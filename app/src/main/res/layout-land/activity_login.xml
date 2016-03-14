@@ -33,7 +33,9 @@
         android:paddingTop="10dp"
         android:paddingBottom="10dp"
         android:text="Username"
-        android:maxLines="1" />
+        android:maxLines="1"
+        android:selectAllOnFocus="true"
+        android:singleLine="true" />
 
     <Button
         android:layout_width="wrap_content"
