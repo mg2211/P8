@@ -23,4 +23,22 @@ dependencies {
     compile fileTree(dir: 'libs', include: ['*.jar'])
     testCompile 'junit:junit:4.12'
     compile 'com.android.support:appcompat-v7:23.1.1'
+    compile files('libs/commons-cli-1.2.jar')
+    compile files('libs/httpcore5-5.0-alpha1.jar')
+    compile files('libs/httpcore5-ab-5.0-alpha1.jar')
+    compile files('libs/httpclient-4.5.2.jar')
+    compile files('libs/commons-io-2.4.jar')
+    compile files('libs/commons-io-2.4-javadoc.jar')
+    compile files('libs/commons-io-2.4-sources.jar')
+    compile files('libs/commons-io-2.4-test-sources.jar')
+    compile files('libs/commons-io-2.4-tests.jar')
+}
+android {
+    packagingOptions {
+        exclude 'META-INF/DEPENDENCIES'
+        exclude 'META-INF/NOTICE'
+        exclude 'META-INF/LICENSE'
+        exclude 'META-INF/LICENSE.txt'
+        exclude 'META-INF/NOTICE.txt'
+    }
 }

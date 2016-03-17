@@ -19,10 +19,9 @@
         android:paddingTop="10dp"
         android:paddingBottom="10dp"
         android:layout_marginTop="10dp"
-        android:text="Password"
         android:maxLines="1"
         android:singleLine="true"
-        android:selectAllOnFocus="true" />
+        android:hint="Password"/>
 
     <EditText
         android:layout_width="wrap_content"
@@ -34,10 +33,9 @@
         android:background="#ffffff"
         android:paddingTop="10dp"
         android:paddingBottom="10dp"
-        android:text="Username"
         android:maxLines="1"
-        android:selectAllOnFocus="true"
-        android:singleLine="true" />
+        android:singleLine="true"
+        android:hint="Username"/>
 
     <Button
         android:layout_width="wrap_content"
