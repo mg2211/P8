@@ -1,6 +1,7 @@
 package com.example.svilen.p8;
 
 import android.content.Context;
+import android.content.Intent;
 import android.net.Uri;
 import android.os.StrictMode;
 import android.support.v7.app.AppCompatActivity;
@@ -12,6 +13,8 @@ import android.widget.EditText;
 import android.widget.Toast;
 
 import org.apache.commons.io.IOUtils;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedWriter;
@@ -74,7 +77,18 @@ public class LoginActivity extends AppCompatActivity {
 
                         Log.d("response", response);
 
+                        JSONObject result = new JSONObject(response);
+
+                        String generalResponse = result.getString("generalresponse");
+                        int responsecode = result.getInt("responsecode");
+                        String username = result.getString("username");
+                        String role = result.getString("role");
+
+                        checkCredentials(generalResponse, responsecode, username, role);
+
                     } catch (IOException e) {
+                        e.printStackTrace();
+                    } catch (JSONException e) {
                         e.printStackTrace();
                     }
                 } else {
@@ -88,5 +102,28 @@ public class LoginActivity extends AppCompatActivity {
                 }
             }
         });
+    }
+
+    public void checkCredentials(String generalResponse, int responsecode, String username, String role) {
+
+        Intent intent;
+        if(responsecode == 100){
+            if(role.equals("student")){
+                intent = new Intent(this, StudentActivity.class);
+
+            } else {
+               intent = new Intent(this, TeacherActivity.class);
+            }
+
+            startActivity(intent);
+
+        } else if(responsecode == 200){
+            Context context = getApplicationContext();
+            int duration = Toast.LENGTH_LONG;
+
+            Toast toast = Toast.makeText(context, generalResponse, duration);
+            toast.show();
+        }
+
     }
 }
