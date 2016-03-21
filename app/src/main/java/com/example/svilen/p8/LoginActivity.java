@@ -95,6 +95,7 @@ public class LoginActivity extends AppCompatActivity {
                         e.printStackTrace();
                     } catch (JSONException e) {
                         e.printStackTrace();
+                        Log.d("...","...");
                     }
                 } else {
                     //make toast if one or both inputs are empty.
