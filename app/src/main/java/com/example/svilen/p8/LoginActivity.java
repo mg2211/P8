@@ -40,6 +40,8 @@ public class LoginActivity extends AppCompatActivity {
         setContentView(R.layout.activity_login);
         StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
         StrictMode.setThreadPolicy(policy);
+
+
         loginButton = (Button) findViewById(R.id.loginButton);
         loginButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -52,7 +54,7 @@ public class LoginActivity extends AppCompatActivity {
                 Log.d("username", Username);
                 Log.d("Password", Password);
 
-                if (!Username.equals("") && !Password.equals("")) {
+                if (!Username.equals("") && !Password.equals("")) { //check if both input fields has text
                     try {
                         URL url = new URL("http://emilsiegenfeldt.dk/p8/login.php");
                         HttpURLConnection connection = (HttpURLConnection) url.openConnection();
@@ -71,19 +73,22 @@ public class LoginActivity extends AppCompatActivity {
 
                         connection.connect();
 
+
+                        //Catch server response
                         InputStream in = new BufferedInputStream(connection.getInputStream());
 
-                        String response = IOUtils.toString(in, "UTF-8");
+                        String response = IOUtils.toString(in, "UTF-8"); //convert to readable string
 
-                        Log.d("response", response);
-
+                        //convert to JSON object
                         JSONObject result = new JSONObject(response);
 
+                        //extract variables from JSONObject result var
                         String generalResponse = result.getString("generalresponse");
                         int responsecode = result.getInt("responsecode");
                         String username = result.getString("username");
                         String role = result.getString("role");
 
+                        //call method to check login
                         checkCredentials(generalResponse, responsecode, username, role);
 
                     } catch (IOException e) {
@@ -92,7 +97,7 @@ public class LoginActivity extends AppCompatActivity {
                         e.printStackTrace();
                     }
                 } else {
-                    Log.d("Empty", "empty");
+                    //make toast if one or both inputs are empty.
                     Context context = getApplicationContext();
                     CharSequence alert = "Please fill in both username and password";
                     int duration = Toast.LENGTH_LONG;
@@ -108,16 +113,19 @@ public class LoginActivity extends AppCompatActivity {
 
         Intent intent;
         if(responsecode == 100){
+
+            //if login credentials are right - set intent to either student or teacher depending on role variable.
             if(role.equals("student")){
                 intent = new Intent(this, StudentActivity.class);
-
             } else {
                intent = new Intent(this, TeacherActivity.class);
             }
 
+            //start the right activity
             startActivity(intent);
 
         } else if(responsecode == 200){
+            //if login is wrong - make a toast saying so.
             Context context = getApplicationContext();
             int duration = Toast.LENGTH_LONG;
 
