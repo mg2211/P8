@@ -84,12 +84,12 @@ public class LoginActivity extends AppCompatActivity {
 
                         //extract variables from JSONObject result var
                         String generalResponse = result.getString("generalresponse");
-                        int responsecode = result.getInt("responsecode");
+                        int responseCode = result.getInt("responsecode");
                         String username = result.getString("username");
                         String role = result.getString("role");
 
                         //call method to check login
-                        checkCredentials(generalResponse, responsecode, username, role);
+                        checkCredentials(generalResponse, responseCode, username, role);
 
                     } catch (IOException e) {
                         e.printStackTrace();

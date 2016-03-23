@@ -10,4 +10,14 @@ public class StudentActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_student);
     }
+
+    public boolean SaySomething(String message){
+
+        if(message.equals("hello World")){
+            return false;
+        } else {
+            return true;
+        }
+
+    }
 }
