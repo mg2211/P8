@@ -4,9 +4,6 @@ import android.test.suitebuilder.annotation.SmallTest;
 
 import junit.framework.TestCase;
 
-/**
- * Created by EmilSiegenfeldt on 23/03/16.
- */
 public class StudentTest extends TestCase{
 
     @Override
@@ -20,7 +17,6 @@ public class StudentTest extends TestCase{
         StudentActivity studentActivity = new StudentActivity();
         boolean result = studentActivity.SaySomething("hello World");
         assertEquals(false,result);
-
     }
 
     @Override

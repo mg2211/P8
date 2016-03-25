@@ -6,7 +6,7 @@ android {
 
     defaultConfig {
         applicationId "com.example.svilen.p8"
-        minSdkVersion 19
+        minSdkVersion 15
         targetSdkVersion 23
         versionCode 1
         versionName "1.0"
@@ -40,5 +40,10 @@ android {
         exclude 'META-INF/LICENSE'
         exclude 'META-INF/LICENSE.txt'
         exclude 'META-INF/NOTICE.txt'
+    }
+    buildTypes{
+        debug{
+            debuggable true
+        }
     }
 }

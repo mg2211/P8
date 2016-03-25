@@ -82,20 +82,26 @@ public class LoginActivity extends AppCompatActivity {
                         //convert to JSON object
                         JSONObject result = new JSONObject(response);
 
+                        Log.d("In var", String.valueOf(in));
+                        Log.d("result var", response);
+
                         //extract variables from JSONObject result var
                         String generalResponse = result.getString("generalresponse");
                         int responseCode = result.getInt("responsecode");
                         String username = result.getString("username");
                         String role = result.getString("role");
-
                         //call method to check login
                         checkCredentials(generalResponse, responseCode, username, role);
 
                     } catch (IOException e) {
-                        e.printStackTrace();
+                        Context context = getApplicationContext();
+                        CharSequence alert = "No response from server - Please try again later";
+                        int duration = Toast.LENGTH_LONG;
+
+                        Toast toast = Toast.makeText(context, alert, duration);
+                        toast.show();
                     } catch (JSONException e) {
                         e.printStackTrace();
-                        Log.d("...","...");
                     }
                 } else {
                     //make toast if one or both inputs are empty.
