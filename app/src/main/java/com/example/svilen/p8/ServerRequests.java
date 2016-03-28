@@ -5,15 +5,14 @@ package com.example.svilen.p8;
  */
 import android.app.ProgressDialog;
 import android.content.Context;
+import android.content.Intent;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.util.Log;
+import android.widget.Toast;
 
 
 import org.apache.commons.io.IOUtils;
-import org.apache.http.params.HttpConnectionParams;
-import org.apache.http.params.HttpParams;
-import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -29,7 +28,6 @@ import java.io.UnsupportedEncodingException;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLEncoder;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -37,16 +35,113 @@ import java.util.Map;
  * Created by Brandur on 3/15/2016.
  */
 public class ServerRequests {
+    private final Context context;
     ProgressDialog progressDialog;
-    public static final int CONNECTION_TIMEOUT = 1000 * 15;
-    public static final String SERVER_ADDRESS = "http://emilsiegenfeldt.dk/p8/";
-    String JSON_String;
     public ServerRequests(Context context) {
+        this.context = context;
         progressDialog = new ProgressDialog(context);
         progressDialog.setCancelable(false);
         progressDialog.setTitle("Processing...");
         progressDialog.setMessage("Please wait...");
     }
+    public void loginExecute(String username, String password){
+        new loginTask().execute(username, password);
+        progressDialog.show();
+    }
+    public class loginTask extends AsyncTask<String, Void, HashMap<String, String>> {
+
+        @Override
+        protected HashMap<String, String> doInBackground(String... userdata) {
+            String username = userdata[0];
+            String password = userdata[1];
+            String generalResponse = null;
+            int responseCode = 0;
+            String role = null;
+
+            try {
+                URL url = new URL("http://emilsiegenfeldt.dk/p8/login.php");
+                HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+                connection.setRequestMethod("POST");
+
+                Uri.Builder builder = new Uri.Builder().appendQueryParameter("username", username)
+                        .appendQueryParameter("password", password);
+
+                String query = builder.build().getEncodedQuery();
+                OutputStream os = connection.getOutputStream();
+                BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(os, "UTF-8"));
+                writer.write(query);
+                writer.flush();
+                writer.close();
+                os.close();
+
+                connection.connect();
+
+                //Catch server response
+                InputStream in = new BufferedInputStream(connection.getInputStream());
+
+                String response = IOUtils.toString(in, "UTF-8"); //convert to readable string
+
+                //convert to JSON object
+                JSONObject JSONresult = new JSONObject(response);
+
+                //extract variables from JSONObject result var
+                generalResponse = JSONresult.getString("generalresponse");
+                responseCode = JSONresult.getInt("responsecode");
+                username = JSONresult.getString("username");
+                role = JSONresult.getString("role");
+
+            } catch (IOException e) {
+                responseCode = 300;
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+            HashMap<String, String> result = new HashMap<>();
+            result.put("Username", username);
+            result.put("Password", password);
+            result.put("responseCode", String.valueOf(responseCode));
+            result.put("generalResponse", generalResponse);
+            result.put("role", role);
+
+            return result;
+        }
+
+        protected void onPostExecute(HashMap<String, String> result){
+            String username = result.get("Username");
+            String generalResponse = result.get("generalResponse");
+            String responseCode = result.get("responseCode");
+            String role = result.get("role");
+            progressDialog.dismiss();
+
+            if(Integer.parseInt(responseCode) == 100){
+                Intent intent;
+                //if login credentials are right - set intent to either student or teacher depending on role variable.
+            if(role.equals("student")){
+                intent = new Intent(context, StudentActivity.class);
+            } else {
+               intent = new Intent(context, TeacherActivity.class);
+            }
+            //start the right activity
+            context.startActivity(intent);
+
+            } else if(Integer.parseInt(responseCode) == 200){
+                //if login is wrong - make a toast saying so.
+                int duration = Toast.LENGTH_LONG;
+
+                Toast toast = Toast.makeText(context, generalResponse, duration);
+                toast.show();
+            } else if(Integer.parseInt(responseCode) == 300){
+                int duration = Toast.LENGTH_LONG;
+                String alert = "Server connection failed - Please try again later";
+                Toast toast = Toast.makeText(context, alert, duration);
+                toast.show();
+            }
+        }
+    }
+
+    public static final int CONNECTION_TIMEOUT = 1000 * 15;
+    public static final String SERVER_ADDRESS = "http://emilsiegenfeldt.dk/p8/";
+    String JSON_String;
+
 
     public void storeUserDataInBackground(User user,
                                           GetUserCallback userCallBack) {
