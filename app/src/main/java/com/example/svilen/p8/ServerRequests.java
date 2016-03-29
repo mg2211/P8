@@ -45,8 +45,12 @@ public class ServerRequests {
 
         @Override
         protected HashMap<String, String> doInBackground(String... userdata) {
+           //Getting params
             String username = userdata[0];
             String password = userdata[1];
+
+            //Initiating return vars.
+            HashMap<String, String> result = new HashMap<>();
             String generalResponse = null;
             int responseCode = 0;
             String role = null;
@@ -75,20 +79,20 @@ public class ServerRequests {
                 String response = IOUtils.toString(in, "UTF-8"); //convert to readable string
 
                 //convert to JSON object
-                JSONObject JSONresult = new JSONObject(response);
+                JSONObject JSONResult = new JSONObject(response);
 
                 //extract variables from JSONObject result var
-                generalResponse = JSONresult.getString("generalresponse");
-                responseCode = JSONresult.getInt("responsecode");
-                username = JSONresult.getString("username");
-                role = JSONresult.getString("role");
+                generalResponse = JSONResult.getString("generalresponse");
+                responseCode = JSONResult.getInt("responsecode");
+                username = JSONResult.getString("username");
+                role = JSONResult.getString("role");
 
             } catch (IOException e) {
                 responseCode = 300;
             } catch (JSONException e) {
                 e.printStackTrace();
             }
-            HashMap<String, String> result = new HashMap<>();
+
             result.put("Username", username);
             result.put("Password", password);
             result.put("responseCode", String.valueOf(responseCode));
