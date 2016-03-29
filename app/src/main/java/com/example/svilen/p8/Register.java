@@ -37,7 +37,10 @@ public class Register extends AppCompatActivity implements View.OnClickListener 
 
                 User user = new User(name, username, password);
 
-                registerUser(user);
+                //registerUser(user);
+                ServerRequests serverRequests = new ServerRequests(this);
+
+                serverRequests.registerExecute(username, password, name);
                 break;
         }
     }

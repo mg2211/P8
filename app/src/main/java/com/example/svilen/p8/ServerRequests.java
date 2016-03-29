@@ -139,6 +139,94 @@ public class ServerRequests {
     public static final String SERVER_ADDRESS = "http://emilsiegenfeldt.dk/p8/";
     String JSON_String;
 
+    public void registerExecute(String username, String password, String name){
+        new registerTask().execute(username, password, name);
+        progressDialog.show();
+    }
+
+
+    public class registerTask extends AsyncTask<String, Void, HashMap<String, String>> {
+
+        @Override
+        protected HashMap<String, String> doInBackground(String... userdata) {
+            String username = userdata[0];
+            String password = userdata[1];
+            String name = userdata[2];
+
+            String generalResponse = null;
+            int responseCode = 0;
+
+
+            try {
+                URL url = new URL("http://emilsiegenfeldt.dk/p8/newUser.php");
+                HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+                connection.setRequestMethod("POST");
+
+                Uri.Builder builder = new Uri.Builder().appendQueryParameter("username", username)
+                        .appendQueryParameter("password", password)
+                        .appendQueryParameter("name", name);
+
+                String query = builder.build().getEncodedQuery();
+                OutputStream os = connection.getOutputStream();
+                BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(os, "UTF-8"));
+                writer.write(query);
+                writer.flush();
+                writer.close();
+                os.close();
+
+                connection.connect();
+
+                //Catch server response
+                InputStream in = new BufferedInputStream(connection.getInputStream());
+
+                String response = IOUtils.toString(in, "UTF-8"); //convert to readable string
+
+                //convert to JSON object
+                JSONObject JSONResult = new JSONObject(response);
+
+                //extract variables from JSONObject result var
+                generalResponse = JSONResult.getString("generalResponse");
+                responseCode = JSONResult.getInt("responseCode");
+                username = JSONResult.getString("username");
+
+                Log.d("response",response);
+
+            } catch (IOException e) {
+                responseCode = 300;
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+            HashMap<String, String> result = new HashMap<>();
+
+            result.put("generalResponse", generalResponse);
+            result.put("responseCode", String.valueOf(responseCode));
+            result.put("username",username);
+            result.put("name",name);
+
+
+
+            return result;
+        }
+
+        protected void onPostExecute(HashMap<String, String> result){
+
+            progressDialog.dismiss();
+            String responseCode = result.get("responseCode");
+            String generalResponse = result.get("generalResponse");
+            String username = result.get("username");
+            String name = result.get("name");
+
+            if(Integer.parseInt(responseCode) == 100){
+                Log.d("response", generalResponse);
+            } else if(Integer.parseInt(responseCode) == 200){
+                Log.d("response", generalResponse);
+            } else if(Integer.parseInt(responseCode) == 300){
+                Log.d("response", "Server connection failed");
+            }
+
+        }
+    }
+
 
     public void storeUserDataInBackground(User user,
                                           GetUserCallback userCallBack) {
