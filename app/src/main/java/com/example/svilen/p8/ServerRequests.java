@@ -1,8 +1,5 @@
 package com.example.svilen.p8;
 
-/**
- * Created by Brandur on 3/17/2016.
- */
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
@@ -10,7 +7,6 @@ import android.net.Uri;
 import android.os.AsyncTask;
 import android.util.Log;
 import android.widget.Toast;
-
 
 import org.apache.commons.io.IOUtils;
 import org.json.JSONException;
@@ -31,9 +27,6 @@ import java.net.URLEncoder;
 import java.util.HashMap;
 import java.util.Map;
 
-/**
- * Created by Brandur on 3/15/2016.
- */
 public class ServerRequests {
     private final Context context;
     ProgressDialog progressDialog;
@@ -126,12 +119,12 @@ public class ServerRequests {
             } else if(Integer.parseInt(responseCode) == 200){
                 //if login is wrong - make a toast saying so.
                 int duration = Toast.LENGTH_LONG;
-
                 Toast toast = Toast.makeText(context, generalResponse, duration);
                 toast.show();
             } else if(Integer.parseInt(responseCode) == 300){
+                //If server connection fails.
                 int duration = Toast.LENGTH_LONG;
-                String alert = "Server connection failed - Please try again later";
+                CharSequence alert = "Server connection failed - Please try again later";
                 Toast toast = Toast.makeText(context, alert, duration);
                 toast.show();
             }
