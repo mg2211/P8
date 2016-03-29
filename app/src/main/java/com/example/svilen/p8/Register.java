@@ -1,9 +1,7 @@
 package com.example.svilen.p8;
 
-import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -35,25 +33,11 @@ public class Register extends AppCompatActivity implements View.OnClickListener 
                 String username = etUsername.getText().toString();
                 String password = etPassword.getText().toString();
 
-                User user = new User(name, username, password);
-
-                //registerUser(user);
                 ServerRequests serverRequests = new ServerRequests(this);
 
                 serverRequests.registerExecute(username, password, name);
                 break;
         }
-    }
-    private void registerUser(User user){
-        Log.d("registerUser", "registerUser");
-        ServerRequests serverRequests = new ServerRequests(this);
-        serverRequests.storeUserDataInBackground(user, new GetUserCallback() {
-            @Override
-            public void done(User returnedUser) {
-                startActivity(new Intent(Register.this, LoginActivity.class));
-            }
-
-        });
     }
 }
 
