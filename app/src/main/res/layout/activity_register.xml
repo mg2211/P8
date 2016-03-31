@@ -9,63 +9,72 @@
     android:paddingTop="@dimen/activity_vertical_margin"
     tools:context="com.example.svilen.p8.Register">
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textAppearance="?android:attr/textAppearanceMedium"
-        android:text="NAME"
-        android:id="@+id/et"
-        android:layout_alignParentTop="true"
-        android:layout_alignParentStart="true"
-        android:layout_marginTop="83dp"
-        android:textSize="60dp" />
-
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Username"
-        android:id="@+id/textView3"
-        android:layout_centerVertical="true"
-        android:layout_alignParentStart="true"
-        android:textSize="60dp" />
-
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Password"
-        android:id="@+id/textView4"
-        android:layout_alignParentBottom="true"
-        android:layout_alignParentStart="true"
-        android:layout_marginBottom="111dp"
-        android:textSize="60dp" />
-
     <EditText
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:id="@+id/etName"
-        android:layout_alignBottom="@+id/et"
-        android:layout_alignParentEnd="true" />
+        android:id="@+id/etRole"
+        android:text="@string/role"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true"
+        android:layout_marginTop="42dp" />
+
 
     <EditText
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:id="@+id/etUserName"
-        android:layout_alignBottom="@+id/textView3"
-        android:layout_alignStart="@+id/etName" />
+        android:text="@string/username"
+        android:layout_below="@+id/etRole"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true"
+        android:layout_marginTop="16dp" />
 
     <EditText
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:id="@+id/etPassword"
-        android:layout_alignBottom="@+id/textView4"
-        android:layout_alignStart="@+id/etUserName" />
+        android:text="@string/password"
+        android:inputType="textVisiblePassword"
+        android:layout_below="@+id/etUserName"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true" />
+
+    <EditText
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/etFirstName"
+        android:text="@string/firstName"
+        android:layout_below="@+id/etPassword"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:layout_marginTop="16dp" />
+
+    <EditText
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/etLastName"
+        android:text="@string/lastName"
+        android:layout_below="@+id/etFirstName"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true" />
+
+    <EditText
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/etEmail"
+        android:text="@string/email"
+        android:layout_below="@+id/etLastName"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true" />
 
     <Button
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Register"
+        android:text="@string/register"
         android:id="@+id/bRegister"
-        android:layout_alignParentBottom="true"
-        android:layout_below="@+id/etPassword"
-        android:layout_centerInParent="true" />
+        android:layout_centerVertical="true"
+        android:layout_centerHorizontal="true" />
+
+
 </RelativeLayout>

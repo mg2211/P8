@@ -2,5 +2,17 @@
     <string name="app_name">P8</string>
     <string name="username">Username</string>
     <string name="password">Password</string>
+    <string name="firstName">First name</string>
+    <string name="lastName">Last name</string>
+    <string name="email">E-mail address</string>
+    <!--
+    <string-array name="role_array">
+        <item><string name="student">Student</string></item>
+        <item><string name="teacher">Teacher</string></item>
+    </string-array>
+    -->
+    <string name="role">Role</string>
     <string name="login">Login</string>
+    <string name="register">Register</string>
+
 </resources>

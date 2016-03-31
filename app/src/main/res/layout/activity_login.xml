@@ -15,28 +15,29 @@
         android:id="@+id/password"
         android:foreground="#ffffff"
         android:text="Password"
-        android:layout_alignParentBottom="true"
+        android:layout_below="@+id/username"
         android:layout_centerHorizontal="true"
-        android:layout_marginBottom="256dp" />
+        android:layout_marginTop="44dp" />
 
     <EditText
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:id="@+id/username"
-        android:layout_centerVertical="true"
-        android:layout_alignStart="@+id/password"
-        android:layout_alignEnd="@+id/password"
         android:foreground="#ffffff"
-        android:text="Username" />
+        android:text="Username"
+        android:layout_marginTop="82dp"
+        android:layout_alignParentTop="true"
+        android:layout_alignLeft="@+id/password"
+        android:layout_alignStart="@+id/password" />
 
     <Button
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Login"
         android:id="@+id/loginButton"
-        android:layout_marginTop="61dp"
-        android:layout_alignTop="@+id/password"
-        android:layout_alignEnd="@+id/password"
-        android:layout_alignStart="@+id/password" />
+        android:layout_marginTop="174dp"
+        android:layout_below="@+id/password"
+        android:layout_alignLeft="@+id/username"
+        android:layout_alignStart="@+id/username" />
 
 </RelativeLayout>

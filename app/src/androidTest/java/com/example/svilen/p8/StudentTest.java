@@ -11,7 +11,6 @@ public class StudentTest extends TestCase{
         super.setUp();
     }
 
-
     @SmallTest
     public void testSaySomething(){
         StudentActivity studentActivity = new StudentActivity();
