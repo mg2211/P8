@@ -19,9 +19,10 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".StudentActivity"></activity>
-        <activity android:name=".TeacherActivity"></activity>
-        <activity android:name=".Register"></activity>
+        <activity android:name=".StudentActivity" />
+        <activity android:name=".TeacherActivity" />
+        <activity android:name=".Register" />
+        <activity android:name=".ClassList"></activity>
     </application>
 
 </manifest>

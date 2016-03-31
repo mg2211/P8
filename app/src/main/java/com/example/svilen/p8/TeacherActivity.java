@@ -9,6 +9,8 @@ import android.widget.Button;
 public class TeacherActivity extends AppCompatActivity {
 
     Button bRegisterUser;
+    Button bShowClasses;
+    Button bShowStudents;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -23,5 +25,25 @@ public class TeacherActivity extends AppCompatActivity {
                 startActivity(intent);
             }
         });
+
+        bShowClasses = (Button) findViewById(R.id.bShowClasses);
+        bShowClasses.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(TeacherActivity.this, ClassList.class);
+                startActivity(intent);
+            }
+        });
+
+        /*
+        bShowStudents = (Button) findViewById(R.id.bShowStudents);
+        bShowStudents.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(TeacherActivity.this, Register.class);
+                startActivity(intent);
+            }
+        });
+        */
     }
 }
