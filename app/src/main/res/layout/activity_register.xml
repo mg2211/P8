@@ -13,7 +13,7 @@
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:id="@+id/etRole"
-        android:text="@string/role"
+        android:hint="@string/role"
         android:layout_alignParentTop="true"
         android:layout_alignParentRight="true"
         android:layout_alignParentEnd="true"
@@ -24,7 +24,7 @@
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:id="@+id/etUserName"
-        android:text="@string/username"
+        android:hint="@string/username"
         android:layout_below="@+id/etRole"
         android:layout_alignParentRight="true"
         android:layout_alignParentEnd="true"
@@ -34,7 +34,7 @@
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:id="@+id/etPassword"
-        android:text="@string/password"
+        android:hint="@string/password"
         android:inputType="textVisiblePassword"
         android:layout_below="@+id/etUserName"
         android:layout_alignParentLeft="true"
@@ -44,7 +44,7 @@
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:id="@+id/etFirstName"
-        android:text="@string/firstName"
+        android:hint="@string/firstName"
         android:layout_below="@+id/etPassword"
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"
@@ -54,7 +54,7 @@
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:id="@+id/etLastName"
-        android:text="@string/lastName"
+        android:hint="@string/lastName"
         android:layout_below="@+id/etFirstName"
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true" />
@@ -62,8 +62,9 @@
     <EditText
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
+        android:inputType="textEmailAddress"
         android:id="@+id/etEmail"
-        android:text="@string/email"
+        android:hint="@string/email"
         android:layout_below="@+id/etLastName"
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true" />
@@ -75,6 +76,5 @@
         android:id="@+id/bRegister"
         android:layout_centerVertical="true"
         android:layout_centerHorizontal="true" />
-
 
 </RelativeLayout>
