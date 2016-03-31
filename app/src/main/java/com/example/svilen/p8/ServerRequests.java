@@ -50,7 +50,7 @@ public class ServerRequests {
 
 
             try {
-                URL url = new URL("emilsiegenfeldt.dk/p8/newUser.php");
+                URL url = new URL("http://emilsiegenfeldt.dk/p8/newUser.php");
                 HttpURLConnection connection = (HttpURLConnection) url.openConnection();
                 connection.setRequestMethod("POST");
 
@@ -144,7 +144,7 @@ public class ServerRequests {
             String role = null;
 
             try {
-                URL url = new URL("emilsiegenfeldt.dk/p8/login.php");
+                URL url = new URL("http://emilsiegenfeldt.dk/p8/login.php");
                 HttpURLConnection connection = (HttpURLConnection) url.openConnection();
                 connection.setRequestMethod("POST");
 
@@ -245,7 +245,7 @@ public class ServerRequests {
 
 
             try {
-                URL url = new URL("emilsiegenfeldt.dk/p8/newUser.php");
+                URL url = new URL("http://emilsiegenfeldt.dk/p8/newUser.php");
                 HttpURLConnection connection = (HttpURLConnection) url.openConnection();
                 connection.setRequestMethod("POST");
 
