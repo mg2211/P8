@@ -11,7 +11,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textAppearance="?android:attr/textAppearanceLarge"
-        android:text="Fuck You Android - im Logged in!"
+        android:text="@string/backgroundLoggedInTeacher"
         android:id="@+id/textView2"
         android:layout_centerVertical="true"
         android:layout_centerHorizontal="true" />
@@ -20,8 +20,28 @@
         style="?android:attr/buttonStyleSmall"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Register new student"
-        android:id="@+id/bRegister1"
+        android:text="@string/registerUser"
+        android:id="@+id/bRegisterUser"
         android:layout_alignParentTop="true"
         android:layout_alignParentStart="true" />
+
+    <Button
+        style="?android:attr/buttonStyleSmall"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/showClasses"
+        android:id="@+id/bShowClasses"
+        android:layout_alignParentStart="true"
+        android:layout_below="@+id/bRegisterUser"
+        android:layout_marginTop="16dp" />
+
+    <Button
+        style="?android:attr/buttonStyleSmall"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/showStudents"
+        android:id="@+id/bShowStudents"
+        android:layout_alignParentStart="true"
+        android:layout_below="@+id/bShowClasses" />
+
 </RelativeLayout>

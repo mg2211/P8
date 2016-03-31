@@ -1,18 +1,31 @@
 <resources>
+    <!--App name-->
     <string name="app_name">P8</string>
+
+    <!--Labels for buttons-->
+    <string name="login">Login</string>
+    <string name="register">Register</string>
+    <string name="registerUser">Register a new user</string>
+    <string name="showClasses">Show my classes</string>
+    <string name="showStudents">Show my students</string>
+
+    <!--Labels for background page-->
+    <string name="backgroundLoggedInTeacher">Fuck You Android - I'm a teacher logged in!</string>
+    <string name="backgroundLoggedInStudent">Fuck You Android - I'm a student logged in!</string>
+
+    <!--Labels for defining users in text fields-->
     <string name="username">Username</string>
     <string name="password">Password</string>
     <string name="firstName">First name</string>
     <string name="lastName">Last name</string>
     <string name="email">E-mail address</string>
-    <!--
+    <string name="role">Role</string>
+
+    <!-- Spinner content array
     <string-array name="role_array">
         <item><string name="student">Student</string></item>
         <item><string name="teacher">Teacher</string></item>
     </string-array>
     -->
-    <string name="role">Role</string>
-    <string name="login">Login</string>
-    <string name="register">Register</string>
 
 </resources>

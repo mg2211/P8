@@ -8,15 +8,15 @@ import android.widget.Button;
 
 public class TeacherActivity extends AppCompatActivity {
 
-    Button bRegister1;
+    Button bRegisterUser;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_teacher);
 
-        bRegister1 = (Button) findViewById(R.id.bRegister1);
-        bRegister1.setOnClickListener(new View.OnClickListener() {
+        bRegisterUser = (Button) findViewById(R.id.bRegisterUser);
+        bRegisterUser.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(TeacherActivity.this, Register.class);
