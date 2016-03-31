@@ -228,6 +228,7 @@ public class ServerRequests {
                 CharSequence alert = "Server connection failed - Please try again later";
                 Toast toast = Toast.makeText(context, alert, duration);
                 toast.show();
+
             }
 
         }
