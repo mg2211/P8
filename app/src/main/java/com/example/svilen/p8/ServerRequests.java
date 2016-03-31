@@ -94,7 +94,7 @@ public class ServerRequests {
             result.put("responseCode", String.valueOf(responseCode));
             result.put("generalResponse", generalResponse);
             result.put("role", role);
-
+//
             return result;
         }
 
