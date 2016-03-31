@@ -238,9 +238,81 @@ public class ServerRequests {
     }
 
     public void classListExecute(String teacherID){
-        new classListTask().execute(teacherID);
+        new ClassTask().execute(teacherID);
         progressDialog.show();
     }
+
+    public class ClassTask extends AsyncTask<String, Void, HashMap<String, HashMap<String,String>>>{
+
+
+        @Override
+        protected HashMap<String, HashMap<String, String>> doInBackground(String... params) {
+            String teacherId = params[0];
+            String generalResponse = null;
+            int responseCode = 0;
+            HashMap<String, HashMap<String, String>> results = new HashMap<>();
+
+
+            try {
+                URL url = new URL("http://emilsiegenfeldt.dk/p8/class.php");
+                HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+                connection.setRequestMethod("POST");
+
+                Uri.Builder builder = new Uri.Builder().appendQueryParameter("teacherId", teacherId);
+
+                String query = builder.build().getEncodedQuery();
+                OutputStream os = connection.getOutputStream();
+                BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(os, "UTF-8"));
+                writer.write(query);
+                writer.flush();
+                writer.close();
+                os.close();
+
+                connection.connect();
+
+                //Catch server response
+                InputStream in = new BufferedInputStream(connection.getInputStream());
+
+                String response = IOUtils.toString(in, "UTF-8"); //convert to readable string
+
+                //convert to JSON object
+                JSONObject JSONResult = new JSONObject(response);
+
+                JSONArray classes = JSONResult.getJSONArray("classes");
+                for(int i = 0; i<classes.length(); i++){
+                    Log.d("Class","class");
+                    HashMap<String, String> classInfo;
+                    JSONObject specificClass = classes.getJSONObject(i);
+                    String className = specificClass.getString("className");
+                    String classId = String.valueOf(specificClass.getInt("classId"));
+                    String classTeacher = String.valueOf(specificClass.getInt("teacherId"));
+                    results.put(classId, classInfo = new HashMap<>());
+                    classInfo.put("classId", classId);
+                    classInfo.put("teacherId", classTeacher);
+                    classInfo.put("className", className);
+                    Log.d("class", classInfo.toString());
+
+                    results.put("Class", classInfo);
+                }
+
+
+            } catch (IOException e) {
+                responseCode = 300;
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+
+            return results;
+
+        }
+
+        protected void onPostExecute(HashMap<String, HashMap<String, String>> results){
+            progressDialog.dismiss();
+            Log.d("Hashmap", results.toString());
+        }
+    }
+
+
 
     public class classListTask extends AsyncTask<String, Void, List<ArrayList<String>>> {
 
