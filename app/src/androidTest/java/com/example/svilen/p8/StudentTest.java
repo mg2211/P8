@@ -12,11 +12,11 @@ public class StudentTest extends TestCase{
     }
 
     @SmallTest
-    public void testSaySomething(){
+   /* public void testSaySomething(){
         StudentActivity studentActivity = new StudentActivity();
         boolean result = studentActivity.SaySomething("hello World");
         assertEquals(false,result);
-    }
+    }*/
 
     @Override
     protected void tearDown() throws Exception {
