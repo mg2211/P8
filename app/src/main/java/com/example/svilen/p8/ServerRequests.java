@@ -6,9 +6,11 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.util.Log;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import org.apache.commons.io.IOUtils;
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -20,7 +22,9 @@ import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 
 public class ServerRequests {
     private final Context context;
@@ -233,4 +237,69 @@ public class ServerRequests {
         }
     }
 
+    public void classListExecute(String teacherid){
+        new registerTask().execute(teacherid);
+        progressDialog.show();
+    }
+
+    public class ClassListTask extends AsyncTask<String, Void, List<ArrayList<String>>> {
+
+        @Override
+        protected List<ArrayList<String>> doInBackground(String... userdata) {
+            //Getting params
+            String teacherid = userdata[0];
+
+            //Initiating return vars.
+            List<ArrayList<String>> result = new ArrayList<ArrayList<String>>();
+            String generalResponse = null;
+            int responseCode = 0;
+            String role = null;
+
+            try {
+                URL url = new URL("http://emilsiegenfeldt.dk/p8/classList.php");
+                HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+                connection.setRequestMethod("POST");
+
+                Uri.Builder builder = new Uri.Builder().appendQueryParameter("teacherid", teacherid);
+
+                String query = builder.build().getEncodedQuery();
+                OutputStream os = connection.getOutputStream();
+                BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(os, "UTF-8"));
+                writer.write(query);
+                writer.flush();
+                writer.close();
+                os.close();
+
+                connection.connect();
+
+                //Catch server response
+                InputStream in = new BufferedInputStream(connection.getInputStream());
+
+                String response = IOUtils.toString(in, "UTF-8"); //convert to readable string
+
+                //convert to JSON object
+
+                try {
+                    JSONObject JSONResult = new JSONObject(response);
+                    JSONArray classes = JSONResult.getJSONArray("classes");
+                    for (int i = 0; i < classes.length(); i++) {
+                        ArrayList<String> tempResult = new ArrayList<>();
+                        JSONObject jsonClass = classes.getJSONObject(i);
+                        String classID = jsonClass.getString("classid");
+                        System.out.println(classID + " \n");
+                        String className = jsonClass.getString("classname");
+                        System.out.println(className + " \n");
+                        tempResult.add(classID);
+                        tempResult.add(className);
+                        result.add(tempResult);
+                    }
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            } catch (IOException e) {
+                responseCode = 400;
+            }
+            return result;
+        }
+    }
    }
