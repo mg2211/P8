@@ -15,6 +15,7 @@ public class TeacherActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        final ServerRequests serverRequests = new ServerRequests(this);
         setContentView(R.layout.activity_teacher);
 
         bRegisterUser = (Button) findViewById(R.id.bRegisterUser);
@@ -29,9 +30,9 @@ public class TeacherActivity extends AppCompatActivity {
         bShowClasses = (Button) findViewById(R.id.bShowClasses);
         bShowClasses.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(TeacherActivity.this, ClassList.class);
-                startActivity(intent);
+            public void onClick(View w) {
+                        String teacherID = "1";
+                        serverRequests.classListExecute(teacherID);
             }
         });
 
