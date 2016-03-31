@@ -3,8 +3,10 @@ package com.example.svilen.p8;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.AsyncTask;
+import android.preference.PreferenceManager;
 import android.util.Log;
 import android.widget.Toast;
 
@@ -21,6 +23,7 @@ import java.io.OutputStreamWriter;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.HashMap;
+import java.util.Map;
 
 public class ServerRequests {
     private final Context context;
@@ -50,6 +53,11 @@ public class ServerRequests {
             String generalResponse = null;
             int responseCode = 0;
             String role = null;
+            int teacherId;
+            int studentId;
+            String firstname = null;
+            String lastname = null;
+            String email = null;
 
             try {
                 URL url = new URL("http://emilsiegenfeldt.dk/p8/login.php");
@@ -82,6 +90,18 @@ public class ServerRequests {
                 responseCode = JSONResult.getInt("responsecode");
                 username = JSONResult.getString("username");
                 role = JSONResult.getString("role");
+                firstname = JSONResult.getString("firstname");
+                lastname = JSONResult.getString("lastname");
+                email = JSONResult.getString("email");
+
+
+                if(role.equals("student")){
+                    studentId = JSONResult.getInt("studentId");
+                    result.put("studentId", String.valueOf(studentId));
+                } else if(role.equals("teacher")){
+                    teacherId = JSONResult.getInt("teacherId");
+                    result.put("teacherId", String.valueOf(teacherId));
+                }
 
             } catch (IOException e) {
                 responseCode = 300;
@@ -94,25 +114,51 @@ public class ServerRequests {
             result.put("responseCode", String.valueOf(responseCode));
             result.put("generalResponse", generalResponse);
             result.put("role", role);
+            result.put("firstname", firstname);
+            result.put("lastname", lastname);
+            result.put("email",email);
+
 //
             return result;
         }
 
         protected void onPostExecute(HashMap<String, String> result){
-            String username = result.get("Username");
+
             String generalResponse = result.get("generalResponse");
             String responseCode = result.get("responseCode");
             String role = result.get("role");
+            String username = result.get("Username");
+            String firstname = result.get("firstname");
+            String lastname = result.get("lastname");
+            String email = result.get("email");
+            String teacherId = result.get("teacherId");
+            String studentId = result.get("studentId");
             progressDialog.dismiss();
 
             if(Integer.parseInt(responseCode) == 100){
                 Intent intent;
                 //if login credentials are right - set intent to either student or teacher depending on role variable.
-            if(role.equals("student")){
-                intent = new Intent(context, StudentActivity.class);
-            } else {
-               intent = new Intent(context, TeacherActivity.class);
-            }
+
+                //save user information on device
+                SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context.getApplicationContext());
+                SharedPreferences.Editor editor = preferences.edit();
+                editor.putString("username", username);
+                editor.putString("firstname", firstname);
+                editor.putString("lastname", lastname);
+                editor.putString("email", email);
+                editor.putString("role", role);
+                if(role.equals("teacher")) {
+                    editor.putString("teacherId", teacherId);
+                } else if(role.equals("student")) {
+                    editor.putString("studentId", studentId);
+                }
+                editor.commit();
+
+                if(role.equals("student")){
+                    intent = new Intent(context, StudentActivity.class);
+                } else {
+                   intent = new Intent(context, TeacherActivity.class);
+                }
             //start the right activity
             context.startActivity(intent);
 
