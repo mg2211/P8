@@ -10,8 +10,8 @@
     <string name="showStudents">Show my students</string>
 
     <!--Labels for background page-->
-    <string name="backgroundLoggedInTeacher">Fuck You Android - I'm a teacher logged in!</string>
-    <string name="backgroundLoggedInStudent">Fuck You Android - I'm a student logged in!</string>
+    <string name="backgroundLoggedInTeacher">Fuck You Android - I\'m a teacher logged in!</string>
+    <string name="backgroundLoggedInStudent">Fuck You Android - I\'m a student logged in!</string>
 
     <!--Labels for defining users in text fields-->
     <string name="username">Username</string>
