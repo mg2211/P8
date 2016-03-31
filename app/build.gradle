@@ -32,6 +32,7 @@ dependencies {
     compile files('libs/commons-io-2.4-sources.jar')
     compile files('libs/commons-io-2.4-test-sources.jar')
     compile files('libs/commons-io-2.4-tests.jar')
+    compile files('libs/commons-lang3-3.4.jar')
 }
 android {
     packagingOptions {
