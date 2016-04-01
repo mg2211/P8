@@ -21,13 +21,16 @@ public class TeacherActivity extends AppCompatActivity {
         final ServerRequests serverRequests = new ServerRequests(this);
         setContentView(R.layout.activity_teacher);
 
-        /*bShowStudents = (Button) findViewById(R.id.bShowStudents);
+        bShowStudents = (Button) findViewById(R.id.bShowStudents);
         bShowStudents.setOnClickListener(new View.OnClickListener(){
             @Override
         public void onClick(View v){
-                Intent intent = new Intent (TeacherActivity.this,  )
+                UserInfo userInfo = new UserInfo(getApplicationContext());
+                HashMap<String, String> user = userInfo.getUser();
+                String studentId = user.get("studentId");
+                serverRequests.classListExecute(studentId);
             }
-        });*/
+        });
 
         bRegisterUser = (Button) findViewById(R.id.bRegisterUser);
         bRegisterUser.setOnClickListener(new View.OnClickListener() {
@@ -43,10 +46,10 @@ public class TeacherActivity extends AppCompatActivity {
             @Override
             public void onClick(View w) {
 
-                        UserInfo userInfo = new UserInfo(getApplicationContext());
-                        HashMap<String, String> user = userInfo.getUser();
-                        String teacherID = user.get("teacherId");
-                        serverRequests.classListExecute(teacherID);
+                UserInfo userInfo = new UserInfo(getApplicationContext());
+                HashMap<String, String> user = userInfo.getUser();
+                String teacherID = user.get("teacherId");
+                serverRequests.classListExecute(teacherID);
             }
         });
 
