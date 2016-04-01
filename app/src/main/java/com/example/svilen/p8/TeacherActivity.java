@@ -28,7 +28,7 @@ public class TeacherActivity extends AppCompatActivity {
                 UserInfo userInfo = new UserInfo(getApplicationContext());
                 HashMap<String, String> user = userInfo.getUser();
                 String studentId = user.get("studentId");
-                serverRequests.classListExecute(studentId);
+                serverRequests.studentListExecute(studentId);
             }
         });
 

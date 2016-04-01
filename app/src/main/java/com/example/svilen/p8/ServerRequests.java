@@ -454,7 +454,13 @@ public class ServerRequests {
             } catch (JSONException e) {
                 e.printStackTrace();
             }
-       return results; }
+
+            HashMap<String, String> response = new HashMap<>();
+            response.put("generalResponse", generalResponse);
+            response.put("responseCode", String.valueOf(responseCode));
+            results.put("response", response);
+
+            return results; }
 
 
         protected void onPostExecute (HashMap<String, HashMap<String, String>> results){
