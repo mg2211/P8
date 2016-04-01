@@ -85,8 +85,8 @@
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="library" exported="" name="commons-io-2.4" level="project" />
     <orderEntry type="library" exported="" name="httpcore5-ab-5.0-alpha1" level="project" />
-    <orderEntry type="library" exported="" name="commons-io-2.4-javadoc" level="project" />
     <orderEntry type="library" exported="" name="commons-io-2.4-sources" level="project" />
+    <orderEntry type="library" exported="" name="commons-io-2.4-javadoc" level="project" />
     <orderEntry type="library" exported="" name="commons-io-2.4-test-sources" level="project" />
     <orderEntry type="library" exported="" name="commons-cli-1.2" level="project" />
     <orderEntry type="library" exported="" name="httpcore5-5.0-alpha1" level="project" />

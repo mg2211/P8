@@ -22,6 +22,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -372,4 +373,68 @@ public class ServerRequests {
             }
         }
     }
+    public void studentListExecute (String classId) {
+        new StudentTask().execute(classId);
+        progressDialog.show();
+
+    }
+
+    public class StudentTask extends AsyncTask <String, Void, HashMap<String, HashMap<String, String>>>{
+
+
+
+        @Override
+        protected HashMap<String, HashMap<String, String>> doInBackground(String ... params){
+            String classId = params[0];
+            String generalResponse = null;
+            int responseCode = 0;
+            HashMap<String, HashMap<String, String>> results = new HashMap<>();
+
+            try{
+                URL url = new URL ("http://emilsiegenfeldt.dk/p8/class.php");
+                HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+                connection.setRequestMethod("POST");
+
+                Uri.Builder builder = new Uri.Builder().appendQueryParameter("classId", classId);
+
+                String query = builder.build().getEncodedQuery();
+                OutputStream os = connection.getOutputStream();
+                BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(os, "UTF-8"));
+                writer.write(query);
+                writer.flush();
+                writer.close();
+                os.close();
+
+                connection.connect();
+
+                //Catch server response
+
+                InputStream in = new BufferedInputStream(connection.getInputStream());
+                String response = IOUtils.toString(in, "UTF-8"); // convert to string
+
+                //convert to JSONobject
+
+                JSONObject JSONResult = new JSONObject((response));
+                generalResponse = JSONResult.getString("generalResponse");
+                responseCode = JSONResult.getInt("responseCode");
+
+
+
+
+
+
+
+            } catch (MalformedURLException e) {
+                e.printStackTrace();
+            } catch (IOException e) {
+                e.printStackTrace();
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        }
+
+    }
+
 }
+
+
