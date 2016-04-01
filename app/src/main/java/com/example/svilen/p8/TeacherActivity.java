@@ -21,6 +21,14 @@ public class TeacherActivity extends AppCompatActivity {
         final ServerRequests serverRequests = new ServerRequests(this);
         setContentView(R.layout.activity_teacher);
 
+        //bShowStudents = (Button) findViewById(R.id.bShowStudents);
+        //bShowStudents.setOnClickListener(new View.OnClickListener(){
+        //    @Override
+        //public void onClick(View v){
+        //        Intent intent = new Intent (TeacherActivity.this,  )
+        //    }
+       // });
+
         bRegisterUser = (Button) findViewById(R.id.bRegisterUser);
         bRegisterUser.setOnClickListener(new View.OnClickListener() {
             @Override

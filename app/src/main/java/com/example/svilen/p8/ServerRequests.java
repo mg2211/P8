@@ -373,8 +373,10 @@ public class ServerRequests {
             }
         }
     }
-    public void studentListExecute (String classId) {
-        new StudentTask().execute(classId);
+
+
+    public void studentListExecute (String classID) {
+        new StudentTask().execute(classID);
         progressDialog.show();
 
     }
@@ -385,7 +387,7 @@ public class ServerRequests {
 
         @Override
         protected HashMap<String, HashMap<String, String>> doInBackground(String ... params){
-            String classId = params[0];
+            String classID = params[0];
             String generalResponse = null;
             int responseCode = 0;
             HashMap<String, HashMap<String, String>> results = new HashMap<>();
@@ -395,7 +397,7 @@ public class ServerRequests {
                 HttpURLConnection connection = (HttpURLConnection) url.openConnection();
                 connection.setRequestMethod("POST");
 
-                Uri.Builder builder = new Uri.Builder().appendQueryParameter("classId", classId);
+                Uri.Builder builder = new Uri.Builder().appendQueryParameter("classId", classID);
 
                 String query = builder.build().getEncodedQuery();
                 OutputStream os = connection.getOutputStream();
@@ -418,19 +420,47 @@ public class ServerRequests {
                 generalResponse = JSONResult.getString("generalResponse");
                 responseCode = JSONResult.getInt("responseCode");
 
+                JSONArray students = JSONResult.getJSONArray("students");
+                for (int i = 0; i < students.length(); i++){
+                    JSONObject specificStudent = students.getJSONObject(i);
+                    String studentId = specificStudent.getString("studentId");
+                    String classId = specificStudent.getString("classId");
+                    String parentEmail = specificStudent.getString("parentEmail");
+                    String firstname = specificStudent.getString("firstname");
+                    String lastname = specificStudent.getString("lastname");
+                    String username = specificStudent.getString("username");
+                    String role = specificStudent.getString("role");
+                    String email = specificStudent.getString("email");
+                    HashMap<String, String> studentInfo = new HashMap<>();
+                    studentInfo.put("studentId", studentId);
+                    studentInfo.put("classId", classId);
+                    studentInfo.put("parentEmail", parentEmail);
+                    studentInfo.put("firstname", firstname);
+                    studentInfo.put("lastname", lastname);
+                    studentInfo.put("username", username);
+                    studentInfo.put("role", role);
+                    studentInfo.put("email", email);
+
+                    results.put("StudentID: " + studentId, studentInfo);
+                }
 
 
 
 
 
-
-            } catch (MalformedURLException e) {
-                e.printStackTrace();
-            } catch (IOException e) {
+            }
+             catch (IOException e) {
                 e.printStackTrace();
             } catch (JSONException e) {
                 e.printStackTrace();
             }
+       return results; }
+
+
+        protected void onPostExecute (HashMap<String, HashMap<String, String>> results){
+
+            progressDialog.dismiss();
+            Log.d("Hall´´oóóó", results.toString());
         }
 
     }
