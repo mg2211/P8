@@ -28,6 +28,7 @@ import java.util.List;
 public class ServerRequests {
     private final Context context;
     ProgressDialog progressDialog;
+
     public ServerRequests(Context context) {
         this.context = context;
         progressDialog = new ProgressDialog(context);
@@ -35,7 +36,8 @@ public class ServerRequests {
         progressDialog.setTitle("Processing...");
         progressDialog.setMessage("Please wait...");
     }
-    public void loginExecute(String username, String password){
+
+    public void loginExecute(String username, String password) {
         new loginTask().execute(username, password);
         progressDialog.show();
     }
@@ -44,7 +46,7 @@ public class ServerRequests {
 
         @Override
         protected HashMap<String, String> doInBackground(String... userdata) {
-           //Getting params
+            //Getting params
             String username = userdata[0];
             String password = userdata[1];
 
@@ -101,30 +103,30 @@ public class ServerRequests {
             return result;
         }
 
-        protected void onPostExecute(HashMap<String, String> result){
+        protected void onPostExecute(HashMap<String, String> result) {
             String username = result.get("Username");
             String generalResponse = result.get("generalResponse");
             String responseCode = result.get("responseCode");
             String role = result.get("role");
             progressDialog.dismiss();
 
-            if(Integer.parseInt(responseCode) == 100){
+            if (Integer.parseInt(responseCode) == 100) {
                 Intent intent;
                 //if login credentials are right - set intent to either student or teacher depending on role variable.
-            if(role.equals("student")){
-                intent = new Intent(context, StudentActivity.class);
-            } else {
-               intent = new Intent(context, TeacherActivity.class);
-            }
-            //start the right activity
-            context.startActivity(intent);
+                if (role.equals("student")) {
+                    intent = new Intent(context, StudentActivity.class);
+                } else {
+                    intent = new Intent(context, TeacherActivity.class);
+                }
+                //start the right activity
+                context.startActivity(intent);
 
-            } else if(Integer.parseInt(responseCode) == 200){
+            } else if (Integer.parseInt(responseCode) == 200) {
                 //if login is wrong - make a toast saying so.
                 int duration = Toast.LENGTH_LONG;
                 Toast toast = Toast.makeText(context, generalResponse, duration);
                 toast.show();
-            } else if(Integer.parseInt(responseCode) == 300){
+            } else if (Integer.parseInt(responseCode) == 300) {
                 //If server connection fails.
                 int duration = Toast.LENGTH_LONG;
                 CharSequence alert = "Server connection failed - Please try again later";
@@ -134,7 +136,7 @@ public class ServerRequests {
         }
     }
 
-    public void registerExecute(String role, String username, String password, String firstname, String lastname, String email){
+    public void registerExecute(String role, String username, String password, String firstname, String lastname, String email) {
         new registerTask().execute(role, username, password, firstname, lastname, email);
         progressDialog.show();
     }
@@ -190,7 +192,7 @@ public class ServerRequests {
                 responseCode = JSONResult.getInt("responseCode");
                 username = JSONResult.getString("username");
 
-                Log.d("response",response);
+                Log.d("response", response);
 
             } catch (IOException e) {
                 responseCode = 300;
@@ -201,31 +203,30 @@ public class ServerRequests {
 
             result.put("generalResponse", generalResponse);
             result.put("responseCode", String.valueOf(responseCode));
-            result.put("username",username);
+            result.put("username", username);
             //result.put("name",name);
 
             return result;
         }
 
-        protected void onPostExecute(HashMap<String, String> result){
+        protected void onPostExecute(HashMap<String, String> result) {
 
             progressDialog.dismiss();
             String responseCode = result.get("responseCode");
             String generalResponse = result.get("generalResponse");
             String username = result.get("username");
-            //String name = result.get("name");
 
-            if(Integer.parseInt(responseCode) == 100){
+            if (Integer.parseInt(responseCode) == 100) {
                 //if everything is alright
                 int duration = Toast.LENGTH_LONG;
                 Toast toast = Toast.makeText(context, generalResponse, duration);
                 toast.show();
-            } else if(Integer.parseInt(responseCode) == 200){
+            } else if (Integer.parseInt(responseCode) == 200) {
                 //if somethings wrong e.g. username already in use
                 int duration = Toast.LENGTH_LONG;
                 Toast toast = Toast.makeText(context, generalResponse, duration);
                 toast.show();
-            } else if(Integer.parseInt(responseCode) == 300){
+            } else if (Integer.parseInt(responseCode) == 300) {
                 //If server connection fails.
                 int duration = Toast.LENGTH_LONG;
                 CharSequence alert = "Server connection failed - Please try again later";
@@ -237,12 +238,12 @@ public class ServerRequests {
         }
     }
 
-    public void classListExecute(String teacherID){
+    public void classListExecute(String teacherID) {
         new ClassTask().execute(teacherID);
         progressDialog.show();
     }
 
-    public class ClassTask extends AsyncTask<String, Void, HashMap<String, HashMap<String,String>>>{
+    public class ClassTask extends AsyncTask<String, Void, HashMap<String, HashMap<String, String>>> {
 
 
         @Override
@@ -277,22 +278,21 @@ public class ServerRequests {
 
                 //convert to JSON object
                 JSONObject JSONResult = new JSONObject(response);
+                generalResponse = JSONResult.getString("generalResponse");
+                responseCode = JSONResult.getInt("responseCode");
 
                 JSONArray classes = JSONResult.getJSONArray("classes");
-                for(int i = 0; i<classes.length(); i++){
-                    Log.d("Class","class");
-                    HashMap<String, String> classInfo;
+                for (int i = 0; i < classes.length(); i++) {
                     JSONObject specificClass = classes.getJSONObject(i);
                     String className = specificClass.getString("className");
                     String classId = String.valueOf(specificClass.getInt("classId"));
                     String classTeacher = String.valueOf(specificClass.getInt("teacherId"));
-                    results.put(classId, classInfo = new HashMap<>());
+                    HashMap<String, String> classInfo = new HashMap<>();
                     classInfo.put("classId", classId);
                     classInfo.put("teacherId", classTeacher);
                     classInfo.put("className", className);
-                    Log.d("class", classInfo.toString());
 
-                    results.put("Class", classInfo);
+                    results.put("ClassID: " + classId, classInfo);
                 }
 
 
@@ -302,19 +302,35 @@ public class ServerRequests {
                 e.printStackTrace();
             }
 
+            HashMap<String, String> response = new HashMap<>();
+            response.put("generalResponse", generalResponse);
+            response.put("responseCode", String.valueOf(responseCode));
+            results.put("response", response);
+
             return results;
 
         }
 
-        protected void onPostExecute(HashMap<String, HashMap<String, String>> results){
+        protected void onPostExecute(HashMap<String, HashMap<String, String>> results) {
             progressDialog.dismiss();
-            Log.d("Hashmap", results.toString());
+
+            String generalResponse = results.get("response").get("generalResponse");
+            String responseCode = results.get("response").get("responseCode");
+
+            if(Integer.parseInt(responseCode) == 100){
+                //success
+            } else if(Integer.parseInt(responseCode) == 200){
+                //Something went wrong database side
+            } else if(Integer.parseInt(responseCode) == 300){
+                //Server connection error
+            }
         }
     }
+}
 
 
 
-    public class classListTask extends AsyncTask<String, Void, List<ArrayList<String>>> {
+   /* public class classListTask extends AsyncTask<String, Void, List<ArrayList<String>>> {
 
         @Override
         protected List<ArrayList<String>> doInBackground(String... userdata) {
@@ -375,3 +391,4 @@ public class ServerRequests {
     }
 
    }
+*/
