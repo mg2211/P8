@@ -3,8 +3,10 @@ package com.example.svilen.p8;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.AsyncTask;
+import android.preference.PreferenceManager;
 import android.util.Log;
 import android.widget.Toast;
 
@@ -24,6 +26,7 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class ServerRequests {
     private final Context context;
@@ -54,6 +57,11 @@ public class ServerRequests {
             HashMap<String, String> result = new HashMap<>();
             String generalResponse = null;
             int responseCode = 0;
+            int teacherId = 0;
+            int studentId = 0;
+            String email = null;
+            String firstname = null;
+            String lastname = null;
             String role = null;
 
             try {
@@ -87,6 +95,14 @@ public class ServerRequests {
                 responseCode = JSONResult.getInt("responsecode");
                 username = JSONResult.getString("username");
                 role = JSONResult.getString("role");
+                firstname = JSONResult.getString("firstname");
+                lastname = JSONResult.getString("lastname");
+                email = JSONResult.getString("email");
+                if(role.equals("student")){
+                    studentId = JSONResult.getInt("studentId");
+                } else if(role.equals("teacher")) {
+                    teacherId = JSONResult.getInt("teacherId");
+                }
 
             } catch (IOException e) {
                 responseCode = 300;
@@ -99,15 +115,26 @@ public class ServerRequests {
             result.put("responseCode", String.valueOf(responseCode));
             result.put("generalResponse", generalResponse);
             result.put("role", role);
+            result.put("firstname", firstname);
+            result.put("lastname", lastname);
+            result.put("email", email);
+            result.put("teacherId", String.valueOf(teacherId));
+            result.put("studentId", String.valueOf(studentId));
+
 
             return result;
         }
 
         protected void onPostExecute(HashMap<String, String> result) {
-            String username = result.get("Username");
             String generalResponse = result.get("generalResponse");
             String responseCode = result.get("responseCode");
             String role = result.get("role");
+            String username = result.get("Username");
+            String firstname = result.get("firstname");
+            String lastname = result.get("lastname");
+            String email = result.get("email");
+            String teacherId = result.get("teacherId");
+            String studentId = result.get("studentId");
             progressDialog.dismiss();
 
             if (Integer.parseInt(responseCode) == 100) {
@@ -118,7 +145,22 @@ public class ServerRequests {
                 } else {
                     intent = new Intent(context, TeacherActivity.class);
                 }
-                //start the right activity
+                //save user information on device
+                SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context.getApplicationContext());
+                SharedPreferences.Editor editor = preferences.edit();
+                editor.putString("username", username);
+                editor.putString("firstname", firstname);
+                editor.putString("lastname", lastname);
+                editor.putString("email", email);
+                editor.putString("role", role);
+                if(role.equals("teacher")) {
+                    editor.putString("teacherId", teacherId);
+                } else if(role.equals("student")) {
+                    editor.putString("studentId", studentId);
+                }
+                editor.commit();
+
+
                 context.startActivity(intent);
 
             } else if (Integer.parseInt(responseCode) == 200) {
@@ -318,77 +360,16 @@ public class ServerRequests {
             String responseCode = results.get("response").get("responseCode");
 
             if(Integer.parseInt(responseCode) == 100){
-                //success
+                //everything Okay
+                Log.d("generalresponse", generalResponse);
+                Log.d("generalresponse2", results.toString());
             } else if(Integer.parseInt(responseCode) == 200){
                 //Something went wrong database side
+                Log.d("generalresponse", generalResponse);
             } else if(Integer.parseInt(responseCode) == 300){
                 //Server connection error
+                Log.d("generalresponse", generalResponse);
             }
         }
     }
 }
-
-
-
-   /* public class classListTask extends AsyncTask<String, Void, List<ArrayList<String>>> {
-
-        @Override
-        protected List<ArrayList<String>> doInBackground(String... userdata) {
-            //Getting params
-            String teacherid = userdata[0];
-
-            //Initiating return vars.
-            List<ArrayList<String>> result = new ArrayList<ArrayList<String>>();
-            String generalResponse = null;
-            int responseCode = 0;
-            String role = null;
-
-            try {
-                URL url = new URL("http://emilsiegenfeldt.dk/p8/classList.php");
-                HttpURLConnection connection = (HttpURLConnection) url.openConnection();
-                connection.setRequestMethod("POST");
-
-                Uri.Builder builder = new Uri.Builder().appendQueryParameter("teacherid", teacherid);
-
-                String query = builder.build().getEncodedQuery();
-                OutputStream os = connection.getOutputStream();
-                BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(os, "UTF-8"));
-                writer.write(query);
-                writer.flush();
-                writer.close();
-                os.close();
-
-                connection.connect();
-
-                //Catch server response
-                InputStream in = new BufferedInputStream(connection.getInputStream());
-
-                String response = IOUtils.toString(in, "UTF-8"); //convert to readable string
-
-                //convert to JSON object
-                try {
-                    JSONObject JSONResult = new JSONObject(response);
-                    JSONArray classes = JSONResult.getJSONArray("classes");
-                    for (int i = 0; i < classes.length(); i++) {
-                        ArrayList<String> tempResult = new ArrayList<>();
-                        JSONObject jsonClass = classes.getJSONObject(i);
-                        String classID = jsonClass.getString("classid");
-                        System.out.println(classID + " \n");
-                        String className = jsonClass.getString("classname");
-                        System.out.println(className + " \n");
-                        tempResult.add(classID);
-                        tempResult.add(className);
-                        result.add(tempResult);
-                    }
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
-            } catch (IOException e) {
-                responseCode = 400;
-            }
-            return result;
-        }
-    }
-
-   }
-*/
