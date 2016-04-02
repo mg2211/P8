@@ -1,6 +1,8 @@
 package com.example.svilen.p8;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
+import android.preference.PreferenceManager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -14,6 +16,7 @@ public class TeacherActivity extends AppCompatActivity {
     Button bRegisterUser;
     Button bShowClasses;
     Button bShowStudents;
+    Button bLogout;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -22,9 +25,9 @@ public class TeacherActivity extends AppCompatActivity {
         setContentView(R.layout.activity_teacher);
 
         bShowStudents = (Button) findViewById(R.id.bShowStudents);
-        bShowStudents.setOnClickListener(new View.OnClickListener(){
+        bShowStudents.setOnClickListener(new View.OnClickListener() {
             @Override
-        public void onClick(View v){
+            public void onClick(View v) {
                 String classId = "1";
                 serverRequests.studentListExecute(classId);
             }
@@ -60,5 +63,24 @@ public class TeacherActivity extends AppCompatActivity {
             }
         });
         */
+
+        bLogout = (Button) findViewById(R.id.bLogout);
+        bLogout.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
+                SharedPreferences.Editor editor = preferences.edit();
+                editor.clear();
+                editor.commit();
+
+                HashMap<String, String> user = (HashMap<String, String>) preferences.getAll();
+                Log.d("called", "yes");
+                Log.d("Userinfo", user.toString());
+            }
+        });
+    }
+    @Override
+    public void onBackPressed() {
+        Log.d("","Back button pressed - disabled");
     }
 }

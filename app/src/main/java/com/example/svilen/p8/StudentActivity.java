@@ -14,6 +14,10 @@ public class StudentActivity extends AppCompatActivity {
         Intent intent = new Intent(this, AddTextActivity.class);
         startActivity(intent);
     }
+    @Override
+    public void onBackPressed() {
+
+    }
 
 
 
