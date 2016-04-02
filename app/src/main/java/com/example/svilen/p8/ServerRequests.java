@@ -431,6 +431,7 @@ public class ServerRequests {
                     String username = specificStudent.getString("username");
                     String role = specificStudent.getString("role");
                     String email = specificStudent.getString("email");
+
                     HashMap<String, String> studentInfo = new HashMap<>();
                     studentInfo.put("studentId", studentId);
                     studentInfo.put("classId", classId);
@@ -451,6 +452,7 @@ public class ServerRequests {
             }
              catch (IOException e) {
                 e.printStackTrace();
+                 responseCode = 300;
             } catch (JSONException e) {
                 e.printStackTrace();
             }
@@ -460,17 +462,36 @@ public class ServerRequests {
             response.put("responseCode", String.valueOf(responseCode));
             results.put("response", response);
 
-            return results; }
+            return results;
+
+        }
 
 
         protected void onPostExecute (HashMap<String, HashMap<String, String>> results){
 
+            String responseCode = results.get("response").get("responseCode");
+            String generalResponse = results.get("response").get("generalResponse");
+
+            if(Integer.parseInt(responseCode) == 100){
+                int duration = Toast.LENGTH_LONG;
+                Toast toast = Toast.makeText(context, generalResponse, duration);
+                toast.show();
+            } else if(Integer.parseInt(responseCode) == 200){
+                int duration = Toast.LENGTH_LONG;
+                Toast toast = Toast.makeText(context, generalResponse, duration);
+                toast.show();
+            } else if(Integer.parseInt(responseCode) == 300){
+                int duration = Toast.LENGTH_LONG;
+                CharSequence alert = "Server connection failed - Please try again later";
+                Toast toast = Toast.makeText(context, alert, duration);
+                toast.show();
+            }
+
+            Log.d("Results", results.toString());
             progressDialog.dismiss();
-            Log.d("Hall´´oóóó", results.toString());
         }
 
     }
-
 }
 
 

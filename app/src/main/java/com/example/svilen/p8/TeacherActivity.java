@@ -25,10 +25,8 @@ public class TeacherActivity extends AppCompatActivity {
         bShowStudents.setOnClickListener(new View.OnClickListener(){
             @Override
         public void onClick(View v){
-                UserInfo userInfo = new UserInfo(getApplicationContext());
-                HashMap<String, String> user = userInfo.getUser();
-                String studentId = user.get("studentId");
-                serverRequests.studentListExecute(studentId);
+                String classId = "1";
+                serverRequests.studentListExecute(classId);
             }
         });
 
@@ -45,7 +43,6 @@ public class TeacherActivity extends AppCompatActivity {
         bShowClasses.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View w) {
-
                 UserInfo userInfo = new UserInfo(getApplicationContext());
                 HashMap<String, String> user = userInfo.getUser();
                 String teacherID = user.get("teacherId");
