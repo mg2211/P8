@@ -444,11 +444,6 @@ public class ServerRequests {
 
                     results.put("StudentID: " + studentId, studentInfo);
                 }
-
-
-
-
-
             }
              catch (IOException e) {
                 e.printStackTrace();
@@ -487,6 +482,8 @@ public class ServerRequests {
                 toast.show();
             }
 
+            Log.d("Results", results.toString());
+            results.remove("response");
             Log.d("Results", results.toString());
             progressDialog.dismiss();
         }
