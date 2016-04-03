@@ -73,9 +73,9 @@ public class TeacherActivity extends AppCompatActivity {
                 editor.clear();
                 editor.commit();
 
-                HashMap<String, String> user = (HashMap<String, String>) preferences.getAll();
-                Log.d("called", "yes");
-                Log.d("Userinfo", user.toString());
+                Intent intent = new Intent(getApplicationContext(), LoginActivity.class);
+                startActivity(intent);
+
             }
         });
     }
