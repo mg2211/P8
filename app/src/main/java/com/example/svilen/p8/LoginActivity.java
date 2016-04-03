@@ -1,13 +1,17 @@
 package com.example.svilen.p8;
 
 import android.content.Context;
+import android.content.Intent;
 import android.os.StrictMode;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
+
+import java.util.HashMap;
 
 public class LoginActivity extends AppCompatActivity {
 
@@ -24,6 +28,21 @@ public class LoginActivity extends AppCompatActivity {
 
         final ServerRequests serverRequests = new ServerRequests(this);
 
+        //Check if a user is already logged in
+        UserInfo userinfo = new UserInfo(this);
+        HashMap<String, String> user = userinfo.getUser();
+        String role = user.get("role");
+        if(!user.isEmpty()){
+            Intent intent = null;
+            if(role.equals("student")){
+                Log.d("Student","logged in");
+                intent = new Intent(this, StudentActivity.class);
+            } else if(role.equals("teacher")) {
+                Log.d("Teacher","logged in");
+                intent = new Intent(this, TeacherActivity.class);
+            }
+            startActivity(intent);
+        }
 
         loginButton = (Button) findViewById(R.id.loginButton);
         loginButton.setOnClickListener(new View.OnClickListener() {
