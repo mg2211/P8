@@ -25,7 +25,6 @@ public class LoginActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
-
         final ServerRequests serverRequests = new ServerRequests(this);
 
         //Check if a user is already logged in

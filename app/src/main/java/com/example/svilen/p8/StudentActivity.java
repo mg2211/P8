@@ -21,13 +21,8 @@ public class StudentActivity extends AppCompatActivity {
         bLogout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
-                SharedPreferences.Editor editor = preferences.edit();
-                editor.clear();
-                editor.commit();
-
-                Intent intent = new Intent(getApplicationContext(), LoginActivity.class);
-                startActivity(intent);
+                UserInfo userinfo = new UserInfo(getApplicationContext());
+                userinfo.logOut();
             }
         });
     }

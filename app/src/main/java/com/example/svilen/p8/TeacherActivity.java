@@ -8,6 +8,7 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.SimpleAdapter;
 
 import java.util.HashMap;
 
@@ -18,11 +19,14 @@ public class TeacherActivity extends AppCompatActivity {
     Button bShowStudents;
     Button bLogout;
 
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        final ServerRequests serverRequests = new ServerRequests(this);
+        //final ServerRequests serverRequests = new ServerRequests(this);
         setContentView(R.layout.activity_teacher);
+        final ServerRequests serverRequests = new ServerRequests(this);
+
 
         bShowStudents = (Button) findViewById(R.id.bShowStudents);
         bShowStudents.setOnClickListener(new View.OnClickListener() {
@@ -68,19 +72,13 @@ public class TeacherActivity extends AppCompatActivity {
         bLogout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
-                SharedPreferences.Editor editor = preferences.edit();
-                editor.clear();
-                editor.commit();
-
-                Intent intent = new Intent(getApplicationContext(), LoginActivity.class);
-                startActivity(intent);
-
+                UserInfo userinfo = new UserInfo(getApplicationContext());
+                userinfo.logOut();
             }
         });
     }
     @Override
     public void onBackPressed() {
-        Log.d("","Back button pressed - disabled");
+        Log.d("", "Back button pressed - disabled");
     }
 }

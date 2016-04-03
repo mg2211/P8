@@ -1,5 +1,6 @@
 package com.example.svilen.p8;
 
+import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
@@ -8,6 +9,7 @@ import android.net.Uri;
 import android.os.AsyncTask;
 import android.preference.PreferenceManager;
 import android.util.Log;
+import android.view.View;
 import android.widget.Toast;
 
 import org.apache.commons.io.IOUtils;
@@ -40,6 +42,7 @@ public class ServerRequests {
         progressDialog.setTitle("Processing...");
         progressDialog.setMessage("Please wait...");
     }
+
 
     public void loginExecute(String username, String password) {
         new loginTask().execute(username, password);
@@ -162,6 +165,7 @@ public class ServerRequests {
                 editor.commit();
 
 
+                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                 context.startActivity(intent);
 
             } else if (Integer.parseInt(responseCode) == 200) {
@@ -183,7 +187,6 @@ public class ServerRequests {
         new registerTask().execute(role, username, password, firstname, lastname, email);
         progressDialog.show();
     }
-
 
     public class registerTask extends AsyncTask<String, Void, HashMap<String, String>> {
 
@@ -291,6 +294,7 @@ public class ServerRequests {
 
         @Override
         protected HashMap<String, HashMap<String, String>> doInBackground(String... params) {
+
             String teacherId = params[0];
             String generalResponse = null;
             int responseCode = 0;
@@ -364,16 +368,18 @@ public class ServerRequests {
                 //everything Okay
                 Log.d("generalresponse", generalResponse);
                 Log.d("generalresponse2", results.toString());
+                results.remove("response");
+
             } else if(Integer.parseInt(responseCode) == 200){
                 //Something went wrong database side
                 Log.d("generalresponse", generalResponse);
             } else if(Integer.parseInt(responseCode) == 300){
                 //Server connection error
-                Log.d("generalresponse", generalResponse);
+                Log.d("generalresponse", "Server error");
             }
+
         }
     }
-
 
     public void studentListExecute (String classID) {
         new StudentTask().execute(classID);
