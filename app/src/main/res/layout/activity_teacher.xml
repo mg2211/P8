@@ -15,8 +15,8 @@
         <ListView
             android:layout_width="417dp"
             android:layout_height="wrap_content"
-            android:id="@+id/listView2"
-            android:layout_alignParentTop="true" />
+            android:id="@+id/classListView"
+            android:choiceMode="singleChoice" />
 
         <LinearLayout
             android:orientation="vertical"
