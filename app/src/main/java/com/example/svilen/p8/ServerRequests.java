@@ -24,12 +24,9 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.net.HttpURLConnection;
-import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.concurrent.ExecutionException;
 
 public class ServerRequests {
     private final Context context;
@@ -43,8 +40,7 @@ public class ServerRequests {
         progressDialog.setMessage("Please wait...");
     }
 
-
-    public void loginExecute(String username, String password) {
+    public void loginExecute(String username, String password){
         new loginTask().execute(username, password);
         progressDialog.show();
     }
@@ -291,7 +287,6 @@ public class ServerRequests {
 
     public class ClassTask extends AsyncTask<String, Void, HashMap<String, HashMap<String, String>>> {
 
-
         @Override
         protected HashMap<String, HashMap<String, String>> doInBackground(String... params) {
 
@@ -299,7 +294,6 @@ public class ServerRequests {
             String generalResponse = null;
             int responseCode = 0;
             HashMap<String, HashMap<String, String>> results = new HashMap<>();
-
 
             try {
                 URL url = new URL("http://emilsiegenfeldt.dk/p8/class.php");
@@ -370,6 +364,10 @@ public class ServerRequests {
                 Log.d("generalresponse2", results.toString());
                 results.remove("response");
 
+                Class callerClass = context.getClass();
+                Log.d("caller class", String.valueOf(callerClass));
+
+                new TeacherActivity().getClassList(results);
             } else if(Integer.parseInt(responseCode) == 200){
                 //Something went wrong database side
                 Log.d("generalresponse", generalResponse);
@@ -388,8 +386,6 @@ public class ServerRequests {
     }
 
     public class StudentTask extends AsyncTask <String, Void, HashMap<String, HashMap<String, String>>>{
-
-
 
         @Override
         protected HashMap<String, HashMap<String, String>> doInBackground(String ... params){
@@ -468,7 +464,7 @@ public class ServerRequests {
         }
 
 
-        protected void onPostExecute (HashMap<String, HashMap<String, String>> results){
+        protected void onPostExecute(HashMap<String, HashMap<String, String>> results){
 
             String responseCode = results.get("response").get("responseCode");
             String generalResponse = results.get("response").get("generalResponse");
