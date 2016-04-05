@@ -1,6 +1,5 @@
 package com.example.svilen.p8;
 
-import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
@@ -9,7 +8,6 @@ import android.net.Uri;
 import android.os.AsyncTask;
 import android.preference.PreferenceManager;
 import android.util.Log;
-import android.view.View;
 import android.widget.Toast;
 
 import org.apache.commons.io.IOUtils;
@@ -26,7 +24,6 @@ import java.io.OutputStreamWriter;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.HashMap;
-import java.util.concurrent.ExecutionException;
 
 public class ServerRequests {
     private final Context context;
@@ -352,7 +349,7 @@ public class ServerRequests {
 
         }
 
-        protected void onPostExecute(HashMap<String, HashMap<String, String>> results) {
+        protected  void onPostExecute(HashMap<String, HashMap<String, String>> results) {
             progressDialog.dismiss();
 
             String generalResponse = results.get("response").get("generalResponse");

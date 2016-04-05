@@ -7,7 +7,9 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
@@ -17,8 +19,10 @@ public class TeacherActivity extends AppCompatActivity {
     Button bShowClasses;
     Button bShowStudents;
     Button bLogout;
+    List<Map<String, String>> classList = new ArrayList<>();
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+
 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_teacher);
@@ -72,24 +76,23 @@ public class TeacherActivity extends AppCompatActivity {
         });
 
 
-
     }
+
     @Override
     public void onBackPressed() {
         Log.d("", "Back button pressed - disabled");
     }
 
-    public void getClassList(HashMap<String, HashMap<String, String>> classes){
-        for (Entry<String, HashMap<String, String>> classId : classes.entrySet()){
+    public void getClassList(HashMap<String, HashMap<String, String>> classes) {
+        for (Entry<String, HashMap<String, String>> classId : classes.entrySet()) {
             Map<String, String> classInfo = new HashMap<>();
             String specificClassname = classId.getValue().get("className");
             String specificClassStudents = classId.getValue().get("classId");
 
             classInfo.put("Class name", specificClassname);
             classInfo.put("Students", specificClassStudents);
-
-            //add to ArrayList to populate listView.
+            classList.add(classInfo);
         }
-
     }
 }
+
