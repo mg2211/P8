@@ -11,6 +11,7 @@ public class UserInfo {
     private Context context;
 
     public UserInfo(Context context){
+
         this.context = context;
     }
 
