@@ -9,10 +9,6 @@
     <string name="showClasses">Show my classes</string>
     <string name="showStudents">Show my students</string>
 
-    <!--Labels for background page-->
-    <string name="backgroundLoggedInTeacher">Fuck You Android - I\'m a teacher logged in!</string>
-    <string name="backgroundLoggedInStudent">Fuck You Android - I\'m a student logged in!</string>
-
     <!--Labels for defining users in text fields-->
     <string name="username">Username</string>
     <string name="password">Password</string>
@@ -21,11 +17,11 @@
     <string name="email">E-mail address</string>
     <string name="role">Role</string>
 
-    <!-- Spinner content array
+    <!-- Spinner content array-->
     <string-array name="role_array">
         <item><string name="student">Student</string></item>
         <item><string name="teacher">Teacher</string></item>
     </string-array>
-    -->
+
 
 </resources>
