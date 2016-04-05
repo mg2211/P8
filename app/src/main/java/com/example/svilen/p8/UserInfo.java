@@ -4,14 +4,8 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
-import android.util.Log;
-
 import java.util.HashMap;
-import java.util.Map;
 
-/**
- * Created by EmilSiegenfeldt on 31/03/16.
- */
 public class UserInfo {
 
     private Context context;
@@ -24,10 +18,7 @@ public class UserInfo {
 
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context.getApplicationContext());
 
-        HashMap<String, String> user = (HashMap<String, String>) preferences.getAll();
-        Log.d("called", "yes");
-        Log.d("Userinfo", user.toString());
-        return user;
+        return (HashMap<String, String>) preferences.getAll();
     }
 
     public void logOut(){

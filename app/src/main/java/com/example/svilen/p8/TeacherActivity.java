@@ -61,7 +61,6 @@ public class TeacherActivity extends AppCompatActivity {
                 if(!classList.isEmpty()){
                     classList.clear();
                 }
-                Log.d("classes from async",classes.toString());
                 for (Entry<String, HashMap<String, String>> classId : classes.entrySet()) {
                     Map<String, String> classInfo = new HashMap<>();
                     String specificClassname = classId.getValue().get("className");
