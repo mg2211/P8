@@ -7,7 +7,6 @@ import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.preference.PreferenceManager;
-import android.telecom.Call;
 import android.util.Log;
 import android.widget.Toast;
 
@@ -285,9 +284,9 @@ public class ServerRequests {
 
     public class ClassTask extends AsyncTask<String, Void, HashMap<String, HashMap<String, String>>> {
 
-        Callback delegate;
+        ClassCallback delegate;
 
-        ClassTask(Callback delegate){
+        ClassTask(ClassCallback delegate){
             this.delegate = delegate;
         }
         @Override
@@ -491,11 +490,11 @@ public class ServerRequests {
 }
 class ClassTask extends AsyncTask<String, Void, HashMap<String, HashMap<String, String>>> {
 
-    Callback delegate;
+    ClassCallback delegate;
     ProgressDialog progressDialog;
     private final Context context;
 
-    ClassTask(Callback delegate, Context context){
+    ClassTask(ClassCallback delegate, Context context){
         this.delegate = delegate;
         this.context = context;
         progressDialog = new ProgressDialog(context);
@@ -573,8 +572,6 @@ class ClassTask extends AsyncTask<String, Void, HashMap<String, HashMap<String, 
     }
 
     protected  void onPostExecute(HashMap<String, HashMap<String, String>> results) {
-        //progressDialog.dismiss();
-
         String generalResponse = results.get("response").get("generalResponse");
         String responseCode = results.get("response").get("responseCode");
         progressDialog.dismiss();
