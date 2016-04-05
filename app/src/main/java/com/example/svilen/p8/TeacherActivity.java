@@ -32,14 +32,15 @@ public class TeacherActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_teacher);
+        
+
+
 
         userInfo = new UserInfo(context);
         user = userInfo.getUser();
         String teacherID = user.get("teacherId");
-        final ServerRequests serverRequests = new ServerRequests(this); //delete after Async is moved
 
 
-        classListView = (ListView) findViewById(R.id.classListView);
         classAdapter = new SimpleAdapter(this, classList,
                 android.R.layout.simple_list_item_2,
                 new String[] {"Class", "Number of students" },
