@@ -61,7 +61,7 @@ public class AddTextActivity extends AppCompatActivity {
                     Log.d("L", String.valueOf(L));
                     double lix = (O / P) + (L * 100 / O);
                     //complexity.setText(String.valueOf(lix));
-                    Log.d("lix:",String.valueOf(lix));
+                    Log.d("lix: ",String.valueOf(lix));
                 } else {
                     int duration = Toast.LENGTH_LONG;
                     CharSequence alert = "At least one punctuation mark and one word is needed for the calculation";
