@@ -37,7 +37,7 @@ public class ServerRequests {
         progressDialog.setMessage("Please wait...");
     }
 
-    public void loginExecute(String username, String password){
+    public void loginExecute(String username, String password) {
         new loginTask().execute(username, password);
         progressDialog.show();
     }
@@ -95,9 +95,9 @@ public class ServerRequests {
                 firstname = JSONResult.getString("firstname");
                 lastname = JSONResult.getString("lastname");
                 email = JSONResult.getString("email");
-                if(role.equals("student")){
+                if (role.equals("student")) {
                     studentId = JSONResult.getInt("studentId");
-                } else if(role.equals("teacher")) {
+                } else if (role.equals("teacher")) {
                     teacherId = JSONResult.getInt("teacherId");
                 }
 
@@ -150,9 +150,9 @@ public class ServerRequests {
                 editor.putString("lastname", lastname);
                 editor.putString("email", email);
                 editor.putString("role", role);
-                if(role.equals("teacher")) {
+                if (role.equals("teacher")) {
                     editor.putString("teacherId", teacherId);
-                } else if(role.equals("student")) {
+                } else if (role.equals("student")) {
                     editor.putString("studentId", studentId);
                 }
                 editor.commit();
@@ -276,19 +276,23 @@ public class ServerRequests {
 
         }
     }
-
-    public void classListExecute(String teacherID) {
-        //new ClassTask().execute(teacherID);
-        progressDialog.show();
-    }
-
-    public class ClassTask extends AsyncTask<String, Void, HashMap<String, HashMap<String, String>>> {
+}
+    class ClassTask extends AsyncTask<String, Void, HashMap<String, HashMap<String, String>>> {
 
         ClassCallback delegate;
+        ProgressDialog progressDialog;
+        final Context context;
 
-        ClassTask(ClassCallback delegate){
+        ClassTask(ClassCallback delegate, Context context) {
             this.delegate = delegate;
+            this.context = context;
+            progressDialog = new ProgressDialog(context);
+            progressDialog.setCancelable(false);
+            progressDialog.setTitle("Processing...");
+            progressDialog.setMessage("Please wait...");
+            progressDialog.show();
         }
+
         @Override
         protected HashMap<String, HashMap<String, String>> doInBackground(String... params) {
 
@@ -330,7 +334,9 @@ public class ServerRequests {
                     String className = specificClass.getString("className");
                     String classId = String.valueOf(specificClass.getInt("classId"));
                     String classTeacher = String.valueOf(specificClass.getInt("teacherId"));
+                    String numberOfStudents = String.valueOf(specificClass.getInt("students"));
                     HashMap<String, String> classInfo = new HashMap<>();
+                    classInfo.put("studentsInClass", numberOfStudents);
                     classInfo.put("classId", classId);
                     classInfo.put("teacherId", classTeacher);
                     classInfo.put("className", className);
@@ -354,44 +360,54 @@ public class ServerRequests {
 
         }
 
-        protected  void onPostExecute(HashMap<String, HashMap<String, String>> results) {
-            progressDialog.dismiss();
-
+        protected void onPostExecute(HashMap<String, HashMap<String, String>> results) {
             String generalResponse = results.get("response").get("generalResponse");
             String responseCode = results.get("response").get("responseCode");
+            progressDialog.dismiss();
 
-            if(Integer.parseInt(responseCode) == 100){
+            if (Integer.parseInt(responseCode) == 100) {
                 //everything Okay
-                Log.d("generalresponse", generalResponse);
-                Log.d("generalresponse2", results.toString());
                 results.remove("response");
-            } else if(Integer.parseInt(responseCode) == 200){
+                delegate.classListDone(results);
+            } else if (Integer.parseInt(responseCode) == 200) {
                 //Something went wrong database side
-                Log.d("generalresponse", generalResponse);
-            } else if(Integer.parseInt(responseCode) == 300){
+                int duration = Toast.LENGTH_LONG;
+                Toast toast = Toast.makeText(context, generalResponse, duration);
+                toast.show();
+            } else if (Integer.parseInt(responseCode) == 300) {
                 //Server connection error
-                Log.d("generalresponse", "Server error");
+                int duration = Toast.LENGTH_LONG;
+                CharSequence alert = "Server connection failed - Please try again later";
+                Toast toast = Toast.makeText(context, alert, duration);
+                toast.show();
             }
         }
     }
 
-    public void studentListExecute (String classID) {
-        new StudentTask().execute(classID);
-        progressDialog.show();
+    class StudentTask extends AsyncTask<String, Void, HashMap<String, HashMap<String, String>>> {
+        StudentCallback delegate;
+        ProgressDialog progressDialog;
+        final Context context;
 
-    }
-
-    public class StudentTask extends AsyncTask <String, Void, HashMap<String, HashMap<String, String>>>{
+        StudentTask(StudentCallback delegate, Context context) {
+            this.delegate = delegate;
+            this.context = context;
+            progressDialog = new ProgressDialog(context);
+            progressDialog.setCancelable(false);
+            progressDialog.setTitle("Processing...");
+            progressDialog.setMessage("Please wait...");
+            progressDialog.show();
+        }
 
         @Override
-        protected HashMap<String, HashMap<String, String>> doInBackground(String ... params){
+        protected HashMap<String, HashMap<String, String>> doInBackground(String... params) {
             String classID = params[0];
             String generalResponse = null;
             int responseCode = 0;
             HashMap<String, HashMap<String, String>> results = new HashMap<>();
 
-            try{
-                URL url = new URL ("http://emilsiegenfeldt.dk/p8/studentList.php");
+            try {
+                URL url = new URL("http://emilsiegenfeldt.dk/p8/studentList.php");
                 HttpURLConnection connection = (HttpURLConnection) url.openConnection();
                 connection.setRequestMethod("POST");
 
@@ -419,7 +435,7 @@ public class ServerRequests {
                 responseCode = JSONResult.getInt("responseCode");
 
                 JSONArray students = JSONResult.getJSONArray("students");
-                for (int i = 0; i < students.length(); i++){
+                for (int i = 0; i < students.length(); i++) {
                     JSONObject specificStudent = students.getJSONObject(i);
                     String studentId = specificStudent.getString("studentId");
                     String classId = specificStudent.getString("classId");
@@ -442,10 +458,9 @@ public class ServerRequests {
 
                     results.put("StudentID: " + studentId, studentInfo);
                 }
-            }
-             catch (IOException e) {
+            } catch (IOException e) {
                 e.printStackTrace();
-                 responseCode = 300;
+                responseCode = 300;
             } catch (JSONException e) {
                 e.printStackTrace();
             }
@@ -460,20 +475,22 @@ public class ServerRequests {
         }
 
 
-        protected void onPostExecute(HashMap<String, HashMap<String, String>> results){
+        protected void onPostExecute(HashMap<String, HashMap<String, String>> results) {
 
             String responseCode = results.get("response").get("responseCode");
             String generalResponse = results.get("response").get("generalResponse");
+            results.remove("response");
 
-            if(Integer.parseInt(responseCode) == 100){
+            if (Integer.parseInt(responseCode) == 100) {
                 int duration = Toast.LENGTH_LONG;
                 Toast toast = Toast.makeText(context, generalResponse, duration);
                 toast.show();
-            } else if(Integer.parseInt(responseCode) == 200){
+                delegate.studentListDone(results);
+            } else if (Integer.parseInt(responseCode) == 200) {
                 int duration = Toast.LENGTH_LONG;
                 Toast toast = Toast.makeText(context, generalResponse, duration);
                 toast.show();
-            } else if(Integer.parseInt(responseCode) == 300){
+            } else if (Integer.parseInt(responseCode) == 300) {
                 int duration = Toast.LENGTH_LONG;
                 CharSequence alert = "Server connection failed - Please try again later";
                 Toast toast = Toast.makeText(context, alert, duration);
@@ -487,109 +504,5 @@ public class ServerRequests {
         }
 
     }
-}
-class ClassTask extends AsyncTask<String, Void, HashMap<String, HashMap<String, String>>> {
-
-    ClassCallback delegate;
-    ProgressDialog progressDialog;
-    private final Context context;
-
-    ClassTask(ClassCallback delegate, Context context){
-        this.delegate = delegate;
-        this.context = context;
-        progressDialog = new ProgressDialog(context);
-        progressDialog.setCancelable(false);
-        progressDialog.setTitle("Processing...");
-        progressDialog.setMessage("Please wait...");
-        progressDialog.show();
-    }
-
-    @Override
-    protected HashMap<String, HashMap<String, String>> doInBackground(String... params) {
-
-        String teacherId = params[0];
-        String generalResponse = null;
-        int responseCode = 0;
-        HashMap<String, HashMap<String, String>> results = new HashMap<>();
-
-        try {
-            URL url = new URL("http://emilsiegenfeldt.dk/p8/class.php");
-            HttpURLConnection connection = (HttpURLConnection) url.openConnection();
-            connection.setRequestMethod("POST");
-
-            Uri.Builder builder = new Uri.Builder().appendQueryParameter("teacherId", teacherId);
-
-            String query = builder.build().getEncodedQuery();
-            OutputStream os = connection.getOutputStream();
-            BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(os, "UTF-8"));
-            writer.write(query);
-            writer.flush();
-            writer.close();
-            os.close();
-
-            connection.connect();
-
-            //Catch server response
-            InputStream in = new BufferedInputStream(connection.getInputStream());
-
-            String response = IOUtils.toString(in, "UTF-8"); //convert to readable string
-
-            //convert to JSON object
-            JSONObject JSONResult = new JSONObject(response);
-            generalResponse = JSONResult.getString("generalResponse");
-            responseCode = JSONResult.getInt("responseCode");
-
-            JSONArray classes = JSONResult.getJSONArray("classes");
-            for (int i = 0; i < classes.length(); i++) {
-                JSONObject specificClass = classes.getJSONObject(i);
-                String className = specificClass.getString("className");
-                String classId = String.valueOf(specificClass.getInt("classId"));
-                String classTeacher = String.valueOf(specificClass.getInt("teacherId"));
-                String numberOfStudents = String.valueOf(specificClass.getInt("students"));
-                HashMap<String, String> classInfo = new HashMap<>();
-                classInfo.put("studentsInClass", numberOfStudents);
-                classInfo.put("classId", classId);
-                classInfo.put("teacherId", classTeacher);
-                classInfo.put("className", className);
-
-                results.put("ClassID: " + classId, classInfo);
-            }
-
-
-        } catch (IOException e) {
-            responseCode = 300;
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-
-        HashMap<String, String> response = new HashMap<>();
-        response.put("generalResponse", generalResponse);
-        response.put("responseCode", String.valueOf(responseCode));
-        results.put("response", response);
-
-        return results;
-
-    }
-
-    protected  void onPostExecute(HashMap<String, HashMap<String, String>> results) {
-        String generalResponse = results.get("response").get("generalResponse");
-        String responseCode = results.get("response").get("responseCode");
-        progressDialog.dismiss();
-
-        if(Integer.parseInt(responseCode) == 100){
-            //everything Okay
-            Log.d("generalresponse", generalResponse);
-            Log.d("generalresponse2", results.toString());
-            results.remove("response");
-            delegate.classListDone(results);
-        } else if(Integer.parseInt(responseCode) == 200){
-            //Something went wrong database side
-            Log.d("generalresponse", generalResponse);
-        } else if(Integer.parseInt(responseCode) == 300){
-            //Server connection error
-            Log.d("generalresponse", "Server error");
-        }
-    }
-}
 
 

@@ -20,7 +20,6 @@ import java.util.Map.Entry;
 public class TeacherActivity extends AppCompatActivity {
 
     Button bRegisterUser;
-    Button bShowStudents;
     Button bLogout;
     List<Map<String, String>> classList = new ArrayList<>();
     ListView classListView;
@@ -32,10 +31,7 @@ public class TeacherActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_teacher);
-        
-
-
-
+        classListView = (ListView) findViewById(R.id.classListView);
         userInfo = new UserInfo(context);
         user = userInfo.getUser();
         String teacherID = user.get("teacherId");
@@ -54,6 +50,7 @@ public class TeacherActivity extends AppCompatActivity {
                 String classId = classData.get("ClassId");
                 Intent classIntent = new Intent(context, ClassActivity.class);
                 classIntent.putExtra("classId",classId);
+                classIntent.putExtra("className",classData.get("Class"));
                 startActivity(classIntent);
             }
         });
@@ -80,7 +77,6 @@ public class TeacherActivity extends AppCompatActivity {
         }, context).execute(teacherID);
 
 
-
         bRegisterUser = (Button) findViewById(R.id.bRegisterUser);
         bRegisterUser.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -96,7 +92,6 @@ public class TeacherActivity extends AppCompatActivity {
                 userInfo.logOut();
             }
         });
-
 
     }
 
