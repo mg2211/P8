@@ -40,10 +40,10 @@ public class AddTextActivity extends AppCompatActivity {
                 P = P+StringUtils.countMatches(inputText, ";");
 
                 cleanText = inputText.replaceAll("/./", "");
-                cleanText.replaceAll("/?/", "");
-                cleanText.replaceAll("/!/","");
-                cleanText.replaceAll("/:/","");
-                cleanText.replaceAll("/;/","");
+                cleanText = cleanText.replaceAll("/?/", "");
+                cleanText = cleanText.replaceAll("/!/","");
+                cleanText = cleanText.replaceAll("/:/","");
+                cleanText = cleanText.replaceAll("/;/","");
 
                 String[] words = cleanText.split("\\s+");
                 int O = words.length;

@@ -23,8 +23,15 @@
 
         <LinearLayout
             android:orientation="vertical"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent">
+            android:layout_width="301dp"
+            android:layout_height="491dp">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textAppearance="?android:attr/textAppearanceLarge"
+                android:text="Register new user"
+                android:id="@+id/textView" />
 
             <Spinner
                 android:layout_width="fill_parent"
@@ -91,6 +98,39 @@
                 android:layout_centerHorizontal="true"
                 android:layout_below="@+id/etEmail" />
     </LinearLayout>
+
+        <LinearLayout
+            android:orientation="vertical"
+            android:layout_width="326dp"
+            android:layout_height="match_parent">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textAppearance="?android:attr/textAppearanceLarge"
+                android:text="Showing all users"
+                android:id="@+id/textView2" />
+
+            <ListView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/listView" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:orientation="vertical"
+            android:layout_width="309dp"
+            android:layout_height="match_parent">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textAppearance="?android:attr/textAppearanceLarge"
+                android:text="User details"
+                android:id="@+id/textView3" />
+
+        </LinearLayout>
 
     </LinearLayout>
 
