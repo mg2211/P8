@@ -19,7 +19,7 @@ public class AddTextActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add_text);
-
+/*
         Button addText = (Button) findViewById(R.id.addText);
         Button calc = (Button) findViewById(R.id.calc);
         final EditText text = (EditText) findViewById(R.id.text);
@@ -76,7 +76,7 @@ public class AddTextActivity extends AppCompatActivity {
             public void onClick(View v) {
 
             }
-        });
+        });*/
 
 
     }

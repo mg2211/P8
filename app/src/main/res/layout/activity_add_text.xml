@@ -8,40 +8,57 @@
     tools:context="com.example.svilen.p8.AddTextActivity">
 
     <LinearLayout
-        android:orientation="vertical"
+        android:orientation="horizontal"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_alignParentTop="true"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true"
-        android:weightSum="1">
+        android:layout_height="match_parent">
 
-        <EditText
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:id="@+id/text"
-            android:layout_gravity="center_horizontal"
-            android:layout_weight="0.63" />
-
-        <TextView
-            android:layout_width="74dp"
-            android:layout_height="wrap_content"
-            android:id="@+id/complexity"
-            android:layout_gravity="center_horizontal"
-            android:layout_weight="0.04" />
-
-        <Button
+        <LinearLayout
+            android:orientation="vertical"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Calculate"
-            android:id="@+id/calc" />
+            android:layout_height="match_parent"
+            android:layout_marginRight="20dp">
 
-        <Button
-            android:layout_width="161dp"
-            android:layout_height="wrap_content"
-            android:text="Add text"
-            android:id="@+id/addText"
-            android:layout_gravity="center_horizontal" />
+            <ListView
+                android:layout_width="311dp"
+                android:layout_height="wrap_content"
+                android:id="@+id/listView2" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:orientation="vertical"
+            android:layout_width="618dp"
+            android:layout_height="match_parent"
+            android:weightSum="1">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textAppearance="?android:attr/textAppearanceLarge"
+                android:text="Text title"
+                android:id="@+id/textView5" />
+
+            <EditText
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/editText"
+                android:background="@android:color/transparent" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textAppearance="?android:attr/textAppearanceLarge"
+                android:text="Text content"
+                android:id="@+id/textView4" />
+
+            <EditText
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:inputType="textMultiLine"
+                android:ems="10"
+                android:id="@+id/editText2"
+                android:layout_weight="0.53" />
+        </LinearLayout>
 
     </LinearLayout>
+
 </RelativeLayout>
