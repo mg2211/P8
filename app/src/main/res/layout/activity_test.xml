@@ -3,13 +3,13 @@
     xmlns:tools="http://schemas.android.com/tools" android:layout_width="fill_parent"
     android:layout_height="fill_parent" android:paddingLeft="0dp"
     android:paddingRight="0dp"
-    android:paddingTop="0dp"
-    android:paddingBottom="0dp"
+    android:paddingTop="-5dp"
+    android:paddingBottom="-5dp"
     tools:context="com.example.svilen.p8.TestActivity">
 
     <LinearLayout
         android:orientation="horizontal"
-        android:layout_width="300dp"
+        android:layout_width="fill_parent"
         android:layout_height="match_parent"
         android:id="@+id/linearLayout">
 
@@ -17,13 +17,15 @@
             android:orientation="vertical"
             android:layout_width="251dp"
             android:layout_height="match_parent"
-            android:padding="0dp">
+            android:padding="0dp"
+            android:id="@+id/menuLinear"
+            android:layout_marginBottom="-1dp">
 
             <Button
                 android:layout_width="match_parent"
-                android:layout_height="100dp"
+                android:layout_height="wrap_content"
                 android:text="CLASSES"
-                android:id="@+id/button"
+                android:id="@+id/bClasses"
                 android:layout_marginLeft="0dp"
                 android:layout_marginRight="0dp"
                 android:layout_marginTop="0dp"
@@ -35,9 +37,9 @@
 
             <Button
                 android:layout_width="match_parent"
-                android:layout_height="100dp"
-                android:text="Menu item"
-                android:id="@+id/button2"
+                android:layout_height="wrap_content"
+                android:text="Assignments"
+                android:id="@+id/bAssignments"
                 android:layout_marginLeft="0dp"
                 android:layout_marginRight="0dp"
                 android:layout_marginTop="0dp"
@@ -49,9 +51,9 @@
 
             <Button
                 android:layout_width="match_parent"
-                android:layout_height="100dp"
-                android:text="Menu item"
-                android:id="@+id/button3"
+                android:layout_height="wrap_content"
+                android:text="Texts"
+                android:id="@+id/bTexts"
                 android:layout_marginLeft="0dp"
                 android:layout_marginRight="0dp"
                 android:layout_marginTop="0dp"
@@ -63,9 +65,9 @@
 
             <Button
                 android:layout_width="match_parent"
-                android:layout_height="100dp"
-                android:text="Menu item"
-                android:id="@+id/button4"
+                android:layout_height="wrap_content"
+                android:text="User management"
+                android:id="@+id/bUsers"
                 android:layout_marginLeft="0dp"
                 android:layout_marginRight="0dp"
                 android:layout_marginTop="0dp"
@@ -77,9 +79,9 @@
 
             <Button
                 android:layout_width="match_parent"
-                android:layout_height="100dp"
-                android:text="Menu item"
-                android:id="@+id/button5"
+                android:layout_height="wrap_content"
+                android:text="Log Out"
+                android:id="@+id/bLogOut"
                 android:layout_marginLeft="0dp"
                 android:layout_marginRight="0dp"
                 android:layout_marginTop="0dp"
@@ -89,62 +91,26 @@
                 android:enabled="true"
                 android:textSize="20sp" />
 
-            <Button
-                android:layout_width="match_parent"
-                android:layout_height="100dp"
-                android:text="Menu item"
-                android:id="@+id/button6"
-                android:layout_marginLeft="0dp"
-                android:layout_marginRight="0dp"
-                android:layout_marginTop="0dp"
-                android:layout_marginBottom="0dp"
-                android:background="#fff176"
-                android:typeface="sans"
-                android:enabled="true"
-                android:textSize="20sp" />
-
-            <Button
-                android:layout_width="match_parent"
-                android:layout_height="100dp"
-                android:text="Menu item"
-                android:id="@+id/button7"
-                android:layout_marginLeft="0dp"
-                android:layout_marginRight="0dp"
-                android:layout_marginTop="0dp"
-                android:layout_marginBottom="0dp"
-                android:background="#fff176"
-                android:typeface="sans"
-                android:enabled="true"
-                android:textSize="20sp" />
-
-            <Button
-                android:layout_width="match_parent"
-                android:layout_height="100dp"
-                android:text="Menu item"
-                android:id="@+id/button8"
-                android:layout_marginLeft="0dp"
-                android:layout_marginRight="0dp"
-                android:layout_marginTop="0dp"
-                android:layout_marginBottom="0dp"
-                android:background="#fff176"
-                android:typeface="sans"
-                android:enabled="true"
-                android:textSize="20sp" />
         </LinearLayout>
-    </LinearLayout>
 
-    <LinearLayout
-        android:orientation="horizontal"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_alignParentBottom="true"
-        android:layout_alignLeft="@+id/linearLayout"
-        android:layout_alignStart="@+id/linearLayout"
-        android:id="@+id/content">
-
-        <RelativeLayout
+        <LinearLayout
+            android:orientation="vertical"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:id="@+id/chartLayout"></RelativeLayout>
+            android:layout_height="match_parent">
+
+            <Button
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="New Button"
+                android:id="@+id/button10"
+                android:layout_weight="1"/>
+
+            <com.github.mikephil.charting.charts.BarChart
+                android:id="@+id/chart"
+                android:layout_width="match_parent"
+                android:layout_height="250dp" />
+        </LinearLayout>
+
     </LinearLayout>
+
 </RelativeLayout>
