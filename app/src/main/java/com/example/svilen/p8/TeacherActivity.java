@@ -37,6 +37,16 @@ public class TeacherActivity extends AppCompatActivity {
         String teacherID = user.get("teacherId");
 
 
+        Button testButton = (Button) findViewById(R.id.button9);
+        testButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(context, TestActivity.class);
+                startActivity(intent);
+            }
+        });
+
+
         classAdapter = new SimpleAdapter(this, classList,
                 android.R.layout.simple_list_item_2,
                 new String[] {"Class", "Number of students" },
@@ -49,8 +59,8 @@ public class TeacherActivity extends AppCompatActivity {
                 Map<String, String> classData = classList.get(position);
                 String classId = classData.get("ClassId");
                 Intent classIntent = new Intent(context, ClassActivity.class);
-                classIntent.putExtra("classId",classId);
-                classIntent.putExtra("className",classData.get("Class"));
+                classIntent.putExtra("classId", classId);
+                classIntent.putExtra("className", classData.get("Class"));
                 startActivity(classIntent);
             }
         });

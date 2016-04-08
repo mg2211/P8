@@ -23,11 +23,12 @@
         <activity android:name=".StudentActivity" />
         <activity android:name=".TeacherActivity" />
         <activity android:name=".Register" />
-        <activity android:name=".ClassList" />
         <activity
             android:name=".AddTextActivity"
             android:screenOrientation="landscape" />
         <activity android:name=".ClassActivity" >
+        </activity>
+        <activity android:name=".TestActivity" >
         </activity>
     </application>
 
