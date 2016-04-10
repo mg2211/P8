@@ -104,38 +104,6 @@ public class TestActivity extends AppCompatActivity {
         xAxis.setDrawGridLines(false);
 
         mChart.getAxisLeft().setDrawGridLines(false);
-
-        yVal.add(new BarEntry(10, 0));
-        yVal.add(new BarEntry(20, 1));
-        yVal.add(new BarEntry(100, 2));
-        yVal.add(new BarEntry(50, 3));
-        yVal.add(new BarEntry(75, 4));
-
-        BarDataSet set1 = new BarDataSet(yVal, "Assignments");
-        colors.add(Color.rgb(255, 0, 0));
-        colors.add(Color.rgb(0, 0, 0));
-        colors.add(Color.rgb(0, 255, 0));
-        colors.add(Color.rgb(0, 0, 255));
-        colors.add(Color.rgb(255, 255, 255));
-
-
-        set1.setColors(colors);
-
-
-        xVals.add("Assignment 1");
-        xVals.add("Assignment 2");
-        xVals.add("Assignment 3");
-        xVals.add("Assignment 4");
-        xVals.add("Assignment 5");
-
-        assignments.add(1);
-        assignments.add(2);
-        assignments.add(3);
-        assignments.add(4);
-        assignments.add(5);
-
-        dataSets.add(set1);
-
         BarData data = new BarData(xVals, dataSets);
 
         mChart.setData(data);
@@ -150,7 +118,6 @@ public class TestActivity extends AppCompatActivity {
 
             }
         });
-
 
     }
 
@@ -168,8 +135,9 @@ public class TestActivity extends AppCompatActivity {
             }
             xVals.add("Assignment "+n);
         }
-
-
+        BarDataSet set1 = new BarDataSet(yVal, "Assignments");
+        set1.setColors(colors);
+        dataSets.add(set1);
     }
 
     private void setButtons(){
