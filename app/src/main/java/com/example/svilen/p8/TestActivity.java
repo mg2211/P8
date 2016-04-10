@@ -110,7 +110,6 @@ public class TestActivity extends AppCompatActivity {
         mChart.setOnChartValueSelectedListener(new OnChartValueSelectedListener() {
             @Override
             public void onValueSelected(Entry entry, int i, Highlight highlight) {
-                Log.d("...", String.valueOf(assignments.get(entry.getXIndex())));
             }
 
             @Override
@@ -126,9 +125,9 @@ public class TestActivity extends AppCompatActivity {
         for(int n = 0; n<i; n++){
             int randomnumber = (int)(Math.random() * 101);
             yVal.add(new BarEntry(randomnumber, n));
-            if(randomnumber >= 50){
+            if(randomnumber >= 50 && randomnumber <= 75){
                 colors.add(Color.rgb(255, 235, 69));
-            } else if(randomnumber == 100){
+            } else if(randomnumber > 75){
                 colors.add(Color.rgb(156,204,101));
             } else {
                 colors.add(Color.rgb(239,83,80));
