@@ -99,12 +99,28 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent">
 
-            <Button
+            <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="New Button"
-                android:id="@+id/button10"
-                android:layout_weight="1"/>
+                android:textAppearance="?android:attr/textAppearanceLarge"
+                android:text="Notifications"
+                android:id="@+id/tvNotifications"
+                android:layout_marginLeft="20dp"
+                android:layout_marginTop="10dp" />
+
+            <ListView
+                android:layout_width="wrap_content"
+                android:layout_height="0dp"
+                android:id="@+id/listView3"
+                android:layout_weight="1" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textAppearance="?android:attr/textAppearanceLarge"
+                android:text="Latest 5 assignments completion"
+                android:id="@+id/tvAssignmentsCompl"
+                android:layout_marginLeft="20dp" />
 
             <com.github.mikephil.charting.charts.BarChart
                 android:id="@+id/chart"
