@@ -12,6 +12,7 @@ import android.widget.Button;
 
 import com.github.mikephil.charting.charts.BarChart;
 import com.github.mikephil.charting.components.XAxis;
+import com.github.mikephil.charting.components.YAxis;
 import com.github.mikephil.charting.data.BarData;
 import com.github.mikephil.charting.data.BarDataSet;
 import com.github.mikephil.charting.data.BarEntry;
@@ -102,6 +103,16 @@ public class TestActivity extends AppCompatActivity {
         xAxis.setPosition(XAxis.XAxisPosition.BOTTOM);
         xAxis.setSpaceBetweenLabels(0);
         xAxis.setDrawGridLines(false);
+
+        YAxis yaxisleft = mChart.getAxisLeft();
+        YAxis yaxisright = mChart.getAxisRight();
+        yaxisleft.setLabelCount(3, true);
+        yaxisright.setLabelCount(3,true);
+        yaxisleft.setAxisMaxValue(100);
+        yaxisright.setAxisMaxValue(100);
+        yaxisleft.setAxisMinValue(0);
+        yaxisright.setAxisMinValue(0);
+
 
         mChart.getAxisLeft().setDrawGridLines(false);
         BarData data = new BarData(xVals, dataSets);
