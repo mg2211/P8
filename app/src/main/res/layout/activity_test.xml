@@ -11,15 +11,16 @@
         android:orientation="horizontal"
         android:layout_width="fill_parent"
         android:layout_height="match_parent"
-        android:id="@+id/linearLayout">
+        android:id="@+id/linearLayout"
+        android:layout_marginBottom="-8dp">
 
         <LinearLayout
             android:orientation="vertical"
             android:layout_width="251dp"
-            android:layout_height="match_parent"
+            android:layout_height="fill_parent"
             android:padding="0dp"
             android:id="@+id/menuLinear"
-            android:layout_marginBottom="-1dp">
+            android:background="#ff0000">
 
             <Button
                 android:layout_width="match_parent"
@@ -58,7 +59,7 @@
                 android:layout_marginRight="0dp"
                 android:layout_marginTop="0dp"
                 android:layout_marginBottom="0dp"
-                android:background="#26c6da"
+                android:background="#9ccc65"
                 android:typeface="sans"
                 android:enabled="true"
                 android:textSize="20sp" />
@@ -72,7 +73,7 @@
                 android:layout_marginRight="0dp"
                 android:layout_marginTop="0dp"
                 android:layout_marginBottom="0dp"
-                android:background="#ef5350"
+                android:background="#9ccc65"
                 android:typeface="sans"
                 android:enabled="true"
                 android:textSize="20sp" />
@@ -98,12 +99,28 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent">
 
-            <Button
+            <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="New Button"
-                android:id="@+id/button10"
-                android:layout_weight="1"/>
+                android:textAppearance="?android:attr/textAppearanceLarge"
+                android:text="Notifications"
+                android:id="@+id/tvNotifications"
+                android:layout_marginLeft="20dp"
+                android:layout_marginTop="10dp" />
+
+            <ListView
+                android:layout_width="wrap_content"
+                android:layout_height="0dp"
+                android:id="@+id/listView3"
+                android:layout_weight="1" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textAppearance="?android:attr/textAppearanceLarge"
+                android:text="Latest 5 assignments completion"
+                android:id="@+id/tvAssignmentsCompl"
+                android:layout_marginLeft="20dp" />
 
             <com.github.mikephil.charting.charts.BarChart
                 android:id="@+id/chart"
