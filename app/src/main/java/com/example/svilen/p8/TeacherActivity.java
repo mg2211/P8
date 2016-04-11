@@ -178,6 +178,5 @@ public class TeacherActivity extends AppCompatActivity {
     @Override
     public void onBackPressed() {
         Log.d("Back button pressed", " -Disabled");
-
     }
 }
