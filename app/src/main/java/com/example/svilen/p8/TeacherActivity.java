@@ -27,6 +27,7 @@ public class TeacherActivity extends AppCompatActivity {
     UserInfo userInfo;
     HashMap<String, String> user;
     Context context = this;
+    Button bText;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -35,6 +36,15 @@ public class TeacherActivity extends AppCompatActivity {
         userInfo = new UserInfo(context);
         user = userInfo.getUser();
         String teacherID = user.get("teacherId");
+
+        Button bText = (Button) findViewById (R.id.bText);
+        bText.setOnClickListener(new View.OnClickListener(){
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(TeacherActivity.this, AddTextActivity.class);
+                startActivity(intent);
+            }
+        });
 
 
         Button testButton = (Button) findViewById(R.id.button9);

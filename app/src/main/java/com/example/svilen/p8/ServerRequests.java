@@ -1,12 +1,15 @@
 package com.example.svilen.p8;
 
 import android.app.ProgressDialog;
+import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.AsyncTask;
+import android.os.DropBoxManager;
 import android.preference.PreferenceManager;
+import android.util.Log;
 import android.widget.Toast;
 
 import org.apache.commons.io.IOUtils;
@@ -21,10 +24,13 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.HashMap;
+import java.util.Map;
 
 public class ServerRequests {
+
 }
     class LoginTask extends AsyncTask<String, Void, HashMap<String, String>> {
         ProgressDialog progressDialog;
@@ -498,6 +504,118 @@ public class ServerRequests {
             progressDialog.dismiss();
         }
 
+
+
     }
 
+    class TextTask extends AsyncTask<String, Void, HashMap<String, HashMap<String, String>>> {
+
+        TextCallback delegate;
+        ProgressDialog progressDialog;
+        Context context; // change to final
+
+        TextTask(TextCallback delegate, Context context) {
+            this.delegate = delegate;
+            this.context = context;
+            progressDialog = new ProgressDialog(context);
+            progressDialog.setCancelable(false);
+            progressDialog.setTitle("Processing...");
+            progressDialog.setMessage("Please wait...");
+            progressDialog.show();
+        }
+
+
+        @Override
+        protected HashMap<String, HashMap<String, String>> doInBackground(String... params) {
+
+            String textname = params[0];
+            String generalResponse = null;
+            int responseCode = 0;
+            HashMap<String, HashMap<String, String>> results = new HashMap<>();
+
+            try {
+                URL url = new URL("http://emilsiegenfeldt.dk/p8/gettext.php");
+                HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+                connection.setRequestMethod("POST");
+
+                Uri.Builder builder = new Uri.Builder().appendQueryParameter("textname", textname);
+
+                String query = builder.build().getEncodedQuery();
+                OutputStream os = connection.getOutputStream();
+                BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(os, "UTF-8"));
+                writer.write(query);
+                writer.flush();
+                writer.close();
+                os.close();
+
+                connection.connect();
+                //catch server response
+                InputStream in = new BufferedInputStream(connection.getInputStream());
+
+                String response = IOUtils.toString(in, "UTF-8");
+
+                //convert to jsonobject
+
+                JSONObject JSONResult = new JSONObject(response);
+                generalResponse = JSONResult.getString("generalResponse");
+                responseCode = JSONResult.getInt("responseCode");
+
+                JSONArray texts = JSONResult.getJSONArray("texts");
+                for (int i = 0; i < texts.length(); i++) {
+
+                    JSONObject specificText = texts.getJSONObject(i);
+                    textname = specificText.getString("textName"); //Within brackets stuff from php
+                    String textContent = specificText.getString("textContent");
+                    String textId = specificText.getString("textId");
+
+                    HashMap<String, String> textInfo = new HashMap<>();
+                    textInfo.put("textname", textname);
+                    textInfo.put("textcontent", textContent);
+                    textInfo.put("id", textId);
+
+                    results.put("TextId: " + textId, textInfo);
+                }
+
+
+            } catch (IOException e) {
+                responseCode = 300;
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+
+            HashMap<String, String> response = new HashMap<>();
+            response.put("generalResponse", generalResponse);
+            response.put("responseCode", String.valueOf(responseCode));
+            results.put("response", response);
+
+
+            return results;
+        }
+
+        protected void onPostExecute(HashMap<String, HashMap<String, String>> results) {
+
+            String generalResponse = results.get("response").get("generalResponse");
+            String responseCode = results.get("response").get("responseCode");
+            progressDialog.dismiss();
+
+            if (Integer.parseInt(responseCode) == 100){
+                results.remove("response");
+                delegate.textListDone(results);}
+
+            else if (Integer.parseInt(responseCode) == 200){
+
+                int duration = Toast.LENGTH_LONG;
+                Toast toast = Toast.makeText(context, generalResponse,duration);
+                toast.show();
+            }else if (Integer.parseInt(responseCode) == 300) {
+
+                int duration = Toast.LENGTH_LONG;
+                CharSequence alert = "Server connection failed";
+
+                Toast toast = Toast.makeText(context, alert, duration);
+                toast.show();
+            }
+
+        }
+    }
 

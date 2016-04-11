@@ -21,7 +21,7 @@
             <ListView
                 android:layout_width="311dp"
                 android:layout_height="wrap_content"
-                android:id="@+id/listView2" />
+                android:id="@+id/textListView" />
         </LinearLayout>
 
         <LinearLayout
@@ -47,16 +47,23 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:textAppearance="?android:attr/textAppearanceLarge"
-                android:text="Text content"
-                android:id="@+id/textView4" />
+                android:text="Textname"
+                android:id="@+id/twTextName" />
 
             <EditText
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
                 android:inputType="textMultiLine"
                 android:ems="10"
-                android:id="@+id/editText2"
-                android:layout_weight="0.53" />
+                android:id="@+id/etTextContent"
+                android:layout_weight="0.53"
+                android:text="Text Content" />
+
+            <Button
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="trybutton"
+                android:id="@+id/tryButton" />
         </LinearLayout>
 
     </LinearLayout>
