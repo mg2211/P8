@@ -1,59 +1,134 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools" android:layout_width="match_parent"
-    android:layout_height="match_parent" android:paddingLeft="@dimen/activity_horizontal_margin"
-    android:paddingRight="@dimen/activity_horizontal_margin"
-    android:paddingTop="@dimen/activity_vertical_margin"
-    android:paddingBottom="@dimen/activity_vertical_margin"
-    tools:context="com.example.svilen.p8.TeacherActivity">
+    xmlns:tools="http://schemas.android.com/tools" android:layout_width="fill_parent"
+    android:layout_height="fill_parent" android:paddingLeft="0dp"
+    android:paddingRight="0dp"
+    android:paddingTop="-5dp"
+    android:paddingBottom="-5dp"
+    tools:context="com.example.svilen.p8.TestActivity">
 
     <LinearLayout
         android:orientation="horizontal"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_width="fill_parent"
+        android:layout_height="match_parent"
+        android:id="@+id/linearLayout"
+        android:layout_marginBottom="-8dp">
 
-        <ListView
-            android:layout_width="417dp"
-            android:layout_height="wrap_content"
-            android:id="@+id/classListView"
-            android:choiceMode="singleChoice" />
+        <LinearLayout
+            android:orientation="vertical"
+            android:layout_width="251dp"
+            android:layout_height="fill_parent"
+            android:padding="0dp"
+            android:id="@+id/menuLinear"
+            android:background="#ff0000">
+
+            <Button
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="CLASSES"
+                android:id="@+id/bClasses"
+                android:layout_marginLeft="0dp"
+                android:layout_marginRight="0dp"
+                android:layout_marginTop="0dp"
+                android:layout_marginBottom="0dp"
+                android:background="#9ccc65"
+                android:typeface="sans"
+                android:enabled="true"
+                android:textSize="20sp" />
+
+            <Button
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Assignments"
+                android:id="@+id/bAssignments"
+                android:layout_marginLeft="0dp"
+                android:layout_marginRight="0dp"
+                android:layout_marginTop="0dp"
+                android:layout_marginBottom="0dp"
+                android:background="#9ccc65"
+                android:typeface="sans"
+                android:enabled="true"
+                android:textSize="20sp" />
+
+            <Button
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Texts"
+                android:id="@+id/bTexts"
+                android:layout_marginLeft="0dp"
+                android:layout_marginRight="0dp"
+                android:layout_marginTop="0dp"
+                android:layout_marginBottom="0dp"
+                android:background="#9ccc65"
+                android:typeface="sans"
+                android:enabled="true"
+                android:textSize="20sp" />
+
+            <Button
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="User management"
+                android:id="@+id/bUsers"
+                android:layout_marginLeft="0dp"
+                android:layout_marginRight="0dp"
+                android:layout_marginTop="0dp"
+                android:layout_marginBottom="0dp"
+                android:background="#9ccc65"
+                android:typeface="sans"
+                android:enabled="true"
+                android:textSize="20sp" />
+
+            <Button
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Log Out"
+                android:id="@+id/bLogOut"
+                android:layout_marginLeft="0dp"
+                android:layout_marginRight="0dp"
+                android:layout_marginTop="0dp"
+                android:layout_marginBottom="0dp"
+                android:background="#ef5350"
+                android:typeface="sans"
+                android:enabled="true"
+                android:textSize="20sp" />
+
+        </LinearLayout>
 
         <LinearLayout
             android:orientation="vertical"
             android:layout_width="match_parent"
             android:layout_height="match_parent">
 
-            <Button
-                style="?android:attr/buttonStyleSmall"
+            <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@string/registerUser"
-                android:id="@+id/bRegisterUser"
-                android:layout_alignParentTop="true"
-                android:layout_alignParentStart="true" />
+                android:textAppearance="?android:attr/textAppearanceLarge"
+                android:text="Notifications"
+                android:id="@+id/tvNotifications"
+                android:layout_marginLeft="20dp"
+                android:layout_marginTop="10dp" />
 
-            <Button
+            <ListView
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Log out"
-                android:id="@+id/bLogout"
-                android:layout_below="@+id/bShowStudents"
-                android:layout_alignParentLeft="true"
-                android:layout_alignParentStart="true" />
+                android:layout_height="0dp"
+                android:id="@+id/listView3"
+                android:layout_weight="1" />
 
-            <Button
+            <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="New Button"
-                android:id="@+id/button9"
-                android:layout_gravity="center_horizontal" />
+                android:textAppearance="?android:attr/textAppearanceLarge"
+                android:text="Latest 5 assignments completion"
+                android:id="@+id/tvAssignmentsCompl"
+                android:layout_marginLeft="20dp" />
 
-            <Button
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Text"
-                android:id="@+id/bText" />
+            <com.github.mikephil.charting.charts.BarChart
+                android:id="@+id/chart"
+                android:layout_width="match_parent"
+                android:layout_height="250dp"
+                android:layout_marginBottom="10dp" />
         </LinearLayout>
+
     </LinearLayout>
 
 </RelativeLayout>
