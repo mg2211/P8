@@ -45,8 +45,7 @@ import java.util.Map;
 public class AddTextActivity extends AppCompatActivity {
 
     Button tryButton;
-    EditText etTextContent;
-    TextView twTextName;
+    EditText etContent;
     String textname = "TestText";
     Context context = this;
     ListView textListView;
@@ -64,14 +63,25 @@ public class AddTextActivity extends AppCompatActivity {
 
         tryButton = (Button) findViewById(R.id.tryButton);
         textListView = (ListView) findViewById(R.id.lwTextOver);
+        etContent = (EditText) findViewById(R.id.etContent);
 
 textAdapter = new SimpleAdapter(this,
                 textList,
                 android.R.layout.simple_list_item_2,
-                new String [] {"textname", "textcontent"},
+                new String [] {"textname", ""},
                 new int[] {android.R.id.text1, android.R.id.text2}); //hvaða textar eru þetta?
         textListView.setAdapter(textAdapter);
 
+        textListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+
+                Map<String, String> textData = textList.get(position);
+                String textContent = textData.get("textcontent");
+                etContent.setText(textContent);
+
+            }
+        });
 
         new TextTask(new TextCallback() {
             @Override
@@ -80,7 +90,13 @@ textAdapter = new SimpleAdapter(this,
 
                     Map<String, String> textInfo = new HashMap<>();
                     String textName = text.getValue().get("textname");
+                    String textContent = text.getValue().get("textcontent");
+                    String textBook = text.getValue().get("textbook");
+                    String complexity = text.getValue().get("complexity");
                     textInfo.put("textname", textName);
+                    textInfo.put("textcontent", textContent);
+                    textInfo.put("textbook", textBook);
+                    textInfo.put("complexity", complexity);
                     textList.add(textInfo);
                 }
                 textAdapter.notifyDataSetChanged();
@@ -99,7 +115,7 @@ textAdapter = new SimpleAdapter(this,
                     @Override
                     public void textListDone(HashMap<String, HashMap<String, String>> texts) {
 
-                        for (Map.Entry<String, HashMap<String, String>> textId : texts.entrySet()){
+                        for (Map.Entry<String, HashMap<String, String>> textId : texts.entrySet()) {
                             Map<String, String> textInfo = new HashMap<String, String>();
                             String specificTextName = textId.getValue().get("textname");
                             String specificTextContent = textId.getValue().get("textcontent");
@@ -114,7 +130,6 @@ textAdapter = new SimpleAdapter(this,
                         }
                     }
                 }, context).execute(textname);
-
 
 
             }
