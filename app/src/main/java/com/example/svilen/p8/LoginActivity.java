@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -30,11 +31,11 @@ public class LoginActivity extends AppCompatActivity {
         userInfo = new UserInfo(this);
         HashMap<String, String> user = userInfo.getUser();
         String role = user.get("role");
-        if(!user.isEmpty()){
+        if (!user.isEmpty()) {
             Intent intent = null;
-            if(role.equals("student")){
+            if (role.equals("student")) {
                 intent = new Intent(this, StudentActivity.class);
-            } else if(role.equals("teacher")) {
+            } else if (role.equals("teacher")) {
                 intent = new Intent(this, TeacherActivity.class);
             }
             startActivity(intent);
@@ -51,7 +52,6 @@ public class LoginActivity extends AppCompatActivity {
                 password = passwordInput.getText().toString();
 
 
-
                 if (!username.equals("") && !password.equals("")) {//check if both input fields has text
                     new LoginTask(context).execute(username, password);
                 } else {
@@ -64,6 +64,4 @@ public class LoginActivity extends AppCompatActivity {
             }
         });
     }
-
-
-    }
+}
