@@ -21,6 +21,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.HashMap;
 
@@ -616,3 +617,109 @@ public class ServerRequests {
         }
     }
 
+class CreateTextTask extends AsyncTask<String, Void, HashMap<String, String>>{
+
+    ProgressDialog progressDialog;
+    final Context context;
+
+    CreateTextTask (Context context){
+        this.context = context;
+        progressDialog = new ProgressDialog(context);
+        progressDialog.setCancelable(false);
+        progressDialog.setTitle("Processing...");
+        progressDialog.setMessage("Please wait ...");
+        progressDialog.show();
+    }
+
+
+
+
+    @Override
+    protected HashMap<String, String> doInBackground(String... params) {
+
+        String textName = params[0];
+        String textContent = params[1];
+
+        String generalResponse = null;
+        int responseCode = 0;
+
+        try {
+            URL url = new URL ("http://emilsiegenfeldt.dk/p8/CreateText.php");
+            HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+            connection.setRequestMethod("POST");
+
+            Uri.Builder builder = new Uri.Builder().appendQueryParameter("textname", textName)
+                    .appendQueryParameter("textcontent", textContent);
+
+            String query = builder.build().getEncodedQuery();
+            OutputStream os = connection.getOutputStream();
+
+            BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(os, "UTF-8"));
+            writer.write(query);
+            writer.flush();
+            writer.close();
+            os.close();
+            connection.connect();
+
+
+            InputStream in = new BufferedInputStream(connection.getInputStream());
+
+            String response = IOUtils.toString(in, "UTF-8");
+
+            JSONObject JSONResult = new JSONObject(response);
+
+            generalResponse = JSONResult.getString("generalResponse");
+            responseCode = JSONResult.getInt("responseCode");
+           // textName = JSONResult.getString("textname");
+
+
+
+
+
+
+
+
+
+        } catch (IOException e) {
+            responseCode = 300;
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+        HashMap<String, String> result = new HashMap<>();
+
+        result.put("generalResponse", generalResponse);
+        result.put("responseCode", String.valueOf(responseCode));
+        result.put("textname", textName);
+
+        return result;
+    }
+
+    protected void onPostExecute (HashMap<String, String> result){
+
+
+        progressDialog.dismiss();
+        String responseCode = result.get("responseCode");
+        String generalResponse = result.get("generalResponse");
+        String textName = result.get("textname");
+
+
+        if (Integer.parseInt(responseCode) == 100){
+            result.remove("response"); }
+
+        else if (Integer.parseInt(responseCode) == 200){
+
+            int duration = Toast.LENGTH_LONG;
+            Toast toast = Toast.makeText(context, generalResponse,duration);
+            toast.show();
+        }else if (Integer.parseInt(responseCode) == 300) {
+
+            int duration = Toast.LENGTH_LONG;
+            CharSequence alert = "Server connection failed";
+
+            Toast toast = Toast.makeText(context, alert, duration);
+            toast.show();
+        }
+
+    }
+}

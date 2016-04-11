@@ -26,8 +26,9 @@
         <activity
             android:name=".AddTextActivity"
             android:screenOrientation="landscape" />
-        <activity android:name=".ClassActivity"></activity>
-        <activity android:name=".TestActivity"></activity>
+        <activity android:name=".ClassActivity" />
+        <activity android:name=".TestActivity" />
+        <activity android:name=".CreateTextActivity"></activity>
     </application>
 
 </manifest>

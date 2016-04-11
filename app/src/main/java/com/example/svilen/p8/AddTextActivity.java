@@ -51,7 +51,8 @@ public class AddTextActivity extends AppCompatActivity {
     ListView textListView;
     List<Map<String, String>> textList = new ArrayList<>();
     SimpleAdapter textAdapter;
-
+    Button bUpdate;
+    Button bCreateText;
 
 
 
@@ -64,6 +65,8 @@ public class AddTextActivity extends AppCompatActivity {
         tryButton = (Button) findViewById(R.id.tryButton);
         textListView = (ListView) findViewById(R.id.lwTextOver);
         etContent = (EditText) findViewById(R.id.etContent);
+        bUpdate = (Button) findViewById(R.id.bUpdate);
+        bCreateText = (Button) findViewById(R.id.bCreateText);
 
 textAdapter = new SimpleAdapter(this,
                 textList,
@@ -106,6 +109,7 @@ textAdapter = new SimpleAdapter(this,
 
 
 
+
         tryButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -139,7 +143,20 @@ textAdapter = new SimpleAdapter(this,
 
 
 
+        bUpdate.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
 
+            }
+        });
+
+        bCreateText.setOnClickListener(new View.OnClickListener(){
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(AddTextActivity.this, CreateTextActivity.class);
+                startActivity(intent);
+            }
+        });
 
 
 
