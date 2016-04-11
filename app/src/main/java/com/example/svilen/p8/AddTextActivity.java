@@ -49,9 +49,9 @@ public class AddTextActivity extends AppCompatActivity {
     TextView twTextName;
     String textname = "TestText";
     Context context = this;
-    /*ListView textListView;
+    ListView textListView;
     List<Map<String, String>> textList = new ArrayList<>();
-    SimpleAdapter textAdapter;*/
+    SimpleAdapter textAdapter;
 
 
 
@@ -62,12 +62,30 @@ public class AddTextActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add_text);
 
-        etTextContent = (EditText)findViewById(R.id.etTextContent);
         tryButton = (Button) findViewById(R.id.tryButton);
-        twTextName = (TextView) findViewById(R.id.twTextName);
-       // textListView = (ListView) findViewById(R.id.textListView);
+        textListView = (ListView) findViewById(R.id.lwTextOver);
+
+textAdapter = new SimpleAdapter(this,
+                textList,
+                android.R.layout.simple_list_item_2,
+                new String [] {"textname", "textcontent"},
+                new int[] {android.R.id.text1, android.R.id.text2}); //hvaða textar eru þetta?
+        textListView.setAdapter(textAdapter);
 
 
+        new TextTask(new TextCallback() {
+            @Override
+            public void textListDone(HashMap<String, HashMap<String, String>> texts) {
+                for (Map.Entry<String, HashMap<String, String>> text : texts.entrySet()){
+
+                    Map<String, String> textInfo = new HashMap<>();
+                    String textName = text.getValue().get("textname");
+                    textInfo.put("textname", textName);
+                    textList.add(textInfo);
+                }
+                textAdapter.notifyDataSetChanged();
+            }
+        }, context).execute(""); //Nothing within "" to get every text - see php script
 
 
 

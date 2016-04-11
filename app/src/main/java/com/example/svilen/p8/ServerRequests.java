@@ -523,6 +523,8 @@ public class ServerRequests {
         @Override
         protected HashMap<String, HashMap<String, String>> doInBackground(String... params) {
 
+
+
             String textname = params[0];
             String generalResponse = null;
             int responseCode = 0;
