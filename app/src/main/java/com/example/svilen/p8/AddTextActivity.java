@@ -53,6 +53,8 @@ public class AddTextActivity extends AppCompatActivity {
     SimpleAdapter textAdapter;
     Button bUpdate;
     Button bCreateText;
+    Button bDelete;
+    TextView tvTextName;
 
 
 
@@ -67,12 +69,36 @@ public class AddTextActivity extends AppCompatActivity {
         etContent = (EditText) findViewById(R.id.etContent);
         bUpdate = (Button) findViewById(R.id.bUpdate);
         bCreateText = (Button) findViewById(R.id.bCreateText);
+        bDelete = (Button) findViewById (R.id.bDelete);
+        tvTextName = (TextView) findViewById(R.id.tvTextName);
+
+
+        bDelete.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+             //   String dTextName = getText(et)
+
+                String dText = String.valueOf(tvTextName);
+                String dContent = String.valueOf(etContent);
+                String ble = "textest";
+            new DeleteTextTask(context).execute(ble);
+                Log.d("DELETEDELETE", dText);
+
+
+
+
+            }
+        });
+
+
+
 
 textAdapter = new SimpleAdapter(this,
                 textList,
-                android.R.layout.simple_list_item_2,
-                new String [] {"textname", ""},
-                new int[] {android.R.id.text1, android.R.id.text2}); //hvaða textar eru þetta?
+                android.R.layout.simple_list_item_1,
+                new String [] {"textname"},
+                new int[] {android.R.id.text1}); //text1 = the text within the listView
         textListView.setAdapter(textAdapter);
 
         textListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -81,7 +107,9 @@ textAdapter = new SimpleAdapter(this,
 
                 Map<String, String> textData = textList.get(position);
                 String textContent = textData.get("textcontent");
+                String textName = textData.get("textname");
                 etContent.setText(textContent);
+                tvTextName.setText(textName);
 
             }
         });
@@ -160,7 +188,10 @@ textAdapter = new SimpleAdapter(this,
 
 
 
-    }}
+    }
+
+
+}
 
 
 

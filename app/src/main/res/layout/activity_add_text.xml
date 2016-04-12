@@ -60,8 +60,8 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:textAppearance="?android:attr/textAppearanceLarge"
-                android:text="Notifications"
-                android:id="@+id/tvNotifications"
+                android:text="Textname"
+                android:id="@+id/tvTextName"
                 android:layout_marginLeft="20dp"
                 android:layout_marginTop="10dp" />
 
@@ -102,6 +102,13 @@
                     android:layout_height="wrap_content"
                     android:text="Update"
                     android:id="@+id/bUpdate"
+                    android:layout_weight="0" />
+
+                <Button
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Delete Text"
+                    android:id="@+id/bDelete"
                     android:layout_weight="0" />
             </LinearLayout>
 
