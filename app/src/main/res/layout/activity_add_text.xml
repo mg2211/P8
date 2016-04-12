@@ -56,14 +56,11 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent">
 
-            <TextView
-                android:layout_width="wrap_content"
+            <EditText
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:textAppearance="?android:attr/textAppearanceLarge"
-                android:text="Textname"
-                android:id="@+id/tvTextName"
-                android:layout_marginLeft="20dp"
-                android:layout_marginTop="10dp" />
+                android:id="@+id/tvTextname"
+                android:text="Textname" />
 
             <LinearLayout
                 android:orientation="vertical"
@@ -109,6 +106,13 @@
                     android:layout_height="wrap_content"
                     android:text="Delete Text"
                     android:id="@+id/bDelete"
+                    android:layout_weight="0" />
+
+                <Button
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Save"
+                    android:id="@+id/bSave"
                     android:layout_weight="0" />
             </LinearLayout>
 

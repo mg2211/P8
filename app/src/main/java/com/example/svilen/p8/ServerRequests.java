@@ -726,7 +726,6 @@ class CreateTextTask extends AsyncTask<String, Void, HashMap<String, String>>{
 }
 
 class DeleteTextTask extends AsyncTask<String, Void, HashMap<String, String>>{
-    DeleteTextCallBack delegate;
     ProgressDialog progressDialog;
     final Context context;
 

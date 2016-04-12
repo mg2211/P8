@@ -54,7 +54,9 @@ public class AddTextActivity extends AppCompatActivity {
     Button bUpdate;
     Button bCreateText;
     Button bDelete;
-    TextView tvTextName;
+    //TextView tvTextName;
+    Button bSave;
+    EditText tvTextName;
 
 
 
@@ -63,35 +65,52 @@ public class AddTextActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add_text);
-
+        bSave = (Button) findViewById(R.id.bSave);
         tryButton = (Button) findViewById(R.id.tryButton);
         textListView = (ListView) findViewById(R.id.lwTextOver);
         etContent = (EditText) findViewById(R.id.etContent);
         bUpdate = (Button) findViewById(R.id.bUpdate);
         bCreateText = (Button) findViewById(R.id.bCreateText);
         bDelete = (Button) findViewById (R.id.bDelete);
-        tvTextName = (TextView) findViewById(R.id.tvTextName);
+        tvTextName = (EditText) findViewById(R.id.tvTextname);
+
+
+
+        bSave.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                String textName = tvTextName.getText().toString();
+                String textContent = etContent.getText().toString();
+
+                if (!textName.equals("") && !textContent.equals("")){
+                    new CreateTextTask(context).execute(textName, textContent);
+                }else {
+                    int duration = Toast.LENGTH_LONG;
+                    CharSequence alert = "Please fill all required fields";
+                    Toast toast = Toast.makeText(context, alert, duration);
+                    toast.show();
+                }
+
+            }
+        });
+
 
 
         bDelete.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
 
-             //   String dTextName = getText(et)
+                //   String dTextName = getText(et)
 
                 String dText = String.valueOf(tvTextName);
                 String dContent = String.valueOf(etContent);
                 String ble = "textest";
-            new DeleteTextTask(context).execute(ble);
+                new DeleteTextTask(context).execute(dText);
                 Log.d("DELETEDELETE", dText);
-
-
 
 
             }
         });
-
-
 
 
 textAdapter = new SimpleAdapter(this,
@@ -181,8 +200,8 @@ textAdapter = new SimpleAdapter(this,
         bCreateText.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(AddTextActivity.this, CreateTextActivity.class);
-                startActivity(intent);
+                tvTextName.setText("");
+                etContent.setText("");
             }
         });
 
