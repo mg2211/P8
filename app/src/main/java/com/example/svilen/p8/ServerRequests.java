@@ -7,6 +7,7 @@ import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.preference.PreferenceManager;
+import android.util.Log;
 import android.widget.Toast;
 
 import org.apache.commons.io.IOUtils;
@@ -739,8 +740,6 @@ class DeleteTextTask extends AsyncTask<String, Void, HashMap<String, String>>{
     }
 
 
-
-
     @Override
     protected HashMap<String, String> doInBackground(String... params) {
 
@@ -749,6 +748,8 @@ class DeleteTextTask extends AsyncTask<String, Void, HashMap<String, String>>{
         int responseCode = 0;
 
         try{
+
+            Log.d("called", "yes");
 
             URL url = new URL ("http://emilsiegenfeldt.dk/p8/deleteText.php");
 

@@ -102,7 +102,7 @@ public class AddTextActivity extends AppCompatActivity {
 
                 //   String dTextName = getText(et)
 
-                String dText = String.valueOf(tvTextName);
+                String dText = tvTextName.getText().toString();
                 String dContent = String.valueOf(etContent);
                 String ble = "textest";
                 new DeleteTextTask(context).execute(dText);

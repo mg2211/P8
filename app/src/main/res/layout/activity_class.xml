@@ -1,31 +1,81 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools" android:layout_width="match_parent"
-    android:layout_height="match_parent" android:paddingLeft="@dimen/activity_horizontal_margin"
-    android:paddingRight="@dimen/activity_horizontal_margin"
-    android:paddingTop="@dimen/activity_vertical_margin"
-    android:paddingBottom="@dimen/activity_vertical_margin"
-    tools:context="com.example.svilen.p8.ClassActivity">
+    xmlns:tools="http://schemas.android.com/tools" android:layout_width="fill_parent"
+    android:layout_height="fill_parent" android:paddingLeft="0dp"
+    android:paddingRight="0dp"
+    android:paddingTop="-5dp"
+    android:paddingBottom="-5dp"
+    tools:context="com.example.svilen.p8.TestActivity">
 
     <LinearLayout
-        android:orientation="vertical"
-        android:layout_width="match_parent"
+        android:orientation="horizontal"
+        android:layout_width="fill_parent"
         android:layout_height="match_parent"
-        android:layout_alignParentTop="true"
-        android:layout_centerHorizontal="true">
+        android:id="@+id/linearLayout"
+        android:layout_marginBottom="-8dp">
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textAppearance="?android:attr/textAppearanceLarge"
-            android:id="@+id/classLabel"
-            android:layout_gravity="center_horizontal" />
+        <LinearLayout
+            android:orientation="vertical"
+            android:layout_width="251dp"
+            android:layout_height="fill_parent"
+            android:padding="0dp"
+            android:id="@+id/menuLinear"
+            android:background="#f30000">
 
-        <ListView
+            <Button
+                android:layout_width="match_parent"
+                android:layout_height="60dp"
+                android:text="New Button"
+                android:id="@+id/button"
+                android:layout_marginLeft="0dp"
+                android:layout_marginTop="0dp"
+                android:layout_marginRight="0dp"
+                android:layout_marginBottom="0dp"
+                android:background="#9ccc65"
+                android:paddingRight="20dp"
+                android:drawableRight="@drawable/add"/>
+
+            <EditText
+                android:layout_width="fill_parent"
+                android:layout_height="60dp"
+                android:id="@+id/etSearch"
+                android:hint="Search"
+                android:layout_marginTop="0dp"
+                android:layout_marginBottom="0dp"
+                android:background="#29b6f6"
+                android:paddingLeft="20dp"
+                android:drawableRight="@drawable/search"
+                android:paddingRight="20dp" />
+
+            <ListView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/lvClasses"
+                android:layout_marginTop="0dp"
+                android:background="#ffeb3b" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:orientation="vertical"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:id="@+id/studentListView"
-            android:layout_gravity="center_horizontal"
-            android:choiceMode="singleChoice" />
+            android:layout_height="match_parent">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textAppearance="?android:attr/textAppearanceLarge"
+                android:text="Students in class"
+                android:id="@+id/tvStudents"
+                android:layout_marginLeft="20dp"
+                android:layout_marginTop="10dp"/>
+
+            <ListView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/lvStudents" />
+
+        </LinearLayout>
+
     </LinearLayout>
+
 </RelativeLayout>

@@ -60,7 +60,8 @@ public class TeacherActivity extends AppCompatActivity {
         bClasses.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                //Code for opening class list activity
+                Intent intent = new Intent(context, ClassActivity.class);
+                startActivity(intent);
             }
         });
 
