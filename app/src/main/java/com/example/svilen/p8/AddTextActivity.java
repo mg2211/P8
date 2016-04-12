@@ -45,14 +45,18 @@ import java.util.Map;
 public class AddTextActivity extends AppCompatActivity {
 
     Button tryButton;
-    EditText etTextContent;
-    TextView twTextName;
+    EditText etContent;
     String textname = "TestText";
     Context context = this;
-    /*ListView textListView;
+    ListView textListView;
     List<Map<String, String>> textList = new ArrayList<>();
-    SimpleAdapter textAdapter;*/
-
+    SimpleAdapter textAdapter;
+    Button bUpdate;
+    Button bCreateText;
+    Button bDelete;
+    //TextView tvTextName;
+    Button bSave;
+    EditText tvTextName;
 
 
 
@@ -61,12 +65,93 @@ public class AddTextActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add_text);
-
-        etTextContent = (EditText)findViewById(R.id.etTextContent);
+        bSave = (Button) findViewById(R.id.bSave);
         tryButton = (Button) findViewById(R.id.tryButton);
-        twTextName = (TextView) findViewById(R.id.twTextName);
-       // textListView = (ListView) findViewById(R.id.textListView);
+        textListView = (ListView) findViewById(R.id.lwTextOver);
+        etContent = (EditText) findViewById(R.id.etContent);
+        bUpdate = (Button) findViewById(R.id.bUpdate);
+        bCreateText = (Button) findViewById(R.id.bCreateText);
+        bDelete = (Button) findViewById (R.id.bDelete);
+        tvTextName = (EditText) findViewById(R.id.tvTextname);
 
+
+
+        bSave.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                String textName = tvTextName.getText().toString();
+                String textContent = etContent.getText().toString();
+
+                if (!textName.equals("") && !textContent.equals("")){
+                    new CreateTextTask(context).execute(textName, textContent);
+                }else {
+                    int duration = Toast.LENGTH_LONG;
+                    CharSequence alert = "Please fill all required fields";
+                    Toast toast = Toast.makeText(context, alert, duration);
+                    toast.show();
+                }
+
+            }
+        });
+
+
+
+        bDelete.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                //   String dTextName = getText(et)
+
+                String dText = String.valueOf(tvTextName);
+                String dContent = String.valueOf(etContent);
+                String ble = "textest";
+                new DeleteTextTask(context).execute(dText);
+                Log.d("DELETEDELETE", dText);
+
+
+            }
+        });
+
+
+textAdapter = new SimpleAdapter(this,
+                textList,
+                android.R.layout.simple_list_item_1,
+                new String [] {"textname"},
+                new int[] {android.R.id.text1}); //text1 = the text within the listView
+        textListView.setAdapter(textAdapter);
+
+        textListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+
+                Map<String, String> textData = textList.get(position);
+                String textContent = textData.get("textcontent");
+                String textName = textData.get("textname");
+                etContent.setText(textContent);
+                tvTextName.setText(textName);
+
+            }
+        });
+
+        new TextTask(new TextCallback() {
+            @Override
+            public void textListDone(HashMap<String, HashMap<String, String>> texts) {
+                for (Map.Entry<String, HashMap<String, String>> text : texts.entrySet()){
+
+                    Map<String, String> textInfo = new HashMap<>();
+                    String textName = text.getValue().get("textname");
+                    String textContent = text.getValue().get("textcontent");
+                    String textBook = text.getValue().get("textbook");
+                    String complexity = text.getValue().get("complexity");
+                    textInfo.put("textname", textName);
+                    textInfo.put("textcontent", textContent);
+                    textInfo.put("textbook", textBook);
+                    textInfo.put("complexity", complexity);
+                    textList.add(textInfo);
+                }
+                textAdapter.notifyDataSetChanged();
+            }
+        }, context).execute(""); //Nothing within "" to get every text - see php script
 
 
 
@@ -81,7 +166,7 @@ public class AddTextActivity extends AppCompatActivity {
                     @Override
                     public void textListDone(HashMap<String, HashMap<String, String>> texts) {
 
-                        for (Map.Entry<String, HashMap<String, String>> textId : texts.entrySet()){
+                        for (Map.Entry<String, HashMap<String, String>> textId : texts.entrySet()) {
                             Map<String, String> textInfo = new HashMap<String, String>();
                             String specificTextName = textId.getValue().get("textname");
                             String specificTextContent = textId.getValue().get("textcontent");
@@ -98,7 +183,6 @@ public class AddTextActivity extends AppCompatActivity {
                 }, context).execute(textname);
 
 
-
             }
 
         });
@@ -106,11 +190,27 @@ public class AddTextActivity extends AppCompatActivity {
 
 
 
+        bUpdate.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+            }
+        });
+
+        bCreateText.setOnClickListener(new View.OnClickListener(){
+            @Override
+            public void onClick(View v) {
+                tvTextName.setText("");
+                etContent.setText("");
+            }
+        });
 
 
 
+    }
 
-    }}
+
+}
 
 
 
