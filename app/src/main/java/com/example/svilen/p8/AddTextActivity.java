@@ -57,6 +57,7 @@ public class AddTextActivity extends AppCompatActivity {
     //TextView tvTextName;
     Button bSave;
     EditText tvTextName;
+    TextView tvId;
 
 
 
@@ -73,8 +74,39 @@ public class AddTextActivity extends AppCompatActivity {
         bCreateText = (Button) findViewById(R.id.bCreateText);
         bDelete = (Button) findViewById (R.id.bDelete);
         tvTextName = (EditText) findViewById(R.id.tvTextname);
+        tvId = (TextView) findViewById(R.id.tvId);
 
 
+        bUpdate.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                String Id = tvId.getText().toString();
+                String tContent = etContent.getText().toString();
+                String textName = tvTextName.getText().toString();
+                new UpdateTextTask(context).execute(Id, tContent, textName);
+                Log.d("UPDATE UPDATE", Id);
+
+
+            }
+        });
+
+        bDelete.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                //   String dTextName = getText(et)
+
+                String dText = tvTextName.getText().toString();
+                String dId = tvId.getText().toString();
+                String dContent = String.valueOf(etContent);
+                int ble = 4;
+                new DeleteTextTask(context).execute(dId);
+                Log.d("DELETEDELETE", dId);
+
+
+            }
+        });
 
         bSave.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -96,21 +128,7 @@ public class AddTextActivity extends AppCompatActivity {
 
 
 
-        bDelete.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
 
-                //   String dTextName = getText(et)
-
-                String dText = tvTextName.getText().toString();
-                String dContent = String.valueOf(etContent);
-                String ble = "textest";
-                new DeleteTextTask(context).execute(dText);
-                Log.d("DELETEDELETE", dText);
-
-
-            }
-        });
 
 
 textAdapter = new SimpleAdapter(this,
@@ -127,8 +145,10 @@ textAdapter = new SimpleAdapter(this,
                 Map<String, String> textData = textList.get(position);
                 String textContent = textData.get("textcontent");
                 String textName = textData.get("textname");
+                String textId = textData.get("id");
                 etContent.setText(textContent);
                 tvTextName.setText(textName);
+                tvId.setText(textId);
 
             }
         });
@@ -139,6 +159,7 @@ textAdapter = new SimpleAdapter(this,
                 for (Map.Entry<String, HashMap<String, String>> text : texts.entrySet()){
 
                     Map<String, String> textInfo = new HashMap<>();
+                    String textId = text.getValue().get("id");
                     String textName = text.getValue().get("textname");
                     String textContent = text.getValue().get("textcontent");
                     String textBook = text.getValue().get("textbook");
@@ -147,6 +168,7 @@ textAdapter = new SimpleAdapter(this,
                     textInfo.put("textcontent", textContent);
                     textInfo.put("textbook", textBook);
                     textInfo.put("complexity", complexity);
+                    textInfo.put("id", textId);
                     textList.add(textInfo);
                 }
                 textAdapter.notifyDataSetChanged();
@@ -190,12 +212,7 @@ textAdapter = new SimpleAdapter(this,
 
 
 
-        bUpdate.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
 
-            }
-        });
 
         bCreateText.setOnClickListener(new View.OnClickListener(){
             @Override
