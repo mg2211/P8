@@ -22,15 +22,12 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.net.HttpURLConnection;
-import java.net.MalformedURLException;
-import java.net.ProtocolException;
 import java.net.URL;
 import java.util.HashMap;
 
 public class ServerRequests {
-
 }
-    class LoginTask extends AsyncTask<String, Void, HashMap<String, String>> {
+class LoginTask extends AsyncTask<String, Void, HashMap<String, String>> {
         ProgressDialog progressDialog;
         final Context context;
 
@@ -175,7 +172,7 @@ public class ServerRequests {
         }
     }
 }
-    class RegisterTask extends AsyncTask<String, Void, HashMap<String, String>> {
+class RegisterTask extends AsyncTask<String, Void, HashMap<String, String>> {
     ProgressDialog progressDialog;
     final Context context;
 
@@ -279,7 +276,7 @@ public class ServerRequests {
 
     }
 }
-    class ClassTask extends AsyncTask<String, Void, HashMap<String, HashMap<String, String>>> {
+class ClassTask extends AsyncTask<String, Void, HashMap<String, HashMap<String, String>>> {
 
         ClassCallback delegate;
         ProgressDialog progressDialog;
@@ -385,7 +382,7 @@ public class ServerRequests {
             }
         }
     }
-    class StudentTask extends AsyncTask<String, Void, HashMap<String, HashMap<String, String>>> {
+class StudentTask extends AsyncTask<String, Void, HashMap<String, HashMap<String, String>>> {
         StudentCallback delegate;
         ProgressDialog progressDialog;
         final Context context;
@@ -505,8 +502,7 @@ public class ServerRequests {
 
 
     }
-
-    class TextTask extends AsyncTask<String, Void, HashMap<String, HashMap<String, String>>> {
+class TextTask extends AsyncTask<String, Void, HashMap<String, HashMap<String, String>>> {
 
         TextCallback delegate;
         ProgressDialog progressDialog;
@@ -618,7 +614,6 @@ public class ServerRequests {
 
         }
     }
-
 class CreateTextTask extends AsyncTask<String, Void, HashMap<String, String>>{
 
     ProgressDialog progressDialog;
@@ -725,7 +720,6 @@ class CreateTextTask extends AsyncTask<String, Void, HashMap<String, String>>{
 
     }
 }
-
 class DeleteTextTask extends AsyncTask<String, Void, HashMap<String, String>>{
     ProgressDialog progressDialog;
     final Context context;
