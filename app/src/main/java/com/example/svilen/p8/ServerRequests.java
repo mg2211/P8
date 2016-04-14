@@ -1210,7 +1210,6 @@ class RoleTask extends AsyncTask<String, Void, Map<String,HashMap<String, String
 
             //convert to readable string
             String response = IOUtils.toString(in, "UTF-8");
-            System.out.println("response :" + response);
 
             //convert to JSON object
             JSONObject JSONResult = new JSONObject(response);
@@ -1228,7 +1227,6 @@ class RoleTask extends AsyncTask<String, Void, Map<String,HashMap<String, String
                 JSONObject specificText = roles.getJSONObject(i);
                 roleId = specificText.getString("roleId");
                 roleName = specificText.getString("roleName");
-                System.out.println("roleName: " + roleName);
                 resultData.put(roleId, roleName);
             }
             result.put("resultData", resultData);
@@ -1244,16 +1242,8 @@ class RoleTask extends AsyncTask<String, Void, Map<String,HashMap<String, String
         response.put("responseCode", String.valueOf(responseCode));
         result.put("response", response);
 
-        System.out.println("Map result: " + result);
         return result;
     }
-
-     /*
-     Questions:
-     * When will onPostExecute be called?
-     * How will i differentiate between the response rows and the data rows in the returned HashMap?
-     * Do I need really need a Callback interface to transfer the data?
-     */
 
     protected void onPostExecute(Map<String,HashMap<String, String>> result) {
 
