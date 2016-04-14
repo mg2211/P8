@@ -151,6 +151,7 @@ public class AssignmentActivity extends AppCompatActivity {
                 new TextTask(new TextCallback() {
                     @Override
                     public void textListDone(HashMap<String, HashMap<String, String>> texts) {
+                        textList.clear();
                         for (Map.Entry<String, HashMap<String, String>> text : texts.entrySet()) {
 
                             Map<String, String> textInfo = new HashMap<>();
