@@ -23,6 +23,7 @@ import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.io.UnsupportedEncodingException;
 import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.HashMap;
 
@@ -507,7 +508,7 @@ class TextTask extends AsyncTask<String, Void, HashMap<String, HashMap<String, S
 
         TextCallback delegate;
         ProgressDialog progressDialog;
-        Context context; // change to final
+         Context context; // change to final
 
         TextTask(TextCallback delegate, Context context) {
             this.delegate = delegate;
@@ -935,3 +936,141 @@ class UpdateTextTask extends AsyncTask<String, Void, HashMap<String, String>> {
 
     }
 }
+
+class ALTask extends AsyncTask<String, Void, HashMap<String, HashMap<String, String>>>{
+
+    AssignmentCallback delegate;
+    ProgressDialog progressDialog;
+    Context context;
+
+    ALTask (AssignmentCallback delegate, Context context){
+
+        this.delegate = delegate;
+        this.context = context;
+
+        progressDialog = new ProgressDialog(context);
+        progressDialog.setCancelable(false);
+        progressDialog.setTitle("Processing...");
+        progressDialog.setMessage("Please wait...");
+        progressDialog.show();
+    }
+
+
+
+
+    @Override
+    protected HashMap<String, HashMap<String, String>> doInBackground(String... params) {
+
+        String assignmentName = params[0];
+       String id = params[1];
+        String generalResponse = null;
+        int responseCode = 0;
+        HashMap<String, HashMap<String, String>> results = new HashMap<>();
+
+       try {
+
+
+           URL url = new URL ("http://emilsiegenfeldt.dk/p8/getAssignments.php");
+           HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+           connection.setRequestMethod("POST");
+
+           Uri.Builder builder = new Uri.Builder().appendQueryParameter("assignmentName", assignmentName)
+                   .appendQueryParameter("id", id);
+
+
+           String query = builder.build().getEncodedQuery();
+           OutputStream os = connection.getOutputStream();
+           BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(os, "UTF-8"));
+           writer.write(query);
+           writer.flush();
+           writer.close();
+           os.close();
+
+           connection.connect();
+           //catch server response
+           InputStream in = new BufferedInputStream(connection.getInputStream());
+
+           String response = IOUtils.toString(in, "UTF-8");
+
+           JSONObject JSONResult = new JSONObject(response);
+           generalResponse = JSONResult.getString("generalResponse");
+           responseCode = JSONResult.getInt("responseCode");
+
+           JSONArray assignments = JSONResult.getJSONArray("assignments");
+           for(int i = 0; i<assignments.length(); i++){
+
+               JSONObject specificAssignment = assignments.getJSONObject(i);
+               assignmentName = specificAssignment.getString("assignmentName");
+               String textId = specificAssignment.getString("textId");
+                 id = specificAssignment.getString("id");
+               String assignmentId = specificAssignment.getString("assignmentId");
+
+               HashMap<String, String> assignmentInfo = new HashMap<>();
+               assignmentInfo.put("assignmentName", assignmentName);
+               assignmentInfo.put("textId", textId);
+               assignmentInfo.put("id", id);
+               assignmentInfo.put("assignmentId", assignmentId);
+
+               results.put("Id: " + id, assignmentInfo);
+           }
+
+
+       } catch (IOException e) {
+           responseCode = 300;
+       } catch (JSONException e) {
+           e.printStackTrace();
+       }
+
+        HashMap<String, String> response = new HashMap<>();
+        response.put("generalResponse", generalResponse);
+        response.put("responseCode", String.valueOf(responseCode));
+        results.put("response", response);
+
+
+        return results;
+    }
+    protected void onPostExecute(HashMap<String, HashMap<String, String>> results) {
+
+        String generalResponse = results.get("response").get("generalResponse");
+        String responseCode = results.get("response").get("responseCode");
+        progressDialog.dismiss();
+
+        if (Integer.parseInt(responseCode) == 100){
+            results.remove("response");
+            delegate.assignmentListDone(results);}
+
+        else if (Integer.parseInt(responseCode) == 200){
+
+            int duration = Toast.LENGTH_LONG;
+            Toast toast = Toast.makeText(context, generalResponse,duration);
+            toast.show();
+        }else if (Integer.parseInt(responseCode) == 300) {
+
+            int duration = Toast.LENGTH_LONG;
+            CharSequence alert = "Server connection failed";
+
+            Toast toast = Toast.makeText(context, alert, duration);
+            toast.show();
+        }
+
+    }
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

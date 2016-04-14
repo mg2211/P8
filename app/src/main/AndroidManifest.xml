@@ -26,8 +26,10 @@
         <activity
             android:name=".AddTextActivity"
             android:screenOrientation="landscape" />
-        <activity android:name=".ClassActivity"
-            android:windowSoftInputMode="stateUnchanged"></activity>
+        <activity
+            android:name=".ClassActivity"
+            android:windowSoftInputMode="stateUnchanged" />
+        <activity android:name=".AssignmentActivity"></activity>
     </application>
 
 </manifest>

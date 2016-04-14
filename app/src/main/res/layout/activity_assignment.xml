@@ -25,8 +25,8 @@
             <Button
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="CLASSES"
-                android:id="@+id/bClasses"
+                android:text="Add new assignment"
+                android:id="@+id/bAddNewAss"
                 android:layout_marginLeft="0dp"
                 android:layout_marginRight="0dp"
                 android:layout_marginTop="0dp"
@@ -55,8 +55,8 @@
             <Button
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="User management"
-                android:id="@+id/bUsers"
+                android:text="GoToMain"
+                android:id="@+id/bTeacher"
                 android:layout_marginLeft="0dp"
                 android:layout_marginRight="0dp"
                 android:layout_marginTop="0dp"
@@ -79,6 +79,11 @@
                 android:typeface="sans"
                 android:enabled="true"
                 android:textSize="20sp" />
+
+            <ListView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/lvAssignments" />
 
         </LinearLayout>
 
@@ -131,6 +136,13 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:id="@+id/editText4"
+                    android:layout_weight="0" />
+
+                <Button
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="TeacherActivity"
+                    android:id="@+id/bTeacher1"
                     android:layout_weight="0" />
             </LinearLayout>
 
