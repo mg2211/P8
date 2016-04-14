@@ -1061,7 +1061,7 @@ class CreateAssToLibTask extends AsyncTask<String, Void, HashMap<String, String>
 
 
     ProgressDialog progressDialog;
-    Context context;
+   final Context context;
 
     CreateAssToLibTask (Context context){
         this.context = context;
@@ -1084,7 +1084,7 @@ class CreateAssToLibTask extends AsyncTask<String, Void, HashMap<String, String>
 
         try {
 
-            URL url = new URL ("http://emilsiegenfeldt.dk/p8/CreateText.php");
+            URL url = new URL ("http://emilsiegenfeldt.dk/p8/AssToLib.php");
             HttpURLConnection connection = (HttpURLConnection) url.openConnection();
             connection.setRequestMethod("POST");
 
