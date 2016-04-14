@@ -15,6 +15,7 @@ import android.widget.ListView;
 import android.widget.SimpleAdapter;
 import android.widget.Spinner;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import org.w3c.dom.Text;
 
@@ -39,6 +40,7 @@ public class AssignmentActivity extends AppCompatActivity {
     SimpleAdapter assignmentLibraryAdapter;
     String assignmentName = "assignmentName";
     String test = "1";
+    Button bCreateNewAss;
 
 
 
@@ -53,6 +55,28 @@ public class AssignmentActivity extends AppCompatActivity {
         etAssName = (EditText) findViewById(R.id.etAssName);
         lvAssignments = (ListView) findViewById(R.id.lvAssignments);
         bTeacher = (Button) findViewById(R.id.bTeacher);
+        bCreateNewAss = (Button) findViewById(R.id.bCreateNewAss);
+
+
+        bCreateNewAss.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                String textId = tvTextId.getText().toString();
+                String assName = etAssName.getText().toString();
+
+                if (!textId.equals("") && !assName.equals("")){
+                    new CreateTextTask(context).execute(textId, assName);
+                }else {
+                    int duration = Toast.LENGTH_LONG;
+                    CharSequence alert = "Please fill all required fields";
+                    Toast toast = Toast.makeText(context, alert, duration);
+                    toast.show();
+                }
+
+            }
+        });
+
 
         bTeacher.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -151,6 +175,7 @@ public class AssignmentActivity extends AppCompatActivity {
                 new TextTask(new TextCallback() {
                     @Override
                     public void textListDone(HashMap<String, HashMap<String, String>> texts) {
+                        textList.clear();
                         for (Map.Entry<String, HashMap<String, String>> text : texts.entrySet()) {
 
                             Map<String, String> textInfo = new HashMap<>();
