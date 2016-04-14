@@ -1,6 +1,7 @@
 package com.example.svilen.p8;
 
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
@@ -63,6 +64,9 @@ public class AddTextActivity extends AppCompatActivity {
                 new UpdateTextTask(context).execute(Id, tContent, textName);
                 Log.d("UPDATE UPDATE", Id);
 
+                Intent refresh = new Intent(AddTextActivity.this, AddTextActivity.class);
+                startActivity(refresh);
+
 
             }
         });
@@ -79,7 +83,8 @@ public class AddTextActivity extends AppCompatActivity {
                 int ble = 4;
                 new DeleteTextTask(context).execute(dId);
                 Log.d("DELETEDELETE", dId);
-
+                Intent refresh = new Intent(AddTextActivity.this, AddTextActivity.class);
+                startActivity(refresh);
 
             }
         });
@@ -98,7 +103,8 @@ public class AddTextActivity extends AppCompatActivity {
                     Toast toast = Toast.makeText(context, alert, duration);
                     toast.show();
                 }
-
+                Intent refresh = new Intent(AddTextActivity.this, AddTextActivity.class);
+                startActivity(refresh);
             }
         });
 

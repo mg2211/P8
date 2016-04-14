@@ -68,7 +68,10 @@ public class TeacherActivity extends AppCompatActivity {
         bAssignments.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                //Open assignments activity
+
+                    Intent intent = new Intent (TeacherActivity.this, AssignmentActivity.class);
+                startActivity(intent);
+
             }
         });
 
