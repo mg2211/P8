@@ -39,8 +39,11 @@ public class TextActivity extends AppCompatActivity {
     TextView tvComplexity;
     EditText etSearch;
     String textContent = "";
+    String textId;
     boolean newText = false;
     boolean textChanged = false;
+    double lix = 0;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -69,7 +72,11 @@ public class TextActivity extends AppCompatActivity {
         bSave.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                //update/save text
+                if(newText == true){
+                    new TempTextTask(context).executeTask("create","",etTextName.getText().toString(),etContent.getText().toString(), lix);
+                } else {
+                    new TempTextTask(context).executeTask("update", textId, etTextName.getText().toString(),etContent.getText().toString(),lix);
+                }
             }
         });
 
@@ -112,6 +119,7 @@ public class TextActivity extends AppCompatActivity {
 
                 etContent.setText(textContent);
                 etTextName.setText(textName);
+                textId = textData.get("id");
                 calculate();
             }
         });
@@ -179,12 +187,8 @@ public class TextActivity extends AppCompatActivity {
                         L++;
                     }
                 }
-                Log.d("O", String.valueOf(O));
-                Log.d("P", String.valueOf(P));
-                Log.d("L", String.valueOf(L));
-                double lix = (O / P) + (L * 100 / O);
+                lix = (O / P) + (L * 100 / O);
                 tvComplexity.setText("Complexity: " + String.valueOf(lix));
-                Log.d("lix:", String.valueOf(lix));
             } else {
                 tvComplexity.setText("Complexity: Unable to calculate");
             }
@@ -220,13 +224,12 @@ public class TextActivity extends AppCompatActivity {
                 .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        Log.d("save changes", "yes");
                         //save data from current update
 
                         if(newText == true){
-                            //save as new text
+                           new TempTextTask(context).executeTask("create","",etTextName.getText().toString(),etContent.getText().toString(), lix);
                         } else {
-                            //update text
+                            new TempTextTask(context).executeTask("update", textId, etTextName.getText().toString(),etContent.getText().toString(),lix);
                         }
 
                         etContent.setText("");
