@@ -33,14 +33,15 @@ public class TextActivity extends AppCompatActivity {
     ListView lvTexts;
     List<Map<String, String>> textList = new ArrayList<>();
     SimpleAdapter textAdapter;
-    Button bUpdate;
-    Button bCreateText;
+    Button bAddText;
     Button bDelete;
     Button bSave;
     EditText tvTextName;
     String tvId;
     TextView tvComplexity;
     EditText etSearch;
+    boolean newText = false;
+    boolean textChanged = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -49,8 +50,7 @@ public class TextActivity extends AppCompatActivity {
         bSave = (Button) findViewById(R.id.bSave);
         lvTexts = (ListView) findViewById(R.id.lvTexts);
         etContent = (EditText) findViewById(R.id.etContent);
-        bUpdate = (Button) findViewById(R.id.bUpdate);
-        bCreateText = (Button) findViewById(R.id.bCreateText);
+        bAddText = (Button) findViewById(R.id.bAddText);
         bDelete = (Button) findViewById (R.id.bDelete);
         tvTextName = (EditText) findViewById(R.id.tvTextname);
         tvId = "";
@@ -59,21 +59,42 @@ public class TextActivity extends AppCompatActivity {
 
         getTexts();
 
-
-        bUpdate.setOnClickListener(new View.OnClickListener() {
+        bAddText.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                if(textChanged == true){
+                    new AlertDialog.Builder(context)
+                            .setIcon(android.R.drawable.ic_dialog_alert)
+                            .setTitle("Confirm")
+                            .setMessage("You have unsaved changes. Save before continuing")
+                            .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+                                    Log.d("delete discard changes", "yes");
+                                    //save data from current update
+                                    //clear editTexts
+                                }
 
-                String Id = tvId;
-                String tContent = etContent.getText().toString();
-                String textName = tvTextName.getText().toString();
-                new UpdateTextTask(context).execute(Id, tContent, textName);
-                Log.d("UPDATE UPDATE", Id);
-
-                Intent refresh = new Intent(TextActivity.this, TextActivity.class);
-                startActivity(refresh);
+                            })
+                            .setNegativeButton("No", new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+                                    //clear EditTexts
+                                    Log.d("delete discard changes", "no");
+                                }
+                            })
+                            .show();
+                }
             }
         });
+
+        bSave.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                //update/save text
+            }
+        });
+
 
         bDelete.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -87,6 +108,7 @@ public class TextActivity extends AppCompatActivity {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
                                 Log.d("delete confirm", "yes");
+                                //delete text
                             }
 
                         })
@@ -95,76 +117,21 @@ public class TextActivity extends AppCompatActivity {
             }
         });
 
-        /*bDelete.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-
-                //   String dTextName = getText(et)
-
-                String dText = tvTextName.getText().toString();
-                String dId = tvId.getText().toString();
-                String dContent = String.valueOf(etContent);
-                int ble = 4;
-                new DeleteTextTask(context).execute(dId);
-                Log.d("DELETEDELETE", dId);
-                Intent refresh = new Intent(TextActivity.this, TextActivity.class);
-                startActivity(refresh);
-
-            }
-        });*/
-
-        bSave.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                String textName = tvTextName.getText().toString();
-                String textContent = etContent.getText().toString();
-
-                if (!textName.equals("") && !textContent.equals("")){
-                    new CreateTextTask(context).execute(textName, textContent);
-                }else {
-                    int duration = Toast.LENGTH_LONG;
-                    CharSequence alert = "Please fill all required fields";
-                    Toast toast = Toast.makeText(context, alert, duration);
-                    toast.show();
-                }
-                Intent refresh = new Intent(TextActivity.this, TextActivity.class);
-                startActivity(refresh);
-            }
-        });
-
-
-
-
-
-
-textAdapter = new SimpleAdapter(this,
-                textList,
-                android.R.layout.simple_list_item_1,
-                new String [] {"textname"},
-                new int[] {android.R.id.text1}); //text1 = the text within the listView
+        textAdapter = new SimpleAdapter(this, textList, android.R.layout.simple_list_item_1, new String [] {"textname"}, new int[] {android.R.id.text1}); //text1 = the text within the listView
         lvTexts.setAdapter(textAdapter);
 
         lvTexts.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-
                 Map<String, String> textData = textList.get(position);
                 String textContent = textData.get("textcontent");
                 String textName = textData.get("textname");
+
                 etContent.setText(textContent);
                 tvTextName.setText(textName);
                 calculate();
             }
         });
-
-        bCreateText.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-               // tvTextName.setText("New text");
-               // etContent.setText("New text");
-            }
-        });
-
 
         etContent.addTextChangedListener(new TextWatcher() {
             @Override
@@ -175,6 +142,7 @@ textAdapter = new SimpleAdapter(this,
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
                 calculate();
+                //textChanged = true;
             }
 
             @Override
@@ -256,7 +224,6 @@ textAdapter = new SimpleAdapter(this,
                 }
             }, context).execute(""); //Nothing within "" to get every text - see php script
         }
-
     }
 
 

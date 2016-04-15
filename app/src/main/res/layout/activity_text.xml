@@ -32,7 +32,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="Add new"
-                android:id="@+id/bCreateText"
+                android:id="@+id/bAddText"
                 android:layout_marginLeft="0dp"
                 android:layout_marginRight="0dp"
                 android:layout_marginTop="0dp"
@@ -95,13 +95,6 @@
                     android:textAppearance="?android:attr/textAppearanceLarge"
                     android:text="Complexity:"
                     android:id="@+id/tvComplexity"
-                    android:layout_weight="0" />
-
-                <Button
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Update"
-                    android:id="@+id/bUpdate"
                     android:layout_weight="0" />
 
                 <Button
