@@ -676,10 +676,6 @@ class CreateTextTask extends AsyncTask<String, Void, HashMap<String, String>>{
 
 
 
-
-
-
-
         } catch (IOException e) {
             responseCode = 300;
         } catch (JSONException e) {
@@ -1076,19 +1072,21 @@ class CreateAssToLibTask extends AsyncTask<String, Void, HashMap<String, String>
 
     @Override
     protected HashMap<String, String> doInBackground(String... params) {
-
         String assignmentName = params[0];
+        String textId = params[1];
 
         String generalResponse = null;
         int responseCode = 0;
 
         try {
 
+            Log.d("asstoLib", "server");
             URL url = new URL ("http://emilsiegenfeldt.dk/p8/AssToLib.php");
             HttpURLConnection connection = (HttpURLConnection) url.openConnection();
             connection.setRequestMethod("POST");
 
-            Uri.Builder builder = new Uri.Builder().appendQueryParameter("assignmentName", assignmentName);
+            Uri.Builder builder = new Uri.Builder().appendQueryParameter("assignmentName", assignmentName)
+                    .appendQueryParameter("textId", textId);
 
             String query = builder.build().getEncodedQuery();
             OutputStream os = connection.getOutputStream();
@@ -1109,6 +1107,7 @@ class CreateAssToLibTask extends AsyncTask<String, Void, HashMap<String, String>
 
             generalResponse = JSONResult.getString("generalResponse");
             responseCode = JSONResult.getInt("responseCode");
+
 
         } catch (IOException e) {
             responseCode = 300;

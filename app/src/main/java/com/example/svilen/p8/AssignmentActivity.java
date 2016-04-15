@@ -190,7 +190,6 @@ public class AssignmentActivity extends AppCompatActivity {
                             textInfo.put("complexity", complexity);
                             textInfo.put("id", textId);
                             textList.add(textInfo);
-                            Log.d("TEXTTASK", "CHECK");
                         }
                         textAdapter.notifyDataSetChanged();
                     }
