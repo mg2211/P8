@@ -8,27 +8,40 @@
         android:layout_height="wrap_content"
         android:textAppearance="?android:attr/textAppearanceLarge"
         android:text="Assignment Id"
-        android:id="@+id/tvAssId" />
+        android:id="@+id/tvAssId1" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:text="Assignment name"
+        android:id="@+id/tvAssName1" />
 
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textAppearance="?android:attr/textAppearanceLarge"
         android:text="Text name"
-        android:id="@+id/tvTextName" />
+        android:id="@+id/tvTextName1" />
 
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textAppearance="?android:attr/textAppearanceLarge"
         android:text="Text id"
-        android:id="@+id/tvTextId" />
+        android:id="@+id/tvTextId1" />
 
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textAppearance="?android:attr/textAppearanceLarge"
         android:text="Text content"
-        android:id="@+id/tvTextContent" />
+        android:id="@+id/tvTextContent1" />
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Assign to student"
+        android:id="@+id/bAssToStudent1" />
 
 </LinearLayout>

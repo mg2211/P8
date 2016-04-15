@@ -536,7 +536,7 @@ class TextTask extends AsyncTask<String, Void, HashMap<String, HashMap<String, S
 
 
 
-            String textname = params[0];
+            String id = params[0];
             String generalResponse = null;
             int responseCode = 0;
             HashMap<String, HashMap<String, String>> results = new HashMap<>();
@@ -546,7 +546,7 @@ class TextTask extends AsyncTask<String, Void, HashMap<String, HashMap<String, S
                 HttpURLConnection connection = (HttpURLConnection) url.openConnection();
                 connection.setRequestMethod("POST");
 
-                Uri.Builder builder = new Uri.Builder().appendQueryParameter("textname", textname);
+                Uri.Builder builder = new Uri.Builder().appendQueryParameter("id", id);
 
                 String query = builder.build().getEncodedQuery();
                 OutputStream os = connection.getOutputStream();
@@ -572,16 +572,16 @@ class TextTask extends AsyncTask<String, Void, HashMap<String, HashMap<String, S
                 for (int i = 0; i < texts.length(); i++) {
 
                     JSONObject specificText = texts.getJSONObject(i);
-                    textname = specificText.getString("textName"); //Within brackets stuff from php
+                    String textname = specificText.getString("textName"); //Within brackets stuff from php
                     String textContent = specificText.getString("textContent");
-                    String textId = specificText.getString("textId");
+                     id = specificText.getString("textId");
 
                     HashMap<String, String> textInfo = new HashMap<>();
                     textInfo.put("textname", textname);
                     textInfo.put("textcontent", textContent);
-                    textInfo.put("id", textId);
+                    textInfo.put("id", id);
 
-                    results.put("TextId: " + textId, textInfo);
+                    results.put("TextId: " + id, textInfo);
                 }
 
 

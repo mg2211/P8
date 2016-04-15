@@ -34,9 +34,9 @@ public class AssignmentActivity extends AppCompatActivity {
     Button bTeacher;
     List<Map<String, String>> assignmentLibraryList = new ArrayList<>();
     SimpleAdapter assignmentLibraryAdapter;
-    String assignmentName = "assignmentName";
-    String test = "1";
+
     Button bCreateNewAss;
+
 
 
 
@@ -52,6 +52,7 @@ public class AssignmentActivity extends AppCompatActivity {
         lvAssignments = (ListView) findViewById(R.id.lvAssignments);
         bTeacher = (Button) findViewById(R.id.bTeacher);
         bCreateNewAss = (Button) findViewById(R.id.bCreateNewAss);
+
 
 
         bCreateNewAss.setOnClickListener(new View.OnClickListener() {
@@ -101,12 +102,49 @@ public class AssignmentActivity extends AppCompatActivity {
                 AlertDialog.Builder builder = new AlertDialog.Builder(context);
                 LayoutInflater inflater = getLayoutInflater();
                 View layout = inflater.inflate(R.layout.assignment_dialog, null);
-
+                Button bAssToStudent;
                 builder.setView(layout);
+
+                TextView tvAssLibId1 = (TextView) layout.findViewById(R.id.tvAssId1);
+                TextView tvAssName1 = (TextView) layout.findViewById(R.id.tvAssName1);
+                TextView tvTextName1 = (TextView) layout.findViewById(R.id.tvTextName1);
+                TextView tvTextId1 = (TextView) layout.findViewById(R.id.tvTextId1);
+                TextView tvTextContent1 = (TextView) layout.findViewById(R.id.tvTextContent1);
+                bAssToStudent = (Button) layout.findViewById(R.id.bAssToStudent1);
+
+
+                String AssLibId = assignmentLibraryList.get(position).get("id");
+                String tvAssname = assignmentLibraryList.get(position).get("assignmentName");
+                String tvTextId = assignmentLibraryList.get(position).get("textId");
+
+
+                tvAssLibId1.setText(AssLibId);
+                tvAssName1.setText(tvAssname);
+                tvTextId1.setText(tvTextId);
+
+                bAssToStudent.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+
+
+                        AlertDialog.Builder builder = new AlertDialog.Builder(context);
+                        LayoutInflater inflater = getLayoutInflater();
+                        View layout = inflater.inflate(R.layout.assignment_to_student_dialog, null);
+
+                        builder.setView(layout);
+
+                        AlertDialog dialog = builder.create();
+                        dialog.setCanceledOnTouchOutside(true);
+                        dialog.show();
+
+
+                    }
+                });
 
                 AlertDialog dialog = builder.create();
                 dialog.setCanceledOnTouchOutside(true);
                 dialog.show();
+
 
 
             }
@@ -132,7 +170,7 @@ public class AssignmentActivity extends AppCompatActivity {
                 }assignmentLibraryAdapter.notifyDataSetChanged();
             }
 
-        },context).execute("","");
+        },context).execute("", "");
 
 
 
