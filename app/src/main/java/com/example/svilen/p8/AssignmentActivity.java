@@ -98,6 +98,16 @@ public class AssignmentActivity extends AppCompatActivity {
 
                 Map<String, String> assignmentData = assignmentLibraryList.get(position);
 
+                AlertDialog.Builder builder = new AlertDialog.Builder(context);
+                LayoutInflater inflater = getLayoutInflater();
+                View layout = inflater.inflate(R.layout.assignment_dialog, null);
+
+                builder.setView(layout);
+
+                AlertDialog dialog = builder.create();
+                dialog.setCanceledOnTouchOutside(true);
+                dialog.show();
+
 
             }
         });
@@ -134,7 +144,7 @@ public class AssignmentActivity extends AppCompatActivity {
 
                 AlertDialog.Builder builder = new AlertDialog.Builder(context);
                 LayoutInflater inflater = getLayoutInflater();
-                View layout = inflater.inflate(R.layout.textOverview_dialog, null);
+                View layout = inflater.inflate(R.layout.text_overview_dialog, null);
 
                 lvTextToAss = (ListView) layout.findViewById(R.id.lvTextToAss);
                 builder.setView(layout);
