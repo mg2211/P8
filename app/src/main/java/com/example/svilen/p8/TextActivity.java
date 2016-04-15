@@ -35,7 +35,6 @@ public class TextActivity extends AppCompatActivity {
     Button bDelete;
     Button bSave;
     EditText etTextName;
-    String tvId;
     TextView tvComplexity;
     EditText etSearch;
     String textContent = "";
@@ -49,6 +48,8 @@ public class TextActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_text);
+
+
         bSave = (Button) findViewById(R.id.bSave);
         lvTexts = (ListView) findViewById(R.id.lvTexts);
         etContent = (EditText) findViewById(R.id.etContent);
@@ -77,6 +78,7 @@ public class TextActivity extends AppCompatActivity {
                 } else {
                     new TempTextTask(context).executeTask("update", textId, etTextName.getText().toString(),etContent.getText().toString(),lix);
                 }
+                getTexts();
             }
         });
 
@@ -92,8 +94,8 @@ public class TextActivity extends AppCompatActivity {
                         {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
-                                Log.d("delete confirm", "yes");
-                                //delete text
+                                new TempTextTask(context).executeTask("delete",textId,"","",0);
+                                getTexts();
                             }
 
                         })
@@ -197,6 +199,7 @@ public class TextActivity extends AppCompatActivity {
             new TextTask(new TextCallback() {
                 @Override
                 public void textListDone(HashMap<String, HashMap<String, String>> texts) {
+                    textList.clear();
                     for (Map.Entry<String, HashMap<String, String>> text : texts.entrySet()){
 
                         Map<String, String> textInfo = new HashMap<>();
@@ -246,6 +249,7 @@ public class TextActivity extends AppCompatActivity {
                     }
                 })
                 .show();
+            getTexts();
     }
     }
 
