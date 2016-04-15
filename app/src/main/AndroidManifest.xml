@@ -25,7 +25,8 @@
         <activity android:name=".Register" />
         <activity
             android:name=".TextActivity"
-            android:screenOrientation="landscape" />
+            android:screenOrientation="landscape"
+            android:windowSoftInputMode="stateUnchanged"/>
         <activity
             android:name=".ClassActivity"
             android:windowSoftInputMode="stateUnchanged" />

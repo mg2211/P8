@@ -1,6 +1,8 @@
 package com.example.svilen.p8;
 
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
@@ -12,7 +14,6 @@ import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
-import android.widget.SearchView;
 import android.widget.SimpleAdapter;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -26,17 +27,15 @@ import java.util.Map;
 
 public class TextActivity extends AppCompatActivity {
 
-    Button tryButton;
     EditText etContent;
     String textname = "TestText";
     Context context = this;
-    ListView textListView;
+    ListView lvTexts;
     List<Map<String, String>> textList = new ArrayList<>();
     SimpleAdapter textAdapter;
     Button bUpdate;
     Button bCreateText;
     Button bDelete;
-    //TextView tvTextName;
     Button bSave;
     EditText tvTextName;
     String tvId;
@@ -48,8 +47,7 @@ public class TextActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_text);
         bSave = (Button) findViewById(R.id.bSave);
-        tryButton = (Button) findViewById(R.id.tryButton);
-        textListView = (ListView) findViewById(R.id.lwTextOver);
+        lvTexts = (ListView) findViewById(R.id.lvTexts);
         etContent = (EditText) findViewById(R.id.etContent);
         bUpdate = (Button) findViewById(R.id.bUpdate);
         bCreateText = (Button) findViewById(R.id.bCreateText);
@@ -58,6 +56,8 @@ public class TextActivity extends AppCompatActivity {
         tvId = "";
         tvComplexity = (TextView) findViewById(R.id.tvComplexity);
         etSearch = (EditText) findViewById(R.id.etSearch);
+
+        getTexts();
 
 
         bUpdate.setOnClickListener(new View.OnClickListener() {
@@ -72,8 +72,26 @@ public class TextActivity extends AppCompatActivity {
 
                 Intent refresh = new Intent(TextActivity.this, TextActivity.class);
                 startActivity(refresh);
+            }
+        });
 
+        bDelete.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                new AlertDialog.Builder(context)
+                        .setIcon(android.R.drawable.ic_dialog_alert)
+                        .setTitle("Confirm")
+                        .setMessage("Are you sure you want to delete the text " + textname)
+                        .setPositiveButton("Yes", new DialogInterface.OnClickListener()
+                        {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                Log.d("delete confirm", "yes");
+                            }
 
+                        })
+                        .setNegativeButton("No", null)
+                        .show();
             }
         });
 
@@ -124,88 +142,26 @@ textAdapter = new SimpleAdapter(this,
                 android.R.layout.simple_list_item_1,
                 new String [] {"textname"},
                 new int[] {android.R.id.text1}); //text1 = the text within the listView
-        textListView.setAdapter(textAdapter);
+        lvTexts.setAdapter(textAdapter);
 
-        textListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+        lvTexts.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
 
                 Map<String, String> textData = textList.get(position);
                 String textContent = textData.get("textcontent");
                 String textName = textData.get("textname");
-                String textId = textData.get("id");
                 etContent.setText(textContent);
                 tvTextName.setText(textName);
                 calculate();
             }
         });
 
-        new TextTask(new TextCallback() {
-            @Override
-            public void textListDone(HashMap<String, HashMap<String, String>> texts) {
-                for (Map.Entry<String, HashMap<String, String>> text : texts.entrySet()){
-
-                    Map<String, String> textInfo = new HashMap<>();
-                    String textId = text.getValue().get("id");
-                    String textName = text.getValue().get("textname");
-                    String textContent = text.getValue().get("textcontent");
-                    String textBook = text.getValue().get("textbook");
-                    String complexity = text.getValue().get("complexity");
-                    textInfo.put("textname", textName);
-                    textInfo.put("textcontent", textContent);
-                    textInfo.put("textbook", textBook);
-                    textInfo.put("complexity", complexity);
-                    textInfo.put("id", textId);
-                    textList.add(textInfo);
-                }
-                textAdapter.notifyDataSetChanged();
-            }
-        }, context).execute(""); //Nothing within "" to get every text - see php script
-
-
-
-
-
-        tryButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-
-
-                new TextTask(new TextCallback() {
-                    @Override
-                    public void textListDone(HashMap<String, HashMap<String, String>> texts) {
-
-                        for (Map.Entry<String, HashMap<String, String>> textId : texts.entrySet()) {
-                            Map<String, String> textInfo = new HashMap<String, String>();
-                            String specificTextName = textId.getValue().get("textname");
-                            String specificTextContent = textId.getValue().get("textcontent");
-                            String specificTextId = textId.getValue().get("id");
-                            textInfo.put("id", specificTextId);
-                            textInfo.put("textname", specificTextName);
-                            textInfo.put("textcontent", specificTextContent);
-
-                            Log.d("brandurbrandurbrandur", textInfo.toString());
-
-
-                        }
-                    }
-                }, context).execute(textname);
-
-
-            }
-
-        });
-
-
-
-
-
-
         bCreateText.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                tvTextName.setText("");
-                etContent.setText("");
+               // tvTextName.setText("New text");
+               // etContent.setText("New text");
             }
         });
 
@@ -276,6 +232,29 @@ textAdapter = new SimpleAdapter(this,
             } else {
                 tvComplexity.setText("Complexity: Unable to calculate");
             }
+        }
+        public void getTexts(){
+            new TextTask(new TextCallback() {
+                @Override
+                public void textListDone(HashMap<String, HashMap<String, String>> texts) {
+                    for (Map.Entry<String, HashMap<String, String>> text : texts.entrySet()){
+
+                        Map<String, String> textInfo = new HashMap<>();
+                        String textId = text.getValue().get("id");
+                        String textName = text.getValue().get("textname");
+                        String textContent = text.getValue().get("textcontent");
+                        String textBook = text.getValue().get("textbook");
+                        String complexity = text.getValue().get("complexity");
+                        textInfo.put("textname", textName);
+                        textInfo.put("textcontent", textContent);
+                        textInfo.put("textbook", textBook);
+                        textInfo.put("complexity", complexity);
+                        textInfo.put("id", textId);
+                        textList.add(textInfo);
+                    }
+                    textAdapter.notifyDataSetChanged();
+                }
+            }, context).execute(""); //Nothing within "" to get every text - see php script
         }
 
     }
