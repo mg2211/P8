@@ -26,7 +26,7 @@ import java.util.Map;
 public class TextActivity extends AppCompatActivity {
 
     EditText etContent;
-    String textname = "TestText";
+    String textName;
     Context context = this;
     ListView lvTexts;
     List<Map<String, String>> textList = new ArrayList<>();
@@ -37,11 +37,11 @@ public class TextActivity extends AppCompatActivity {
     EditText etTextName;
     TextView tvComplexity;
     EditText etSearch;
-    String textContent = "";
+    String textContent;
     String textId;
-    boolean newText = false;
-    boolean textChanged = false;
-    double lix = 0;
+    boolean newText;
+    boolean changed;
+    double lix;
 
 
     @Override
@@ -64,8 +64,12 @@ public class TextActivity extends AppCompatActivity {
         bAddText.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(textChanged == true){
+                if (changed == true) {
                     confirmChanges();
+                } else {
+                    etContent.setText("");
+                    etTextName.setText("");
+                    newText = true;
                 }
             }
         });
@@ -74,7 +78,7 @@ public class TextActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 if(newText == true){
-                    new TempTextTask(context).executeTask("create","",etTextName.getText().toString(),etContent.getText().toString(), lix);
+                    new TempTextTask(context).executeTask("create", "", etTextName.getText().toString(), etContent.getText().toString(), lix);
                 } else {
                     new TempTextTask(context).executeTask("update", textId, etTextName.getText().toString(),etContent.getText().toString(),lix);
                 }
@@ -89,7 +93,7 @@ public class TextActivity extends AppCompatActivity {
                 new AlertDialog.Builder(context)
                         .setIcon(android.R.drawable.ic_dialog_alert)
                         .setTitle("Confirm")
-                        .setMessage("Are you sure you want to delete the text " + textname)
+                        .setMessage("Are you sure you want to delete the text " + textName)
                         .setPositiveButton("Yes", new DialogInterface.OnClickListener()
                         {
                             @Override
@@ -111,18 +115,19 @@ public class TextActivity extends AppCompatActivity {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
 
-                if(textChanged == true) {
+                if (changed == true) {
                     confirmChanges();
                 }
 
                 Map<String, String> textData = textList.get(position);
                 textContent = textData.get("textcontent");
-                String textName = textData.get("textname");
+                textName = textData.get("textname");
 
                 etContent.setText(textContent);
                 etTextName.setText(textName);
                 textId = textData.get("id");
                 calculate();
+                newText = false;
             }
         });
 
@@ -136,16 +141,37 @@ public class TextActivity extends AppCompatActivity {
             public void onTextChanged(CharSequence s, int start, int before, int count) {
                 calculate();
                 String content = etContent.getText().toString();
-                if(!content.equals("") && !content.equals(textContent)) {
-                    textChanged = true;
+                if (!content.equals("") && !content.equals(textContent)) {
+                    changed = true;
                 } else {
-                    textChanged = false;
+                    changed = false;
                 }
             }
 
             @Override
             public void afterTextChanged(Editable s) {
                 //auto generated stub
+            }
+        });
+        etTextName.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                String name = etTextName.getText().toString();
+                if (!name.equals("") && !name.equals(textName)) {
+                    changed = true;
+                } else {
+                    changed = false;
+                }
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+
             }
         });
         etSearch.addTextChangedListener(new TextWatcher() {
@@ -237,6 +263,8 @@ public class TextActivity extends AppCompatActivity {
 
                         etContent.setText("");
                         etTextName.setText("");
+                        newText = true;
+                        getTexts();
                     }
 
                 })
@@ -246,10 +274,12 @@ public class TextActivity extends AppCompatActivity {
                         Log.d("Discard changes", "yes");
                         etContent.setText("");
                         etTextName.setText("");
+                        newText = true;
+                        getTexts();
+
                     }
                 })
                 .show();
-            getTexts();
     }
     }
 
