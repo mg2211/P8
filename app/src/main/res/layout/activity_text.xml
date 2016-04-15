@@ -68,7 +68,7 @@
                 <EditText
                     android:layout_width="fill_parent"
                     android:layout_height="wrap_content"
-                    android:id="@+id/tvTextname"
+                    android:id="@+id/etTextname"
                     android:maxLines="1"
                     android:singleLine="true"
                     android:background="@null"

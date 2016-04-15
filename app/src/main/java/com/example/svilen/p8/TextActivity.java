@@ -3,7 +3,6 @@ package com.example.svilen.p8;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
-import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.text.Editable;
@@ -16,7 +15,6 @@ import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.SimpleAdapter;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import org.apache.commons.lang3.StringUtils;
 
@@ -36,10 +34,11 @@ public class TextActivity extends AppCompatActivity {
     Button bAddText;
     Button bDelete;
     Button bSave;
-    EditText tvTextName;
+    EditText etTextName;
     String tvId;
     TextView tvComplexity;
     EditText etSearch;
+    String textContent = "";
     boolean newText = false;
     boolean textChanged = false;
 
@@ -52,8 +51,7 @@ public class TextActivity extends AppCompatActivity {
         etContent = (EditText) findViewById(R.id.etContent);
         bAddText = (Button) findViewById(R.id.bAddText);
         bDelete = (Button) findViewById (R.id.bDelete);
-        tvTextName = (EditText) findViewById(R.id.tvTextname);
-        tvId = "";
+        etTextName = (EditText) findViewById(R.id.etTextname);
         tvComplexity = (TextView) findViewById(R.id.tvComplexity);
         etSearch = (EditText) findViewById(R.id.etSearch);
 
@@ -63,27 +61,7 @@ public class TextActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 if(textChanged == true){
-                    new AlertDialog.Builder(context)
-                            .setIcon(android.R.drawable.ic_dialog_alert)
-                            .setTitle("Confirm")
-                            .setMessage("You have unsaved changes. Save before continuing")
-                            .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
-                                @Override
-                                public void onClick(DialogInterface dialog, int which) {
-                                    Log.d("delete discard changes", "yes");
-                                    //save data from current update
-                                    //clear editTexts
-                                }
-
-                            })
-                            .setNegativeButton("No", new DialogInterface.OnClickListener() {
-                                @Override
-                                public void onClick(DialogInterface dialog, int which) {
-                                    //clear EditTexts
-                                    Log.d("delete discard changes", "no");
-                                }
-                            })
-                            .show();
+                    confirmChanges();
                 }
             }
         });
@@ -123,12 +101,17 @@ public class TextActivity extends AppCompatActivity {
         lvTexts.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+
+                if(textChanged == true) {
+                    confirmChanges();
+                }
+
                 Map<String, String> textData = textList.get(position);
-                String textContent = textData.get("textcontent");
+                textContent = textData.get("textcontent");
                 String textName = textData.get("textname");
 
                 etContent.setText(textContent);
-                tvTextName.setText(textName);
+                etTextName.setText(textName);
                 calculate();
             }
         });
@@ -142,7 +125,12 @@ public class TextActivity extends AppCompatActivity {
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
                 calculate();
-                //textChanged = true;
+                String content = etContent.getText().toString();
+                if(!content.equals("") && !content.equals(textContent)) {
+                    textChanged = true;
+                } else {
+                    textChanged = false;
+                }
             }
 
             @Override
@@ -224,6 +212,38 @@ public class TextActivity extends AppCompatActivity {
                 }
             }, context).execute(""); //Nothing within "" to get every text - see php script
         }
+        public void confirmChanges(){
+        new AlertDialog.Builder(context)
+                .setIcon(android.R.drawable.ic_dialog_alert)
+                .setTitle("Confirm")
+                .setMessage("You have unsaved changes. Save before continuing?")
+                .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        Log.d("save changes", "yes");
+                        //save data from current update
+
+                        if(newText == true){
+                            //save as new text
+                        } else {
+                            //update text
+                        }
+
+                        etContent.setText("");
+                        etTextName.setText("");
+                    }
+
+                })
+                .setNegativeButton("No", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        Log.d("Discard changes", "yes");
+                        etContent.setText("");
+                        etTextName.setText("");
+                    }
+                })
+                .show();
+    }
     }
 
 
