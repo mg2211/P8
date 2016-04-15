@@ -5,7 +5,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.AdapterView;
@@ -13,11 +12,8 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.SimpleAdapter;
-import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
-
-import org.w3c.dom.Text;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -132,19 +128,13 @@ public class AssignmentActivity extends AppCompatActivity {
 
 
 
-
-
-
-
-
-
         bGetText.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
 
                 AlertDialog.Builder builder = new AlertDialog.Builder(context);
                 LayoutInflater inflater = getLayoutInflater();
-                View layout = inflater.inflate(R.layout.assignment_dialog, null);
+                View layout = inflater.inflate(R.layout.textOverview_dialog, null);
 
                 lvTextToAss = (ListView) layout.findViewById(R.id.lvTextToAss);
                 builder.setView(layout);
