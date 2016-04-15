@@ -22,17 +22,17 @@
             android:id="@+id/menuLinear"
             android:background="#ffffff">
 
-            <SearchView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:id="@+id/searchView"
-                android:background="#7ddfcd"/>
+            <EditText
+                android:layout_width="fill_parent"
+                android:layout_height="50dp"
+                android:id="@+id/etSearch"
+                android:background="#7ddfcd" />
 
             <Button
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="Add new"
-                android:id="@+id/bCreateText"
+                android:id="@+id/bAddText"
                 android:layout_marginLeft="0dp"
                 android:layout_marginRight="0dp"
                 android:layout_marginTop="0dp"
@@ -45,7 +45,7 @@
             <ListView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:id="@+id/lwTextOver"
+                android:id="@+id/lvTexts"
                 android:choiceMode="singleChoice" />
 
 
@@ -54,13 +54,10 @@
         <LinearLayout
             android:orientation="vertical"
             android:layout_width="match_parent"
-            android:layout_height="match_parent">
-
-            <EditText
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:id="@+id/tvTextname"
-                android:text="Textname" />
+            android:layout_height="match_parent"
+            android:layout_marginLeft="20dp"
+            android:layout_marginTop="10dp"
+            android:layout_marginBottom="10dp">
 
             <LinearLayout
                 android:orientation="vertical"
@@ -68,44 +65,36 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1">
 
+                <EditText
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/etTextname"
+                    android:maxLines="1"
+                    android:singleLine="true"
+                    android:background="@null"
+                    android:layout_marginTop="10dp"
+                    android:layout_marginBottom="10dp"
+                    android:hint="Text name" />
+
+                <EditText
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:inputType="textMultiLine"
+                    android:ems="10"
+                    android:id="@+id/etContent"
+                    android:layout_weight="0"
+                    android:background="@null"
+                    android:hint="Text content"
+                    android:lines="10"
+                    android:textAlignment="gravity"
+                    android:gravity="top" />
+
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Text id"
-                    android:id="@+id/tvId"
-                    android:layout_weight="0" />
-
-                <EditText
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:id="@+id/etContent"
-                    android:layout_weight="0"
-                    android:text="TextContent" />
-
-                <EditText
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:id="@+id/editText3"
-                    android:layout_weight="0" />
-
-                <EditText
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:id="@+id/editText4"
-                    android:layout_weight="0" />
-
-                <Button
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Test Button"
-                    android:id="@+id/tryButton"
-                    android:layout_weight="0" />
-
-                <Button
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Update"
-                    android:id="@+id/bUpdate"
+                    android:textAppearance="?android:attr/textAppearanceLarge"
+                    android:text="Complexity:"
+                    android:id="@+id/tvComplexity"
                     android:layout_weight="0" />
 
                 <Button
@@ -121,6 +110,7 @@
                     android:text="Save"
                     android:id="@+id/bSave"
                     android:layout_weight="0" />
+
             </LinearLayout>
 
         </LinearLayout>

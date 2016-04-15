@@ -78,7 +78,7 @@ public class TeacherActivity extends AppCompatActivity {
         bTexts.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(context, AddTextActivity.class);
+                Intent intent = new Intent(context, TextActivity.class);
                 startActivity(intent);
             }
         });
