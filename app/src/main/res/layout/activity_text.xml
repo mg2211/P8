@@ -22,11 +22,11 @@
             android:id="@+id/menuLinear"
             android:background="#ffffff">
 
-            <SearchView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:id="@+id/searchView"
-                android:background="#7ddfcd"/>
+            <EditText
+                android:layout_width="fill_parent"
+                android:layout_height="50dp"
+                android:id="@+id/etSearch"
+                android:background="#7ddfcd" />
 
             <Button
                 android:layout_width="match_parent"
@@ -56,42 +56,45 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent">
 
-            <EditText
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:id="@+id/tvTextname"
-                android:text="Textname" />
-
             <LinearLayout
                 android:orientation="vertical"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_weight="1">
 
+                <EditText
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/tvTextname"
+                    android:text="Textname"
+                    android:maxLines="1"
+                    android:singleLine="true"
+                    android:background="@null"
+                    android:layout_marginTop="10dp"
+                    android:layout_marginBottom="10dp" />
+
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Text id"
-                    android:id="@+id/tvId"
-                    android:layout_weight="0" />
+                    android:textAppearance="?android:attr/textAppearanceMedium"
+                    android:text="Text content"
+                    android:id="@+id/textView4" />
 
                 <EditText
-                    android:layout_width="wrap_content"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:inputType="textMultiLine"
+                    android:ems="10"
                     android:id="@+id/etContent"
-                    android:layout_weight="0"
-                    android:text="TextContent" />
+                    android:layout_weight="1"
+                    android:background="@null" />
 
-                <EditText
+                <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:id="@+id/editText3"
-                    android:layout_weight="0" />
-
-                <EditText
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:id="@+id/editText4"
+                    android:textAppearance="?android:attr/textAppearanceLarge"
+                    android:text="Complexity:"
+                    android:id="@+id/tvComplexity"
                     android:layout_weight="0" />
 
                 <Button
@@ -121,6 +124,7 @@
                     android:text="Save"
                     android:id="@+id/bSave"
                     android:layout_weight="0" />
+
             </LinearLayout>
 
         </LinearLayout>

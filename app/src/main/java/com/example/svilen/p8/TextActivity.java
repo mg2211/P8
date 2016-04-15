@@ -4,22 +4,27 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
+import android.widget.SearchView;
 import android.widget.SimpleAdapter;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import org.apache.commons.lang3.StringUtils;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class AddTextActivity extends AppCompatActivity {
+public class TextActivity extends AppCompatActivity {
 
     Button tryButton;
     EditText etContent;
@@ -34,15 +39,14 @@ public class AddTextActivity extends AppCompatActivity {
     //TextView tvTextName;
     Button bSave;
     EditText tvTextName;
-    TextView tvId;
-
-
-
+    String tvId;
+    TextView tvComplexity;
+    EditText etSearch;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_add_text);
+        setContentView(R.layout.activity_text);
         bSave = (Button) findViewById(R.id.bSave);
         tryButton = (Button) findViewById(R.id.tryButton);
         textListView = (ListView) findViewById(R.id.lwTextOver);
@@ -51,27 +55,29 @@ public class AddTextActivity extends AppCompatActivity {
         bCreateText = (Button) findViewById(R.id.bCreateText);
         bDelete = (Button) findViewById (R.id.bDelete);
         tvTextName = (EditText) findViewById(R.id.tvTextname);
-        tvId = (TextView) findViewById(R.id.tvId);
+        tvId = "";
+        tvComplexity = (TextView) findViewById(R.id.tvComplexity);
+        etSearch = (EditText) findViewById(R.id.etSearch);
 
 
         bUpdate.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
 
-                String Id = tvId.getText().toString();
+                String Id = tvId;
                 String tContent = etContent.getText().toString();
                 String textName = tvTextName.getText().toString();
                 new UpdateTextTask(context).execute(Id, tContent, textName);
                 Log.d("UPDATE UPDATE", Id);
 
-                Intent refresh = new Intent(AddTextActivity.this, AddTextActivity.class);
+                Intent refresh = new Intent(TextActivity.this, TextActivity.class);
                 startActivity(refresh);
 
 
             }
         });
 
-        bDelete.setOnClickListener(new View.OnClickListener() {
+        /*bDelete.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
 
@@ -83,11 +89,11 @@ public class AddTextActivity extends AppCompatActivity {
                 int ble = 4;
                 new DeleteTextTask(context).execute(dId);
                 Log.d("DELETEDELETE", dId);
-                Intent refresh = new Intent(AddTextActivity.this, AddTextActivity.class);
+                Intent refresh = new Intent(TextActivity.this, TextActivity.class);
                 startActivity(refresh);
 
             }
-        });
+        });*/
 
         bSave.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -103,7 +109,7 @@ public class AddTextActivity extends AppCompatActivity {
                     Toast toast = Toast.makeText(context, alert, duration);
                     toast.show();
                 }
-                Intent refresh = new Intent(AddTextActivity.this, AddTextActivity.class);
+                Intent refresh = new Intent(TextActivity.this, TextActivity.class);
                 startActivity(refresh);
             }
         });
@@ -130,8 +136,7 @@ textAdapter = new SimpleAdapter(this,
                 String textId = textData.get("id");
                 etContent.setText(textContent);
                 tvTextName.setText(textName);
-                tvId.setText(textId);
-
+                calculate();
             }
         });
 
@@ -196,7 +201,7 @@ textAdapter = new SimpleAdapter(this,
 
 
 
-        bCreateText.setOnClickListener(new View.OnClickListener(){
+        bCreateText.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 tvTextName.setText("");
@@ -205,11 +210,77 @@ textAdapter = new SimpleAdapter(this,
         });
 
 
+        etContent.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+                //Auto generated stub
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                calculate();
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+                //auto generated stub
+            }
+        });
+        etSearch.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+                //Auto generated stub
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+
+                textAdapter.getFilter().filter(s);
+
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+                //Auto generated stub
+            }
+        });
+    }
+        public void calculate(){
+            String inputText = etContent.getText().toString();
+            String cleanText;
+            int P = StringUtils.countMatches(inputText, ".");
+            P = P + StringUtils.countMatches(inputText, "?");
+            P = P + StringUtils.countMatches(inputText, "!");
+            P = P + StringUtils.countMatches(inputText, ":");
+            P = P + StringUtils.countMatches(inputText, ";");
+            cleanText = inputText.replaceAll("/./", "");
+            cleanText = cleanText.replaceAll("/?/", "");
+            cleanText = cleanText.replaceAll("/!/", "");
+            cleanText = cleanText.replaceAll("/:/", "");
+            cleanText = cleanText.replaceAll("/;/", "");
+            String[] words = cleanText.split("\\s+");
+            int O = words.length;
+            if (O > 0 && P > 0) {
+                int L = 0;
+                for (int i = 0; i < words.length; i++) {
+                    if (words[i].length() > 6) {
+                        L++;
+                    }
+                }
+                Log.d("O", String.valueOf(O));
+                Log.d("P", String.valueOf(P));
+                Log.d("L", String.valueOf(L));
+                double lix = (O / P) + (L * 100 / O);
+                tvComplexity.setText("Complexity: " + String.valueOf(lix));
+                Log.d("lix:", String.valueOf(lix));
+            } else {
+                tvComplexity.setText("Complexity: Unable to calculate");
+            }
+        }
 
     }
 
 
-}
 
 
 
@@ -230,30 +301,6 @@ textAdapter = new SimpleAdapter(this,
 
 
 
-
-
-
-/*textAdapter = new SimpleAdapter(this,
-                textList,
-                android.R.layout.simple_list_item_2,
-                new String [] {"textname", "textcontent"},
-                new int[] {android.R.id.text1, android.R.id.text2}); //hvaða textar eru þetta?
-        textListView.setAdapter(textAdapter);*/
-
-        /*textListView.setOnClickListener(new AdapterView.OnClickListener(){
-
-            @Override
-            public void onClick(View v) {
-                public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                    Map<String, String> textData = textList.get(position);
-                    String textId = textData.get("id");
-                    Intent textIntent = new Intent (context, .class);
-                    textIntent.putExtra("id", textId);
-                    textIntent.putExtra("textname", textData.get("textname"));
-                    startActivity(textIntent);
-                }
-            }
-        });*/
 
 
 
