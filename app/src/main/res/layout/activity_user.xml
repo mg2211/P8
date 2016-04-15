@@ -50,7 +50,7 @@
             <ListView
                 android:layout_width="wrap_content"
                 android:layout_height="fill_parent"
-                android:id="@+id/lvClasses"
+                android:id="@+id/lvUsers"
                 android:layout_marginTop="0dp"
                 android:background="#ffeb3b" />
         </LinearLayout>
@@ -60,22 +60,9 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent">
 
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:textAppearance="?android:attr/textAppearanceLarge"
-                android:text="Students in class"
-                android:id="@+id/tvStudents"
-                android:layout_marginLeft="20dp"
-                android:layout_marginTop="10dp"/>
-
-            <ListView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:id="@+id/lvStudents" />
-
         </LinearLayout>
 
     </LinearLayout>
 
 </RelativeLayout>
+

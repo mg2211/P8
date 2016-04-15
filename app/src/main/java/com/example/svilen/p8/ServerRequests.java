@@ -6,8 +6,14 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.AsyncTask;
+import android.os.Bundle;
 import android.preference.PreferenceManager;
+import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
+import android.widget.ArrayAdapter;
+import android.widget.Button;
+import android.widget.EditText;
+import android.widget.Spinner;
 import android.widget.Toast;
 
 import org.apache.commons.io.IOUtils;
@@ -26,7 +32,10 @@ import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.ProtocolException;
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 public class ServerRequests {
 }
@@ -1151,6 +1160,106 @@ class CreateAssToLibTask extends AsyncTask<String, Void, HashMap<String, String>
         }
 
     }
+}
+
+class RoleTask extends AsyncTask<String, Void, Map<String,HashMap<String, String>>> {
+
+    RoleCallback delegate;
+    ProgressDialog progressDialog;
+    final Context context;
+
+    RoleTask(RoleCallback delegate, Context context) {
+        this.delegate = delegate;
+        this.context = context;
+        progressDialog = new ProgressDialog(context);
+        progressDialog.setCancelable(false);
+        progressDialog.setTitle("Processing...");
+        progressDialog.setMessage("Please wait...");
+        progressDialog.show();
+    }
+
+    @Override
+    protected Map<String,HashMap<String, String>> doInBackground(String... params) {
+
+        //Initiating return vars.
+        Map<String, HashMap<String,String>> result = new HashMap<>();
+        String generalResponse = null;
+        int responseCode = 0;
+        String role = null;
+
+        try {
+            URL url = new URL("http://emilsiegenfeldt.dk/p8/roleList.php");
+            HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+            connection.setRequestMethod("POST");
+
+            Uri.Builder builder = new Uri.Builder().appendQueryParameter("","");
+
+            String query = builder.build().getEncodedQuery();
+            OutputStream os = connection.getOutputStream();
+            BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(os, "UTF-8"));
+            writer.write(query);
+            writer.flush();
+            writer.close();
+            os.close();
+
+            connection.connect();
+
+            //Catch server response
+            InputStream in = new BufferedInputStream(connection.getInputStream());
+
+            //convert to readable string
+            String response = IOUtils.toString(in, "UTF-8");
+
+            //convert to JSON object
+            JSONObject JSONResult = new JSONObject(response);
+
+            //extract variables from JSONObject result var
+            generalResponse = JSONResult.getString("generalResponse");
+            responseCode = JSONResult.getInt("responseCode");
+
+            String roleName;
+            String roleId;
+            HashMap<String, String> resultData = new HashMap<>();
+
+            JSONArray roles = JSONResult.getJSONArray("roles");
+            for (int i = 0; i < roles.length(); i++) {
+                JSONObject specificText = roles.getJSONObject(i);
+                roleId = specificText.getString("roleId");
+                roleName = specificText.getString("roleName");
+                resultData.put(roleId, roleName);
+            }
+            result.put("resultData", resultData);
+
+        } catch (IOException e) {
+            responseCode = 300;
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+        HashMap<String, String> response = new HashMap<>();
+        response.put("generalResponse", generalResponse);
+        response.put("responseCode", String.valueOf(responseCode));
+        result.put("response", response);
+
+        return result;
+    }
+
+    protected void onPostExecute(Map<String,HashMap<String, String>> result) {
+
+        String generalResponse = result.get("response").get("generalResponse");
+        String responseCode = result.get("response").get("responseCode");
+        progressDialog.dismiss();
+
+        if (Integer.parseInt(responseCode) == 100) {
+            result.remove("response");
+            delegate.roleListDone(result);
+        } else if (Integer.parseInt(responseCode) == 200) {
+            int duration = Toast.LENGTH_LONG;
+            Toast toast = Toast.makeText(context, generalResponse, duration);
+            toast.show();
+        }
+    }
+
 }
 
 

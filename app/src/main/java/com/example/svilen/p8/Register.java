@@ -1,21 +1,31 @@
 package com.example.svilen.p8;
 
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.SimpleAdapter;
 import android.widget.Spinner;
 import android.widget.Toast;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
 
 public class Register extends AppCompatActivity{
 
     Button bRegister;
     EditText etUsername, etPassword, etFirstName, etLastName, etEmail;
-    Spinner spinner;
+    Spinner spinnerRole;
     Context context = this;
+    List<String> roleList = new ArrayList<>();
+    ArrayAdapter roleAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -28,18 +38,20 @@ public class Register extends AppCompatActivity{
         etLastName = (EditText) findViewById(R.id.etLastName);
         etEmail = (EditText) findViewById(R.id.etEmail);
         bRegister = (Button) findViewById(R.id.bRegister);
-        spinner = (Spinner) findViewById(R.id.spinner);
-        ArrayAdapter<CharSequence> spinnerAdapter;
+        spinnerRole = (Spinner) findViewById(R.id.spinnerRole);
 
-        spinnerAdapter = ArrayAdapter.createFromResource(this,
-                R.array.role_array, android.R.layout.simple_spinner_item);
-        spinnerAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        spinner.setAdapter(spinnerAdapter);
+        roleAdapter = new ArrayAdapter<>(this,
+                android.R.layout.simple_spinner_item, roleList);
+        roleAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        spinnerRole.setAdapter(roleAdapter);
+
+        Intent intent = getIntent();
+        String roleId = intent.getStringExtra("roleId");
 
         bRegister.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                String role = spinner.getSelectedItem().toString();
+                String role = spinnerRole.getSelectedItem().toString();
                 String username = etUsername.getText().toString();
                 String password = etPassword.getText().toString();
                 String firstname = etFirstName.getText().toString();
@@ -54,10 +66,22 @@ public class Register extends AppCompatActivity{
                     Toast toast = Toast.makeText(context, alert, duration);
                     toast.show();
                 }
-
-
             }
         });
+
+        new RoleTask(new RoleCallback() {
+            @Override
+            public void roleListDone(Map<String, HashMap<String, String>> roles) {
+                for(Map.Entry<String, HashMap<String,String>> line : roles.entrySet()) {
+                    for (Map.Entry<String,String> role : line.getValue().entrySet()) {
+                        System.out.println("KEY: " + role.getKey() +role+ " VALUE:" + role.getValue());
+                        String roleName = role.getValue();
+                        roleList.add(roleName);
+                    }
+                }
+                roleAdapter.notifyDataSetChanged();
+            }
+        }, context).execute(roleId);
     }
 }
 

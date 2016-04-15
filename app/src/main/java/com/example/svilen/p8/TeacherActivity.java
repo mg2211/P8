@@ -86,7 +86,9 @@ public class TeacherActivity extends AppCompatActivity {
         bUsers.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                //open user management activity
+                Intent intent = new Intent (context, Register.class);
+                startActivity(intent);
+                //new UserTask().execute("");
             }
         });
 
