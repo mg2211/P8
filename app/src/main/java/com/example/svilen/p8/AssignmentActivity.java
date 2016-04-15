@@ -63,10 +63,10 @@ public class AssignmentActivity extends AppCompatActivity {
             public void onClick(View v) {
 
                 String textId = tvTextId.getText().toString();
-                String assName = etAssName.getText().toString();
+                String assignmentName = etAssName.getText().toString();
 
-                if (!textId.equals("") && !assName.equals("")){
-                    new CreateAssToLibTask (context).execute(textId, assName);
+                if (!textId.equals("") && !assignmentName.equals("")){
+                    new CreateAssToLibTask (context).execute(assignmentName, textId);
                 }else {
                     int duration = Toast.LENGTH_LONG;
                     CharSequence alert = "Please fill all required fields";
