@@ -15,6 +15,7 @@ import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.SimpleAdapter;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import org.apache.commons.lang3.StringUtils;
 
@@ -26,7 +27,7 @@ import java.util.Map;
 public class TextActivity extends AppCompatActivity {
 
     EditText etContent;
-    String textName;
+
     Context context = this;
     ListView lvTexts;
     List<Map<String, String>> textList = new ArrayList<>();
@@ -39,9 +40,11 @@ public class TextActivity extends AppCompatActivity {
     EditText etSearch;
     String textContent;
     String textId;
+    String textName;
     boolean newText;
     boolean changed;
     double lix;
+    boolean clear;
 
 
     @Override
@@ -58,29 +61,74 @@ public class TextActivity extends AppCompatActivity {
         etTextName = (EditText) findViewById(R.id.etTextname);
         tvComplexity = (TextView) findViewById(R.id.tvComplexity);
         etSearch = (EditText) findViewById(R.id.etSearch);
-
+        bDelete.setEnabled(false);
+        newText = true;
         getTexts();
+
+
+        textAdapter = new SimpleAdapter(this, textList, android.R.layout.simple_list_item_1, new String [] {"textname"}, new int[] {android.R.id.text1}); //text1 = the text within the listView
+        lvTexts.setAdapter(textAdapter);
+
+        lvTexts.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                if(changed == true){
+                    if(confirmChanges()){
+                        Map<String, String> textData = textList.get(position);
+                        textContent = textData.get("textcontent");
+                        textName = textData.get("textname");
+                        textId = textData.get("id");
+                        etContent.setText(textContent);
+                        etTextName.setText(textName);
+                        bDelete.setEnabled(true);
+                        calculate();
+                    }
+                } else {
+                    Map<String, String> textData = textList.get(position);
+                    textContent = textData.get("textcontent");
+                    textName = textData.get("textname");
+                    textId = textData.get("id");
+                    etContent.setText(textContent);
+                    etTextName.setText(textName);
+                    bDelete.setEnabled(true);
+                    calculate();
+                }
+                newText = false;
+                changed = false;
+            }
+        });
+
 
         bAddText.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (changed == true) {
-                    confirmChanges();
-                } else {
+                    if(changed == true){
+                        confirmChanges();
+                    }
                     etContent.setText("");
                     etTextName.setText("");
+                    bDelete.setEnabled(false);
+                    changed = false;
                     newText = true;
-                }
             }
         });
 
         bSave.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(newText == true){
-                    new TempTextTask(context).executeTask("create", "", etTextName.getText().toString(), etContent.getText().toString(), lix);
+                if(!etTextName.getText().toString().equals("") && !etContent.getText().toString().equals("")){
+                    if(newText == true){
+                        createText();
+                        changed = false;
+                    } else {
+                        updateText();
+                        changed = false;
+                    }
                 } else {
-                    new TempTextTask(context).executeTask("update", textId, etTextName.getText().toString(),etContent.getText().toString(),lix);
+                    int duration = Toast.LENGTH_LONG;
+                    CharSequence alert = "Please fill in all required fields";
+                    Toast toast = Toast.makeText(context, alert, duration);
+                    toast.show();
                 }
                 getTexts();
             }
@@ -90,44 +138,7 @@ public class TextActivity extends AppCompatActivity {
         bDelete.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                new AlertDialog.Builder(context)
-                        .setIcon(android.R.drawable.ic_dialog_alert)
-                        .setTitle("Confirm")
-                        .setMessage("Are you sure you want to delete the text " + textName)
-                        .setPositiveButton("Yes", new DialogInterface.OnClickListener()
-                        {
-                            @Override
-                            public void onClick(DialogInterface dialog, int which) {
-                                new TempTextTask(context).executeTask("delete",textId,"","",0);
-                                getTexts();
-                            }
-
-                        })
-                        .setNegativeButton("No", null)
-                        .show();
-            }
-        });
-
-        textAdapter = new SimpleAdapter(this, textList, android.R.layout.simple_list_item_1, new String [] {"textname"}, new int[] {android.R.id.text1}); //text1 = the text within the listView
-        lvTexts.setAdapter(textAdapter);
-
-        lvTexts.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-
-                if (changed == true) {
-                    confirmChanges();
-                }
-
-                Map<String, String> textData = textList.get(position);
-                textContent = textData.get("textcontent");
-                textName = textData.get("textname");
-
-                etContent.setText(textContent);
-                etTextName.setText(textName);
-                textId = textData.get("id");
-                calculate();
-                newText = false;
+                deleteText();
             }
         });
 
@@ -245,25 +256,38 @@ public class TextActivity extends AppCompatActivity {
                 }
             }, context).execute(""); //Nothing within "" to get every text - see php script
         }
-        public void confirmChanges(){
-        new AlertDialog.Builder(context)
+        public boolean confirmChanges(){
+            new AlertDialog.Builder(context)
                 .setIcon(android.R.drawable.ic_dialog_alert)
                 .setTitle("Confirm")
-                .setMessage("You have unsaved changes. Save before continuing?")
+                .setMessage("You have unsaved changes. Continue?")
                 .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         //save data from current update
-
-                        if(newText == true){
-                           new TempTextTask(context).executeTask("create","",etTextName.getText().toString(),etContent.getText().toString(), lix);
+                        if(!etTextName.equals("") && !etContent.equals("")){
+                            if(newText == true){
+                               if(createText()){
+                                   clear = true;
+                                   changed = false;
+                               } else {
+                                   clear = false;
+                               }
+                            } else {
+                                if(updateText()){
+                                    clear = true;
+                                    changed = false;
+                                } else {
+                                    clear = false;
+                                }
+                            }
                         } else {
-                            new TempTextTask(context).executeTask("update", textId, etTextName.getText().toString(),etContent.getText().toString(),lix);
+                            int duration = Toast.LENGTH_LONG;
+                            CharSequence alert = "Please fill in all required fields";
+                            Toast toast = Toast.makeText(context, alert, duration);
+                            toast.show();
                         }
 
-                        etContent.setText("");
-                        etTextName.setText("");
-                        newText = true;
                         getTexts();
                     }
 
@@ -272,15 +296,69 @@ public class TextActivity extends AppCompatActivity {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         Log.d("Discard changes", "yes");
-                        etContent.setText("");
-                        etTextName.setText("");
-                        newText = true;
-                        getTexts();
+                        clear = false;
 
                     }
                 })
                 .show();
-    }
+
+
+            return clear;
+        }
+        public boolean createText(){
+            if(!etTextName.getText().toString().equals("") && !etContent.getText().toString().equals("")){
+                new TempTextTask(context).executeTask("create","",etTextName.getText().toString(),etContent.getText().toString(), lix);
+                return true;
+            } else {
+                int duration = Toast.LENGTH_LONG;
+                CharSequence alert = "Please fill in all required fields";
+                Toast toast = Toast.makeText(context, alert, duration);
+                toast.show();
+                return false;
+            }
+
+        }
+        public boolean updateText(){
+            if(!etTextName.getText().toString().equals("") && !etContent.getText().toString().equals("")){
+                new TempTextTask(context).executeTask("update", textId, etTextName.getText().toString(),etContent.getText().toString(),lix);
+                return true;
+            } else {
+                int duration = Toast.LENGTH_LONG;
+                CharSequence alert = "Please fill in all required fields";
+                Toast toast = Toast.makeText(context, alert, duration);
+                toast.show();
+                return false;
+            }
+
+        }
+        public void deleteText(){
+            new AlertDialog.Builder(context)
+                    .setIcon(android.R.drawable.ic_dialog_alert)
+                    .setTitle("Confirm")
+                    .setMessage("Are you sure you want to delete the text " + textName)
+                    .setPositiveButton("Yes", new DialogInterface.OnClickListener()
+                    {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            new TempTextTask(context).executeTask("delete",textId,"","",0);
+                            getTexts();
+                            etContent.setText("");
+                            etTextName.setText("");
+                            calculate();
+                            Log.d("textname", textName);
+                            Log.d("textId", textId);
+                            newText = true;
+                            changed = false;
+                            textId = "";
+                            textName = "";
+
+                        }
+
+                    })
+                    .setNegativeButton("No", null)
+                    .show();
+
+        }
     }
 
 
