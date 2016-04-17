@@ -69,12 +69,13 @@ public class TextActivity extends AppCompatActivity {
         getTexts();
 
         //textAdapter = new SimpleAdapter(this, textList, android.R.layout.simple_list_item_1, new String [] {"textname"}, new int[] {android.R.id.text1}); //text1 = the text within the listView
-        textAdapter = new ListViewAdapter(this, textList, android.R.layout.simple_list_item_1, new String [] {"textname"}, new int[] {android.R.id.text1}, colors);
+        textAdapter = new ListViewAdapter(this, textList, android.R.layout.simple_list_item_2, new String [] {"textname", "complexity"}, new int[] {android.R.id.text1, android.R.id.text2}, colors);
 
         lvTexts.setAdapter(textAdapter);
         lvTexts.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, final int position, long id) {
+                view.setBackgroundColor(Color.BLUE);
                 Log.d("posistion", String.valueOf(position));
                 if(changed == true){
 
@@ -325,7 +326,7 @@ public class TextActivity extends AppCompatActivity {
                         textInfo.put("textname", textName);
                         textInfo.put("textcontent", textContent);
                         textInfo.put("textbook", textBook);
-                        textInfo.put("complexity", complexity);
+                        textInfo.put("complexity", "Complexity: "+complexity);
                         textInfo.put("id", textId);
                         textList.add(textInfo);
                         double difficulty = Double.parseDouble(complexity);
