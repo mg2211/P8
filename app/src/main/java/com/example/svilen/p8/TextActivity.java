@@ -75,7 +75,7 @@ public class TextActivity extends AppCompatActivity {
 
                     confirm(new DialogCallback() {
                         @Override
-                        public void dialogue(boolean dialogResponse) {
+                        public void dialogResponse(boolean dialogResponse) {
                             if(dialogResponse == true){
                                 if(newText == true){
                                     if(createText()){
@@ -133,11 +133,54 @@ public class TextActivity extends AppCompatActivity {
         bAddText.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+
+
+
+                if(changed){
+                    confirm(new DialogCallback() {
+                        @Override
+                        public void dialogResponse(boolean dialogResponse) {
+                            if(dialogResponse == true){
+                                if(newText == true){
+                                    if(createText()){
+                                        clear = true;
+                                        setChanged(false);
+                                        setNewText(false);
+                                    } else {
+                                        clear = false;
+                                    }
+                                }
+                                if(changed == true){
+                                    if(updateText()){
+                                        clear = true;
+                                        setChanged(false);
+                                        setNewText(false);
+                                    } else {
+                                        clear = false;
+                                    }
+                                }
+                            } else {
+                                clear = true;
+                            }
+                            if(clear){
+                                etContent.setText("");
+                                etTextName.setText("");
+                                bDelete.setEnabled(false);
+                                setChanged(false);
+                                setNewText(true);
+                            }
+                        }
+                    });
+                } else {
                     etContent.setText("");
                     etTextName.setText("");
                     bDelete.setEnabled(false);
-                   setChanged(false);
-                   setNewText(true);
+                    setChanged(false);
+                    setNewText(true);
+                }
+
+
+
             }
         });
 
@@ -357,14 +400,14 @@ public class TextActivity extends AppCompatActivity {
                     .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
-                            callback.dialogue(true);
+                            callback.dialogResponse(true);
                         }
 
                     })
                     .setNegativeButton("No", new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
-                            callback.dialogue(false);
+                            callback.dialogResponse(false);
 
                         }
                     })
