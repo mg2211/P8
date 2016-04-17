@@ -3,6 +3,7 @@ package com.example.svilen.p8;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.text.Editable;
@@ -71,6 +72,7 @@ public class TextActivity extends AppCompatActivity {
         lvTexts.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, final int position, long id) {
+                Log.d("posistion", String.valueOf(position));
                 if(changed == true){
 
                     confirm(new DialogCallback() {
@@ -413,6 +415,11 @@ public class TextActivity extends AppCompatActivity {
                     })
                     .show();
 
+        }
+        public void setColor(){
+
+            int children = lvTexts.getChildCount();
+            Log.d("children", String.valueOf(children));
         }
     }
 
