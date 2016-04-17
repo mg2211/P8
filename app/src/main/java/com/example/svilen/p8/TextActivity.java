@@ -32,7 +32,7 @@ public class TextActivity extends AppCompatActivity {
     Context context = this;
     ListView lvTexts;
     List<Map<String, String>> textList = new ArrayList<>();
-    SimpleAdapter textAdapter;
+    ListViewAdapter textAdapter;
     Button bAddText;
     Button bDelete;
     Button bSave;
@@ -67,7 +67,9 @@ public class TextActivity extends AppCompatActivity {
         setChanged(false);
         getTexts();
 
-        textAdapter = new SimpleAdapter(this, textList, android.R.layout.simple_list_item_1, new String [] {"textname"}, new int[] {android.R.id.text1}); //text1 = the text within the listView
+        //textAdapter = new SimpleAdapter(this, textList, android.R.layout.simple_list_item_1, new String [] {"textname"}, new int[] {android.R.id.text1}); //text1 = the text within the listView
+        textAdapter = new ListViewAdapter(this,textList, android.R.layout.simple_list_item_1, new String [] {"textname"}, new int[] {android.R.id.text1});
+
         lvTexts.setAdapter(textAdapter);
         lvTexts.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
