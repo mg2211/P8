@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.support.annotation.IntegerRes;
 import android.support.v7.app.AppCompatActivity;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -14,7 +15,6 @@ import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
-import android.widget.SimpleAdapter;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -32,6 +32,7 @@ public class TextActivity extends AppCompatActivity {
     Context context = this;
     ListView lvTexts;
     List<Map<String, String>> textList = new ArrayList<>();
+    ArrayList<Integer> colors = new ArrayList<>();
     ListViewAdapter textAdapter;
     Button bAddText;
     Button bDelete;
@@ -68,7 +69,7 @@ public class TextActivity extends AppCompatActivity {
         getTexts();
 
         //textAdapter = new SimpleAdapter(this, textList, android.R.layout.simple_list_item_1, new String [] {"textname"}, new int[] {android.R.id.text1}); //text1 = the text within the listView
-        textAdapter = new ListViewAdapter(this,textList, android.R.layout.simple_list_item_1, new String [] {"textname"}, new int[] {android.R.id.text1});
+        textAdapter = new ListViewAdapter(this, textList, android.R.layout.simple_list_item_1, new String [] {"textname"}, new int[] {android.R.id.text1}, colors);
 
         lvTexts.setAdapter(textAdapter);
         lvTexts.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -312,6 +313,7 @@ public class TextActivity extends AppCompatActivity {
                 @Override
                 public void textListDone(HashMap<String, HashMap<String, String>> texts) {
                     textList.clear();
+                    colors.clear();
                     for (Map.Entry<String, HashMap<String, String>> text : texts.entrySet()){
 
                         Map<String, String> textInfo = new HashMap<>();
@@ -326,6 +328,16 @@ public class TextActivity extends AppCompatActivity {
                         textInfo.put("complexity", complexity);
                         textInfo.put("id", textId);
                         textList.add(textInfo);
+                        double difficulty = Double.parseDouble(complexity);
+                        if(difficulty > 0 && difficulty <= 20){
+                            colors.add(Color.rgb(156, 204, 101));
+                        } else if(difficulty > 20 && difficulty <= 40){
+                            colors.add(Color.rgb(255, 235, 69));
+                        } else if(difficulty > 40){
+                            colors.add(Color.rgb(239, 83, 80));
+                        } else {
+                            colors.add(Color.TRANSPARENT);
+                        }
                     }
                     textAdapter.notifyDataSetChanged();
                 }

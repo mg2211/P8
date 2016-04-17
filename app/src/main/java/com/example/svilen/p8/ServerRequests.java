@@ -575,11 +575,13 @@ class TextTask extends AsyncTask<String, Void, HashMap<String, HashMap<String, S
                     String textname = specificText.getString("textName"); //Within brackets stuff from php
                     String textContent = specificText.getString("textContent");
                      id = specificText.getString("textId");
+                    double complexity = specificText.getDouble("complexity");
 
                     HashMap<String, String> textInfo = new HashMap<>();
                     textInfo.put("textname", textname);
                     textInfo.put("textcontent", textContent);
                     textInfo.put("id", id);
+                    textInfo.put("complexity", String.valueOf(complexity));
 
                     results.put("TextId: " + id, textInfo);
                 }
