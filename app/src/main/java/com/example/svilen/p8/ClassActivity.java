@@ -124,8 +124,6 @@ public class ClassActivity extends AppCompatActivity {
                 TextView text = (TextView) layout.findViewById(R.id.tvStudentClass);
                 text.setText(studentClass+studentname);
                 builder.setView(layout);
-
-
                 AlertDialog dialog = builder.create();
                 dialog.setCanceledOnTouchOutside(true);
                 dialog.show();
