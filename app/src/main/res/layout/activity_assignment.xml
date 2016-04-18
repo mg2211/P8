@@ -112,6 +112,48 @@
                 android:enabled="true"
                 android:textSize="20sp" />
 
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textAppearance="?android:attr/textAppearanceLarge"
+                android:text="Assignment name"
+                android:id="@+id/tvAssName" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textAppearance="?android:attr/textAppearanceLarge"
+                android:text="Assignment Library ID"
+                android:id="@+id/tvAssLibId" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textAppearance="?android:attr/textAppearanceLarge"
+                android:text="Textname"
+                android:id="@+id/tvTextname" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textAppearance="?android:attr/textAppearanceLarge"
+                android:text="Text Id"
+                android:id="@+id/tvTextId1" />
+
+            <Button
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Assign assignment"
+                android:id="@+id/bAssToStudent"
+                android:layout_marginLeft="0dp"
+                android:layout_marginRight="0dp"
+                android:layout_marginTop="0dp"
+                android:layout_marginBottom="0dp"
+                android:background="#9ccc65"
+                android:typeface="sans"
+                android:enabled="true"
+                android:textSize="20sp" />
+
         </LinearLayout>
 
     </LinearLayout>

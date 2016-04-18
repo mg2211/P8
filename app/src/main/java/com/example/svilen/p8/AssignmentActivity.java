@@ -34,8 +34,13 @@ public class AssignmentActivity extends AppCompatActivity {
     Button bTeacher;
     List<Map<String, String>> assignmentLibraryList = new ArrayList<>();
     SimpleAdapter assignmentLibraryAdapter;
-
     Button bCreateNewAss;
+
+    TextView assLibId;
+    TextView assignmentName;
+    TextView textName;
+    TextView textId1;
+    Button bAssToStudent;
 
 
 
@@ -45,6 +50,12 @@ public class AssignmentActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_assignment);
 
+
+        assLibId = (TextView) findViewById(R.id.tvAssLibId);
+        assignmentName = (TextView) findViewById(R.id.tvAssName);
+        textName = (TextView) findViewById(R.id.tvTextname);
+        textId1 = (TextView) findViewById(R.id.tvTextId1);
+        bAssToStudent = (Button) findViewById(R.id.bAssToStudent);
         bGetText = (Button) findViewById(R.id.bGetText);
         tvTextChosen = (TextView) findViewById(R.id.tvTextChosen);
         tvTextId = (TextView) findViewById(R.id.tvTextId);
@@ -54,43 +65,22 @@ public class AssignmentActivity extends AppCompatActivity {
         bCreateNewAss = (Button) findViewById(R.id.bCreateNewAss);
 
 
-
-        bCreateNewAss.setOnClickListener(new View.OnClickListener() {
+        bAssToStudent.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
 
-                String textId = tvTextId.getText().toString();
-                String assignmentName = etAssName.getText().toString();
+                AlertDialog.Builder builder = new AlertDialog.Builder(context);
+                LayoutInflater inflater = getLayoutInflater();
+                View layout = inflater.inflate(R.layout.dialog_assignment, null);
 
-                if (!textId.equals("") && !assignmentName.equals("")){
-                    new CreateAssToLibTask (context).execute(assignmentName, textId);
-                }else {
-                    int duration = Toast.LENGTH_LONG;
-                    CharSequence alert = "Please fill all required fields";
-                    Toast toast = Toast.makeText(context, alert, duration);
-                    toast.show();
-                }
+                builder.setView(layout);
+
+                AlertDialog dialog = builder.create();
+                dialog.setCanceledOnTouchOutside(true);
+                dialog.show();
 
             }
         });
-
-
-        bTeacher.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-
-                Intent intent = new Intent(AssignmentActivity.this, TeacherActivity.class);
-                startActivity(intent);
-            }
-        });
-
-
-        assignmentLibraryAdapter = new SimpleAdapter(this,
-                assignmentLibraryList,
-                android.R.layout.simple_list_item_1,
-                new String[] {"assignmentName"},
-                new int[] {android.R.id.text1});
-                lvAssignments.setAdapter(assignmentLibraryAdapter);
 
 
         lvAssignments.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -99,117 +89,107 @@ public class AssignmentActivity extends AppCompatActivity {
 
                 Map<String, String> assignmentData = assignmentLibraryList.get(position);
 
-                AlertDialog.Builder builder = new AlertDialog.Builder(context);
-                LayoutInflater inflater = getLayoutInflater();
-                View layout = inflater.inflate(R.layout.assignment_dialog, null);
-                Button bAssToStudent;
-                builder.setView(layout);
-
-                TextView tvAssLibId1 = (TextView) layout.findViewById(R.id.tvAssId1);
-                TextView tvAssName1 = (TextView) layout.findViewById(R.id.tvAssName1);
-                TextView tvTextName1 = (TextView) layout.findViewById(R.id.tvTextName1);
-                TextView tvTextId1 = (TextView) layout.findViewById(R.id.tvTextId1);
-                TextView tvTextContent1 = (TextView) layout.findViewById(R.id.tvTextContent1);
-                bAssToStudent = (Button) layout.findViewById(R.id.bAssToStudent1);
-
 
                 String AssLibId = assignmentLibraryList.get(position).get("id");
                 String tvAssname = assignmentLibraryList.get(position).get("assignmentName");
                 String tvTextId = assignmentLibraryList.get(position).get("textId");
+                String textname = assignmentLibraryList.get(position).get("textname");
 
 
-                tvAssLibId1.setText(AssLibId);
-                tvAssName1.setText(tvAssname);
-                tvTextId1.setText(tvTextId);
+                assignmentName.setText(tvAssname);
+                textId1.setText(tvTextId);
+                textName.setText(textname);
+                assLibId.setText(AssLibId);
 
-                bAssToStudent.setOnClickListener(new View.OnClickListener() {
+
+            }});
+
+
+
+                bCreateNewAss.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
 
+                        String textId = tvTextId.getText().toString();
+                        String assignmentName = etAssName.getText().toString();
+
+                        if (!textId.equals("") && !assignmentName.equals("")) {
+                            new CreateAssToLibTask(context).execute(assignmentName, textId);
+                        } else {
+                            int duration = Toast.LENGTH_LONG;
+                            CharSequence alert = "Please fill all required fields";
+                            Toast toast = Toast.makeText(context, alert, duration);
+                            toast.show();
+                        }
+
+                    }
+                });
+
+
+                bTeacher.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+
+                        Intent intent = new Intent(AssignmentActivity.this, TeacherActivity.class);
+                        startActivity(intent);
+                    }
+                });
+
+
+                assignmentLibraryAdapter = new SimpleAdapter(this,
+                        assignmentLibraryList,
+                        android.R.layout.simple_list_item_1,
+                        new String[]{"assignmentName"},
+                        new int[]{android.R.id.text1});
+                lvAssignments.setAdapter(assignmentLibraryAdapter);
+
+
+                getAssignments();
+
+
+                bGetText.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
 
                         AlertDialog.Builder builder = new AlertDialog.Builder(context);
                         LayoutInflater inflater = getLayoutInflater();
-                        View layout = inflater.inflate(R.layout.assignment_to_student_dialog, null);
+                        View layout = inflater.inflate(R.layout.dialog_text_overview, null);
 
+                        lvTextToAss = (ListView) layout.findViewById(R.id.lvTextToAss);
                         builder.setView(layout);
 
                         AlertDialog dialog = builder.create();
                         dialog.setCanceledOnTouchOutside(true);
                         dialog.show();
 
+                        textAdapter = new SimpleAdapter(context,
+                                textList,
+                                android.R.layout.simple_list_item_1,
+                                new String[]{"textname"},
+                                new int[]{android.R.id.text1}); //text1 = the text within the listView
+                        lvTextToAss.setAdapter(textAdapter);
+                        lvTextToAss.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                            @Override
+                            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+
+                                Map<String, String> textData = textList.get(position);
+                                String textName = textData.get("textname");
+                                String textId = textData.get("id");
+                                tvTextChosen.setText(textName);
+                                tvTextId.setText(textId);
+
+                            }
+                        });
+
+                        getTexts();
 
                     }
                 });
 
-                AlertDialog dialog = builder.create();
-                dialog.setCanceledOnTouchOutside(true);
-                dialog.show();
-
-
 
             }
-        });
 
-        new ALTask(new AssignmentCallback() {
-            @Override
-            public void assignmentListDone(HashMap<String, HashMap<String, String>> assignments) {
-                for (Map.Entry<String, HashMap<String, String>> assignment : assignments.entrySet()){
-
-                    Map<String, String> assInfo = new HashMap<String, String>();
-                    String id = assignment.getValue().get("id");
-                    String assignmentName = assignment.getValue().get("assignmentName");
-                    String assignmentId = assignment.getValue().get("assignmentId");
-                    String textId = assignment.getValue().get("textId");
-
-                    assInfo.put("id", id);
-                    assInfo.put("assignmentName", assignmentName);
-                    assInfo.put("assignmentId", assignmentId);
-                    assInfo.put("textId", textId);
-
-                    assignmentLibraryList.add(assInfo);
-                }assignmentLibraryAdapter.notifyDataSetChanged();
-            }
-
-        },context).execute("", "");
-
-
-
-
-
-        bGetText.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-
-                AlertDialog.Builder builder = new AlertDialog.Builder(context);
-                LayoutInflater inflater = getLayoutInflater();
-                View layout = inflater.inflate(R.layout.text_overview_dialog, null);
-
-                lvTextToAss = (ListView) layout.findViewById(R.id.lvTextToAss);
-                builder.setView(layout);
-
-                AlertDialog dialog = builder.create();
-                dialog.setCanceledOnTouchOutside(true);
-                dialog.show();
-
-                textAdapter = new SimpleAdapter(context,
-                        textList,
-                        android.R.layout.simple_list_item_1,
-                        new String[]{"textname"},
-                        new int[]{android.R.id.text1}); //text1 = the text within the listView
-                lvTextToAss.setAdapter(textAdapter);
-                lvTextToAss.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-                    @Override
-                    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-
-                        Map<String, String> textData = textList.get(position);
-                        String textName = textData.get("textname");
-                        String textId = textData.get("id");
-                        tvTextChosen.setText(textName);
-                        tvTextId.setText(textId);
-
-                    }
-                });
-
+            public void getTexts() {
                 new TextTask(new TextCallback() {
                     @Override
                     public void textListDone(HashMap<String, HashMap<String, String>> texts) {
@@ -231,11 +211,42 @@ public class AssignmentActivity extends AppCompatActivity {
                         }
                         textAdapter.notifyDataSetChanged();
                     }
-                }, context).execute(""); //Nothing within "" to get every text - see php script*/
+                }, context).execute(""); //Nothing within "" to get every text - see php script
+            }
+
+            public void getAssignments() {
+
+                new ALTask(new AssignmentCallback() {
+                    @Override
+                    public void assignmentListDone(HashMap<String, HashMap<String, String>> assignments) {
+                        for (Map.Entry<String, HashMap<String, String>> assignment : assignments.entrySet()) {
+
+                            Map<String, String> assInfo = new HashMap<String, String>();
+                            String id = assignment.getValue().get("id");
+                            String assignmentName = assignment.getValue().get("assignmentName");
+                            String assignmentId = assignment.getValue().get("assignmentId");
+                            String textId = assignment.getValue().get("textId");
+                            String textName = assignment.getValue().get("textname");
+
+                            assInfo.put("id", id);
+                            assInfo.put("assignmentName", assignmentName);
+                            assInfo.put("assignmentId", assignmentId);
+                            assInfo.put("textId", textId);
+                            assInfo.put("textname", textName);
+
+
+
+                            assignmentLibraryList.add(assInfo);
+                        }
+                        assignmentLibraryAdapter.notifyDataSetChanged();
+                    }
+
+                }, context).execute("", "");
+            }
+
+            public void getClasses() {
 
             }
-        });
+        }
 
 
-
-    }}

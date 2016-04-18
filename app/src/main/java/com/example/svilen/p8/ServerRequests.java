@@ -696,12 +696,14 @@ class ALTask extends AsyncTask<String, Void, HashMap<String, HashMap<String, Str
                String textId = specificAssignment.getString("textId");
                  id = specificAssignment.getString("id");
                String assignmentId = specificAssignment.getString("assignmentId");
+               String textName = specificAssignment.getString("textname");
 
                HashMap<String, String> assignmentInfo = new HashMap<>();
                assignmentInfo.put("assignmentName", assignmentName);
                assignmentInfo.put("textId", textId);
                assignmentInfo.put("id", id);
                assignmentInfo.put("assignmentId", assignmentId);
+               assignmentInfo.put("textname", textName);
 
                results.put("Id: " + id, assignmentInfo);
            }
