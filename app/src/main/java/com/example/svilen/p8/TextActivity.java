@@ -5,7 +5,6 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.graphics.Color;
 import android.os.Bundle;
-import android.support.annotation.IntegerRes;
 import android.support.v7.app.AppCompatActivity;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -68,7 +67,6 @@ public class TextActivity extends AppCompatActivity {
         setChanged(false);
         getTexts();
 
-        //textAdapter = new SimpleAdapter(this, textList, android.R.layout.simple_list_item_1, new String [] {"textname"}, new int[] {android.R.id.text1}); //text1 = the text within the listView
         textAdapter = new ListViewAdapter(this, textList, android.R.layout.simple_list_item_2, new String [] {"textname", "complexity"}, new int[] {android.R.id.text1, android.R.id.text2}, colors);
 
         lvTexts.setAdapter(textAdapter);
@@ -106,31 +104,13 @@ public class TextActivity extends AppCompatActivity {
                                 clear = true;
                             }
                             if(clear == true){
-                                Map<String, String> textData = textList.get(position);
-                                textContent = textData.get("textcontent");
-                                textName = textData.get("textname");
-                                textId = textData.get("id");
-                                etContent.setText(textContent);
-                                etTextName.setText(textName);
-                                bDelete.setEnabled(true);
-                                calculate();
-                                setChanged(false);
-                                setNewText(false);
+                                setContentPane(position);
                             }
                         }
                     });
 
                 } else {
-                    Map<String, String> textData = textList.get(position);
-                    textContent = textData.get("textcontent");
-                    textName = textData.get("textname");
-                    textId = textData.get("id");
-                    etContent.setText(textContent);
-                    etTextName.setText(textName);
-                    bDelete.setEnabled(true);
-                    calculate();
-                    setChanged(false);
-                    setNewText(false);
+                    setContentPane(position);
                 }
             }
         });
@@ -139,9 +119,6 @@ public class TextActivity extends AppCompatActivity {
         bAddText.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
-
-
                 if(changed){
                     confirm(new DialogCallback() {
                         @Override
@@ -169,20 +146,12 @@ public class TextActivity extends AppCompatActivity {
                                 clear = true;
                             }
                             if(clear){
-                                etContent.setText("");
-                                etTextName.setText("");
-                                bDelete.setEnabled(false);
-                                setChanged(false);
-                                setNewText(true);
+                                setContentPane(0);
                             }
                         }
                     });
                 } else {
-                    etContent.setText("");
-                    etTextName.setText("");
-                    bDelete.setEnabled(false);
-                    setChanged(false);
-                    setNewText(true);
+                    setContentPane(0);
                 }
 
 
@@ -431,10 +400,30 @@ public class TextActivity extends AppCompatActivity {
                     .show();
 
         }
-        public void setColor(){
 
-            int children = lvTexts.getChildCount();
-            Log.d("children", String.valueOf(children));
+        //@param position - the position from the listview - if 0 clear the content pane as new text.
+        public void setContentPane(int position){
+            if(position != 0) {
+                Map<String, String> textData = textList.get(position);
+                textContent = textData.get("textcontent");
+                textName = textData.get("textname");
+                textId = textData.get("id");
+                etContent.setText(textContent);
+                etTextName.setText(textName);
+                bDelete.setEnabled(true);
+                calculate();
+                setChanged(false);
+                setNewText(false);
+
+                //get question from db and add to listview.
+            } else {
+                etContent.setText("");
+                etTextName.setText("");
+                bDelete.setEnabled(false);
+                setChanged(false);
+                setNewText(true);
+                //clear questions listview.
+            }
         }
     }
 

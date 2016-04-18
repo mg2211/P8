@@ -52,18 +52,20 @@
         </LinearLayout>
 
         <LinearLayout
-            android:orientation="vertical"
+            android:orientation="horizontal"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_marginLeft="20dp"
             android:layout_marginTop="10dp"
-            android:layout_marginBottom="10dp">
+            android:layout_marginBottom="10dp"
+            android:id="@+id/contentPane"
+            android:layout_marginRight="20dp">
 
             <LinearLayout
                 android:orientation="vertical"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_weight="1">
+                android:layout_width="750dp"
+                android:layout_height="match_parent"
+                android:id="@+id/TextPane">
 
                 <EditText
                     android:layout_width="fill_parent"
@@ -82,12 +84,19 @@
                     android:inputType="textMultiLine"
                     android:ems="10"
                     android:id="@+id/etContent"
-                    android:layout_weight="0"
+                    android:layout_weight="1"
                     android:background="@null"
                     android:hint="Text content"
                     android:lines="10"
                     android:textAlignment="gravity"
                     android:gravity="top" />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:orientation="vertical"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
 
                 <TextView
                     android:layout_width="wrap_content"
@@ -98,21 +107,36 @@
                     android:layout_weight="0" />
 
                 <Button
-                    android:layout_width="wrap_content"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="Delete Text"
-                    android:id="@+id/bDelete"
-                    android:layout_weight="0" />
+                    android:text="New Button"
+                    android:id="@+id/button2"
+                    android:layout_marginBottom="0dp" />
+
+                <ListView
+                    android:layout_width="fill_parent"
+                    android:layout_height="363dp"
+                    android:id="@+id/listView2"
+                    android:layout_weight="1"
+                    android:layout_marginTop="0dp" />
 
                 <Button
-                    android:layout_width="wrap_content"
+                    android:layout_width="fill_parent"
                     android:layout_height="wrap_content"
                     android:text="Save"
                     android:id="@+id/bSave"
-                    android:layout_weight="0" />
+                    android:layout_weight="0"
+                    android:layout_gravity="center_horizontal" />
+
+                <Button
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Delete Text"
+                    android:id="@+id/bDelete"
+                    android:layout_weight="0"
+                    android:layout_gravity="center_horizontal" />
 
             </LinearLayout>
-
         </LinearLayout>
 
     </LinearLayout>
