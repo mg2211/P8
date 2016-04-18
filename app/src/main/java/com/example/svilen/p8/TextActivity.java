@@ -146,12 +146,12 @@ public class TextActivity extends AppCompatActivity {
                                 clear = true;
                             }
                             if(clear){
-                                setContentPane(0);
+                                setContentPane(-1);
                             }
                         }
                     });
                 } else {
-                    setContentPane(0);
+                    setContentPane(-1);
                 }
 
 
@@ -273,9 +273,9 @@ public class TextActivity extends AppCompatActivity {
                     }
                 }
                 lix = (O / P) + (L * 100 / O);
-                tvComplexity.setText("Complexity: " + String.valueOf(lix));
+                tvComplexity.setText(String.valueOf(lix));
             } else {
-                tvComplexity.setText("Complexity: Unable to calculate");
+                tvComplexity.setText("");
             }
         }
         public void getTexts(){
@@ -401,9 +401,9 @@ public class TextActivity extends AppCompatActivity {
 
         }
 
-        //@param position - the position from the listview - if 0 clear the content pane as new text.
+        //@param position - the position from the listview
         public void setContentPane(int position){
-            if(position != 0) {
+            if(position >= 0) {
                 Map<String, String> textData = textList.get(position);
                 textContent = textData.get("textcontent");
                 textName = textData.get("textname");

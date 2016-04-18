@@ -17,6 +17,14 @@
     <string name="email">E-mail address</string>
     <string name="contactEmail">Parent/Caretaker E-mail address</string>
     <string name="role">Role</string>
+    <string name="text_name">Text name</string>
+    <string name="text_content">Text content</string>
+    <string name="complexity">Complexity:</string>
+    <string name="add_question">Add Question</string>
+    <string name="save">Save</string>
+    <string name="delete_text">Delete Text</string>
+    <string name="add_new">Add new</string>
+    <string name="search">Search</string>
 
     <!-- Spinner content array-->
     <string-array name="role_array">
