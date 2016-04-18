@@ -1052,20 +1052,156 @@ class TempTextTask extends AsyncTask<String, Void, HashMap<String, String>>{
 }
 
 
+class UserTask extends AsyncTask<String, Void, String>{
 
+    UserCallback delegate;
 
+    String username;
+    String userId;
+    String teacherId;
+    String studentId;
+    String lastName;
+    String firstName;
+    String role;
+    String parentEmail;
 
+    private final Context context;
+    ProgressDialog progressDialog;
 
+    @Override
+    protected void onPreExecute() {
+    }
 
+    public UserTask(Context context){
+        this.context = context;
+        progressDialog = new ProgressDialog(context);
+        progressDialog.setCancelable(false);
+        progressDialog.setTitle("Processing...");
+        progressDialog.setMessage("Please wait ...");
+        progressDialog.show();
+    }
 
+    public void executeTask(){
+        this.execute();
+    }
 
+    @Override
+    protected String doInBackground(String... params) {
+        if (params[0].equals("")) {
+            username = "";
+            userId = "";
+            teacherId = "";
+            studentId = "";
+            lastName = "";
+            firstName = "";
+            role = "";
+            parentEmail = "";
 
+        } else {
+            username = params[0];
+            userId = params[1];
+            teacherId = params[2];
+            studentId = params[3];
+            lastName = params[4];
+            firstName = params[5];
+            role = params[6];
+            parentEmail = params[7];
+        }
 
+        try {
+            String generalResponse;
+            int responseCode;
 
+            URL url = new URL("http://emilsiegenfeldt.dk/p8/users.php");
+            HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+            connection.setRequestMethod("POST");
 
+            Uri.Builder builder = new Uri.Builder().appendQueryParameter("username", username)
+                    .appendQueryParameter("userid", userId)
+                    .appendQueryParameter("studentid", studentId)
+                    .appendQueryParameter("teacherid", teacherId)
+                    .appendQueryParameter("username", username)
+                    .appendQueryParameter("lastname", lastName)
+                    .appendQueryParameter("firstname", firstName)
+                    .appendQueryParameter("role", role)
+                    .appendQueryParameter("parentemail", parentEmail);
 
+            String query = builder.build().getEncodedQuery();
+            OutputStream os = connection.getOutputStream();
+            BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(os, "UTF-8"));
+            writer.write(query);
+            writer.flush();
+            writer.close();
+            os.close();
 
+            connection.connect();
+            //catch server response
+            InputStream in = new BufferedInputStream(connection.getInputStream());
 
+            String response = IOUtils.toString(in, "UTF-8");
 
+            JSONObject JSONResult = new JSONObject(response);
+            generalResponse = JSONResult.getString("generalResponse");
+            responseCode = JSONResult.getInt("responseCode");
+            HashMap<String, HashMap<String, String>> results = new HashMap<>();
 
+            JSONArray users = JSONResult.getJSONArray("users");
+            for(int i = 0; i<users.length(); i++){
+                HashMap<String, String> userInfo = new HashMap<>();
 
+                JSONObject user = users.getJSONObject(i);
+                String userId = user.getString("userId");
+                userInfo.put("username",user.getString("username"));
+                userInfo.put("userId",userId);
+                userInfo.put("firstName", user.getString("firstname"));
+                userInfo.put("lastName", user.getString("lastname"));
+
+                String role = user.getString("role");
+                userInfo.put("role", role);
+                if(role.equals("teacher")){
+                    userInfo.put("teacherId", user.getString("teacherId"));
+                } else if(role.equals("student")){
+                    userInfo.put("studentId", user.getString("studentId"));
+                    userInfo.put("studentClass", user.getString("classid"));
+                    userInfo.put("contactEmail", user.getString("parentemail"));
+                }
+                results.put("userId: " + userId, userInfo);
+            }
+
+            HashMap<String, String> serverResponse = new HashMap<>();
+            serverResponse.put("generalResponse", generalResponse);
+            serverResponse.put("responseCode", String.valueOf(responseCode));
+            results.put("response", serverResponse);
+
+            Log.d("response", results.toString());
+
+        } catch (IOException e) {
+            //servererror
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+        return null;
+    }
+
+    protected void onPostExecute(Map<String,HashMap<String, String>> result) {
+
+        String generalResponse = result.get("response").get("generalResponse");
+        String responseCode = result.get("response").get("responseCode");
+        progressDialog.dismiss();
+
+        if (Integer.parseInt(responseCode) == 100) {
+            result.remove("response");
+            delegate.userTaskDone(result);
+        } else if (Integer.parseInt(responseCode) != 100) {
+            int duration = Toast.LENGTH_LONG;
+            Toast toast = Toast.makeText(context, "Response code " + responseCode +", " + "Error message: " + generalResponse, duration);
+            toast.show();
+        }
+        else {
+            int duration = Toast.LENGTH_LONG;
+            Toast toast = Toast.makeText(context, "Something went horribly wrong, no response code!", duration);
+            toast.show();
+        }
+    }
+}
