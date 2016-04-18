@@ -414,7 +414,6 @@ public class TextActivity extends AppCompatActivity {
                 calculate();
                 setChanged(false);
                 setNewText(false);
-
                 //get question from db and add to listview.
             } else {
                 etContent.setText("");
