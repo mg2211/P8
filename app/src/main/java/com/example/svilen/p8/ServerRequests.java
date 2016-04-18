@@ -769,6 +769,7 @@ class ALTask extends AsyncTask<String, Void, HashMap<String, HashMap<String, Str
 class CreateAssToLibTask extends AsyncTask<String, Void, HashMap<String, String>>{
 
 
+
     ProgressDialog progressDialog;
    final Context context;
 
@@ -833,6 +834,7 @@ class CreateAssToLibTask extends AsyncTask<String, Void, HashMap<String, String>
         result.put("generalResponse", generalResponse);
         result.put("responseCode", String.valueOf(responseCode));
         result.put("assignmentName", assignmentName);
+        Log.d("asdff", "qwedsf");
 
         return result;
     }
