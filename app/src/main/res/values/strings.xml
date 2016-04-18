@@ -15,6 +15,7 @@
     <string name="firstName">First name</string>
     <string name="lastName">Last name</string>
     <string name="email">E-mail address</string>
+    <string name="contactEmail">Parent/Caretaker E-mail address</string>
     <string name="role">Role</string>
 
     <!-- Spinner content array-->
