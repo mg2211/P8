@@ -659,6 +659,9 @@ class ALTask extends AsyncTask<String, Void, HashMap<String, HashMap<String, Str
         int responseCode = 0;
         HashMap<String, HashMap<String, String>> results = new HashMap<>();
 
+
+
+
        try {
 
 

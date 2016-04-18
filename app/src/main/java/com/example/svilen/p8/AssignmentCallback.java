@@ -9,5 +9,7 @@ public interface AssignmentCallback {
 
 
         void assignmentListDone(HashMap<String, HashMap<String, String>> assignments);
+
+         //assLibID, map of stuff relating to ID fx 1, String like $textname, second string actual data
     }
 

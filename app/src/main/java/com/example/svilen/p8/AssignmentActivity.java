@@ -42,6 +42,13 @@ public class AssignmentActivity extends AppCompatActivity {
     TextView textId1;
     Button bAssToStudent;
 
+    List<Map<String, String>> classList = new ArrayList<>();
+    String teacherId;
+    UserInfo userinfo;
+    HashMap<String, String> user;
+    SimpleAdapter classAdapter;
+
+
 
 
 
@@ -50,6 +57,9 @@ public class AssignmentActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_assignment);
 
+        userinfo = new UserInfo(context);
+        user = userinfo.getUser();
+        teacherId = user.get("teacherId");
 
         assLibId = (TextView) findViewById(R.id.tvAssLibId);
         assignmentName = (TextView) findViewById(R.id.tvAssName);
@@ -69,15 +79,30 @@ public class AssignmentActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
 
+
                 AlertDialog.Builder builder = new AlertDialog.Builder(context);
                 LayoutInflater inflater = getLayoutInflater();
                 View layout = inflater.inflate(R.layout.dialog_assignment, null);
+                ListView lvClasses = (ListView) layout.findViewById(R.id.lvClasses1);
 
+
+
+                classAdapter = new SimpleAdapter(context, classList,
+                        android.R.layout.simple_list_item_2,
+                        new String[] {"Class", "Number of students" },
+                        new int[] {android.R.id.text1, android.R.id.text2 });
+                lvClasses.setAdapter(classAdapter);
+
+                getClasses();
                 builder.setView(layout);
 
                 AlertDialog dialog = builder.create();
                 dialog.setCanceledOnTouchOutside(true);
                 dialog.show();
+
+
+
+
 
             }
         });
@@ -245,8 +270,27 @@ public class AssignmentActivity extends AppCompatActivity {
             }
 
             public void getClasses() {
-
+                new ClassTask(new ClassCallback() {
+                    @Override
+                    public void classListDone(HashMap<String, HashMap<String, String>> classes) {
+                        if(!classList.isEmpty()){
+                            classList.clear();
+                        }
+                        for (Map.Entry<String, HashMap<String, String>> classId : classes.entrySet()) {
+                            Map<String, String> classInfo = new HashMap<>();
+                            String specificClassname = classId.getValue().get("className");
+                            String specificClassStudents = classId.getValue().get("studentsInClass");
+                            String specificClassId = classId.getValue().get("classId");
+                            classInfo.put("ClassId", specificClassId);
+                            classInfo.put("Class", specificClassname);
+                            classInfo.put("Number of students", "Number of students: "+ specificClassStudents);
+                            classList.add(classInfo);
+                        }
+                        classAdapter.notifyDataSetChanged();
+                    }
+                },context).execute(teacherId);
             }
-        }
+            }
+
 
 

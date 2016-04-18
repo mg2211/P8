@@ -1,47 +1,61 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical" android:layout_width="match_parent"
-    android:layout_height="match_parent">
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textAppearance="?android:attr/textAppearanceLarge"
-        android:text="Assignment Id"
-        android:id="@+id/tvAssId1" />
+    <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:tools="http://schemas.android.com/tools" android:layout_width="fill_parent"
+        android:layout_height="fill_parent" android:paddingLeft="0dp"
+        android:paddingRight="0dp"
+        android:paddingTop="-5dp"
+        android:paddingBottom="-5dp"
+        tools:context="com.example.svilen.p8.TestActivity">
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textAppearance="?android:attr/textAppearanceLarge"
-        android:text="Assignment name"
-        android:id="@+id/tvAssName1" />
+        <LinearLayout
+            android:orientation="horizontal"
+            android:layout_width="fill_parent"
+            android:layout_height="match_parent"
+            android:id="@+id/linearLayout"
+            android:layout_marginBottom="-8dp">
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textAppearance="?android:attr/textAppearanceLarge"
-        android:text="Text name"
-        android:id="@+id/tvTextName1" />
+            <LinearLayout
+                android:orientation="vertical"
+                android:layout_width="251dp"
+                android:layout_height="fill_parent"
+                android:padding="0dp"
+                android:id="@+id/menuLinear"
+                android:background="#f30000">
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textAppearance="?android:attr/textAppearanceLarge"
-        android:text="Text id"
-        android:id="@+id/tvTextId1" />
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textAppearance="?android:attr/textAppearanceLarge"
-        android:text="Text content"
-        android:id="@+id/tvTextContent1" />
 
-    <Button
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Assign to student"
-        android:id="@+id/bAssToStudent1" />
+                <ListView
+                    android:layout_width="wrap_content"
+                    android:layout_height="fill_parent"
+                    android:id="@+id/lvClasses1"
+                    android:layout_marginTop="0dp"
+                    android:background="#ffeb3b" />
+            </LinearLayout>
 
-</LinearLayout>
+            <LinearLayout
+                android:orientation="vertical"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textAppearance="?android:attr/textAppearanceLarge"
+                    android:text="Students in class"
+                    android:id="@+id/tvStudents"
+                    android:layout_marginLeft="20dp"
+                    android:layout_marginTop="10dp"/>
+
+                <ListView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/lvStudents1" />
+
+            </LinearLayout>
+
+        </LinearLayout>
+
+    </RelativeLayout>
+
+
