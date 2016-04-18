@@ -188,13 +188,18 @@ class RegisterTask extends AsyncTask<String, Void, HashMap<String, String>> {
     ProgressDialog progressDialog;
     final Context context;
 
-    RegisterTask(Context context) {
-        this.context = context;
+    @Override
+    protected void onPreExecute() {
+        super.onPreExecute();
         progressDialog = new ProgressDialog(context);
-        progressDialog.setCancelable(false);
+        progressDialog.setCancelable(true);
         progressDialog.setTitle("Processing...");
         progressDialog.setMessage("Please wait...");
         progressDialog.show();
+    }
+
+    RegisterTask(Context context) {
+        this.context = context;
     }
 
     @Override
@@ -205,10 +210,10 @@ class RegisterTask extends AsyncTask<String, Void, HashMap<String, String>> {
         String firstname = userdata[3];
         String lastname = userdata[4];
         String email = userdata[5];
+        String parentemail = userdata[6];
 
         String generalResponse = null;
         int responseCode = 0;
-
 
         try {
             URL url = new URL("http://emilsiegenfeldt.dk/p8/newUser.php");
@@ -220,7 +225,8 @@ class RegisterTask extends AsyncTask<String, Void, HashMap<String, String>> {
                     .appendQueryParameter("password", password)
                     .appendQueryParameter("firstname", firstname)
                     .appendQueryParameter("lastname", lastname)
-                    .appendQueryParameter("email", email);
+                    .appendQueryParameter("email", email)
+                    .appendQueryParameter("parentemail", parentemail);
 
             String query = builder.build().getEncodedQuery();
             OutputStream os = connection.getOutputStream();
@@ -262,7 +268,10 @@ class RegisterTask extends AsyncTask<String, Void, HashMap<String, String>> {
 
     protected void onPostExecute(HashMap<String, String> result) {
 
-        progressDialog.dismiss();
+        if(progressDialog.isShowing()){
+            progressDialog.dismiss();
+        }
+
         String responseCode = result.get("responseCode");
         String generalResponse = result.get("generalResponse");
         String username = result.get("username");
@@ -283,7 +292,11 @@ class RegisterTask extends AsyncTask<String, Void, HashMap<String, String>> {
             CharSequence alert = "Server connection failed - Please try again later";
             Toast toast = Toast.makeText(context, alert, duration);
             toast.show();
-
+        } else if (Integer.parseInt(responseCode) == 400) {
+            //If server connection fails.
+            int duration = Toast.LENGTH_LONG;
+            Toast toast = Toast.makeText(context, generalResponse, duration);
+            toast.show();
         }
 
     }
@@ -1169,10 +1182,14 @@ class RoleTask extends AsyncTask<String, Void, Map<String,HashMap<String, String
     ProgressDialog progressDialog;
     final Context context;
 
+    @Override
+    protected void onPreExecute() {
+    }
+
     RoleTask(RoleCallback delegate, Context context) {
+        progressDialog = new ProgressDialog(context);
         this.delegate = delegate;
         this.context = context;
-        progressDialog = new ProgressDialog(context);
         progressDialog.setCancelable(false);
         progressDialog.setTitle("Processing...");
         progressDialog.setMessage("Please wait...");
