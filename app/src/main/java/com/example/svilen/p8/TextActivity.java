@@ -75,6 +75,14 @@ public class TextActivity extends AppCompatActivity {
                 new int[] {android.R.id.text1});
         lvQuestions.setAdapter(questionAdapter);
 
+        lvQuestions.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> adapterView, View view, int position, long l) {
+                Log.d("question info OC", questionList.get(position).toString());
+            }
+        });
+
+
 
         setNewText(true);
         setChanged(false);
@@ -362,19 +370,15 @@ public class TextActivity extends AppCompatActivity {
                     {
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
-                            new TempTextTask(context).executeTask("delete",textId,"","",0);
-                            getTexts();
-                            etContent.setText("");
-                            etTextName.setText("");
-                            calculate();
-                            Log.d("textname", textName);
-                            Log.d("textId", textId);
-                            setNewText(true);
-                            setChanged(false);
-                            bDelete.setEnabled(false);
-                            textId = "";
-                            textName = "";
+                            new TempTextTask(context).executeTask("delete",textId,"","",0);//delete text
+                            new QuestionTask(new QuestionCallback() {//delete questions
+                                @Override
+                                public void QuestionTaskDone(HashMap<String, HashMap<String, String>> results) {
+                                }
+                            },context).executeTask("delete","",textId,"","");
 
+                            getTexts();
+                            setContentPane(-1);
                         }
 
                     })
@@ -412,7 +416,6 @@ public class TextActivity extends AppCompatActivity {
                     .show();
 
         }
-
         //@param position - the position from the listview - pass -1 for new text
         public void setContentPane(int position){
             if(position >= 0) {
@@ -443,10 +446,15 @@ public class TextActivity extends AppCompatActivity {
                 @Override
                 public void QuestionTaskDone(HashMap<String, HashMap<String, String>> results) {
                     results.remove("response");
+                    questionList.clear();
                     for (Map.Entry<String, HashMap<String, String>> question : results.entrySet()) {
                         Map<String, String> questionInfo = new HashMap<>();
                         String specificQuestionContent = question.getValue().get("questionContent");
+                        String specificQuestionId = question.getValue().get("questionId");
+                        String specificQuestionAnswers = question.getValue().get("answers");
                         questionInfo.put("Question",specificQuestionContent);
+                        questionInfo.put("id", specificQuestionId);
+                        questionInfo.put("answers",specificQuestionAnswers);
                         questionList.add(questionInfo);
                     }
                     questionAdapter.notifyDataSetChanged();
