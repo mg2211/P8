@@ -11,8 +11,9 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:id="@+id/etDialogQuestion"
-        android:hint="Question" />
-
+        android:hint="Question"
+        android:selectAllOnFocus="false"
+        android:tag="question"/>
     <LinearLayout
         android:orientation="vertical"
         android:layout_width="match_parent"
@@ -26,23 +27,23 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginBottom="20dp"
-            android:id="@+id/LLAnswer1">
+            android:tag="LLAnswer1">
 
             <EditText
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:id="@+id/etDialogAnswer1"
                 android:layout_weight="1"
-                android:layout_marginRight="20dp" />
+                android:layout_marginRight="20dp"
+                android:tag="etDialogAnswer1"/>
 
             <Switch
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:id="@+id/swDialogSwitch1"
                 android:checked="false"
                 android:layout_marginRight="20dp"
                 android:textOn="Right"
-                android:textOff="Wrong"/>
+                android:textOff="Wrong"
+                android:tag="swDialogSwitch1"/>
         </LinearLayout>
 
         <LinearLayout
@@ -55,18 +56,18 @@
             <EditText
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:id="@+id/etDialogAnswer2"
                 android:layout_weight="1"
-                android:layout_marginRight="20dp" />
+                android:layout_marginRight="20dp"
+                android:tag="etDialogAnswer2"/>
 
             <Switch
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:id="@+id/swDialogSwitch2"
                 android:checked="false"
                 android:layout_marginRight="20dp"
                 android:textOn="Right"
-                android:textOff="Wrong" />
+                android:textOff="Wrong"
+                android:tag="swDialogSwitch2"/>
         </LinearLayout>
     </LinearLayout>
 
@@ -75,7 +76,7 @@
         android:layout_height="wrap_content"
         android:text="Add answer"
         android:id="@+id/bDialogAddAnswer"
-        android:layout_gravity="right" />
+        android:layout_gravity="right"/>
 
     <LinearLayout
         android:orientation="horizontal"

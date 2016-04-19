@@ -98,6 +98,7 @@ public class TextActivity extends AppCompatActivity {
                 final EditText etDialogQuestion = (EditText) layout.findViewById(R.id.etDialogQuestion);
                 final LinearLayout LLAnswers = (LinearLayout) layout.findViewById(R.id.LLAnswers);
                 final int childCount = LLAnswers.getChildCount();
+
                 bDialogAddAnswer.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
@@ -109,14 +110,17 @@ public class TextActivity extends AppCompatActivity {
                         );
                         llparams.setMargins(0,0,0, pxToDp(20));
                         answer.setOrientation(LinearLayout.HORIZONTAL);
-                        answer.setId(childCount+1);
+                        String answerTag = "LLAnswer"+(childCount+1);
+                        answer.setTag(answerTag);
                         answer.setLayoutParams(llparams);
 
                         EditText answerText = new EditText(context);
-                        answerText.setText("hejflksdjf");
+                        answerText.setHint("Answer");
                         LinearLayout.LayoutParams etParams = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT,LinearLayout.LayoutParams.WRAP_CONTENT, 1);
                         etParams.setMargins(0,0,pxToDp(20),0);
                         answerText.setLayoutParams(etParams);
+                        String etTag = "etDialogAnswer"+(childCount+1);
+                        answerText.setTag(etTag);
                         answer.addView(answerText);
 
                         Switch answerSwitch = new Switch(context);
@@ -125,10 +129,9 @@ public class TextActivity extends AppCompatActivity {
                         answerSwitch.setTextOff("Wrong");
                         answerSwitch.setTextOn("Right");
                         answerSwitch.setLayoutParams(swParams);
-
-
+                        String switchTag = "swDialogSwitch"+(childCount+1);
+                        answerSwitch.setTag(switchTag);
                         answer.addView(answerSwitch);
-
                         LLAnswers.addView(answer);
                     }
                 });
