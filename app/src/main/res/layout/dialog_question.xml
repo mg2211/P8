@@ -34,7 +34,8 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:layout_marginRight="20dp"
-                android:tag="etDialogAnswer1"/>
+                android:tag="etDialogAnswer1"
+                android:hint="Required answer" />
 
             <Switch
                 android:layout_width="wrap_content"
@@ -58,7 +59,8 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:layout_marginRight="20dp"
-                android:tag="etDialogAnswer2"/>
+                android:tag="etDialogAnswer2"
+                android:hint="Required answer" />
 
             <Switch
                 android:layout_width="wrap_content"
