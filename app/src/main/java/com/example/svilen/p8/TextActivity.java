@@ -14,6 +14,7 @@ import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
+import android.widget.SimpleAdapter;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -33,6 +34,9 @@ public class TextActivity extends AppCompatActivity {
     List<Map<String, String>> textList = new ArrayList<>();
     ArrayList<Integer> colors = new ArrayList<>();
     ListViewAdapter textAdapter;
+    ListView lvQuestions;
+    List<Map<String, String>> questionList = new ArrayList<>();
+    SimpleAdapter questionAdapter;
     Button bAddText;
     Button bDelete;
     Button bSave;
@@ -63,17 +67,18 @@ public class TextActivity extends AppCompatActivity {
         tvComplexity = (TextView) findViewById(R.id.tvComplexity);
         etSearch = (EditText) findViewById(R.id.etSearch);
         bDelete.setEnabled(false);
+
+        lvQuestions = (ListView) findViewById(R.id.lvQuestions);
+        questionAdapter = new SimpleAdapter(this, questionList,
+                android.R.layout.simple_list_item_1,
+                new String[] {"Question"},
+                new int[] {android.R.id.text1});
+        lvQuestions.setAdapter(questionAdapter);
+
+
         setNewText(true);
         setChanged(false);
         getTexts();
-
-        new QuestionTask(new QuestionCallback() {
-            @Override
-            public void QuestionTaskDone(HashMap<String, HashMap<String, String>> results) {
-
-            }
-        },context).executeTask("get","","","","");
-
         textAdapter = new ListViewAdapter(this, textList, android.R.layout.simple_list_item_2, new String [] {"textname", "complexity"}, new int[] {android.R.id.text1, android.R.id.text2}, colors);
 
         lvTexts.setAdapter(textAdapter);
@@ -421,19 +426,32 @@ public class TextActivity extends AppCompatActivity {
                 calculate();
                 setChanged(false);
                 setNewText(false);
-                //get question from db and add to listview.
+                getQuestions(textId);
             } else {
                 etContent.setText("");
                 etTextName.setText("");
                 bDelete.setEnabled(false);
-                Long time = System.currentTimeMillis()/1000;
+                Long time = System.currentTimeMillis()/1000; //setting a temporary unique id for new texts
                 textId = time.toString();
                 setChanged(false);
                 setNewText(true);
-                //clear questions listview.
+                getQuestions(textId);
             }
         }
         public void getQuestions(String textId){
+            new QuestionTask(new QuestionCallback() {
+                @Override
+                public void QuestionTaskDone(HashMap<String, HashMap<String, String>> results) {
+                    results.remove("response");
+                    for (Map.Entry<String, HashMap<String, String>> question : results.entrySet()) {
+                        Map<String, String> questionInfo = new HashMap<>();
+                        String specificQuestionContent = question.getValue().get("questionContent");
+                        questionInfo.put("Question",specificQuestionContent);
+                        questionList.add(questionInfo);
+                    }
+                    questionAdapter.notifyDataSetChanged();
+                }
+            },context).executeTask("get","",textId,"","");
         }
     }
 
