@@ -67,6 +67,13 @@ public class TextActivity extends AppCompatActivity {
         setChanged(false);
         getTexts();
 
+        new QuestionTask(new QuestionCallback() {
+            @Override
+            public void QuestionTaskDone(HashMap<String, HashMap<String, String>> results) {
+
+            }
+        },context).executeTask("get","","","","");
+
         textAdapter = new ListViewAdapter(this, textList, android.R.layout.simple_list_item_2, new String [] {"textname", "complexity"}, new int[] {android.R.id.text1, android.R.id.text2}, colors);
 
         lvTexts.setAdapter(textAdapter);
@@ -401,7 +408,7 @@ public class TextActivity extends AppCompatActivity {
 
         }
 
-        //@param position - the position from the listview
+        //@param position - the position from the listview - pass -1 for new text
         public void setContentPane(int position){
             if(position >= 0) {
                 Map<String, String> textData = textList.get(position);
@@ -419,10 +426,14 @@ public class TextActivity extends AppCompatActivity {
                 etContent.setText("");
                 etTextName.setText("");
                 bDelete.setEnabled(false);
+                Long time = System.currentTimeMillis()/1000;
+                textId = time.toString();
                 setChanged(false);
                 setNewText(true);
                 //clear questions listview.
             }
+        }
+        public void getQuestions(String textId){
         }
     }
 

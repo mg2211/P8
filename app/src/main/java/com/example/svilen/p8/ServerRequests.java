@@ -6,14 +6,8 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.AsyncTask;
-import android.os.Bundle;
 import android.preference.PreferenceManager;
-import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
-import android.widget.ArrayAdapter;
-import android.widget.Button;
-import android.widget.EditText;
-import android.widget.Spinner;
 import android.widget.Toast;
 
 import org.apache.commons.io.IOUtils;
@@ -27,14 +21,9 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
-import java.io.UnsupportedEncodingException;
 import java.net.HttpURLConnection;
-import java.net.MalformedURLException;
-import java.net.ProtocolException;
 import java.net.URL;
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 public class ServerRequests {
@@ -1203,5 +1192,103 @@ class UserTask extends AsyncTask<String, Void, String>{
             Toast toast = Toast.makeText(context, "Something went horribly wrong, no response code!", duration);
             toast.show();
         }
+    }
+}
+class QuestionTask extends AsyncTask<String, Void, HashMap<String, HashMap<String, String>>> {
+
+    QuestionCallback delegate;
+    private final Context context;
+    ProgressDialog progressDialog;
+
+    @Override
+    protected void onPreExecute() {
+    }
+
+    public QuestionTask(QuestionCallback delegate, Context context) {
+        this.delegate = delegate;
+        this.context = context;
+        progressDialog = new ProgressDialog(context);
+        progressDialog.setCancelable(false);
+        progressDialog.setTitle("Processing...");
+        progressDialog.setMessage("Please wait ...");
+        progressDialog.show();
+    }
+
+    public void executeTask(String method, String questionId, String textId, String answers, String questionContent) {
+        this.execute(method, questionId, questionContent, answers, textId);
+    }
+
+    @Override
+    protected HashMap<String, HashMap<String, String>> doInBackground(String... params) {
+        HashMap<String, HashMap<String, String>> results = new HashMap<>();
+        String generalResponse;
+        int responseCode;
+        String method = params[0];
+        String questionId = params[1];
+        String questionContent = params[2];
+        String answers = params[3];
+        String textId = params[4];
+
+        try {
+        URL url = new URL("http://emilsiegenfeldt.dk/p8/questions.php");
+        HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+        connection.setRequestMethod("POST");
+
+        Uri.Builder builder = new Uri.Builder().appendQueryParameter("method", method)
+                .appendQueryParameter("textId", textId)
+                .appendQueryParameter("id", questionId)
+                .appendQueryParameter("questionContent", questionContent)
+                .appendQueryParameter("answers", answers);
+
+        String query = builder.build().getEncodedQuery();
+        OutputStream os = connection.getOutputStream();
+        BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(os, "UTF-8"));
+        writer.write(query);
+        writer.flush();
+        writer.close();
+        os.close();
+
+        connection.connect();
+        //catch server response
+        InputStream in = new BufferedInputStream(connection.getInputStream());
+
+        String response = IOUtils.toString(in, "UTF-8");
+        Log.d("response", response);
+        Log.d("query", query);
+
+            JSONObject JSONResult = new JSONObject(response);
+            generalResponse = JSONResult.getString("generalResponse");
+            responseCode = JSONResult.getInt("responseCode");
+            if(method.equals("get")) {
+                JSONArray questions = JSONResult.getJSONArray("questions");
+                for (int i = 0; i < questions.length(); i++) {
+                    HashMap<String, String> questionInfo = new HashMap<>();
+
+                    JSONObject question = questions.getJSONObject(i);
+                    String id = question.getString("id");
+                    questionInfo.put("questionContent", question.getString("content"));
+                    questionInfo.put("textId", question.getString("textId"));
+                    questionInfo.put("questionId", question.getString("id"));
+                    questionInfo.put("answers", question.getJSONArray("answers").toString());
+                    results.put("QuestionID:" + id, questionInfo);
+                }
+            }
+            HashMap<String, String> serverResponse = new HashMap<>();
+            serverResponse.put("generalResponse",generalResponse);
+            serverResponse.put("responseCode", String.valueOf(responseCode));
+            results.put("response",serverResponse);
+
+        } catch(IOException e){
+        //server error
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        return results;
+    }
+
+    protected void onPostExecute(HashMap<String, HashMap<String, String>> results) {
+        Log.d("results",results.toString());
+        progressDialog.dismiss();
+        delegate.QuestionTaskDone(results);
     }
 }
