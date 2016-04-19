@@ -3,18 +3,27 @@ package com.example.svilen.p8;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.res.Resources;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.support.annotation.LayoutRes;
+import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
+import android.util.TypedValue;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.SimpleAdapter;
+import android.widget.Switch;
+import android.widget.TableLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -78,7 +87,52 @@ public class TextActivity extends AppCompatActivity {
         lvQuestions.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int position, long l) {
-                Log.d("question info OC", questionList.get(position).toString());
+                AlertDialog.Builder builder = new AlertDialog.Builder(context);
+                LayoutInflater inflater = getLayoutInflater();
+                View layout = inflater.inflate(R.layout.dialog_question, null);
+                builder.setView(layout);
+                AlertDialog dialog = builder.create();
+                dialog.setCanceledOnTouchOutside(true);
+                dialog.show();
+                Button bDialogAddAnswer = (Button) layout.findViewById(R.id.bDialogAddAnswer);
+                final EditText etDialogQuestion = (EditText) layout.findViewById(R.id.etDialogQuestion);
+                final LinearLayout LLAnswers = (LinearLayout) layout.findViewById(R.id.LLAnswers);
+                final int childCount = LLAnswers.getChildCount();
+                bDialogAddAnswer.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+
+                        LinearLayout answer= new LinearLayout(context);
+                        LinearLayout.LayoutParams llparams = new LinearLayout.LayoutParams(
+                                LinearLayout.LayoutParams.MATCH_PARENT,
+                                LinearLayout.LayoutParams.WRAP_CONTENT
+                        );
+                        llparams.setMargins(0,0,0, pxToDp(20));
+                        answer.setOrientation(LinearLayout.HORIZONTAL);
+                        answer.setId(childCount+1);
+                        answer.setLayoutParams(llparams);
+
+                        EditText answerText = new EditText(context);
+                        answerText.setText("hejflksdjf");
+                        LinearLayout.LayoutParams etParams = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT,LinearLayout.LayoutParams.WRAP_CONTENT, 1);
+                        etParams.setMargins(0,0,pxToDp(20),0);
+                        answerText.setLayoutParams(etParams);
+                        answer.addView(answerText);
+
+                        Switch answerSwitch = new Switch(context);
+                        LinearLayout.LayoutParams swParams = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT,LinearLayout.LayoutParams.WRAP_CONTENT);
+                        swParams.setMargins(0,0,pxToDp(20),0);
+                        answerSwitch.setTextOff("Wrong");
+                        answerSwitch.setTextOn("Right");
+                        answerSwitch.setLayoutParams(swParams);
+
+
+                        answer.addView(answerSwitch);
+
+                        LLAnswers.addView(answer);
+                    }
+                });
+
             }
         });
 
@@ -460,6 +514,9 @@ public class TextActivity extends AppCompatActivity {
                     questionAdapter.notifyDataSetChanged();
                 }
             },context).executeTask("get","",textId,"","");
+        }
+        public int pxToDp(int px){
+            return (int) (px / Resources.getSystem().getDisplayMetrics().density);
         }
     }
 
