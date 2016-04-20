@@ -516,15 +516,16 @@ public class TextActivity extends AppCompatActivity {
 
             return answer;
         }
-        private void questionDialog(int position) {
+        private void questionDialog(final int position) {
             AlertDialog.Builder builder = new AlertDialog.Builder(context);
             LayoutInflater inflater = getLayoutInflater();
             View layout = inflater.inflate(R.layout.dialog_question, null);
             builder.setView(layout);
-            AlertDialog dialog = builder.create();
+            final AlertDialog dialog = builder.create();
             dialog.setCanceledOnTouchOutside(true);
             dialog.show();
             Button bDialogAddAnswer = (Button) layout.findViewById(R.id.bDialogAddAnswer);
+            Button bDialogDelete = (Button) layout.findViewById(R.id.bDialogDelete);
             final EditText etDialogQuestion = (EditText) layout.findViewById(R.id.etDialogQuestion);
             final LinearLayout LLAnswers = (LinearLayout) layout.findViewById(R.id.LLAnswers);
             EditText etDialogAnswer1 = (EditText) layout.findViewWithTag("etDialogAnswer1");
@@ -532,6 +533,11 @@ public class TextActivity extends AppCompatActivity {
             Switch swDialogSwitch1 = (Switch) layout.findViewWithTag("swDialogSwitch1");
             Switch swDialogSwitch2 = (Switch) layout.findViewWithTag("swDialogSwitch2");
             final int childCount = LLAnswers.getChildCount();
+            if(position >= 0){
+                bDialogDelete.setEnabled(true);
+            } else {
+                bDialogDelete.setEnabled(false);
+            }
 
             bDialogAddAnswer.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -539,6 +545,19 @@ public class TextActivity extends AppCompatActivity {
                     LLAnswers.addView(addAnswerToDialog(childCount + 1));
                 }
             });
+            bDialogDelete.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    new QuestionTask(new QuestionCallback() {
+                        @Override
+                        public void QuestionTaskDone(HashMap<String, HashMap<String, String>> results) {
+                            dialog.dismiss();
+                            getQuestions(textId);
+                        }
+                    },context).executeTask("delete",questionList.get(position).get("id"),"","","");
+                }
+            });
+
 
             if (position >= 0) {
                 etDialogQuestion.setText(questionList.get(position).get("Question"));
