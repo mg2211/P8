@@ -963,9 +963,11 @@ class RoleTask extends AsyncTask<String, Void, Map<String,HashMap<String, String
 class TempTextTask extends AsyncTask<String, Void, HashMap<String, String>>{
 
     private final Context context;
+    private final TempTextCallback delegate;
     ProgressDialog progressDialog;
 
-    public TempTextTask(Context context){
+    public TempTextTask(TempTextCallback delegate, Context context){
+        this.delegate = delegate;
         this.context = context;
         progressDialog = new ProgressDialog(context);
         progressDialog.setCancelable(false);
@@ -1019,6 +1021,9 @@ class TempTextTask extends AsyncTask<String, Void, HashMap<String, String>>{
             String responseCode = String.valueOf(JSONResult.getInt("responseCode"));
             results.put("generalResponse", generalResponse);
             results.put("responseCode", responseCode);
+            if(method.equals("create")){
+                results.put("insertedId", JSONResult.getString("insertedId"));
+            }
 
         } catch (IOException e){
             results.put("generalResponse", "Server connection failed");
@@ -1033,10 +1038,12 @@ class TempTextTask extends AsyncTask<String, Void, HashMap<String, String>>{
         progressDialog.dismiss();
         int duration = Toast.LENGTH_LONG;
         CharSequence alert = results.get("generalResponse");
-
         Toast toast = Toast.makeText(context, alert, duration);
         toast.show();
 
+        if(results.get("insertedId") != null){
+           delegate.TempTextCallBack(results.get("insertedId"));
+        }
     }
 }
 
@@ -1238,6 +1245,7 @@ class QuestionTask extends AsyncTask<String, Void, HashMap<String, HashMap<Strin
                 .appendQueryParameter("textId", textId)
                 .appendQueryParameter("id", questionId)
                 .appendQueryParameter("questionContent", questionContent)
+                .appendQueryParameter("questionId", questionId)
                 .appendQueryParameter("answers", answers);
 
         String query = builder.build().getEncodedQuery();
