@@ -520,30 +520,67 @@ public class TextActivity extends AppCompatActivity {
         private void questionDialog(final int position) {
             AlertDialog.Builder builder = new AlertDialog.Builder(context);
             LayoutInflater inflater = getLayoutInflater();
-            View layout = inflater.inflate(R.layout.dialog_question, null);
+            final View layout = inflater.inflate(R.layout.dialog_question, null);
             builder.setView(layout);
             final AlertDialog dialog = builder.create();
             dialog.setCanceledOnTouchOutside(true);
             dialog.show();
             Button bDialogAddAnswer = (Button) layout.findViewById(R.id.bDialogAddAnswer);
             Button bDialogDelete = (Button) layout.findViewById(R.id.bDialogDelete);
+            Button bDialogSave = (Button) layout.findViewById(R.id.bDialogSave);
             final EditText etDialogQuestion = (EditText) layout.findViewById(R.id.etDialogQuestion);
             final LinearLayout LLAnswers = (LinearLayout) layout.findViewById(R.id.LLAnswers);
             EditText etDialogAnswer1 = (EditText) layout.findViewWithTag("etDialogAnswer1");
             EditText etDialogAnswer2 = (EditText) layout.findViewWithTag("etDialogAnswer2");
             Switch swDialogSwitch1 = (Switch) layout.findViewWithTag("swDialogSwitch1");
             Switch swDialogSwitch2 = (Switch) layout.findViewWithTag("swDialogSwitch2");
-            final int childCount = LLAnswers.getChildCount();
+            int childCount = getChildCount(LLAnswers);
+            final ArrayList<String> answerIds = new ArrayList();
             if(position >= 0){
                 bDialogDelete.setEnabled(true);
             } else {
                 bDialogDelete.setEnabled(false);
             }
 
+            bDialogSave.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view){
+
+
+                    String answerString = "";
+                    for(int i = 1; i <= getChildCount(LLAnswers); i++){
+                        Log.d("child COunt", String.valueOf(getChildCount(LLAnswers)));
+                        Log.d("i", String.valueOf(i));
+                        EditText etAnswerText = (EditText) layout.findViewWithTag("etDialogAnswer" + i);
+                        Switch swAnswerSwitch = (Switch) layout.findViewWithTag("swDialogSwitch" + i);
+                        String answerId;
+                        String answerCorrect;
+                        String answerText;
+                        String answer;
+
+                        if(answerIds.size() < getChildCount(LLAnswers)-1){
+                           answerId = "0";
+                        } else {
+                            answerId = answerIds.get(getChildCount(LLAnswers)-1);
+                        }
+                        if(swAnswerSwitch.isChecked()){
+                            answerCorrect = "1";
+                        } else {
+                            answerCorrect = "0";
+                        }
+                        answerText = etAnswerText.getText().toString();
+                        answer = answerId+";"+answerText+";"+answerCorrect;
+                        answerString = answerString+answer+"#";
+                        Log.d("answer",answer);
+                        Log.d("all answers", answerString);
+                    }
+                }
+            });
+
             bDialogAddAnswer.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    LLAnswers.addView(addAnswerToDialog(childCount + 1));
+                    LLAnswers.addView(addAnswerToDialog(getChildCount(LLAnswers) + 1));
                 }
             });
             bDialogDelete.setOnClickListener(new View.OnClickListener() {
@@ -577,7 +614,6 @@ public class TextActivity extends AppCompatActivity {
                 etDialogQuestion.setText(questionList.get(position).get("Question"));
                 String answerString = questionList.get(position).get("answers");
                 String answers[] = answerString.split("#");
-                ArrayList<String> answerIds = new ArrayList();
                 for (int i = 0; i < answers.length; i++) {
                     String answer[] = answers[i].split(";");
                     String answerText = answer[1];
@@ -604,6 +640,9 @@ public class TextActivity extends AppCompatActivity {
                     }
                 }
             }
+        }
+        private int getChildCount(LinearLayout parent){
+            return  parent.getChildCount();
         }
     }
 
