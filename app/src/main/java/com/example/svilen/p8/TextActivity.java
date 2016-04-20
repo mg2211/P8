@@ -570,7 +570,11 @@ public class TextActivity extends AppCompatActivity {
                         }
                         answerText = etAnswerText.getText().toString();
                         answer = answerId+";"+answerText+";"+answerCorrect;
-                        answerString = answerString+answer+"#";
+                        if(i == getChildCount(LLAnswers)){
+                            answerString = answerString+answer;
+                        } else {
+                            answerString = answerString + answer + "#";
+                        }
                         Log.d("answer",answer);
                         Log.d("all answers", answerString);
                     }
