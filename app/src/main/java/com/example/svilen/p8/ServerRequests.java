@@ -1269,7 +1269,20 @@ class QuestionTask extends AsyncTask<String, Void, HashMap<String, HashMap<Strin
                     questionInfo.put("questionContent", question.getString("content"));
                     questionInfo.put("textId", question.getString("textId"));
                     questionInfo.put("questionId", question.getString("id"));
-                    questionInfo.put("answers", question.getJSONArray("answers").toString());
+                    JSONArray questionAnswers = question.getJSONArray("answers");
+                    String questionAnswersString = "";
+                    for(int n = 0; n<questionAnswers.length(); n++){
+                        JSONObject answer = questionAnswers.getJSONObject(n);
+                        String answerText = answer.getString("answertext");
+                        String answerId = answer.getString("id");
+                        String isCorrect = answer.getString("iscorrect");
+                        String specificAnswer = answerId+";"+answerText+";"+isCorrect;
+                        if(n != questionAnswers.length()){
+                            specificAnswer = specificAnswer+"#";
+                        }
+                        questionAnswersString = questionAnswersString+specificAnswer;
+                    }
+                    questionInfo.put("answers",questionAnswersString);
                     results.put("QuestionID:" + id, questionInfo);
                 }
             }
