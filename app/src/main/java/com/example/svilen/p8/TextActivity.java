@@ -516,6 +516,7 @@ public class TextActivity extends AppCompatActivity {
 
             return answer;
         }
+         //@param position - the position from the listview - pass -1 for new question
         private void questionDialog(final int position) {
             AlertDialog.Builder builder = new AlertDialog.Builder(context);
             LayoutInflater inflater = getLayoutInflater();
@@ -548,13 +549,26 @@ public class TextActivity extends AppCompatActivity {
             bDialogDelete.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    new QuestionTask(new QuestionCallback() {
-                        @Override
-                        public void QuestionTaskDone(HashMap<String, HashMap<String, String>> results) {
-                            dialog.dismiss();
-                            getQuestions(textId);
-                        }
-                    },context).executeTask("delete",questionList.get(position).get("id"),"","","");
+                    new AlertDialog.Builder(context)
+                            .setIcon(android.R.drawable.ic_dialog_alert)
+                            .setTitle("Confirm")
+                            .setMessage("Are you sure you want to delete the question and all related answers")
+                            .setPositiveButton("Yes", new DialogInterface.OnClickListener()
+                            {
+                                @Override
+                                public void onClick(DialogInterface dialogCallback, int which) {
+                                    new QuestionTask(new QuestionCallback() {
+                                        @Override
+                                        public void QuestionTaskDone(HashMap<String, HashMap<String, String>> results) {
+                                            dialog.dismiss();
+                                            getQuestions(textId);
+                                        }
+                                    },context).executeTask("delete",questionList.get(position).get("id"),"","","");
+                                }
+
+                            })
+                            .setNegativeButton("No", null)
+                            .show();
                 }
             });
 
