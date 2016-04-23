@@ -167,8 +167,8 @@ public class TextActivity extends AppCompatActivity {
                     confirm(new DialogCallback() {
                         @Override
                         public void dialogResponse(boolean dialogResponse) {
-                            if (dialogResponse == true) {
-                                if (newText == true) {
+                            if (dialogResponse) {
+                                if (newText) {
                                     if (createText()) {
                                         clear = true;
                                         setChanged(false);
@@ -177,7 +177,7 @@ public class TextActivity extends AppCompatActivity {
                                         clear = false;
                                     }
                                 }
-                                if (changed == true) {
+                                if (changed) {
                                     if (updateText()) {
                                         clear = true;
                                         setChanged(false);
@@ -215,7 +215,7 @@ public class TextActivity extends AppCompatActivity {
             public void onClick(View v) {
                 if (!etTextName.getText().toString().equals("") && !etContent.getText().toString().equals("")) {
                     getQuestions(textId);
-                    if (newText == true) {
+                    if (newText) {
                         createText();
                         setChanged(false);
                     } else {
