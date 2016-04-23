@@ -27,6 +27,31 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginBottom="20dp"
+            android:tag="LLAnswer0">
+
+            <EditText
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:layout_marginRight="20dp"
+                android:tag="etDialogAnswer0"
+                android:hint="Required answer" />
+
+            <Switch
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:checked="false"
+                android:layout_marginRight="20dp"
+                android:textOn="Right"
+                android:textOff="Wrong"
+                android:tag="swDialogSwitch0"/>
+        </LinearLayout>
+
+        <LinearLayout
+            android:orientation="horizontal"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="20dp"
             android:tag="LLAnswer1">
 
             <EditText
@@ -45,31 +70,6 @@
                 android:textOn="Right"
                 android:textOff="Wrong"
                 android:tag="swDialogSwitch1"/>
-        </LinearLayout>
-
-        <LinearLayout
-            android:orientation="horizontal"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="20dp"
-            android:id="@+id/LLAnswer2">
-
-            <EditText
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:layout_marginRight="20dp"
-                android:tag="etDialogAnswer2"
-                android:hint="Required answer" />
-
-            <Switch
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:checked="false"
-                android:layout_marginRight="20dp"
-                android:textOn="Right"
-                android:textOff="Wrong"
-                android:tag="swDialogSwitch2"/>
         </LinearLayout>
     </LinearLayout>
 

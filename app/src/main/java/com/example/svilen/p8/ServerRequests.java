@@ -1285,10 +1285,11 @@ class QuestionTask extends AsyncTask<String, Void, HashMap<String, HashMap<Strin
                         String answerId = answer.getString("id");
                         String isCorrect = answer.getString("iscorrect");
                         String specificAnswer = answerId+";"+answerText+";"+isCorrect;
-                        if(n != questionAnswers.length()){
-                            specificAnswer = specificAnswer+"#";
+                        if(n == 0){
+                            questionAnswersString =specificAnswer;
+                        } else {
+                            questionAnswersString = questionAnswersString+"#"+specificAnswer;
                         }
-                        questionAnswersString = questionAnswersString+specificAnswer;
                     }
                     questionInfo.put("answers",questionAnswersString);
                     results.put("QuestionID:" + id, questionInfo);

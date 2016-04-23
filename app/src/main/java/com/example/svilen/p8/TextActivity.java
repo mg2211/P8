@@ -201,15 +201,16 @@ public class TextActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 if (!etTextName.getText().toString().equals("") && !etContent.getText().toString().equals("")) {
+                    getQuestions(textId);
                     if (newText == true) {
                         if(createText()){
                             textId = insertedId;
+                            Log.d("textid",textId);
                         }
                         setChanged(false);
                         //iterate over questions
-                        getQuestions(textId);
                         if (questionList.size() > 0) {
-                            for (int i = 0; i <= questionList.size(); i++) {
+                            for (int i = 0; i < questionList.size(); i++) {
                                 String questionId = questionList.get(i).get("id");
                                 new QuestionTask(new QuestionCallback() {
                                     @Override
@@ -375,6 +376,7 @@ public class TextActivity extends AppCompatActivity {
                 @Override
                 public void TempTextCallBack(String id) {
                     insertedId(id);
+                    Log.d("insertedid",id);
                 }
             }, context).executeTask("create", "", etTextName.getText().toString(), etContent.getText().toString(), lix);
             getTexts();
@@ -523,7 +525,7 @@ public class TextActivity extends AppCompatActivity {
         return (int) (px / Resources.getSystem().getDisplayMetrics().density);
     }
 
-    private View addAnswerToDialog(int childCount) {
+    private View addAnswerToDialog(int childNo, String id) {
         LinearLayout answer = new LinearLayout(context);
         LinearLayout.LayoutParams llParams = new LinearLayout.LayoutParams(
                 LinearLayout.LayoutParams.MATCH_PARENT,
@@ -531,8 +533,7 @@ public class TextActivity extends AppCompatActivity {
         );
         llParams.setMargins(0, 0, 0, pxToDp(20));
         answer.setOrientation(LinearLayout.HORIZONTAL);
-        String answerTag = "LLAnswer" + childCount;
-        answer.setTag(answerTag);
+        answer.setTag(R.id.ANSWER_ID_TAG, id);
         answer.setLayoutParams(llParams);
 
         EditText answerText = new EditText(context);
@@ -540,7 +541,7 @@ public class TextActivity extends AppCompatActivity {
         LinearLayout.LayoutParams etParams = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT, 1);
         etParams.setMargins(0, 0, pxToDp(20), 0);
         answerText.setLayoutParams(etParams);
-        String etTag = "etDialogAnswer" + childCount;
+        String etTag = "etDialogAnswer" + childNo;
         Log.d("etTag", etTag);
         answerText.setTag(etTag);
         answer.addView(answerText);
@@ -551,7 +552,7 @@ public class TextActivity extends AppCompatActivity {
         answerSwitch.setTextOff("Wrong");
         answerSwitch.setTextOn("Right");
         answerSwitch.setLayoutParams(swParams);
-        String switchTag = "swDialogSwitch" + childCount;
+        String switchTag = "swDialogSwitch" + childNo;
         answerSwitch.setTag(switchTag);
         answer.addView(answerSwitch);
 
@@ -572,40 +573,83 @@ public class TextActivity extends AppCompatActivity {
         Button bDialogSave = (Button) layout.findViewById(R.id.bDialogSave);
         final EditText etDialogQuestion = (EditText) layout.findViewById(R.id.etDialogQuestion);
         final LinearLayout LLAnswers = (LinearLayout) layout.findViewById(R.id.LLAnswers);
+        final EditText etDialogAnswer0 = (EditText) layout.findViewWithTag("etDialogAnswer0");
         final EditText etDialogAnswer1 = (EditText) layout.findViewWithTag("etDialogAnswer1");
-        final EditText etDialogAnswer2 = (EditText) layout.findViewWithTag("etDialogAnswer2");
+        Switch swDialogSwitch0 = (Switch) layout.findViewWithTag("swDialogSwitch0");
         Switch swDialogSwitch1 = (Switch) layout.findViewWithTag("swDialogSwitch1");
-        Switch swDialogSwitch2 = (Switch) layout.findViewWithTag("swDialogSwitch2");
-        int childCount = getChildCount(LLAnswers);
-        final ArrayList<String> answerIds = new ArrayList();
+
         if (position >= 0) {
             bDialogDelete.setEnabled(true);
+            etDialogQuestion.setText(questionList.get(position).get("Question"));
+            String answerString = questionList.get(position).get("answers");
+
+            Log.d("answer string", answerString);
+            String answers[] = answerString.split("#");
+            Log.d("answers", String.valueOf(answers.length));
+            for (int i = 0; i < answers.length; i++) {
+                String answer[] = answers[i].split(";");
+                String answerText = answer[1];
+                String answerId = answer[0];
+                boolean answerCorrect;
+                if (answer[2].equals("1")) {
+                    answerCorrect = true;
+                } else {
+                    answerCorrect = false;
+                }
+
+                if (i == 0) {
+                    etDialogAnswer0.setText(answerText);
+                    swDialogSwitch0.setChecked(answerCorrect);
+                    LLAnswers.getChildAt(i).setTag(R.id.ANSWER_ID_TAG,answerId);
+                } else if (i == 1) {
+                    etDialogAnswer1.setText(answerText);
+                    swDialogSwitch1.setChecked(answerCorrect);
+                    LLAnswers.getChildAt(i).setTag(R.id.ANSWER_ID_TAG,answerId);
+                } else {
+                    LLAnswers.addView(addAnswerToDialog(i, answer[0]));
+                    EditText newRowEt = (EditText) layout.findViewWithTag("etDialogAnswer" + i);
+                    Switch newRowSw = (Switch) layout.findViewWithTag("swDialogSwitch" + i);
+                    newRowSw.setChecked(answerCorrect);
+                    newRowEt.setText(answerText);
+                }
+            }
+
         } else {
+
+            //new text - sets the answer rows id to 0...
             bDialogDelete.setEnabled(false);
+            LLAnswers.getChildAt(0).setTag(R.id.ANSWER_ID_TAG, "0");
+            LLAnswers.getChildAt(1).setTag(R.id.ANSWER_ID_TAG, "0");
         }
 
         bDialogSave.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
 
-                if (!etDialogAnswer1.getText().toString().equals("") && !etDialogAnswer2.getText().toString().equals("") && !etDialogQuestion.getText().toString().equals("")) {
+                if (!etDialogAnswer0.getText().toString().equals("") && !etDialogAnswer0.getText().toString().equals("") && !etDialogQuestion.getText().toString().equals("")) {
                     String answerString = "";
                     int correctanswers = 0;
-                    for (int i = 1; i <= getChildCount(LLAnswers); i++) {
-                        Log.d("child COunt", String.valueOf(getChildCount(LLAnswers)));
+                    int childcount = getChildCount(LLAnswers)-1;
+
+                    for (int i = 0; i <= childcount; i++) {
+                        Log.d("child COunt", String.valueOf(childcount));
                         Log.d("i", String.valueOf(i));
                         EditText etAnswerText = (EditText) layout.findViewWithTag("etDialogAnswer" + i);
                         Switch swAnswerSwitch = (Switch) layout.findViewWithTag("swDialogSwitch" + i);
-                        String answerId;
+                        String answerId = null;
                         String answerCorrect;
                         String answerText;
                         String answer;
 
-                        if (answerIds.size() < getChildCount(LLAnswers) - 1) {
-                            answerId = "0";
-                        } else {
-                            answerId = answerIds.get(getChildCount(LLAnswers) - 1);
+
+                        View answerRow = LLAnswers.getChildAt(i);
+                        String tag = (String) answerRow.getTag(R.id.ANSWER_ID_TAG);
+                        if(tag != null) {
+                            Log.d("tag", tag);
+                            answerId = tag;
                         }
+
+
                         if (swAnswerSwitch.isChecked()) {
                             answerCorrect = "1";
                             correctanswers++;
@@ -615,13 +659,15 @@ public class TextActivity extends AppCompatActivity {
                         answerText = etAnswerText.getText().toString();
                         answer = answerId + ";" + answerText + ";" + answerCorrect;
 
-                        if (!answerText.equals("")) {
-                            if (i == getChildCount(LLAnswers)) {
-                                answerString = answerString + answer;
+
+                        if(!answerText.equals("")){
+                            if(answerString.equals("")){
+                                answerString = answer;
                             } else {
-                                answerString = answerString + answer + "#";
+                                answerString = answerString + "#" + answer;
                             }
                         }
+
                         Log.d("answer", answer);
                         Log.d("all answers", answerString);
                     }
@@ -670,7 +716,7 @@ public class TextActivity extends AppCompatActivity {
         bDialogAddAnswer.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                LLAnswers.addView(addAnswerToDialog(getChildCount(LLAnswers) + 1));
+                LLAnswers.addView(addAnswerToDialog(getChildCount(LLAnswers), "0"));
             }
         });
         bDialogDelete.setOnClickListener(new View.OnClickListener() {
@@ -697,38 +743,6 @@ public class TextActivity extends AppCompatActivity {
                         .show();
             }
         });
-
-
-        if (position >= 0) {
-            etDialogQuestion.setText(questionList.get(position).get("Question"));
-            String answerString = questionList.get(position).get("answers");
-            String answers[] = answerString.split("#");
-            for (int i = 0; i < answers.length; i++) {
-                String answer[] = answers[i].split(";");
-                String answerText = answer[1];
-                answerIds.add(answer[0]);
-                boolean answerCorrect;
-                if (answer[2].equals("1")) {
-                    answerCorrect = true;
-                } else {
-                    answerCorrect = false;
-                }
-
-                if (i == 0) {
-                    etDialogAnswer1.setText(answerText);
-                    swDialogSwitch1.setChecked(answerCorrect);
-                } else if (i == 1) {
-                    etDialogAnswer2.setText(answerText);
-                    swDialogSwitch2.setChecked(answerCorrect);
-                } else {
-                    LLAnswers.addView(addAnswerToDialog(childCount + 1));
-                    EditText newRowEt = (EditText) layout.findViewWithTag("etDialogAnswer" + (childCount + 1));
-                    Switch newRowSw = (Switch) layout.findViewWithTag("swDialogSwitch" + (childCount + 1));
-                    newRowSw.setChecked(answerCorrect);
-                    newRowEt.setText(answerText);
-                }
-            }
-        }
     }
 
     private int getChildCount(LinearLayout parent) {
