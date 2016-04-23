@@ -111,7 +111,6 @@ public class TextActivity extends AppCompatActivity {
         lvTexts.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, final int position, long id) {
-                view.setBackgroundColor(Color.BLUE);
                 if (changed == true) {
                     confirm(new DialogCallback() {
                         @Override
@@ -701,6 +700,9 @@ public class TextActivity extends AppCompatActivity {
                             }
                         }, context).executeTask(method, questionId, textId, answerString, etDialogQuestion.getText().toString());
                         dialog.dismiss();
+                        if(newText){
+                            setChanged(true);
+                        }
                         getQuestions(textId);
                     }
                 } else {
