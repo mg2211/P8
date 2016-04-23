@@ -63,7 +63,6 @@ public class TextActivity extends AppCompatActivity {
     boolean changed;
     double lix;
     boolean clear;
-    String insertedId;
 
     @Override
     protected void onCreate(final Bundle savedInstanceState) {
@@ -81,8 +80,6 @@ public class TextActivity extends AppCompatActivity {
         etSearch = (EditText) findViewById(R.id.etSearch);
         bDelete.setEnabled(false);
         bAddQuestion = (Button) findViewById(R.id.bAddQuestion);
-        insertedId = "";
-
 
         lvQuestions = (ListView) findViewById(R.id.lvQuestions);
         questionAdapter = new SimpleAdapter(this, questionList,
@@ -203,22 +200,8 @@ public class TextActivity extends AppCompatActivity {
                 if (!etTextName.getText().toString().equals("") && !etContent.getText().toString().equals("")) {
                     getQuestions(textId);
                     if (newText == true) {
-                        if(createText()){
-                            textId = insertedId;
-                            Log.d("textid",textId);
-                        }
+                        createText();
                         setChanged(false);
-                        //iterate over questions
-                        if (questionList.size() > 0) {
-                            for (int i = 0; i < questionList.size(); i++) {
-                                String questionId = questionList.get(i).get("id");
-                                new QuestionTask(new QuestionCallback() {
-                                    @Override
-                                    public void QuestionTaskDone(HashMap<String, HashMap<String, String>> results) {
-                                    }
-                                }, context).executeTask("update", questionId, textId, questionList.get(i).get("answers"), questionList.get(i).get("Question"));
-                            }
-                        }
                     } else {
                         updateText();
                         setChanged(false);
@@ -375,8 +358,16 @@ public class TextActivity extends AppCompatActivity {
             new TempTextTask(new TempTextCallback() {
                 @Override
                 public void TempTextCallBack(String id) {
-                    insertedId(id);
-                    Log.d("insertedid",id);
+                    if (questionList.size() > 0) {
+                        for (int i = 0; i < questionList.size(); i++) {
+                            String questionId = questionList.get(i).get("id");
+                            new QuestionTask(new QuestionCallback() {
+                                @Override
+                                public void QuestionTaskDone(HashMap<String, HashMap<String, String>> results) {
+                                }
+                            }, context).executeTask("update", questionId, id, questionList.get(i).get("answers"), questionList.get(i).get("Question"));
+                        }
+                    }
                 }
             }, context).executeTask("create", "", etTextName.getText().toString(), etContent.getText().toString(), lix);
             getTexts();
@@ -396,7 +387,16 @@ public class TextActivity extends AppCompatActivity {
             new TempTextTask(new TempTextCallback() {
                 @Override
                 public void TempTextCallBack(String id) {
-
+                    if (questionList.size() > 0) {
+                        for (int i = 0; i < questionList.size(); i++) {
+                            String questionId = questionList.get(i).get("id");
+                            new QuestionTask(new QuestionCallback() {
+                                @Override
+                                public void QuestionTaskDone(HashMap<String, HashMap<String, String>> results) {
+                                }
+                            }, context).executeTask("update", questionId, textId, questionList.get(i).get("answers"), questionList.get(i).get("Question"));
+                        }
+                    }
                 }
             }, context).executeTask("update", textId, etTextName.getText().toString(), etContent.getText().toString(), lix);
             getTexts();
@@ -747,9 +747,6 @@ public class TextActivity extends AppCompatActivity {
 
     private int getChildCount(LinearLayout parent) {
         return parent.getChildCount();
-    }
-    private void insertedId(String id){
-        insertedId = id;
     }
 }
 
