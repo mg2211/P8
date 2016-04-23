@@ -111,12 +111,12 @@ public class TextActivity extends AppCompatActivity {
         lvTexts.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, final int position, long id) {
-                if (changed == true) {
+                if (changed) {
                     confirm(new DialogCallback() {
                         @Override
                         public void dialogResponse(boolean dialogResponse) {
-                            if (dialogResponse == true) {
-                                if (newText == true) {
+                            if (dialogResponse) {
+                                if (newText) {
                                     if (createText()) {
                                         clear = true;
                                         setChanged(false);
@@ -125,7 +125,7 @@ public class TextActivity extends AppCompatActivity {
                                         clear = false;
                                     }
                                 }
-                                if (changed == true) {
+                                if (changed) {
                                     if (updateText()) {
                                         clear = true;
                                         setChanged(false);
@@ -137,9 +137,18 @@ public class TextActivity extends AppCompatActivity {
 
                             } else {
                                 clear = true;
+                               if(newText) {
+                                   new QuestionTask(new QuestionCallback() {
+                                       @Override
+                                       public void QuestionTaskDone(HashMap<String, HashMap<String, String>> results) {
+
+                                       }
+                                   }, context).executeTask("delete", "", textId, "", "");
+                               }
                             }
-                            if (clear == true) {
+                            if (clear) {
                                 setContentPane(position);
+
                             }
                         }
                     });
@@ -179,6 +188,14 @@ public class TextActivity extends AppCompatActivity {
                                 }
                             } else {
                                 clear = true;
+                                if(newText) {
+                                    new QuestionTask(new QuestionCallback() {
+                                        @Override
+                                        public void QuestionTaskDone(HashMap<String, HashMap<String, String>> results) {
+
+                                        }
+                                    }, context).executeTask("delete", "", textId, "", "");
+                                }
                             }
                             if (clear) {
                                 setContentPane(-1);
@@ -442,12 +459,10 @@ public class TextActivity extends AppCompatActivity {
 
     public void setNewText(boolean value) {
         newText = value;
-        Log.d("new text value", String.valueOf(newText));
     }
 
     public void setChanged(boolean value) {
         changed = value;
-        Log.d("Changed value", String.valueOf(changed));
     }
 
     public void confirm(final DialogCallback callback) {
@@ -466,7 +481,6 @@ public class TextActivity extends AppCompatActivity {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         callback.dialogResponse(false);
-
                     }
                 })
                 .show();
@@ -541,7 +555,6 @@ public class TextActivity extends AppCompatActivity {
         etParams.setMargins(0, 0, pxToDp(20), 0);
         answerText.setLayoutParams(etParams);
         String etTag = "etDialogAnswer" + childNo;
-        Log.d("etTag", etTag);
         answerText.setTag(etTag);
         answer.addView(answerText);
 
@@ -582,9 +595,7 @@ public class TextActivity extends AppCompatActivity {
             etDialogQuestion.setText(questionList.get(position).get("Question"));
             String answerString = questionList.get(position).get("answers");
 
-            Log.d("answer string", answerString);
             String answers[] = answerString.split("#");
-            Log.d("answers", String.valueOf(answers.length));
             for (int i = 0; i < answers.length; i++) {
                 String answer[] = answers[i].split(";");
                 String answerText = answer[1];
@@ -631,8 +642,6 @@ public class TextActivity extends AppCompatActivity {
                     int childcount = getChildCount(LLAnswers)-1;
 
                     for (int i = 0; i <= childcount; i++) {
-                        Log.d("child COunt", String.valueOf(childcount));
-                        Log.d("i", String.valueOf(i));
                         EditText etAnswerText = (EditText) layout.findViewWithTag("etDialogAnswer" + i);
                         Switch swAnswerSwitch = (Switch) layout.findViewWithTag("swDialogSwitch" + i);
                         String answerId = null;
@@ -644,7 +653,6 @@ public class TextActivity extends AppCompatActivity {
                         View answerRow = LLAnswers.getChildAt(i);
                         String tag = (String) answerRow.getTag(R.id.ANSWER_ID_TAG);
                         if(tag != null) {
-                            Log.d("tag", tag);
                             answerId = tag;
                         }
 
@@ -666,9 +674,6 @@ public class TextActivity extends AppCompatActivity {
                                 answerString = answerString + "#" + answer;
                             }
                         }
-
-                        Log.d("answer", answer);
-                        Log.d("all answers", answerString);
                     }
 
                     if (correctanswers > 1) {
