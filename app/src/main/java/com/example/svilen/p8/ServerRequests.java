@@ -1266,26 +1266,20 @@ class AssignmentLibTask extends AsyncTask<String, Void, HashMap<String, HashMap<
 
             Log.d("serverresponse", serverResponse);
 
-            /*if(method.equals("create")){
-                response.put("insertedId", JSONResult.getString("insertedId"));
-            }*/
+            if(method.equals("get")){
+                JSONArray assignments = JSONResult.getJSONArray("assignments");
+                for (int i = 0; i < assignments.length(); i++) {
+                    JSONObject specificAssignment = assignments.getJSONObject(i);
 
-            /*if(method.equals("get")){
-                JSONArray texts = JSONResult.getJSONArray("texts");
-                for (int i = 0; i < texts.length(); i++) {
-                    JSONObject specificText = texts.getJSONObject(i);
-                    String specificTextname = specificText.getString("textName");
-                    String specificTextContent = specificText.getString("textContent");
-                    String specificTextId = specificText.getString("textId");
-                    double specificTextComplexity = specificText.getDouble("complexity");
-                    HashMap<String, String> textInfo = new HashMap<>();
-                    textInfo.put("textname", specificTextname);
-                    textInfo.put("textcontent", specificTextContent);
-                    textInfo.put("id", specificTextId);
-                    textInfo.put("complexity", String.valueOf(specificTextComplexity));
-                    results.put("TextId: " + specificTextId, textInfo);
+                    HashMap<String, String> assignmentInfo = new HashMap<>();
+                    assignmentInfo.put("id",specificAssignment.getString("id"));
+                    assignmentInfo.put("name",specificAssignment.getString("name"));
+                    assignmentInfo.put("textId", specificAssignment.getString("text"));
+                    assignmentInfo.put("teacherId",specificAssignment.getString("teacherId"));
+
+                    results.put("Assignment id" + specificAssignment.getString("id"), assignmentInfo);
                 }
-            }*/
+            }
 
         } catch (IOException e){
             response.put("generalResponse", "Server connection failed");
@@ -1303,5 +1297,6 @@ class AssignmentLibTask extends AsyncTask<String, Void, HashMap<String, HashMap<
         CharSequence alert = results.get("response").get("generalResponse");
         Toast toast = Toast.makeText(context, alert, duration);
         toast.show();
+        delegate.AssignmentLibDone(results);
     }
 }

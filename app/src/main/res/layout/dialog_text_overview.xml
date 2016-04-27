@@ -16,7 +16,11 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:id="@+id/lvTexts"
-            android:layout_weight="1" />
+            android:layout_weight="1"
+            android:choiceMode="singleChoice"
+            android:drawSelectorOnTop="false"
+            android:textFilterEnabled="false"
+            android:smoothScrollbar="false" />
 
         <LinearLayout
             android:orientation="vertical"

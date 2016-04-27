@@ -58,7 +58,7 @@ public class AssignmentActivity extends AppCompatActivity {
         etSearch = (EditText) findViewById(R.id.etSearch);
         assignmentAdapter= new SimpleAdapter(this, assignmentList,
                 android.R.layout.simple_list_item_1,
-                new String[]{"Question"},
+                new String[]{"assignmentName"},
                 new int[]{android.R.id.text1});
         lvAssignments.setAdapter(assignmentAdapter);
         etText = (EditText) findViewById(R.id.etText);
@@ -151,7 +151,6 @@ public class AssignmentActivity extends AppCompatActivity {
                 results.remove("response");
                 textList.clear();
                 for (Map.Entry<String, HashMap<String, String>> text : results.entrySet()) {
-
                     Map<String, String> textInfo = new HashMap<>();
                     String textId = text.getValue().get("id");
                     String textName = text.getValue().get("textname");
@@ -174,8 +173,22 @@ public class AssignmentActivity extends AppCompatActivity {
             @Override
             public void AssignmentLibDone(HashMap<String, HashMap<String, String>> results) {
 
+                results.remove("response");
+                assignmentList.clear();
+                for (Map.Entry<String, HashMap<String, String>> assignment : results.entrySet()) {
+                    Map<String, String> assignmentInfo = new HashMap<>();
+                    String assignmentId = assignment.getValue().get("id");
+                    String assignmentName = assignment.getValue().get("name");
+                    String assignmentText = assignment.getValue().get("textId");
+
+                    assignmentInfo.put("assignmentId",assignmentId);
+                    assignmentInfo.put("assignmentName",assignmentName);
+                    assignmentInfo.put("assignmentText",assignmentText);
+                    assignmentList.add(assignmentInfo);
+                }
+                assignmentAdapter.notifyDataSetChanged();
             }
-        },context).executeTask("get","","");
+        },context).executeTask("get",teacherId,"");
     }
 }
 
