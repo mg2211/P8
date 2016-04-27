@@ -6,5 +6,5 @@ import java.util.HashMap;
  * Created by emilsiegenfeldt on 20/04/16.
  */
 public interface TextCallback {
-    void TempTextCallBack(HashMap<String, HashMap<String, String>> results);
+    void TextCallBack(HashMap<String, HashMap<String, String>> results);
 }

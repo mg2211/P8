@@ -621,7 +621,8 @@ class ALTask extends AsyncTask<String, Void, HashMap<String, HashMap<String, Str
 
         if (Integer.parseInt(responseCode) == 100){
             results.remove("response");
-            delegate.assignmentListDone(results);}
+            //delegate.assignmentListDone(results);
+            }
 
         else if (Integer.parseInt(responseCode) == 200){
 
@@ -940,7 +941,7 @@ class TextTask extends AsyncTask<String, Void, HashMap<String, HashMap<String, S
         CharSequence alert = results.get("response").get("generalResponse");
         Toast toast = Toast.makeText(context, alert, duration);
         toast.show();
-        delegate.TempTextCallBack(results);
+        delegate.TextCallBack(results);
     }
 }
 
@@ -1205,5 +1206,102 @@ class QuestionTask extends AsyncTask<String, Void, HashMap<String, HashMap<Strin
         Log.d("results",results.toString());
         progressDialog.dismiss();
         delegate.QuestionTaskDone(results);
+    }
+}
+class AssignmentLibTask extends AsyncTask<String, Void, HashMap<String, HashMap<String, String>>>{
+
+    private final Context context;
+    private final AssignmentLibCallback delegate;
+    ProgressDialog progressDialog;
+
+    public AssignmentLibTask(AssignmentLibCallback delegate, Context context){
+        this.delegate = delegate;
+        this.context = context;
+        progressDialog = new ProgressDialog(context);
+        progressDialog.setCancelable(false);
+        progressDialog.setTitle("Processing...");
+        progressDialog.setMessage("Please wait ...");
+        progressDialog.show();
+    }
+    public void executeTask(String method, String teacherId, String assignmentId){
+        this.execute(method, teacherId, assignmentId);
+    }
+    @Override
+    protected HashMap <String, HashMap<String, String>> doInBackground(String... params) {
+        String method = params[0];
+        String teacherId = params[1];
+        String assignmentId = params[2];
+
+        HashMap<String, HashMap<String, String>> results = new HashMap<>();
+        HashMap<String, String> response = new HashMap<>();
+        try {
+            URL url = new URL("http://emilsiegenfeldt.dk/p8/assignments.php");
+
+            HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+            connection.setRequestMethod("POST");
+            Uri.Builder builder = new Uri.Builder().appendQueryParameter("method", method)
+                    .appendQueryParameter("assignmentId",assignmentId)
+                    .appendQueryParameter("teacherId", teacherId);
+
+            String query = builder.build().getEncodedQuery();
+            OutputStream os = connection.getOutputStream();
+
+            BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(os, "UTF-8"));
+            writer.write(query);
+            writer.flush();
+            writer.close();
+            os.close();
+            connection.connect();
+
+            InputStream in = new BufferedInputStream(connection.getInputStream());
+
+            String serverResponse = IOUtils.toString(in, "UTF-8");
+
+            JSONObject JSONResult = new JSONObject(serverResponse);
+            String generalResponse = JSONResult.getString("generalResponse");
+            String responseCode = String.valueOf(JSONResult.getInt("responseCode"));
+
+            response.put("generalResponse", generalResponse);
+            response.put("responseCode", responseCode);
+
+            Log.d("serverresponse", serverResponse);
+
+            /*if(method.equals("create")){
+                response.put("insertedId", JSONResult.getString("insertedId"));
+            }*/
+
+            /*if(method.equals("get")){
+                JSONArray texts = JSONResult.getJSONArray("texts");
+                for (int i = 0; i < texts.length(); i++) {
+                    JSONObject specificText = texts.getJSONObject(i);
+                    String specificTextname = specificText.getString("textName");
+                    String specificTextContent = specificText.getString("textContent");
+                    String specificTextId = specificText.getString("textId");
+                    double specificTextComplexity = specificText.getDouble("complexity");
+                    HashMap<String, String> textInfo = new HashMap<>();
+                    textInfo.put("textname", specificTextname);
+                    textInfo.put("textcontent", specificTextContent);
+                    textInfo.put("id", specificTextId);
+                    textInfo.put("complexity", String.valueOf(specificTextComplexity));
+                    results.put("TextId: " + specificTextId, textInfo);
+                }
+            }*/
+
+        } catch (IOException e){
+            response.put("generalResponse", "Server connection failed");
+            response.put("responseCode", "300");
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        results.put("response", response);
+        return results;
+    }
+
+    protected void onPostExecute (HashMap<String, HashMap<String, String>> results){
+        progressDialog.dismiss();
+        int duration = Toast.LENGTH_LONG;
+        CharSequence alert = results.get("response").get("generalResponse");
+        Toast toast = Toast.makeText(context, alert, duration);
+        toast.show();
     }
 }

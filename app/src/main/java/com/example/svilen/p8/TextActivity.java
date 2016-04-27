@@ -326,7 +326,7 @@ public class TextActivity extends AppCompatActivity {
     public void getTexts() {
         new TextTask(new TextCallback() {
             @Override
-            public void TempTextCallBack(HashMap<String, HashMap<String, String>> results) {
+            public void TextCallBack(HashMap<String, HashMap<String, String>> results) {
                 results.remove("response");
                 textList.clear();
                 colors.clear();
@@ -367,7 +367,7 @@ public class TextActivity extends AppCompatActivity {
 
             new TextTask(new TextCallback() {
                 @Override
-                public void TempTextCallBack(HashMap<String, HashMap<String, String>> results) {
+                public void TextCallBack(HashMap<String, HashMap<String, String>> results) {
                    String id = results.get("response").get("insertedId");
                     if (questionList.size() > 0) {
                         for (int i = 0; i < questionList.size(); i++) {
@@ -398,7 +398,7 @@ public class TextActivity extends AppCompatActivity {
 
             new TextTask(new TextCallback() {
                 @Override
-                public void TempTextCallBack(HashMap<String, HashMap<String, String>> results) {
+                public void TextCallBack(HashMap<String, HashMap<String, String>> results) {
                     if (questionList.size() > 0) {
                         for (int i = 0; i < questionList.size(); i++) {
                             String questionId = questionList.get(i).get("id");
@@ -433,7 +433,7 @@ public class TextActivity extends AppCompatActivity {
                     public void onClick(DialogInterface dialog, int which) {
                         new TextTask(new TextCallback() {
                             @Override
-                            public void TempTextCallBack(HashMap<String, HashMap<String, String>> results) {
+                            public void TextCallBack(HashMap<String, HashMap<String, String>> results) {
                                 new QuestionTask(new QuestionCallback() {//delete questions
                                     @Override
                                     public void QuestionTaskDone(HashMap<String, HashMap<String, String>> results) {

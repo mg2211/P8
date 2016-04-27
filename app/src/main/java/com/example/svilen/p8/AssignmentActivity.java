@@ -1,16 +1,23 @@
 package com.example.svilen.p8;
 
+import android.app.AlertDialog;
 import android.content.Context;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.view.WindowManager;
 import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.SimpleAdapter;
+import android.widget.Switch;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -25,10 +32,16 @@ public class AssignmentActivity extends AppCompatActivity {
     String teacherId;
 
     Button bAddAssignment;
+    Button bSelectText;
     EditText etSearch;
+    EditText etText;
     ListView lvAssignments;
     SimpleAdapter assignmentAdapter;
     List<Map<String, String>> assignmentList = new ArrayList<>();
+    List<Map<String, String>> textList = new ArrayList<>();
+    SimpleAdapter textAdapter;
+    int selected;
+    String selectedName;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -37,15 +50,30 @@ public class AssignmentActivity extends AppCompatActivity {
         userInfo = new UserInfo(context);
         user = userInfo.getUser();
         teacherId = user.get("teacherId");
-
+        getTexts();
+        getAssignments();
         lvAssignments = (ListView) findViewById(R.id.lvAssignments);
         bAddAssignment = (Button) findViewById(R.id.bAddAssignment);
+        bSelectText = (Button) findViewById(R.id.bSelectText);
         etSearch = (EditText) findViewById(R.id.etSearch);
         assignmentAdapter= new SimpleAdapter(this, assignmentList,
                 android.R.layout.simple_list_item_1,
                 new String[]{"Question"},
                 new int[]{android.R.id.text1});
         lvAssignments.setAdapter(assignmentAdapter);
+        etText = (EditText) findViewById(R.id.etText);
+
+        textAdapter = new SimpleAdapter(this, textList,
+                android.R.layout.simple_list_item_1,
+                new String[]{"textname"},
+                new int[]{android.R.id.text1});
+
+        bSelectText.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                textDialog(0);
+            }
+        });
 
 
         bAddAssignment.setOnClickListener(new View.OnClickListener() {
@@ -75,16 +103,80 @@ public class AssignmentActivity extends AppCompatActivity {
 
         }
     });
-
     }
 
+    private void textDialog(int textId) {
+        AlertDialog.Builder builder = new AlertDialog.Builder(context);
+        LayoutInflater inflater = getLayoutInflater();
+        final View layout = inflater.inflate(R.layout.dialog_text_overview, null);
+        builder.setView(layout);
+        final AlertDialog dialog = builder.create();
+        dialog.setCanceledOnTouchOutside(true);
+        dialog.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_UNCHANGED);
+        dialog.show();
+        ListView lvTexts = (ListView) layout.findViewById(R.id.lvTexts);
+        Button bDialogAddToAssignment = (Button) layout.findViewById(R.id.bDialogAddToAssignment);
+        final EditText etDialogPreview = (EditText) layout.findViewById(R.id.etDialogPreview);
+
+        if(textId != 0){
+            selected = textId;
+        } else {
+            selected = 0;
+        }
+
+        lvTexts.setAdapter(textAdapter);
+
+        lvTexts.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                etDialogPreview.setText(textList.get(position).get("textcontent"));
+                selected = Integer.parseInt(textList.get(position).get("textid"));
+                selectedName = textList.get(position).get("textname");
+                Log.d("Selected", String.valueOf(selected));
+            }
+        });
+
+        bDialogAddToAssignment.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                etText.setText(selectedName);
+                dialog.dismiss();
+            }
+        });
+    }
+    private void getTexts(){
+        new TextTask(new TextCallback() {
+            @Override
+            public void TextCallBack(HashMap<String, HashMap<String, String>> results) {
+                results.remove("response");
+                textList.clear();
+                for (Map.Entry<String, HashMap<String, String>> text : results.entrySet()) {
+
+                    Map<String, String> textInfo = new HashMap<>();
+                    String textId = text.getValue().get("id");
+                    String textName = text.getValue().get("textname");
+                    String textContent = text.getValue().get("textcontent");
+                    String textBook = text.getValue().get("textbook");
+                    String complexity = text.getValue().get("complexity");
+                    textInfo.put("textname", textName);
+                    textInfo.put("textcontent", textContent);
+                    textInfo.put("textbook", textBook);
+                    textInfo.put("complexity", "Complexity: " + complexity);
+                    textInfo.put("textid", textId);
+                    textList.add(textInfo);
+                }
+                textAdapter.notifyDataSetChanged();
+            }
+        },context).executeTask("get","","","",0);
+    }
     private void getAssignments(){
+        new AssignmentLibTask(new AssignmentLibCallback() {
+            @Override
+            public void AssignmentLibDone(HashMap<String, HashMap<String, String>> results) {
 
+            }
+        },context).executeTask("get","","");
     }
-
-    private void getTexts() {
-    }
-
 }
 
 

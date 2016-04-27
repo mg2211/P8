@@ -62,6 +62,20 @@
             android:id="@+id/contentPane"
             android:layout_marginRight="20dp">
 
+            <EditText
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/etText"
+                android:layout_weight="1"
+                android:enabled="false"/>
+
+            <Button
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Select Text"
+                android:id="@+id/bSelectText"
+                android:layout_weight="0" />
+
         </LinearLayout>
 
     </LinearLayout>

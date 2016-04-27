@@ -30,7 +30,8 @@
         <activity
             android:name=".ClassActivity"
             android:windowSoftInputMode="stateUnchanged" />
-        <activity android:name=".AssignmentActivity"></activity>
+        <activity android:name=".AssignmentActivity"
+            android:windowSoftInputMode="stateUnchanged" ></activity>
     </application>
 
 </manifest>

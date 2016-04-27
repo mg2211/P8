@@ -3,9 +3,48 @@
     android:orientation="vertical" android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <ListView
+    <LinearLayout
+        android:orientation="horizontal"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:id="@+id/lvTextToAss" />
+        android:layout_height="match_parent"
+        android:layout_marginLeft="20dp"
+        android:layout_marginTop="20dp"
+        android:layout_marginRight="20dp"
+        android:layout_marginBottom="20dp">
+
+        <ListView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:id="@+id/lvTexts"
+            android:layout_weight="1" />
+
+        <LinearLayout
+            android:orientation="vertical"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="2">
+
+            <EditText
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:inputType="textMultiLine"
+                android:ems="10"
+                android:id="@+id/etDialogPreview"
+                android:layout_weight="1"
+                android:background="@null"
+                android:enabled="false"
+                android:gravity="top"
+                android:lines="10"/>
+
+            <Button
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Add text to assignment"
+                android:id="@+id/bDialogAddToAssignment"
+                android:layout_gravity="right" />
+        </LinearLayout>
+
+    </LinearLayout>
+
 </LinearLayout>
 
