@@ -333,12 +333,13 @@ public class TextActivity extends AppCompatActivity {
     }
 
     public void getTexts() {
-        new TextTask(new TextCallback() {
+        new TempTextTask(new TempTextCallback() {
             @Override
-            public void textListDone(HashMap<String, HashMap<String, String>> texts) {
+            public void TempTextCallBack(HashMap<String, HashMap<String, String>> results) {
+                results.remove("response");
                 textList.clear();
                 colors.clear();
-                for (Map.Entry<String, HashMap<String, String>> text : texts.entrySet()) {
+                for (Map.Entry<String, HashMap<String, String>> text : results.entrySet()) {
 
                     Map<String, String> textInfo = new HashMap<>();
                     String textId = text.getValue().get("id");
@@ -352,6 +353,7 @@ public class TextActivity extends AppCompatActivity {
                     textInfo.put("complexity", "Complexity: " + complexity);
                     textInfo.put("id", textId);
                     textList.add(textInfo);
+
                     double difficulty = Double.parseDouble(complexity);
                     if (difficulty > 0 && difficulty <= 20) {
                         colors.add(Color.rgb(156, 204, 101));
@@ -365,8 +367,7 @@ public class TextActivity extends AppCompatActivity {
                 }
                 textAdapter.notifyDataSetChanged();
             }
-        }, context).execute(""); //Nothing within "" to get every text - see php script
-        //TODO change this servertask to TempTextTask
+        },context).executeTask("get","","","",0);
     }
 
     public boolean createText() {

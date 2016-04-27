@@ -516,121 +516,6 @@ class StudentTask extends AsyncTask<String, Void, HashMap<String, HashMap<String
 
 
     }
-class TextTask extends AsyncTask<String, Void, HashMap<String, HashMap<String, String>>> {
-
-        TextCallback delegate;
-        ProgressDialog progressDialog;
-         Context context; // change to final
-
-        TextTask(TextCallback delegate, Context context) {
-            this.delegate = delegate;
-            this.context = context;
-            progressDialog = new ProgressDialog(context);
-            progressDialog.setCancelable(false);
-            progressDialog.setTitle("Processing...");
-            progressDialog.setMessage("Please wait...");
-            progressDialog.show();
-        }
-
-
-        @Override
-        protected HashMap<String, HashMap<String, String>> doInBackground(String... params) {
-
-
-
-            String id = params[0];
-            String generalResponse = null;
-            int responseCode = 0;
-            HashMap<String, HashMap<String, String>> results = new HashMap<>();
-
-            try {
-                URL url = new URL("http://emilsiegenfeldt.dk/p8/gettext.php");
-                HttpURLConnection connection = (HttpURLConnection) url.openConnection();
-                connection.setRequestMethod("POST");
-
-                Uri.Builder builder = new Uri.Builder().appendQueryParameter("id", id);
-
-                String query = builder.build().getEncodedQuery();
-                OutputStream os = connection.getOutputStream();
-                BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(os, "UTF-8"));
-                writer.write(query);
-                writer.flush();
-                writer.close();
-                os.close();
-
-                connection.connect();
-                //catch server response
-                InputStream in = new BufferedInputStream(connection.getInputStream());
-
-                String response = IOUtils.toString(in, "UTF-8");
-
-                //convert to jsonobject
-
-                JSONObject JSONResult = new JSONObject(response);
-                generalResponse = JSONResult.getString("generalResponse");
-                responseCode = JSONResult.getInt("responseCode");
-
-                JSONArray texts = JSONResult.getJSONArray("texts");
-                for (int i = 0; i < texts.length(); i++) {
-
-                    JSONObject specificText = texts.getJSONObject(i);
-                    String textname = specificText.getString("textName"); //Within brackets stuff from php
-                    String textContent = specificText.getString("textContent");
-                     id = specificText.getString("textId");
-                    double complexity = specificText.getDouble("complexity");
-
-                    HashMap<String, String> textInfo = new HashMap<>();
-                    textInfo.put("textname", textname);
-                    textInfo.put("textcontent", textContent);
-                    textInfo.put("id", id);
-                    textInfo.put("complexity", String.valueOf(complexity));
-
-                    results.put("TextId: " + id, textInfo);
-                }
-
-
-            } catch (IOException e) {
-                responseCode = 300;
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }
-
-            HashMap<String, String> response = new HashMap<>();
-            response.put("generalResponse", generalResponse);
-            response.put("responseCode", String.valueOf(responseCode));
-            results.put("response", response);
-
-
-            return results;
-        }
-
-        protected void onPostExecute(HashMap<String, HashMap<String, String>> results) {
-
-            String generalResponse = results.get("response").get("generalResponse");
-            String responseCode = results.get("response").get("responseCode");
-            progressDialog.dismiss();
-
-            if (Integer.parseInt(responseCode) == 100){
-                results.remove("response");
-                delegate.textListDone(results);}
-
-            else if (Integer.parseInt(responseCode) == 200){
-
-                int duration = Toast.LENGTH_LONG;
-                Toast toast = Toast.makeText(context, generalResponse,duration);
-                toast.show();
-            }else if (Integer.parseInt(responseCode) == 300) {
-
-                int duration = Toast.LENGTH_LONG;
-                CharSequence alert = "Server connection failed";
-
-                Toast toast = Toast.makeText(context, alert, duration);
-                toast.show();
-            }
-
-        }
-    }
-
 class ALTask extends AsyncTask<String, Void, HashMap<String, HashMap<String, String>>>{
 
     AssignmentCallback delegate;
@@ -987,11 +872,6 @@ class TempTextTask extends AsyncTask<String, Void, HashMap<String, HashMap<Strin
         String complexity = params[4];
         HashMap<String, HashMap<String, String>> results = new HashMap<>();
         HashMap<String, String> response = new HashMap<>();
-        Log.d("method",method);
-        Log.d("textname",textName);
-        Log.d("textcontent", textContent);
-        Log.d("liX", complexity);
-
         try {
             URL url = new URL("http://emilsiegenfeldt.dk/p8/textTask.php");
 
@@ -1025,6 +905,23 @@ class TempTextTask extends AsyncTask<String, Void, HashMap<String, HashMap<Strin
             response.put("responseCode", responseCode);
             if(method.equals("create")){
                 response.put("insertedId", JSONResult.getString("insertedId"));
+            }
+
+            if(method.equals("get")){
+                JSONArray texts = JSONResult.getJSONArray("texts");
+                for (int i = 0; i < texts.length(); i++) {
+                    JSONObject specificText = texts.getJSONObject(i);
+                    String specificTextname = specificText.getString("textName");
+                    String specificTextContent = specificText.getString("textContent");
+                    String specificTextId = specificText.getString("textId");
+                    double specificTextComplexity = specificText.getDouble("complexity");
+                    HashMap<String, String> textInfo = new HashMap<>();
+                    textInfo.put("textname", specificTextname);
+                    textInfo.put("textcontent", specificTextContent);
+                    textInfo.put("id", specificTextId);
+                    textInfo.put("complexity", String.valueOf(specificTextComplexity));
+                    results.put("TextId: " + specificTextId, textInfo);
+                }
             }
 
         } catch (IOException e){
