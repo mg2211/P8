@@ -1,19 +1,16 @@
 package com.example.svilen.p8;
 
-import android.app.AlertDialog;
 import android.content.Context;
-import android.content.Intent;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.view.LayoutInflater;
+import android.support.v7.app.AppCompatActivity;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.SimpleAdapter;
-import android.widget.TextView;
-import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -22,42 +19,76 @@ import java.util.Map;
 
 public class AssignmentActivity extends AppCompatActivity {
 
-    Button bGetText;
-    SimpleAdapter textAdapter;
-    List<Map<String, String>> textList = new ArrayList<>();
     Context context = this;
-    ListView lvTextToAss;
-    TextView tvTextChosen;
-    TextView tvTextId;
-    EditText etAssName;
-    ListView lvAssignments;
-    Button bTeacher;
-    List<Map<String, String>> assignmentLibraryList = new ArrayList<>();
-    SimpleAdapter assignmentLibraryAdapter;
-    Button bCreateNewAss;
-
-    TextView assLibId;
-    TextView assignmentName;
-    TextView textName;
-    TextView textId1;
-    Button bAssToStudent;
-
-    List<Map<String, String>> classList = new ArrayList<>();
-    String teacherId;
-    UserInfo userinfo;
+    UserInfo userInfo;
     HashMap<String, String> user;
-    SimpleAdapter classAdapter;
+    String teacherId;
 
-
-
-
+    Button bAddAssignment;
+    EditText etSearch;
+    ListView lvAssignments;
+    SimpleAdapter assignmentAdapter;
+    List<Map<String, String>> assignmentList = new ArrayList<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_assignment);
+        userInfo = new UserInfo(context);
+        user = userInfo.getUser();
+        teacherId = user.get("teacherId");
 
-        userinfo = new UserInfo(context);
+        lvAssignments = (ListView) findViewById(R.id.lvAssignments);
+        bAddAssignment = (Button) findViewById(R.id.bAddAssignment);
+        etSearch = (EditText) findViewById(R.id.etSearch);
+        assignmentAdapter= new SimpleAdapter(this, assignmentList,
+                android.R.layout.simple_list_item_1,
+                new String[]{"Question"},
+                new int[]{android.R.id.text1});
+        lvAssignments.setAdapter(assignmentAdapter);
+
+
+        bAddAssignment.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                //create new assignment
+            }
+        });
+        lvAssignments.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {//view assignment
+            }
+        });
+        etSearch.addTextChangedListener(new TextWatcher() {
+        @Override
+        public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+        }
+
+        @Override
+        public void onTextChanged(CharSequence s, int start, int before, int count) {
+            //Search
+        }
+
+        @Override
+        public void afterTextChanged(Editable s) {
+
+        }
+    });
+
+    }
+
+    private void getAssignments(){
+
+    }
+
+    private void getTexts() {
+    }
+
+}
+
+
+/*userinfo = new UserInfo(context);
         user = userinfo.getUser();
         teacherId = user.get("teacherId");
 
@@ -289,8 +320,6 @@ public class AssignmentActivity extends AppCompatActivity {
                         classAdapter.notifyDataSetChanged();
                     }
                 },context).execute(teacherId);
-            }
-            }
-
+            }*/
 
 

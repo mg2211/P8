@@ -19,33 +19,26 @@
             android:layout_height="fill_parent"
             android:padding="0dp"
             android:id="@+id/menuLinear"
-            android:background="#ff0000">
+            android:background="#ffffff">
 
+            <EditText
+                android:layout_width="fill_parent"
+                android:layout_height="50dp"
+                android:id="@+id/etSearch"
+                android:background="#7ddfcd"
+                android:inputType="text"
+                android:hint="@string/search" />
 
             <Button
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="GoToMain"
-                android:id="@+id/bTeacher"
+                android:text="@string/add_new"
+                android:id="@+id/bAddAssignment"
                 android:layout_marginLeft="0dp"
                 android:layout_marginRight="0dp"
                 android:layout_marginTop="0dp"
                 android:layout_marginBottom="0dp"
                 android:background="#9ccc65"
-                android:typeface="sans"
-                android:enabled="true"
-                android:textSize="20sp" />
-
-            <Button
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="Log Out"
-                android:id="@+id/bLogOut"
-                android:layout_marginLeft="0dp"
-                android:layout_marginRight="0dp"
-                android:layout_marginTop="0dp"
-                android:layout_marginBottom="0dp"
-                android:background="#ef5350"
                 android:typeface="sans"
                 android:enabled="true"
                 android:textSize="20sp" />
@@ -53,105 +46,21 @@
             <ListView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:id="@+id/lvAssignments" />
+                android:id="@+id/lvAssignments"
+                android:choiceMode="singleChoice" />
+
 
         </LinearLayout>
 
         <LinearLayout
-            android:orientation="vertical"
+            android:orientation="horizontal"
             android:layout_width="match_parent"
-            android:layout_height="match_parent">
-
-            <EditText
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:id="@+id/etAssName"
-                android:text="Set Assignment Name" />
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:textAppearance="?android:attr/textAppearanceLarge"
-                android:id="@+id/tvTextChosen"
-                android:layout_marginLeft="20dp"
-                android:layout_marginTop="10dp" />
-
-            <EditText
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:inputType="number"
-                android:ems="10"
-                android:id="@+id/tvTextId" />
-
-            <Button
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Texts"
-                android:id="@+id/bGetText"
-                android:layout_marginLeft="0dp"
-                android:layout_marginRight="0dp"
-                android:layout_marginTop="0dp"
-                android:layout_marginBottom="0dp"
-                android:background="#9ccc65"
-                android:typeface="sans"
-                android:enabled="true"
-                android:textSize="20sp" />
-
-            <Button
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Create New Assignment"
-                android:id="@+id/bCreateNewAss"
-                android:layout_marginLeft="0dp"
-                android:layout_marginRight="0dp"
-                android:layout_marginTop="0dp"
-                android:layout_marginBottom="0dp"
-                android:background="#9ccc65"
-                android:typeface="sans"
-                android:enabled="true"
-                android:textSize="20sp" />
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:textAppearance="?android:attr/textAppearanceLarge"
-                android:text="Assignment name"
-                android:id="@+id/tvAssName" />
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:textAppearance="?android:attr/textAppearanceLarge"
-                android:text="Assignment Library ID"
-                android:id="@+id/tvAssLibId" />
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:textAppearance="?android:attr/textAppearanceLarge"
-                android:text="Textname"
-                android:id="@+id/tvTextname" />
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:textAppearance="?android:attr/textAppearanceLarge"
-                android:text="Text Id"
-                android:id="@+id/tvTextId1" />
-
-            <Button
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Assign assignment"
-                android:id="@+id/bAssToStudent"
-                android:layout_marginLeft="0dp"
-                android:layout_marginRight="0dp"
-                android:layout_marginTop="0dp"
-                android:layout_marginBottom="0dp"
-                android:background="#9ccc65"
-                android:typeface="sans"
-                android:enabled="true"
-                android:textSize="20sp" />
+            android:layout_height="match_parent"
+            android:layout_marginLeft="20dp"
+            android:layout_marginTop="10dp"
+            android:layout_marginBottom="10dp"
+            android:id="@+id/contentPane"
+            android:layout_marginRight="20dp">
 
         </LinearLayout>
 

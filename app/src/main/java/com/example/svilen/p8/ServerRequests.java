@@ -960,7 +960,7 @@ class RoleTask extends AsyncTask<String, Void, Map<String,HashMap<String, String
     }
 
 }
-class TempTextTask extends AsyncTask<String, Void, HashMap<String, String>>{
+class TempTextTask extends AsyncTask<String, Void, HashMap<String, HashMap<String, String>>>{
 
     private final Context context;
     private final TempTextCallback delegate;
@@ -979,13 +979,14 @@ class TempTextTask extends AsyncTask<String, Void, HashMap<String, String>>{
         this.execute(method, textId, textName, textContent, String.valueOf(complexity));
     }
     @Override
-    protected HashMap <String, String> doInBackground(String... params) {
+    protected HashMap <String, HashMap<String, String>> doInBackground(String... params) {
         String method = params[0];
         String textId = params[1];
         String textName = params[2];
         String textContent = params[3];
         String complexity = params[4];
-        HashMap<String, String> results = new HashMap<>();
+        HashMap<String, HashMap<String, String>> results = new HashMap<>();
+        HashMap<String, String> response = new HashMap<>();
         Log.d("method",method);
         Log.d("textname",textName);
         Log.d("textcontent", textContent);
@@ -1014,36 +1015,35 @@ class TempTextTask extends AsyncTask<String, Void, HashMap<String, String>>{
 
             InputStream in = new BufferedInputStream(connection.getInputStream());
 
-            String response = IOUtils.toString(in, "UTF-8");
+            String serverResponse = IOUtils.toString(in, "UTF-8");
 
-            JSONObject JSONResult = new JSONObject(response);
+            JSONObject JSONResult = new JSONObject(serverResponse);
             String generalResponse = JSONResult.getString("generalResponse");
             String responseCode = String.valueOf(JSONResult.getInt("responseCode"));
-            results.put("generalResponse", generalResponse);
-            results.put("responseCode", responseCode);
+
+            response.put("generalResponse", generalResponse);
+            response.put("responseCode", responseCode);
             if(method.equals("create")){
-                results.put("insertedId", JSONResult.getString("insertedId"));
+                response.put("insertedId", JSONResult.getString("insertedId"));
             }
 
         } catch (IOException e){
-            results.put("generalResponse", "Server connection failed");
-            results.put("responseCode", "300");
+            response.put("generalResponse", "Server connection failed");
+            response.put("responseCode", "300");
         } catch (JSONException e) {
             e.printStackTrace();
         }
+        results.put("response", response);
         return results;
     }
 
-    protected void onPostExecute (HashMap<String, String> results){
+    protected void onPostExecute (HashMap<String, HashMap<String, String>> results){
         progressDialog.dismiss();
         int duration = Toast.LENGTH_LONG;
-        CharSequence alert = results.get("generalResponse");
+        CharSequence alert = results.get("response").get("generalResponse");
         Toast toast = Toast.makeText(context, alert, duration);
         toast.show();
-
-        if(results.get("insertedId") != null){
-           delegate.TempTextCallBack(results.get("insertedId"));
-        }
+        delegate.TempTextCallBack(results);
     }
 }
 
@@ -1206,10 +1206,6 @@ class QuestionTask extends AsyncTask<String, Void, HashMap<String, HashMap<Strin
     QuestionCallback delegate;
     private final Context context;
     ProgressDialog progressDialog;
-
-    @Override
-    protected void onPreExecute() {
-    }
 
     public QuestionTask(QuestionCallback delegate, Context context) {
         this.delegate = delegate;

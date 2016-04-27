@@ -366,14 +366,17 @@ public class TextActivity extends AppCompatActivity {
                 textAdapter.notifyDataSetChanged();
             }
         }, context).execute(""); //Nothing within "" to get every text - see php script
+        //TODO change this servertask to TempTextTask
     }
 
     public boolean createText() {
 
         if (!etTextName.getText().toString().equals("") && !etContent.getText().toString().equals("")) {
+
             new TempTextTask(new TempTextCallback() {
                 @Override
-                public void TempTextCallBack(String id) {
+                public void TempTextCallBack(HashMap<String, HashMap<String, String>> results) {
+                   String id = results.get("response").get("insertedId");
                     if (questionList.size() > 0) {
                         for (int i = 0; i < questionList.size(); i++) {
                             String questionId = questionList.get(i).get("id");
@@ -385,7 +388,7 @@ public class TextActivity extends AppCompatActivity {
                         }
                     }
                 }
-            }, context).executeTask("create", "", etTextName.getText().toString(), etContent.getText().toString(), lix);
+            },context).executeTask("create", "", etTextName.getText().toString(), etContent.getText().toString(), lix);
             getTexts();
             return true;
         } else {
@@ -400,9 +403,10 @@ public class TextActivity extends AppCompatActivity {
 
     public boolean updateText() {
         if (!etTextName.getText().toString().equals("") && !etContent.getText().toString().equals("")) {
+
             new TempTextTask(new TempTextCallback() {
                 @Override
-                public void TempTextCallBack(String id) {
+                public void TempTextCallBack(HashMap<String, HashMap<String, String>> results) {
                     if (questionList.size() > 0) {
                         for (int i = 0; i < questionList.size(); i++) {
                             String questionId = questionList.get(i).get("id");
@@ -414,7 +418,7 @@ public class TextActivity extends AppCompatActivity {
                         }
                     }
                 }
-            }, context).executeTask("update", textId, etTextName.getText().toString(), etContent.getText().toString(), lix);
+            },context).executeTask("update", textId, etTextName.getText().toString(), etContent.getText().toString(), lix);
             getTexts();
             return true;
         } else {
@@ -437,15 +441,14 @@ public class TextActivity extends AppCompatActivity {
                     public void onClick(DialogInterface dialog, int which) {
                         new TempTextTask(new TempTextCallback() {
                             @Override
-                            public void TempTextCallBack(String id) {
-
+                            public void TempTextCallBack(HashMap<String, HashMap<String, String>> results) {
+                                new QuestionTask(new QuestionCallback() {//delete questions
+                                    @Override
+                                    public void QuestionTaskDone(HashMap<String, HashMap<String, String>> results) {
+                                    }
+                                }, context).executeTask("delete", "", textId, "", ""); //delete the questions after the text is deleted
                             }
-                        }, context).executeTask("delete", textId, "", "", 0);//delete text
-                        new QuestionTask(new QuestionCallback() {//delete questions
-                            @Override
-                            public void QuestionTaskDone(HashMap<String, HashMap<String, String>> results) {
-                            }
-                        }, context).executeTask("delete", "", textId, "", "");
+                        },context).executeTask("delete", textId, "", "", 0); //delete the text
 
                         getTexts();
                         setContentPane(-1);
@@ -625,8 +628,7 @@ public class TextActivity extends AppCompatActivity {
             }
 
         } else {
-
-            //new text - sets the answer rows id to 0...
+            //new text - sets the answer rows' id to 0...
             bDialogDelete.setEnabled(false);
             LLAnswers.getChildAt(0).setTag(R.id.ANSWER_ID_TAG, "0");
             LLAnswers.getChildAt(1).setTag(R.id.ANSWER_ID_TAG, "0");
