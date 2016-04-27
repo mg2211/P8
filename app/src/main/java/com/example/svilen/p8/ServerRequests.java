@@ -845,13 +845,13 @@ class RoleTask extends AsyncTask<String, Void, Map<String,HashMap<String, String
     }
 
 }
-class TempTextTask extends AsyncTask<String, Void, HashMap<String, HashMap<String, String>>>{
+class TextTask extends AsyncTask<String, Void, HashMap<String, HashMap<String, String>>>{
 
     private final Context context;
-    private final TempTextCallback delegate;
+    private final TextCallback delegate;
     ProgressDialog progressDialog;
 
-    public TempTextTask(TempTextCallback delegate, Context context){
+    public TextTask(TextCallback delegate, Context context){
         this.delegate = delegate;
         this.context = context;
         progressDialog = new ProgressDialog(context);

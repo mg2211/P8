@@ -6,16 +6,11 @@ import android.content.DialogInterface;
 import android.content.res.Resources;
 import android.graphics.Color;
 import android.os.Bundle;
-import android.support.annotation.LayoutRes;
-import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.text.Editable;
 import android.text.TextWatcher;
-import android.util.Log;
-import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.EditText;
@@ -23,14 +18,10 @@ import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.SimpleAdapter;
 import android.widget.Switch;
-import android.widget.TableLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import org.apache.commons.lang3.StringUtils;
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -333,7 +324,7 @@ public class TextActivity extends AppCompatActivity {
     }
 
     public void getTexts() {
-        new TempTextTask(new TempTextCallback() {
+        new TextTask(new TextCallback() {
             @Override
             public void TempTextCallBack(HashMap<String, HashMap<String, String>> results) {
                 results.remove("response");
@@ -374,7 +365,7 @@ public class TextActivity extends AppCompatActivity {
 
         if (!etTextName.getText().toString().equals("") && !etContent.getText().toString().equals("")) {
 
-            new TempTextTask(new TempTextCallback() {
+            new TextTask(new TextCallback() {
                 @Override
                 public void TempTextCallBack(HashMap<String, HashMap<String, String>> results) {
                    String id = results.get("response").get("insertedId");
@@ -405,7 +396,7 @@ public class TextActivity extends AppCompatActivity {
     public boolean updateText() {
         if (!etTextName.getText().toString().equals("") && !etContent.getText().toString().equals("")) {
 
-            new TempTextTask(new TempTextCallback() {
+            new TextTask(new TextCallback() {
                 @Override
                 public void TempTextCallBack(HashMap<String, HashMap<String, String>> results) {
                     if (questionList.size() > 0) {
@@ -440,7 +431,7 @@ public class TextActivity extends AppCompatActivity {
                 .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        new TempTextTask(new TempTextCallback() {
+                        new TextTask(new TextCallback() {
                             @Override
                             public void TempTextCallBack(HashMap<String, HashMap<String, String>> results) {
                                 new QuestionTask(new QuestionCallback() {//delete questions
