@@ -1225,14 +1225,16 @@ class AssignmentLibTask extends AsyncTask<String, Void, HashMap<String, HashMap<
         progressDialog.setMessage("Please wait ...");
         progressDialog.show();
     }
-    public void executeTask(String method, String teacherId, String assignmentId){
-        this.execute(method, teacherId, assignmentId);
+    public void executeTask(String method, String teacherId, String assignmentId, String assignmentName, String textId){
+        this.execute(method, teacherId, assignmentId, assignmentName, textId);
     }
     @Override
     protected HashMap <String, HashMap<String, String>> doInBackground(String... params) {
         String method = params[0];
         String teacherId = params[1];
         String assignmentId = params[2];
+        String assignmentName = params[3];
+        String textId = params[4];
 
         HashMap<String, HashMap<String, String>> results = new HashMap<>();
         HashMap<String, String> response = new HashMap<>();
@@ -1243,7 +1245,9 @@ class AssignmentLibTask extends AsyncTask<String, Void, HashMap<String, HashMap<
             connection.setRequestMethod("POST");
             Uri.Builder builder = new Uri.Builder().appendQueryParameter("method", method)
                     .appendQueryParameter("assignmentId",assignmentId)
-                    .appendQueryParameter("teacherId", teacherId);
+                    .appendQueryParameter("teacherId", teacherId)
+                    .appendQueryParameter("assignmentName", assignmentName)
+                    .appendQueryParameter("textId",textId);
 
             String query = builder.build().getEncodedQuery();
             OutputStream os = connection.getOutputStream();
@@ -1258,6 +1262,7 @@ class AssignmentLibTask extends AsyncTask<String, Void, HashMap<String, HashMap<
             InputStream in = new BufferedInputStream(connection.getInputStream());
 
             String serverResponse = IOUtils.toString(in, "UTF-8");
+            Log.d("serverresponse", serverResponse);
 
             JSONObject JSONResult = new JSONObject(serverResponse);
             String generalResponse = JSONResult.getString("generalResponse");
