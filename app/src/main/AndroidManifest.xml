@@ -32,7 +32,7 @@
             android:name=".ClassActivity"
             android:windowSoftInputMode="stateUnchanged" />
         <activity android:name=".AssignmentActivity"
-            android:windowSoftInputMode="stateUnchanged" ></activity>
+            android:windowSoftInputMode="stateUnchanged|adjustPan" ></activity>
     </application>
 
 </manifest>
