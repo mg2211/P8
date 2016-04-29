@@ -2,9 +2,12 @@ package com.example.svilen.p8;
 
 import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -42,6 +45,7 @@ public class AssignmentActivity extends AppCompatActivity {
 
     Button bAddAssignment;
     Button bSave;
+    Button bAssign;
     EditText etSearch;
     EditText etAssignmentText;
     EditText etAssignmentName;
@@ -52,12 +56,13 @@ public class AssignmentActivity extends AppCompatActivity {
     SimpleAdapter textAdapter;
     int assignmentTextId;
     String assignmentId;
+    String assignmentName;
     int dialogSelected;
     ArrayList<BarEntry> yVal = new ArrayList<>();
     ArrayList<String> xVals = new ArrayList<>();
     ArrayList<IBarDataSet> dataSets = new ArrayList<>();
     ArrayList<Integer> colors = new ArrayList<>();
-    boolean newAssignment = true;
+    boolean newAssignment;
     boolean changed;
     HashMap<Integer, Integer> textListIds = new HashMap<>();
 
@@ -70,6 +75,7 @@ public class AssignmentActivity extends AppCompatActivity {
         teacherId = user.get("teacherId");
         getTexts();
         getAssignments();
+        setNew(true);
         barChart();
         addData(5);
         lvAssignments = (ListView) findViewById(R.id.lvAssignments);
@@ -78,6 +84,7 @@ public class AssignmentActivity extends AppCompatActivity {
         etSearch = (EditText) findViewById(R.id.etSearch);
         etAssignmentText = (EditText) findViewById(R.id.etAssignmentText);
         bSave = (Button) findViewById(R.id.bSave);
+        bAssign = (Button) findViewById(R.id.bAssign);
 
         assignmentAdapter= new SimpleAdapter(this, assignmentList,
                 android.R.layout.simple_list_item_1,
@@ -121,17 +128,42 @@ public class AssignmentActivity extends AppCompatActivity {
         bAddAssignment.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                //create new assignment
+                if(changed){
+                    confirm(-1);
+                } else {
+                    setContentPane(-1);
+                }
             }
         });
         lvAssignments.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {//view assignment
-                assignmentTextId = Integer.parseInt(assignmentList.get(position).get("assignmentText"));
-                int textListPos = textListIds.get(assignmentTextId);
-                etAssignmentName.setText(assignmentList.get(position).get("assignmentName"));
-                assignmentId = assignmentList.get(position).get("assignmentId");
-                etAssignmentText.setText(textList.get(textListPos).get("textname"));
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                if(changed) {
+                    confirm(position);
+                } else {
+                    setContentPane(position);
+                }
+            }
+        });
+
+        etAssignmentName.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                if(!etAssignmentName.getText().toString().equals(assignmentName) && !etAssignmentName.getText().toString().equals("")){
+                    setChanged(true);
+                } else {
+                    setChanged(false);
+                }
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+
             }
         });
     }
@@ -179,7 +211,10 @@ public class AssignmentActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 etAssignmentText.setText(textList.get(textListIds.get(dialogSelected)).get("textname"));
-                assignmentTextId = dialogSelected;
+                if(assignmentTextId != dialogSelected) {
+                    assignmentTextId = dialogSelected;
+                    setChanged(true);
+                }
                 dialog.dismiss();
                 Log.d("assignmentTextId", String.valueOf(assignmentTextId));
             }
@@ -231,41 +266,144 @@ public class AssignmentActivity extends AppCompatActivity {
                     String assignmentId = assignment.getValue().get("id");
                     String assignmentName = assignment.getValue().get("name");
                     String assignmentText = assignment.getValue().get("textId");
+                    String assigned = assignment.getValue().get("assigned");
 
                     assignmentInfo.put("assignmentId",assignmentId);
                     assignmentInfo.put("assignmentName",assignmentName);
                     assignmentInfo.put("assignmentText",assignmentText);
+                    assignmentInfo.put("assigned",assigned);
                     assignmentList.add(assignmentInfo);
                 }
                 assignmentAdapter.notifyDataSetChanged();
             }
         },context).executeTask("get",teacherId,"","","");
     }
-    private void addData(int i) {
-        colors.clear();
-        for(int n = 0; n<i; n++){
-            int randomnumber = (int)(Math.random() * 101);
-            yVal.add(new BarEntry(randomnumber, n));
-            if(randomnumber >= 50 && randomnumber <= 75){
-                colors.add(Color.rgb(255, 235, 69));
-            } else if(randomnumber > 75){
-                colors.add(Color.rgb(156,204,101));
-            } else {
-                colors.add(Color.rgb(239,83,80));
-            }
-            xVals.add("Assignment "+n);
-        }
-        BarDataSet set1 = new BarDataSet(yVal, "Assignments");
-        set1.setColors(colors);
-        dataSets.add(set1);
-    }
+
     private void setChanged(boolean value){
         changed = value;
-        Log.d("Changed value", String.valueOf(changed));
+        Log.d(".......","changed value"+ String.valueOf(changed));
+        if(value) {
+            bAssign.setEnabled(false);
+            bAssign.setText("Please save before assigning to students");
+        } else {
+            bAssign.setEnabled(true);
+            bAssign.setText("Assign to students");
+        }
     }
     private void setNew(boolean value){
         newAssignment = value;
-        Log.d("New", String.valueOf(newAssignment));
+        Log.d(".......","new value:"+ String.valueOf(newAssignment));
+    }
+
+    private boolean createAssignment(){
+        if(assignmentTextId != 0 && !etAssignmentName.getText().toString().equals("")) {
+            new AssignmentLibTask(new AssignmentLibCallback() {
+                @Override
+                public void AssignmentLibDone(HashMap<String, HashMap<String, String>> results) {
+                    assignmentId = results.get("response").get("insertedId");
+                    if(results.get("response").get("responseCode").equals("100")){
+                        setChanged(false);
+                        setNew(false);
+                        getAssignments();
+                    }
+                }
+            },context).executeTask("create",teacherId,"",etAssignmentName.getText().toString(), String.valueOf(assignmentTextId));
+            return true;
+        } else {
+            int duration = Toast.LENGTH_LONG;
+            CharSequence alert = "Please fill in all relevant information";
+            Toast toast = Toast.makeText(context, alert, duration);
+            toast.show();
+            return false;
+        }
+    }
+    private boolean updateAssignment(){
+        if(assignmentTextId != 0 && !etAssignmentName.getText().toString().equals("")) {
+            new AssignmentLibTask(new AssignmentLibCallback() {
+                @Override
+                public void AssignmentLibDone(HashMap<String, HashMap<String, String>> results) {
+                    if(results.get("response").get("responseCode").equals("100")){
+                        setChanged(false);
+                        setNew(false);
+                        getAssignments();
+                    }
+                }
+            },context).executeTask("update",teacherId,assignmentId,etAssignmentName.getText().toString(), String.valueOf(assignmentTextId));
+            return true;
+        } else {
+            int duration = Toast.LENGTH_LONG;
+            CharSequence alert = "Please fill in all relevant information";
+            Toast toast = Toast.makeText(context, alert, duration);
+            toast.show();
+            return false;
+        }
+
+    }
+    public void confirm(final int position) {
+        new AlertDialog.Builder(context)
+                .setIcon(android.R.drawable.ic_dialog_alert)
+                .setTitle("Confirm")
+                .setMessage("You have unsaved changes - Save before continuing?")
+                .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        if(newAssignment){
+                            Log.d("new assignment","true");
+                            if(createAssignment()) {
+                                setContentPane(position);
+                            }
+                        } else {
+                            if(updateAssignment()){
+                                setContentPane(position);
+                            }
+                            Log.d("update assignment", "true");
+                        }
+                    }
+
+                })
+                .setNegativeButton("No", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        setContentPane(position);
+                        setChanged(false);
+                        setNew(false);
+                    }
+                })
+                .show();
+    }
+    private void setContentPane(int position){
+
+        if(position >= 0) {
+            assignmentTextId = Integer.parseInt(assignmentList.get(position).get("assignmentText"));
+            int textListPos = textListIds.get(assignmentTextId);
+            etAssignmentName.setText(assignmentList.get(position).get("assignmentName"));
+            assignmentId = assignmentList.get(position).get("assignmentId");
+            etAssignmentText.setText(textList.get(textListPos).get("textname"));
+            assignmentName = assignmentList.get(position).get("assignmentName");
+            setChanged(false);
+            setNew(false);
+
+            if (assignmentList.get(position).get("assigned").equals("true")) {
+                etAssignmentName.setEnabled(false);
+                etAssignmentText.setEnabled(false);
+                bSave.setEnabled(false);
+            } else {
+                etAssignmentText.setEnabled(true);
+                etAssignmentName.setEnabled(true);
+                bSave.setEnabled(true);
+            }
+        } else {
+            etAssignmentName.setText("");
+            etAssignmentName.setEnabled(true);
+            etAssignmentText.setText("");
+            etAssignmentText.setEnabled(true);
+            bSave.setEnabled(true);
+            setChanged(false);
+            setNew(true);
+            assignmentName = "";
+            assignmentTextId = 0;
+            assignmentId = "";
+        }
     }
     private void barChart(){
         //design barChart
@@ -309,20 +447,22 @@ public class AssignmentActivity extends AppCompatActivity {
             }
         });
     }
-    private void createAssignment(){
-        new AssignmentLibTask(new AssignmentLibCallback() {
-            @Override
-            public void AssignmentLibDone(HashMap<String, HashMap<String, String>> results) {
-
+    private void addData(int i) {
+        colors.clear();
+        for(int n = 0; n<i; n++){
+            int randomnumber = (int)(Math.random() * 101);
+            yVal.add(new BarEntry(randomnumber, n));
+            if(randomnumber >= 50 && randomnumber <= 75){
+                colors.add(Color.rgb(255, 235, 69));
+            } else if(randomnumber > 75){
+                colors.add(Color.rgb(156,204,101));
+            } else {
+                colors.add(Color.rgb(239,83,80));
             }
-        },context).executeTask("create",teacherId,"",etAssignmentName.getText().toString(), String.valueOf(assignmentTextId));
-    }
-    private void updateAssignment(){
-        new AssignmentLibTask(new AssignmentLibCallback() {
-            @Override
-            public void AssignmentLibDone(HashMap<String, HashMap<String, String>> results) {
-
-            }
-        },context).executeTask("update",teacherId,assignmentId,etAssignmentName.getText().toString(), String.valueOf(assignmentTextId));
+            xVals.add("Assignment "+n);
+        }
+        BarDataSet set1 = new BarDataSet(yVal, "Assignments");
+        set1.setColors(colors);
+        dataSets.add(set1);
     }
 }
