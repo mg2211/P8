@@ -1335,7 +1335,7 @@ class AssignmentLibTask extends AsyncTask<String, Void, HashMap<String, HashMap<
             HashMap<String, HashMap<String, String>> results = new HashMap<>();
 
             try {
-                URL url = new URL("http://emilsiegenfeldt.dk/p8/class.php");
+                URL url = new URL("http://emilsiegenfeldt.dk/p8/assignment.php");
                 HttpURLConnection connection = (HttpURLConnection) url.openConnection();
                 connection.setRequestMethod("POST");
 
@@ -1356,6 +1356,7 @@ class AssignmentLibTask extends AsyncTask<String, Void, HashMap<String, HashMap<
                 InputStream in = new BufferedInputStream(connection.getInputStream());
 
                 String response = IOUtils.toString(in, "UTF-8"); //convert to readable string
+                Log.d("ghgg",response);
 
                 //convert to JSON object
                 JSONObject JSONResult = new JSONObject(response);
@@ -1367,13 +1368,17 @@ class AssignmentLibTask extends AsyncTask<String, Void, HashMap<String, HashMap<
                     JSONObject specificAssignment = assignments.getJSONObject(i);
                     String assLibId = String.valueOf(specificAssignment.getInt("assignmentlibraryid"));
                     String assignmentId = String.valueOf(specificAssignment.getInt("id"));
+                    String assignmentName = specificAssignment.getString("assignmentName");
+                    String textId = specificAssignment.getString("textId");
 
                     HashMap<String, String> assignmentInfo = new HashMap<>();
                     assignmentInfo.put("assignmentlibraryid", assLibId);
                     assignmentInfo.put("assignmentid", assignmentId);
+                    assignmentInfo.put("assignmentName", assignmentName);
+                    assignmentInfo.put("textId", textId);
 
                     results.put("AssignmentId: " +  assignmentId, assignmentInfo);
-                    Log.d("assignmentinfo: ", String.valueOf(assignmentInfo));
+                    Log.d("assINFO: ", String.valueOf(assignmentInfo));
 
                 }
 
