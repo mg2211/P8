@@ -1102,11 +1102,16 @@ class AssignmentLibTask extends AsyncTask<String, Void, HashMap<String, HashMap<
             progressDialog.setMessage("Please wait...");
             progressDialog.show();
         }
+        public void executeTask(String method, String studentId, String assignmentLibId){
+            this.execute(method, studentId, assignmentLibId);
+        }
 
         @Override
         protected HashMap<String, HashMap<String, String>> doInBackground(String... params) {
 
-            String studentId = params[0];
+            String method = params[0];
+            String studentId = params[1];
+            String assignmentLibId = params[2];
             String generalResponse = null;
             int responseCode = 0;
 
@@ -1117,8 +1122,9 @@ class AssignmentLibTask extends AsyncTask<String, Void, HashMap<String, HashMap<
                 HttpURLConnection connection = (HttpURLConnection) url.openConnection();
                 connection.setRequestMethod("POST");
 
-                Uri.Builder builder = new Uri.Builder().appendQueryParameter("studentId", studentId);
-
+                Uri.Builder builder = new Uri.Builder().appendQueryParameter("studentId", studentId)
+                        .appendQueryParameter("assignmentLibId",assignmentLibId)
+                        .appendQueryParameter("method",method);
 
                 String query = builder.build().getEncodedQuery();
                 OutputStream os = connection.getOutputStream();
@@ -1148,12 +1154,16 @@ class AssignmentLibTask extends AsyncTask<String, Void, HashMap<String, HashMap<
                     String assignmentId = String.valueOf(specificAssignment.getInt("id"));
                     String assignmentName = specificAssignment.getString("assignmentName");
                     String textId = specificAssignment.getString("textId");
+                    String from = specificAssignment.getString("from");
+                    String to = specificAssignment.getString("to");
 
                     HashMap<String, String> assignmentInfo = new HashMap<>();
                     assignmentInfo.put("assignmentlibraryid", assLibId);
                     assignmentInfo.put("assignmentid", assignmentId);
                     assignmentInfo.put("assignmentName", assignmentName);
                     assignmentInfo.put("textId", textId);
+                    assignmentInfo.put("availableFrom", from);
+                    assignmentInfo.put("availableTo",to);
 
                     results.put("AssignmentId: " +  assignmentId, assignmentInfo);
                     Log.d("assINFO: ", String.valueOf(assignmentInfo));

@@ -61,11 +61,12 @@ public class StudentActivity extends AppCompatActivity {
                     @Override
                     public void TextCallBack(HashMap<String, HashMap<String, String>> results) {
 
+                        //remove other hashmaps in results var to avoid the first returning null
+
                         for (Map.Entry<String, HashMap<String, String>> text : results.entrySet()) {
                             Map<String, String> textInfo = new HashMap<>();
                             String textContent = text.getValue().get("textcontent");
                             String textName = text.getValue().get("textname");
-
 
                             textInfo.put("textcontent", textContent);
                             textInfo.put("textname", textName);
@@ -137,7 +138,7 @@ public class StudentActivity extends AppCompatActivity {
                 }
 
             }
-        },context).execute(studentId);
+        },context).executeTask("get",studentId,"");
     }
 
 
