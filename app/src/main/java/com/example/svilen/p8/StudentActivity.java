@@ -1,9 +1,13 @@
 package com.example.svilen.p8;
 
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.Button;
@@ -27,10 +31,11 @@ public class StudentActivity extends AppCompatActivity {
     HashMap<String, String> user;
     String studentId;
     String textId;
+    String assignmentName;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_student);
         setContentView(R.layout.activity_student);
 
 
@@ -43,19 +48,45 @@ public class StudentActivity extends AppCompatActivity {
 
         assignmentAdapter = new SimpleAdapter(this, assignmentList,
                 android.R.layout.simple_list_item_1,
-                new String[] {"assignmentName"},
-                new int[] {android.R.id.text1});
+                new String[]{"assignmentName"},
+                new int[]{android.R.id.text1});
         lvAssToStudent.setAdapter(assignmentAdapter);
         getAssignment();
 
-        lvAssToStudent.setOnItemClickListener(new AdapterView.OnItemClickListener(){
+        lvAssToStudent.setOnItemClickListener(new AdapterView.OnItemClickListener() {
 
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
 
                 Map<String, String> assignmentData = assignmentList.get(position);
-                 textId = assignmentData.get("textId");
+                textId = assignmentData.get("textId");
+                assignmentName = assignmentData.get("assignmentName");
                 Log.d("TEXTID::: ", textId);
+
+                AlertDialog.Builder builder = new AlertDialog.Builder(context);
+
+                builder.setMessage("Do you wish to start " + assignmentName + " homework?")
+                        .setTitle(assignmentName)
+                        .setNegativeButton("No", new DialogInterface.OnClickListener(){
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+
+                    }
+                })
+                        .setPositiveButton("Yes", new DialogInterface.OnClickListener(){
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+
+                        Intent intent = new Intent(StudentActivity.this, ReadingActivity.class);
+                        startActivity(intent);
+                    }
+                });
+
+                AlertDialog dialog = builder.create();
+                dialog.setCanceledOnTouchOutside(true);
+                dialog.show();
+
+
 
                 new TextTask(new TextCallback() {
                     @Override
@@ -63,6 +94,7 @@ public class StudentActivity extends AppCompatActivity {
 
                         //remove other hashmaps in results var to avoid the first returning null
 
+                        // remove progressDial if possible
                         for (Map.Entry<String, HashMap<String, String>> text : results.entrySet()) {
                             Map<String, String> textInfo = new HashMap<>();
                             String textContent = text.getValue().get("textcontent");
@@ -70,17 +102,16 @@ public class StudentActivity extends AppCompatActivity {
 
                             textInfo.put("textcontent", textContent);
                             textInfo.put("textname", textName);
-                           // assignmentList.add(textInfo);
+                            // assignmentList.add(textInfo);
                             Log.d("TEXTTASK", String.valueOf(textInfo));
+
+
                         }
                     }
                 }, context).executeTask("get", textId, "", "", 0);
 
             }
         });
-
-
-
 
 
         bLogout = (Button) findViewById(R.id.bLogout);
@@ -91,9 +122,6 @@ public class StudentActivity extends AppCompatActivity {
                 userinfo.logOut();
             }
         });
-
-
-
 
 
     }
@@ -107,7 +135,7 @@ public class StudentActivity extends AppCompatActivity {
     }
 
 
-    public void getAssignment(){
+    public void getAssignment() {
 
         Log.d("HALLO", "HALLO");
         new AssignmentTask(new AssignmentCallback() {
@@ -115,7 +143,7 @@ public class StudentActivity extends AppCompatActivity {
             public void assignmentDone(HashMap<String, HashMap<String, String>> assignments) {
 
                 Log.d("PRUFA", "PRUFA");
-                if(!assignmentList.isEmpty()){
+                if (!assignmentList.isEmpty()) {
                     assignmentList.clear();
                 }
 
@@ -138,8 +166,11 @@ public class StudentActivity extends AppCompatActivity {
                 }
 
             }
-        },context).executeTask("get",studentId,"");
+        }, context).executeTask("get", studentId, "");
     }
 
 
+
 }
+
+

@@ -2,6 +2,9 @@
     <!--App name-->
     <string name="app_name">P8</string>
 
+    <string name="Yes">Yes</string>
+    <string name="No">No</string>
+
     <!--Labels for buttons-->
     <string name="login">Login</string>
     <string name="register">Register</string>
