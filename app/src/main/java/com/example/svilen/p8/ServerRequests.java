@@ -722,19 +722,9 @@ class TextTask extends AsyncTask<String, Void, HashMap<String, HashMap<String, S
 }
 
 
-class UserTask extends AsyncTask<String, Void, String>{
+class UserTask extends AsyncTask<String, Void, Map<String,HashMap<String, String>>> {
 
     UserCallback delegate;
-
-    String username;
-    String userId;
-    String teacherId;
-    String studentId;
-    String lastName;
-    String firstName;
-    String role;
-    String parentEmail;
-
     private final Context context;
     ProgressDialog progressDialog;
 
@@ -742,8 +732,9 @@ class UserTask extends AsyncTask<String, Void, String>{
     protected void onPreExecute() {
     }
 
-    public UserTask(Context context){
+    public UserTask(UserCallback delegate, Context context) {
         this.context = context;
+        this.delegate = delegate;
         progressDialog = new ProgressDialog(context);
         progressDialog.setCancelable(false);
         progressDialog.setTitle("Processing...");
@@ -751,32 +742,44 @@ class UserTask extends AsyncTask<String, Void, String>{
         progressDialog.show();
     }
 
-    public void executeTask(){
-        this.execute();
+
+    public void executeTask(String method, String role, String userId, String teacherId, String studentId,
+                            String classId, String username, String password, String lastName, String firstName,
+                            String email, String parentEmail) {
+        this.execute(method, role, userId, teacherId, studentId, classId, username, password, lastName,
+                firstName, email, parentEmail);
     }
 
     @Override
-    protected String doInBackground(String... params) {
-        if (params[0].equals("")) {
-            username = "";
-            userId = "";
-            teacherId = "";
-            studentId = "";
-            lastName = "";
-            firstName = "";
-            role = "";
-            parentEmail = "";
+    protected Map<String, HashMap<String, String>> doInBackground(String... params) {
 
-        } else {
-            username = params[0];
-            userId = params[1];
-            teacherId = params[2];
-            studentId = params[3];
-            lastName = params[4];
-            firstName = params[5];
-            role = params[6];
-            parentEmail = params[7];
-        }
+        String method;
+        String role;
+        String userId;
+        String teacherId;
+        String studentId;
+        String classId;
+        String username;
+        String password;
+        String lastName;
+        String firstName;
+        String email;
+        String parentEmail;
+
+        Map<String, HashMap<String, String>> result = new HashMap<>();
+
+        method = params[0];
+        role = params[1];
+        userId = params[2];
+        teacherId = params[3];
+        studentId = params[4];
+        classId = params[5];
+        username = params[6];
+        password = params[7];
+        lastName = params[8];
+        firstName = params[9];
+        email = params[10];
+        parentEmail = params[11];
 
         try {
             String generalResponse;
@@ -786,14 +789,17 @@ class UserTask extends AsyncTask<String, Void, String>{
             HttpURLConnection connection = (HttpURLConnection) url.openConnection();
             connection.setRequestMethod("POST");
 
-            Uri.Builder builder = new Uri.Builder().appendQueryParameter("username", username)
+            Uri.Builder builder = new Uri.Builder().appendQueryParameter("method", method)
+                    .appendQueryParameter("role", role)
                     .appendQueryParameter("userid", userId)
                     .appendQueryParameter("studentid", studentId)
                     .appendQueryParameter("teacherid", teacherId)
+                    .appendQueryParameter("classid", classId)
                     .appendQueryParameter("username", username)
+                    .appendQueryParameter("password", password)
                     .appendQueryParameter("lastname", lastName)
                     .appendQueryParameter("firstname", firstName)
-                    .appendQueryParameter("role", role)
+                    .appendQueryParameter("email", email)
                     .appendQueryParameter("parentemail", parentEmail);
 
             String query = builder.build().getEncodedQuery();
@@ -813,51 +819,57 @@ class UserTask extends AsyncTask<String, Void, String>{
             JSONObject JSONResult = new JSONObject(response);
             generalResponse = JSONResult.getString("generalResponse");
             responseCode = JSONResult.getInt("responseCode");
-            HashMap<String, HashMap<String, String>> results = new HashMap<>();
 
-            JSONArray users = JSONResult.getJSONArray("users");
-            for(int i = 0; i<users.length(); i++){
-                HashMap<String, String> userInfo = new HashMap<>();
+            if (params[0].equals("FETCH")) {
 
-                JSONObject user = users.getJSONObject(i);
-                String userId = user.getString("userId");
-                userInfo.put("username",user.getString("username"));
-                userInfo.put("userId",userId);
-                userInfo.put("firstName", user.getString("firstname"));
-                userInfo.put("lastName", user.getString("lastname"));
+                JSONArray users = JSONResult.getJSONArray("users");
+                for (int i = 0; i < users.length(); i++) {
+                    HashMap<String, String> userInfo = new HashMap<>();
 
-                String role = user.getString("role");
-                userInfo.put("role", role);
-                if(role.equals("teacher")){
-                    userInfo.put("teacherId", user.getString("teacherId"));
-                } else if(role.equals("student")){
-                    userInfo.put("studentId", user.getString("studentId"));
-                    userInfo.put("studentClass", user.getString("classid"));
-                    userInfo.put("contactEmail", user.getString("parentemail"));
+                    JSONObject user = users.getJSONObject(i);
+                    userId = user.getString("userId");
+                    userInfo.put("userId", user.getString("userId"));
+                    userInfo.put("username", user.getString("username"));
+                    userInfo.put("password", user.getString("password"));
+                    userInfo.put("userId", userId);
+                    userInfo.put("firstName", user.getString("firstName"));
+                    userInfo.put("lastName", user.getString("lastName"));
+                    userInfo.put("email", user.getString("email"));
+
+                    role = user.getString("role");
+                    userInfo.put("role", role);
+                    if (role.equals("teacher")) {
+                        userInfo.put("teacherId", user.getString("teacherId"));
+                    } else if (role.equals("student")) {
+                        userInfo.put("studentId", user.getString("studentId"));
+                        userInfo.put("classId", user.getString("classId"));
+                        userInfo.put("parentEmail", user.getString("parentEmail"));
+                    }
+                    result.put("userId: " + userId, userInfo);
+                    System.out.println(result);
                 }
-                results.put("userId: " + userId, userInfo);
+
+                HashMap<String, String> serverResponse = new HashMap<>();
+                serverResponse.put("generalResponse", generalResponse);
+                System.out.println("generalResponse: " + generalResponse);
+                serverResponse.put("responseCode", String.valueOf(responseCode));
+                result.put("response", serverResponse);
+                System.out.println("response: " + response);
+
+                Log.d("response", result.toString());
             }
 
-            HashMap<String, String> serverResponse = new HashMap<>();
-            serverResponse.put("generalResponse", generalResponse);
-            serverResponse.put("responseCode", String.valueOf(responseCode));
-            results.put("response", serverResponse);
-
-            Log.d("response", results.toString());
-
-        } catch (IOException e) {
-            //servererror
-        } catch (JSONException e) {
+        } catch(IOException|JSONException e) {
             e.printStackTrace();
         }
-
-        return null;
+        return result;
     }
 
     protected void onPostExecute(Map<String,HashMap<String, String>> result) {
 
         String generalResponse = result.get("response").get("generalResponse");
         String responseCode = result.get("response").get("responseCode");
+
         progressDialog.dismiss();
 
         if (Integer.parseInt(responseCode) == 100) {
@@ -875,6 +887,7 @@ class UserTask extends AsyncTask<String, Void, String>{
         }
     }
 }
+
 class QuestionTask extends AsyncTask<String, Void, HashMap<String, HashMap<String, String>>> {
 
     QuestionCallback delegate;

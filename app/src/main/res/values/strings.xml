@@ -11,6 +11,9 @@
     <string name="registerUser">Register a new user</string>
     <string name="showClasses">Show my classes</string>
     <string name="showStudents">Show my students</string>
+    <string name="editUser">Edit this user</string>
+    <string name="saveUser">Save changes</string>
+    <string name="deleteUser">Delete user</string>
 
     <!--Labels for defining users in text fields-->
     <string name="username">Username</string>
