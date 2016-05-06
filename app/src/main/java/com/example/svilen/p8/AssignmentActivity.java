@@ -54,7 +54,7 @@ public class AssignmentActivity extends AppCompatActivity {
     SimpleAdapter assignmentAdapter;
     List<Map<String, String>> assignmentList = new ArrayList<>();
     List<Map<String, String>> textList = new ArrayList<>();
-    ArrayList<Integer> studentsAssigned = new ArrayList<>();
+    ArrayList<String> studentsAssigned = new ArrayList<>();
     SimpleAdapter textAdapter;
     int assignmentLibTextId;
     String assignmentLibId;
@@ -415,12 +415,20 @@ public class AssignmentActivity extends AppCompatActivity {
         dataSets.add(set1);
     }
 
-    private void getAssignedStudents(String assignmentLibId){
+    private void getAssignedStudents(final String assignmentLibId){
 
         new AssignmentTask(new AssignmentCallback() {
             @Override
             public void assignmentDone(HashMap<String, HashMap<String, String>> assignments) {
-                studentsAssigned.add(2);
+                assignments.remove("results");
+                studentsAssigned.clear();
+                for (Map.Entry<String, HashMap<String, String>> assignment : assignments.entrySet()) {
+                    String studentId = assignment.getValue().get("studentId");
+                    studentsAssigned.add(studentId);
+                }
+
+                Log.d("students",studentsAssigned.toString());
+
             }
         },context).executeTask("get","",assignmentLibId);
 
