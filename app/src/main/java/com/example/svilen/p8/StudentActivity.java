@@ -78,7 +78,10 @@ public class StudentActivity extends AppCompatActivity {
                     public void onClick(DialogInterface dialog, int which) {
 
                         Intent intent = new Intent(StudentActivity.this, ReadingActivity.class);
+                        intent.putExtra("textId", textId);
+                        intent.putExtra("assignmentName", assignmentName);
                         startActivity(intent);
+
                     }
                 });
 
