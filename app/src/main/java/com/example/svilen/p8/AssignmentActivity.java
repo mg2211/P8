@@ -65,6 +65,7 @@ public class AssignmentActivity extends AppCompatActivity {
     boolean newAssignment;
     boolean changed;
     HashMap<Integer, Integer> textListIds = new HashMap<>();
+    BarChart mChart;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -73,11 +74,6 @@ public class AssignmentActivity extends AppCompatActivity {
         userInfo = new UserInfo(context);
         user = userInfo.getUser();
         teacherId = user.get("teacherId");
-        getTexts();
-        getAssignments();
-        setNew(true);
-        barChart();
-        addData(5);
         lvAssignments = (ListView) findViewById(R.id.lvAssignments);
         bAddAssignment = (Button) findViewById(R.id.bAddAssignment);
         etAssignmentName = (EditText) findViewById(R.id.etAssignmentName);
@@ -166,7 +162,12 @@ public class AssignmentActivity extends AppCompatActivity {
 
             }
         });
+        getTexts();
+        getAssignments();
+        setNew(true);
+        setContentPane(-1);
     }
+
 
     private void textDialog(final int textId) {
         AlertDialog.Builder builder = new AlertDialog.Builder(context);
@@ -372,7 +373,7 @@ public class AssignmentActivity extends AppCompatActivity {
                 .show();
     }
     private void setContentPane(int position){
-
+        barChart();
         if(position >= 0) {
             assignmentTextId = Integer.parseInt(assignmentList.get(position).get("assignmentText"));
             int textListPos = textListIds.get(assignmentTextId);
@@ -383,16 +384,27 @@ public class AssignmentActivity extends AppCompatActivity {
             setChanged(false);
             setNew(false);
 
+
+            dataSets.clear();
+            xVals.clear();
+            yVal.clear();
             if (assignmentList.get(position).get("assigned").equals("true")) {
                 etAssignmentName.setEnabled(false);
                 etAssignmentText.setEnabled(false);
                 bSave.setEnabled(false);
+                addData(5);
+                mChart.setVisibility(View.VISIBLE);
             } else {
                 etAssignmentText.setEnabled(true);
                 etAssignmentName.setEnabled(true);
                 bSave.setEnabled(true);
+
+                mChart.setVisibility(View.INVISIBLE);
             }
+            mChart.notifyDataSetChanged();
+            mChart.invalidate();
         } else {
+            mChart.setVisibility(View.INVISIBLE);
             etAssignmentName.setText("");
             etAssignmentName.setEnabled(true);
             etAssignmentText.setText("");
@@ -407,7 +419,7 @@ public class AssignmentActivity extends AppCompatActivity {
     }
     private void barChart(){
         //design barChart
-        BarChart mChart = (BarChart) findViewById(R.id.chart);
+        mChart = (BarChart) findViewById(R.id.chart);
         mChart.setPinchZoom(false);
         mChart.setDoubleTapToZoomEnabled(false);
         mChart.setScaleEnabled(false);
