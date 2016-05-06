@@ -54,6 +54,7 @@ public class AssignmentActivity extends AppCompatActivity {
     SimpleAdapter assignmentAdapter;
     List<Map<String, String>> assignmentList = new ArrayList<>();
     List<Map<String, String>> textList = new ArrayList<>();
+    ArrayList<Integer> studentsAssigned = new ArrayList<>();
     SimpleAdapter textAdapter;
     int assignmentLibTextId;
     String assignmentLibId;
@@ -419,7 +420,7 @@ public class AssignmentActivity extends AppCompatActivity {
         new AssignmentTask(new AssignmentCallback() {
             @Override
             public void assignmentDone(HashMap<String, HashMap<String, String>> assignments) {
-                Log.d("jhkfhk",assignments.toString());
+                studentsAssigned.add(2);
             }
         },context).executeTask("get","",assignmentLibId);
 
