@@ -1018,9 +1018,9 @@ class AssignmentLibTask extends AsyncTask<String, Void, HashMap<String, HashMap<
             HttpURLConnection connection = (HttpURLConnection) url.openConnection();
             connection.setRequestMethod("POST");
             Uri.Builder builder = new Uri.Builder().appendQueryParameter("method", method)
-                    .appendQueryParameter("assignmentId",assignmentId)
+                    .appendQueryParameter("assignmentLibId",assignmentId)
                     .appendQueryParameter("teacherId", teacherId)
-                    .appendQueryParameter("assignmentName", assignmentName)
+                    .appendQueryParameter("assignmentLibName", assignmentName)
                     .appendQueryParameter("textId",textId);
 
             String query = builder.build().getEncodedQuery();
@@ -1156,14 +1156,16 @@ class AssignmentLibTask extends AsyncTask<String, Void, HashMap<String, HashMap<
                     String textId = specificAssignment.getString("textId");
                     String from = specificAssignment.getString("from");
                     String to = specificAssignment.getString("to");
+                    String assignmentStudentId = specificAssignment.getString("studentId");
 
                     HashMap<String, String> assignmentInfo = new HashMap<>();
                     assignmentInfo.put("assignmentlibraryid", assLibId);
                     assignmentInfo.put("assignmentid", assignmentId);
-                    assignmentInfo.put("assignmentName", assignmentName);
+                    assignmentInfo.put("assignmentLibName", assignmentName);
                     assignmentInfo.put("textId", textId);
                     assignmentInfo.put("availableFrom", from);
                     assignmentInfo.put("availableTo",to);
+                    assignmentInfo.put("studentId", assignmentStudentId);
 
                     results.put("AssignmentId: " +  assignmentId, assignmentInfo);
                     Log.d("assINFO: ", String.valueOf(assignmentInfo));

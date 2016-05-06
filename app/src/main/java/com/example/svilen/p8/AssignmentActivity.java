@@ -50,13 +50,14 @@ public class AssignmentActivity extends AppCompatActivity {
     EditText etAssignmentText;
     EditText etAssignmentName;
     ListView lvAssignments;
+    TextView tvStudentPerformance;
     SimpleAdapter assignmentAdapter;
     List<Map<String, String>> assignmentList = new ArrayList<>();
     List<Map<String, String>> textList = new ArrayList<>();
     SimpleAdapter textAdapter;
-    int assignmentTextId;
-    String assignmentId;
-    String assignmentName;
+    int assignmentLibTextId;
+    String assignmentLibId;
+    String assignmentLibName;
     int dialogSelected;
     ArrayList<BarEntry> yVal = new ArrayList<>();
     ArrayList<String> xVals = new ArrayList<>();
@@ -81,10 +82,11 @@ public class AssignmentActivity extends AppCompatActivity {
         etAssignmentText = (EditText) findViewById(R.id.etAssignmentText);
         bSave = (Button) findViewById(R.id.bSave);
         bAssign = (Button) findViewById(R.id.bAssign);
+        tvStudentPerformance = (TextView) findViewById(R.id.tvStudentPerformance);
 
         assignmentAdapter= new SimpleAdapter(this, assignmentList,
                 android.R.layout.simple_list_item_1,
-                new String[]{"assignmentName"},
+                new String[]{"assignmentLibName"},
                 new int[]{android.R.id.text1});
         lvAssignments.setAdapter(assignmentAdapter);
 
@@ -98,14 +100,14 @@ public class AssignmentActivity extends AppCompatActivity {
         etAssignmentText.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                textDialog(assignmentTextId);
+                textDialog(assignmentLibTextId);
             }
         });
         bSave.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
 
-                if(assignmentTextId != 0 && !etAssignmentName.getText().toString().equals("")) {
+                if(assignmentLibTextId != 0 && !etAssignmentName.getText().toString().equals("")) {
                     if(newAssignment){
                         createAssignment();
                     } else {
@@ -150,7 +152,7 @@ public class AssignmentActivity extends AppCompatActivity {
 
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
-                if(!etAssignmentName.getText().toString().equals(assignmentName) && !etAssignmentName.getText().toString().equals("")){
+                if(!etAssignmentName.getText().toString().equals(assignmentLibName) && !etAssignmentName.getText().toString().equals("")){
                     setChanged(true);
                 } else {
                     setChanged(false);
@@ -212,133 +214,21 @@ public class AssignmentActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 etAssignmentText.setText(textList.get(textListIds.get(dialogSelected)).get("textname"));
-                if(assignmentTextId != dialogSelected) {
-                    assignmentTextId = dialogSelected;
+                if(assignmentLibTextId != dialogSelected) {
+                    assignmentLibTextId = dialogSelected;
                     setChanged(true);
                 }
                 dialog.dismiss();
-                Log.d("assignmentTextId", String.valueOf(assignmentTextId));
+                Log.d("assignmentLibTextId", String.valueOf(assignmentLibTextId));
             }
         });
         bDialogCancel.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 dialog.dismiss();
-                Log.d("assignmentTextId", String.valueOf(assignmentTextId));
+                Log.d("assignmentLibTextId", String.valueOf(assignmentLibTextId));
             }
         });
-    }
-    private void getTexts(){
-        new TextTask(new TextCallback() {
-            @Override
-            public void TextCallBack(HashMap<String, HashMap<String, String>> results) {
-                results.remove("response");
-                textList.clear();
-                int i = 0;
-                for (Map.Entry<String, HashMap<String, String>> text : results.entrySet()) {
-                    Map<String, String> textInfo = new HashMap<>();
-                    String textId = text.getValue().get("id");
-                    String textName = text.getValue().get("textname");
-                    String textContent = text.getValue().get("textcontent");
-                    String textBook = text.getValue().get("textbook");
-                    String complexity = text.getValue().get("complexity");
-                    textInfo.put("textname", textName);
-                    textInfo.put("textcontent", textContent);
-                    textInfo.put("textbook", textBook);
-                    textInfo.put("complexity", "Complexity: " + complexity);
-                    textInfo.put("textid", textId);
-                    textList.add(textInfo);
-                    textListIds.put(Integer.valueOf(textId),i);
-                    i++;
-                }
-                textAdapter.notifyDataSetChanged();
-            }
-        },context).executeTask("get","","","",0);
-    }
-    private void getAssignments(){
-        new AssignmentLibTask(new AssignmentLibCallback() {
-            @Override
-            public void AssignmentLibDone(HashMap<String, HashMap<String, String>> results) {
-
-                results.remove("response");
-                assignmentList.clear();
-                for (Map.Entry<String, HashMap<String, String>> assignment : results.entrySet()) {
-                    Map<String, String> assignmentInfo = new HashMap<>();
-                    String assignmentId = assignment.getValue().get("id");
-                    String assignmentName = assignment.getValue().get("name");
-                    String assignmentText = assignment.getValue().get("textId");
-                    String assigned = assignment.getValue().get("assigned");
-
-                    assignmentInfo.put("assignmentId",assignmentId);
-                    assignmentInfo.put("assignmentName",assignmentName);
-                    assignmentInfo.put("assignmentText",assignmentText);
-                    assignmentInfo.put("assigned",assigned);
-                    assignmentList.add(assignmentInfo);
-                }
-                assignmentAdapter.notifyDataSetChanged();
-            }
-        },context).executeTask("get",teacherId,"","","");
-    }
-
-    private void setChanged(boolean value){
-        changed = value;
-        Log.d(".......","changed value"+ String.valueOf(changed));
-        if(value) {
-            bAssign.setEnabled(false);
-            bAssign.setText("Please save before assigning to students");
-        } else {
-            bAssign.setEnabled(true);
-            bAssign.setText("Assign to students");
-        }
-    }
-    private void setNew(boolean value){
-        newAssignment = value;
-        Log.d(".......","new value:"+ String.valueOf(newAssignment));
-    }
-
-    private boolean createAssignment(){
-        if(assignmentTextId != 0 && !etAssignmentName.getText().toString().equals("")) {
-            new AssignmentLibTask(new AssignmentLibCallback() {
-                @Override
-                public void AssignmentLibDone(HashMap<String, HashMap<String, String>> results) {
-                    assignmentId = results.get("response").get("insertedId");
-                    if(results.get("response").get("responseCode").equals("100")){
-                        setChanged(false);
-                        setNew(false);
-                        getAssignments();
-                    }
-                }
-            },context).executeTask("create",teacherId,"",etAssignmentName.getText().toString(), String.valueOf(assignmentTextId));
-            return true;
-        } else {
-            int duration = Toast.LENGTH_LONG;
-            CharSequence alert = "Please fill in all relevant information";
-            Toast toast = Toast.makeText(context, alert, duration);
-            toast.show();
-            return false;
-        }
-    }
-    private boolean updateAssignment(){
-        if(assignmentTextId != 0 && !etAssignmentName.getText().toString().equals("")) {
-            new AssignmentLibTask(new AssignmentLibCallback() {
-                @Override
-                public void AssignmentLibDone(HashMap<String, HashMap<String, String>> results) {
-                    if(results.get("response").get("responseCode").equals("100")){
-                        setChanged(false);
-                        setNew(false);
-                        getAssignments();
-                    }
-                }
-            },context).executeTask("update",teacherId,assignmentId,etAssignmentName.getText().toString(), String.valueOf(assignmentTextId));
-            return true;
-        } else {
-            int duration = Toast.LENGTH_LONG;
-            CharSequence alert = "Please fill in all relevant information";
-            Toast toast = Toast.makeText(context, alert, duration);
-            toast.show();
-            return false;
-        }
-
     }
     public void confirm(final int position) {
         new AlertDialog.Builder(context)
@@ -372,15 +262,59 @@ public class AssignmentActivity extends AppCompatActivity {
                 })
                 .show();
     }
+    private boolean createAssignment(){
+        if(assignmentLibTextId != 0 && !etAssignmentName.getText().toString().equals("")) {
+            new AssignmentLibTask(new AssignmentLibCallback() {
+                @Override
+                public void AssignmentLibDone(HashMap<String, HashMap<String, String>> results) {
+                    assignmentLibId = results.get("response").get("insertedId");
+                    if(results.get("response").get("responseCode").equals("100")){
+                        setChanged(false);
+                        setNew(false);
+                        getAssignments();
+                    }
+                }
+            },context).executeTask("create",teacherId,"",etAssignmentName.getText().toString(), String.valueOf(assignmentLibTextId));
+            return true;
+        } else {
+            int duration = Toast.LENGTH_LONG;
+            CharSequence alert = "Please fill in all relevant information";
+            Toast toast = Toast.makeText(context, alert, duration);
+            toast.show();
+            return false;
+        }
+    }
+    private boolean updateAssignment(){
+        if(assignmentLibTextId != 0 && !etAssignmentName.getText().toString().equals("")) {
+            new AssignmentLibTask(new AssignmentLibCallback() {
+                @Override
+                public void AssignmentLibDone(HashMap<String, HashMap<String, String>> results) {
+                    if(results.get("response").get("responseCode").equals("100")){
+                        setChanged(false);
+                        setNew(false);
+                        getAssignments();
+                    }
+                }
+            },context).executeTask("update",teacherId, assignmentLibId,etAssignmentName.getText().toString(), String.valueOf(assignmentLibTextId));
+            return true;
+        } else {
+            int duration = Toast.LENGTH_LONG;
+            CharSequence alert = "Please fill in all relevant information";
+            Toast toast = Toast.makeText(context, alert, duration);
+            toast.show();
+            return false;
+        }
+
+    }
     private void setContentPane(int position){
         barChart();
         if(position >= 0) {
-            assignmentTextId = Integer.parseInt(assignmentList.get(position).get("assignmentText"));
-            int textListPos = textListIds.get(assignmentTextId);
-            etAssignmentName.setText(assignmentList.get(position).get("assignmentName"));
-            assignmentId = assignmentList.get(position).get("assignmentId");
+            assignmentLibTextId = Integer.parseInt(assignmentList.get(position).get("assignmentText"));
+            int textListPos = textListIds.get(assignmentLibTextId);
+            etAssignmentName.setText(assignmentList.get(position).get("assignmentLibName"));
+            assignmentLibId = assignmentList.get(position).get("assignmentLibId");
             etAssignmentText.setText(textList.get(textListPos).get("textname"));
-            assignmentName = assignmentList.get(position).get("assignmentName");
+            assignmentLibName = assignmentList.get(position).get("assignmentLibName");
             setChanged(false);
             setNew(false);
 
@@ -392,14 +326,16 @@ public class AssignmentActivity extends AppCompatActivity {
                 etAssignmentName.setEnabled(false);
                 etAssignmentText.setEnabled(false);
                 bSave.setEnabled(false);
-                addData(5);
+                getAssignedStudents(assignmentLibId);//old addData method
                 mChart.setVisibility(View.VISIBLE);
+                tvStudentPerformance.setVisibility(View.VISIBLE);
             } else {
                 etAssignmentText.setEnabled(true);
                 etAssignmentName.setEnabled(true);
                 bSave.setEnabled(true);
 
                 mChart.setVisibility(View.INVISIBLE);
+                tvStudentPerformance.setVisibility(View.INVISIBLE);
             }
             mChart.notifyDataSetChanged();
             mChart.invalidate();
@@ -412,9 +348,9 @@ public class AssignmentActivity extends AppCompatActivity {
             bSave.setEnabled(true);
             setChanged(false);
             setNew(true);
-            assignmentName = "";
-            assignmentTextId = 0;
-            assignmentId = "";
+            assignmentLibName = "";
+            assignmentLibTextId = 0;
+            assignmentLibId = "";
         }
     }
     private void barChart(){
@@ -476,5 +412,85 @@ public class AssignmentActivity extends AppCompatActivity {
         BarDataSet set1 = new BarDataSet(yVal, "Assignments");
         set1.setColors(colors);
         dataSets.add(set1);
+    }
+
+    private void getAssignedStudents(String assignmentLibId){
+
+        new AssignmentTask(new AssignmentCallback() {
+            @Override
+            public void assignmentDone(HashMap<String, HashMap<String, String>> assignments) {
+                Log.d("jhkfhk",assignments.toString());
+            }
+        },context).executeTask("get","",assignmentLibId);
+
+    }
+    private void getStats(String assignmentId){
+
+    }
+    private void setChanged(boolean value){
+        changed = value;
+        Log.d(".......","changed value"+ String.valueOf(changed));
+        if(value) {
+            bAssign.setEnabled(false);
+            bAssign.setText("Please save before assigning to students");
+        } else {
+            bAssign.setEnabled(true);
+            bAssign.setText("Assign to students");
+        }
+    }
+    private void setNew(boolean value){
+        newAssignment = value;
+        Log.d(".......","new value:"+ String.valueOf(newAssignment));
+    }
+    private void getTexts(){
+        new TextTask(new TextCallback() {
+            @Override
+            public void TextCallBack(HashMap<String, HashMap<String, String>> results) {
+                results.remove("response");
+                textList.clear();
+                int i = 0;
+                for (Map.Entry<String, HashMap<String, String>> text : results.entrySet()) {
+                    Map<String, String> textInfo = new HashMap<>();
+                    String textId = text.getValue().get("id");
+                    String textName = text.getValue().get("textname");
+                    String textContent = text.getValue().get("textcontent");
+                    String textBook = text.getValue().get("textbook");
+                    String complexity = text.getValue().get("complexity");
+                    textInfo.put("textname", textName);
+                    textInfo.put("textcontent", textContent);
+                    textInfo.put("textbook", textBook);
+                    textInfo.put("complexity", "Complexity: " + complexity);
+                    textInfo.put("textid", textId);
+                    textList.add(textInfo);
+                    textListIds.put(Integer.valueOf(textId),i);
+                    i++;
+                }
+                textAdapter.notifyDataSetChanged();
+            }
+        },context).executeTask("get","","","",0);
+    }
+    private void getAssignments(){
+        new AssignmentLibTask(new AssignmentLibCallback() {
+            @Override
+            public void AssignmentLibDone(HashMap<String, HashMap<String, String>> results) {
+
+                results.remove("response");
+                assignmentList.clear();
+                for (Map.Entry<String, HashMap<String, String>> assignment : results.entrySet()) {
+                    Map<String, String> assignmentInfo = new HashMap<>();
+                    String assignmentId = assignment.getValue().get("id");
+                    String assignmentName = assignment.getValue().get("name");
+                    String assignmentText = assignment.getValue().get("textId");
+                    String assigned = assignment.getValue().get("assigned");
+
+                    assignmentInfo.put("assignmentLibId",assignmentId);
+                    assignmentInfo.put("assignmentLibName",assignmentName);
+                    assignmentInfo.put("assignmentText",assignmentText);
+                    assignmentInfo.put("assigned",assigned);
+                    assignmentList.add(assignmentInfo);
+                }
+                assignmentAdapter.notifyDataSetChanged();
+            }
+        },context).executeTask("get",teacherId,"","","");
     }
 }
