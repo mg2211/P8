@@ -57,9 +57,9 @@ public class ReadingActivity extends AppCompatActivity  {
     String answerId;
     String isCorrrect;
     RadioGroup radioGroup;
-    int radioButtonId;
-    View radioButton;
-    int idx;
+    String text1;
+    int answerId1;
+    RadioGroup ll;
 
 
     @Override
@@ -160,38 +160,16 @@ public class ReadingActivity extends AppCompatActivity  {
 
 
 
-                radioButtonId = radioGroup.getCheckedRadioButtonId();
-                radioButton = radioGroup.findViewById(radioButtonId);
-                idx = radioGroup.indexOfChild(findViewById(radioGroup.getCheckedRadioButtonId()));
-                Log.d("IDX: ", String.valueOf(idx));
-                //idx = radioGroup.indexOfChild(radioButton);
-
-                /*radioGroup.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
-
-                    @Override
-                    public void onCheckedChanged(RadioGroup group, int checkedId) {
-                        switch(checkedId) {
-                           /* case R.id.1:
-                                // 'Incident' checked
-
-                                break;
-                            case R.id.radioButtonaccident:
-                                // 'Accident' checked
-                                break;
-                            case R.id.radioButtonconcern:
-                                // 'Concern' checked
-                                break;
-                        }
-                    }
-                });*/
 
                 bDialogSubmit.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
 
+                        Log.d("TEXTRADIO: ", text1);
+                        Log.d("textRADIOid: ", String.valueOf(answerId1));
 
-                        Log.d("radiobuttonID: ", String.valueOf(radioButtonId));
-                        Log.d("radiobuttonindofChild: ", String.valueOf(idx));
+
+
                     }
                 });
 
@@ -279,7 +257,7 @@ public class ReadingActivity extends AppCompatActivity  {
     public void addRadioButtons(int number) {
 
         for (int row = 0; row < 1; row++) {
-            RadioGroup ll = new RadioGroup(context);
+            ll = new RadioGroup(context);
             ll.setOrientation(LinearLayout.HORIZONTAL);
 
             RadioButton rdbtn = new RadioButton(this);
@@ -287,7 +265,28 @@ public class ReadingActivity extends AppCompatActivity  {
             int id = rdbtn.getId();
             Log.d("RADIO ID: ", String.valueOf(id));
               rdbtn.setText(answerText);
+
                 ll.addView(rdbtn);
+
+            ll.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
+                public void onCheckedChanged(RadioGroup rg, int checkedId) {
+                    for(int i=0; i<rg.getChildCount(); i++) {
+                        RadioButton btn = (RadioButton) rg.getChildAt(i);
+                        if(btn.getId() == checkedId) {
+                            text1 = (String) btn.getText();
+                            answerId1 = btn.getId();
+
+
+                            // do something with text
+                            return;
+                        }
+                    }
+                }
+            });
+
+
+
+
 
 
 
