@@ -18,6 +18,7 @@ import android.widget.LinearLayout;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import org.w3c.dom.Text;
 
@@ -29,10 +30,8 @@ import java.util.Map;
 public class ReadingActivity extends AppCompatActivity  {
 
     List<Map<String, String>> questionList = new ArrayList<>();
-    List<Map<String, String>> textList = new ArrayList<>();
 
     Button bLogout;
-    Button bStart;
     Button bPause;
     Button bFinish;
     Context context = this;
@@ -49,18 +48,16 @@ public class ReadingActivity extends AppCompatActivity  {
     Chronometer chronometer;
     long timeWhenStopped = 0;
     TextView tvQuestionToStudent;
-    TextView tvAnswerToStudent;
     String questionContent;
     String answerText;
     View layout;
     int i;
     String answerId;
     String isCorrrect;
-    RadioGroup radioGroup;
     String text1;
     int answerId1;
+    String correctAnswer;
     RadioGroup ll;
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -80,6 +77,7 @@ public class ReadingActivity extends AppCompatActivity  {
         tvTextId = (TextView) findViewById(R.id.tvTextId1);
         etTextContent = (EditText) findViewById(R.id.etTextContent1);
         chronometer = (Chronometer) findViewById(R.id.chronometer);
+        ll = new RadioGroup(this);
 
 
         Intent intent = getIntent();
@@ -153,7 +151,6 @@ public class ReadingActivity extends AppCompatActivity  {
                 final AlertDialog dialog = builder.create();
                 dialog.setCanceledOnTouchOutside(true); //remember to change to false after programming
                 dialog.show();
-                radioGroup = (RadioGroup) layout.findViewById(R.id.radiogroup);
 
 
                 getQuestions(textId);
@@ -165,8 +162,14 @@ public class ReadingActivity extends AppCompatActivity  {
                     @Override
                     public void onClick(View v) {
 
-                        Log.d("TEXTRADIO: ", text1);
-                        Log.d("textRADIOid: ", String.valueOf(answerId1));
+                       // Log.d("TEXTRADIO: ", text1);
+                        //Log.d("textRADIOid: ", String.valueOf(answerId1));
+
+                        if(text1.equals(correctAnswer)){
+                            Log.d("YOU HAVE ANSWERED: ", "CORRECT!");
+                        }else {
+                            Log.d("YOU HAVE ANSWERED: ", "INCORRECT!");
+                        }
 
 
 
@@ -227,6 +230,7 @@ public class ReadingActivity extends AppCompatActivity  {
                     questionInfo.put("answers", specificQuestionAnswers);
                     questionList.add(questionInfo);
 
+
                     String answers[] = specificQuestionAnswers.split("#");
                     for ( i = 0; i < answers.length; i++) {
                         Log.d("ANSWERS!: ", answers[i].toString());
@@ -237,12 +241,23 @@ public class ReadingActivity extends AppCompatActivity  {
                         isCorrrect = answer[2];
 
 
+                        Log.d("isCorrect: ",isCorrrect);
+
+                        if(isCorrrect.equals("1")){
+                            Log.d("This is the ", "correct answer");
+                            correctAnswer = answerText;
+                            Log.d("CORRECTOOO", correctAnswer);
+
+                        }else{
+                            Log.d("This is not the correct", "answer");
+                        }
+
+
                         addRadioButtons(i);
                     }
 
 
 
-                    Log.d("ANSWERS", answers.toString());
 
 
                     tvQuestionToStudent.setText(specificQuestionContent);
@@ -257,8 +272,10 @@ public class ReadingActivity extends AppCompatActivity  {
     public void addRadioButtons(int number) {
 
         for (int row = 0; row < 1; row++) {
-            ll = new RadioGroup(context);
+            ll.getContext();
             ll.setOrientation(LinearLayout.HORIZONTAL);
+
+
 
             RadioButton rdbtn = new RadioButton(this);
             rdbtn.setId((row * 2) + i);
@@ -266,30 +283,35 @@ public class ReadingActivity extends AppCompatActivity  {
             Log.d("RADIO ID: ", String.valueOf(id));
               rdbtn.setText(answerText);
 
+          //  Log.d("RADIOGROUP!!: ", ll.toString());
                 ll.addView(rdbtn);
 
             ll.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
                 public void onCheckedChanged(RadioGroup rg, int checkedId) {
                     for(int i=0; i<rg.getChildCount(); i++) {
                         RadioButton btn = (RadioButton) rg.getChildAt(i);
+
                         if(btn.getId() == checkedId) {
+
                             text1 = (String) btn.getText();
                             answerId1 = btn.getId();
-
 
                             // do something with text
                             return;
                         }
+
+
                     }
                 }
-            });
+
+            }
+            );
 
 
 
 
 
-
-
+            ((ViewGroup) layout.findViewById(R.id.radiogroup)).removeView(ll);
             ((ViewGroup) layout.findViewById(R.id.radiogroup)).addView(ll);
         }
     }
