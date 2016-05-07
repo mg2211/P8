@@ -128,7 +128,8 @@
                 android:layout_height="wrap_content"
                 android:textAppearance="?android:attr/textAppearanceMedium"
                 android:text="Student performance for assignment"
-                android:id="@+id/textView4" />
+                android:id="@+id/tvStudentPerformance"
+                android:visibility="invisible" />
 
             <com.github.mikephil.charting.charts.BarChart
                 android:id="@+id/chart"

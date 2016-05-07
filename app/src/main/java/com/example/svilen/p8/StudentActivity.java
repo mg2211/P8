@@ -48,7 +48,7 @@ public class StudentActivity extends AppCompatActivity {
 
         assignmentAdapter = new SimpleAdapter(this, assignmentList,
                 android.R.layout.simple_list_item_1,
-                new String[]{"assignmentName"},
+                new String[]{"assignmentLibName"},
                 new int[]{android.R.id.text1});
         lvAssToStudent.setAdapter(assignmentAdapter);
         getAssignment();
@@ -60,7 +60,7 @@ public class StudentActivity extends AppCompatActivity {
 
                 Map<String, String> assignmentData = assignmentList.get(position);
                 textId = assignmentData.get("textId");
-                assignmentName = assignmentData.get("assignmentName");
+                assignmentName = assignmentData.get("assignmentLibName");
                 Log.d("TEXTID::: ", textId);
 
                 AlertDialog.Builder builder = new AlertDialog.Builder(context);
@@ -152,12 +152,12 @@ public class StudentActivity extends AppCompatActivity {
 
                 for (Map.Entry<String, HashMap<String, String>> assignment : assignments.entrySet()) {
                     Map<String, String> assignmentInfo = new HashMap<>();
-                    String specificAssignmentName = assignment.getValue().get("assignmentName");
+                    String specificAssignmentName = assignment.getValue().get("assignmentLibName");
                     String specificAssignmentId = assignment.getValue().get("id");
                     String specificAssLibId = assignment.getValue().get("assignmentlibraryid");
                     String specificTextId = assignment.getValue().get("textId");
 
-                    assignmentInfo.put("assignmentName", specificAssignmentName);
+                    assignmentInfo.put("assignmentLibName", specificAssignmentName);
                     assignmentInfo.put("id", specificAssignmentId);
                     assignmentInfo.put("assignmentlibraryid", specificAssLibId);
                     assignmentInfo.put("textId", specificTextId);
