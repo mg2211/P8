@@ -8,10 +8,15 @@ import android.os.SystemClock;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.Chronometer;
 import android.widget.EditText;
+import android.widget.LinearLayout;
+import android.widget.RadioButton;
+import android.widget.RadioGroup;
 import android.widget.TextView;
 
 import org.w3c.dom.Text;
@@ -23,7 +28,7 @@ import java.util.Map;
 
 public class ReadingActivity extends AppCompatActivity  {
 
-    List<Map<String, String>> assignmentList = new ArrayList<>();
+    List<Map<String, String>> questionList = new ArrayList<>();
     List<Map<String, String>> textList = new ArrayList<>();
 
     Button bLogout;
@@ -43,6 +48,18 @@ public class ReadingActivity extends AppCompatActivity  {
     EditText etTextContent;
     Chronometer chronometer;
     long timeWhenStopped = 0;
+    TextView tvQuestionToStudent;
+    TextView tvAnswerToStudent;
+    String questionContent;
+    String answerText;
+    View layout;
+    int i;
+    String answerId;
+    String isCorrrect;
+    RadioGroup radioGroup;
+    int radioButtonId;
+    View radioButton;
+    int idx;
 
 
     @Override
@@ -63,6 +80,7 @@ public class ReadingActivity extends AppCompatActivity  {
         tvTextId = (TextView) findViewById(R.id.tvTextId1);
         etTextContent = (EditText) findViewById(R.id.etTextContent1);
         chronometer = (Chronometer) findViewById(R.id.chronometer);
+
 
         Intent intent = getIntent();
         Bundle b = intent.getExtras();
@@ -125,6 +143,58 @@ public class ReadingActivity extends AppCompatActivity  {
             @Override
             public void onClick(View v) {
                 chronometer.stop();
+
+                AlertDialog.Builder builder = new AlertDialog.Builder(context);
+                LayoutInflater inflater = getLayoutInflater();
+                 layout = inflater.inflate(R.layout.dialog_answering, null);
+                tvQuestionToStudent = (TextView)layout.findViewById(R.id.tvQuestionToStudent);
+                Button bDialogSubmit = (Button) layout.findViewById(R.id.bDialogSubmit);
+                builder.setView(layout);
+                final AlertDialog dialog = builder.create();
+                dialog.setCanceledOnTouchOutside(true); //remember to change to false after programming
+                dialog.show();
+                radioGroup = (RadioGroup) layout.findViewById(R.id.radiogroup);
+
+
+                getQuestions(textId);
+
+
+
+                radioButtonId = radioGroup.getCheckedRadioButtonId();
+                radioButton = radioGroup.findViewById(radioButtonId);
+                idx = radioGroup.indexOfChild(findViewById(radioGroup.getCheckedRadioButtonId()));
+                Log.d("IDX: ", String.valueOf(idx));
+                //idx = radioGroup.indexOfChild(radioButton);
+
+                /*radioGroup.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
+
+                    @Override
+                    public void onCheckedChanged(RadioGroup group, int checkedId) {
+                        switch(checkedId) {
+                           /* case R.id.1:
+                                // 'Incident' checked
+
+                                break;
+                            case R.id.radioButtonaccident:
+                                // 'Accident' checked
+                                break;
+                            case R.id.radioButtonconcern:
+                                // 'Concern' checked
+                                break;
+                        }
+                    }
+                });*/
+
+                bDialogSubmit.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+
+
+                        Log.d("radiobuttonID: ", String.valueOf(radioButtonId));
+                        Log.d("radiobuttonindofChild: ", String.valueOf(idx));
+                    }
+                });
+
             }
         });
 
@@ -162,35 +232,68 @@ public class ReadingActivity extends AppCompatActivity  {
         }, context).executeTask("get", textId, "", "", 0);
     }
 
- /*   @Override
-    public void onClick(View v) {
 
-        switch(v.getId()){
+    public void getQuestions(String textId) {
+        new QuestionTask(new QuestionCallback() {
+            @Override
+            public void QuestionTaskDone(HashMap<String, HashMap<String, String>> results) {
+                results.remove("response");
+                questionList.clear();
+                for (Map.Entry<String, HashMap<String, String>> question : results.entrySet()) {
+                    Map<String, String> questionInfo = new HashMap<>();
+                    String specificQuestionContent = question.getValue().get("questionContent");
+                    String specificQuestionId = question.getValue().get("questionId");
+                    String specificQuestionAnswers = question.getValue().get("answers");
+                    questionInfo.put("Question", specificQuestionContent);
+                    questionInfo.put("id", specificQuestionId);
+                    questionInfo.put("answers", specificQuestionAnswers);
+                    questionList.add(questionInfo);
 
-            case R.id.bStart:
-                getText();
+                    String answers[] = specificQuestionAnswers.split("#");
+                    for ( i = 0; i < answers.length; i++) {
+                        Log.d("ANSWERS!: ", answers[i].toString());
 
-                Log.d("hello", "start clicked");
+                        String answer[] = answers[i].split(";");
+                        answerText = answer[1];
+                         answerId = answer[0];
+                        isCorrrect = answer[2];
 
-                break;
 
-            case R.id.bPause:
+                        addRadioButtons(i);
+                    }
 
-                Log.d("hello", "pause clicked");
-                break;
 
-            case R.id.bFinish:
 
-                break;
+                    Log.d("ANSWERS", answers.toString());
 
-            case R.id.bLogOutStReading:
 
-                UserInfo userinfo = new UserInfo(getApplicationContext());
-                userinfo.logOut();
+                    tvQuestionToStudent.setText(specificQuestionContent);
+                    questionContent = specificQuestionContent;
+                }
 
-                break;
+
+            }
+        }, context).executeTask("get", "", textId, "", "");
+    }
+
+    public void addRadioButtons(int number) {
+
+        for (int row = 0; row < 1; row++) {
+            RadioGroup ll = new RadioGroup(context);
+            ll.setOrientation(LinearLayout.HORIZONTAL);
+
+            RadioButton rdbtn = new RadioButton(this);
+            rdbtn.setId((row * 2) + i);
+            int id = rdbtn.getId();
+            Log.d("RADIO ID: ", String.valueOf(id));
+              rdbtn.setText(answerText);
+                ll.addView(rdbtn);
+
+
+
+            ((ViewGroup) layout.findViewById(R.id.radiogroup)).addView(ll);
+        }
+    }
+
 
         }
-
-    }*/
-}
