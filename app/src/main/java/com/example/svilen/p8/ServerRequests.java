@@ -1049,7 +1049,6 @@ class AssignmentLibTask extends AsyncTask<String, Void, HashMap<String, HashMap<
             InputStream in = new BufferedInputStream(connection.getInputStream());
 
             String serverResponse = IOUtils.toString(in, "UTF-8");
-            Log.d("serverresponse", serverResponse);
 
             JSONObject JSONResult = new JSONObject(serverResponse);
             String generalResponse = JSONResult.getString("generalResponse");
@@ -1057,8 +1056,6 @@ class AssignmentLibTask extends AsyncTask<String, Void, HashMap<String, HashMap<
 
             response.put("generalResponse", generalResponse);
             response.put("responseCode", responseCode);
-
-            Log.d("serverresponse", serverResponse);
 
             if(method.equals("get")){
                 JSONArray assignments = JSONResult.getJSONArray("assignments");
@@ -1153,8 +1150,6 @@ class AssignmentLibTask extends AsyncTask<String, Void, HashMap<String, HashMap<
                 InputStream in = new BufferedInputStream(connection.getInputStream());
 
                 String response = IOUtils.toString(in, "UTF-8"); //convert to readable string
-                Log.d("ghgg",response);
-
                 //convert to JSON object
                 JSONObject JSONResult = new JSONObject(response);
                 generalResponse = JSONResult.getString("generalResponse");
@@ -1170,6 +1165,7 @@ class AssignmentLibTask extends AsyncTask<String, Void, HashMap<String, HashMap<
                     String from = specificAssignment.getString("from");
                     String to = specificAssignment.getString("to");
                     String assignmentStudentId = specificAssignment.getString("studentId");
+                    String isComplete = specificAssignment.getString("isComplete");
 
                     HashMap<String, String> assignmentInfo = new HashMap<>();
                     assignmentInfo.put("assignmentlibraryid", assLibId);
@@ -1179,10 +1175,9 @@ class AssignmentLibTask extends AsyncTask<String, Void, HashMap<String, HashMap<
                     assignmentInfo.put("availableFrom", from);
                     assignmentInfo.put("availableTo",to);
                     assignmentInfo.put("studentId", assignmentStudentId);
+                    assignmentInfo.put("isComplete",isComplete);
 
                     results.put("AssignmentId: " +  assignmentId, assignmentInfo);
-                    Log.d("assINFO: ", String.valueOf(assignmentInfo));
-
                 }
 
 
