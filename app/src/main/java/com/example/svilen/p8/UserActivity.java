@@ -35,16 +35,19 @@ public class UserActivity extends AppCompatActivity {
     Button bAddUser, bRegisterUser, bEditUser, bDeleteUser;
     EditText etSearch, etUsername, etPassword, etFirstName, etLastName, etEmail, etContactEmail;
     Spinner spinnerRole;
-    ListView lvListUsers, lvListClasses, listUsers;
-    TextView tvRole;
+    ListView lvListUsers, lvListClasses/*, listUsers*/;
+    TextView tvRole, tvTitleRegister, tvTitleEdit;
     List<String> roleList = new ArrayList<>();
     ArrayAdapter roleAdapter;
     SimpleAdapter userListAdapter;
-    UserAdapter customUserListAdapter;
+    //UserAdapter customUserListAdapter;
     List<Map<String, String>> userList = new ArrayList<>();
     UserActivity CustomListView = null;
 
-    String userId;
+    String userUserId;
+    String userTeacherId;
+    String userStudentId;
+    String userClassId;
     String userRole;
     String userUsername;
     String userPassword;
@@ -65,15 +68,15 @@ public class UserActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        getUsers();
-
         setContentView(R.layout.activity_user);
 
         llUserFields = (LinearLayout) findViewById(R.id.llUserFields);
 
         etSearch = (EditText) findViewById(R.id.etSearch);
 
-        //tvRole = (TextView) findViewById(R.id.tvRole);
+        tvRole = (TextView) findViewById(R.id.tvRole);
+        tvTitleRegister = (TextView) findViewById(R.id.tvTitleRegister);
+        tvTitleEdit = (TextView) findViewById(R.id.tvTitleEdit);
         spinnerRole = (Spinner) findViewById(R.id.spinnerRole);
         etUsername = (EditText) findViewById(R.id.etUserName);
         etPassword = (EditText) findViewById(R.id.etPassword);
@@ -87,7 +90,7 @@ public class UserActivity extends AppCompatActivity {
         bDeleteUser = (Button) findViewById(R.id.bDeleteUser);
 
         lvListUsers = (ListView) findViewById(R.id.lvListUsers);
-        listUsers = (ListView) findViewById(R.id.userList);
+        //listUsers = (ListView) findViewById(R.id.userList);
 
         lvListClasses = (ListView) findViewById(R.id.lvListClasses);
 
@@ -101,9 +104,9 @@ public class UserActivity extends AppCompatActivity {
             public void onItemSelected(AdapterView<?> parent, View v,
                                        int position, long id) {
                 if (spinnerRole.getSelectedItem().toString().equals("teacher")) {
-                    //clStudentFields.setVisibility(View.GONE);
+                    etContactEmail.setVisibility(View.GONE);
                 } else if (spinnerRole.getSelectedItem().toString().equals("student")) {
-                    //clStudentFields.setVisibility(View.VISIBLE);
+                    etContactEmail.setVisibility(View.VISIBLE);
                 }
             }
             public void onNothingSelected(AdapterView<?> arg0) {
@@ -111,76 +114,26 @@ public class UserActivity extends AppCompatActivity {
             }
         });
 
+        setNewUser(true);
+        setChanged(false);
         getRoles();
 
         userListAdapter = new SimpleAdapter(this,
                 userList,
                 android.R.layout.simple_list_item_2,
-                new String[]{"username", "firstName"}, new int[]{android.R.id.text1, android.R.id.text2}) {
+                new String[]{"firstName", "lastName"}, new int[]{android.R.id.text1, android.R.id.text2}) {
         };
         lvListUsers.setAdapter(userListAdapter);
         lvListUsers.setChoiceMode(AbsListView.CHOICE_MODE_SINGLE);
 
-        CustomListView = this;
-        Resources res =getResources();
-
-        customUserListAdapter = new UserAdapter(CustomListView, userList);
-        customUserListAdapter.notifyDataSetChanged();
-
-        listUsers.setAdapter(customUserListAdapter);
-        listUsers.setChoiceMode(AbsListView.CHOICE_MODE_SINGLE);
-
         getUsers();
-
-        listUsers.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, final int position, long id) {
-                Log.d("position", String.valueOf(position));
-                listUsers.setItemChecked(position, true);
-                view.setSelected(true);
-                if (changed) {
-                    confirm(new DialogCallback() {
-                        @Override
-                        public void dialogResponse(boolean dialogResponse) {
-                            if (dialogResponse) {
-                                if (newUser) {
-                                    if (createUser()) {
-                                        clear = true;
-                                        setChanged(false);
-                                        setNewUser(false);
-                                    } else {
-                                        clear = false;
-                                    }
-                                }
-                                if (changed) {
-                                    if (updateUser()) {
-                                        clear = true;
-                                        setChanged(false);
-                                        setNewUser(false);
-                                    } else {
-                                        clear = false;
-                                    }
-                                }
-                            } else {
-                                clear = true;
-                            }
-                            if (clear) {
-                                setContentPane(position);
-                            }
-                        }
-                    });
-                } else {
-                    setContentPane(position);
-                }
-            }
-        });
-
+        setContentPane(-1);
 
         lvListUsers.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, final int position, long id) {
                 lvListUsers.setItemChecked(position, true);
-                //view.setSelected(true);
+                view.setSelected(true);
                 Log.d("position", String.valueOf(position));
                 if (changed) {
                     confirm(new DialogCallback() {
@@ -195,8 +148,7 @@ public class UserActivity extends AppCompatActivity {
                                     } else {
                                         clear = false;
                                     }
-                                }
-                                if (changed) {
+                                } if (changed) {
                                     if (updateUser()) {
                                         clear = true;
                                         setChanged(false);
@@ -205,11 +157,10 @@ public class UserActivity extends AppCompatActivity {
                                         clear = false;
                                     }
                                 }
+                            } if (clear) {
+                                setContentPane(position);
                             } else {
                                 clear = true;
-                            }
-                            if (clear) {
-                                setContentPane(position);
                             }
                         }
                     });
@@ -218,8 +169,6 @@ public class UserActivity extends AppCompatActivity {
                 }
             }
         });
-
-
 
         bAddUser.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -234,23 +183,30 @@ public class UserActivity extends AppCompatActivity {
                                         clear = true;
                                         setChanged(false);
                                         setNewUser(false);
+                                        setContentPane(-1);
                                     } else {
                                         clear = false;
+                                        setContentPane(-1);
                                     }
                                 }
                             } else {
                                 clear = true;
+                                setContentPane(-1);
                             }
                         }
                     });
+                } else {
+                    setContentPane(-1);
                 }
             }
         });
+
 
         bRegisterUser.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 createUser();
+                setChanged(false);
             }
         });
 
@@ -258,6 +214,7 @@ public class UserActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 updateUser();
+                setChanged(false);
             }
         });
 
@@ -265,32 +222,10 @@ public class UserActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 deleteUser();
+                setChanged(false);
             }
         });
 
-        etSearch.addTextChangedListener(new TextWatcher() {
-
-            @Override
-            public void onTextChanged(CharSequence cs, int arg1, int arg2, int arg3) {
-                // When user changed the Text
-                customUserListAdapter.getFilter().filter(cs);
-                customUserListAdapter.notifyDataSetChanged();
-            }
-
-            @Override
-            public void beforeTextChanged(CharSequence arg0, int arg1, int arg2,
-                                          int arg3) {
-                // TODO Auto-generated method stub
-
-            }
-
-            @Override
-            public void afterTextChanged(Editable arg0) {
-                // TODO Auto-generated method stub
-            }
-        });
-
-        /*
         etSearch.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
@@ -307,7 +242,138 @@ public class UserActivity extends AppCompatActivity {
                 //Auto generated stub
             }
         });
-        */
+
+        etUsername.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+                //Auto generated stub
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                String content = etUsername.getText().toString();
+                if (!content.equals("") && !content.equals(userUsername)) {
+                    setChanged(true);
+                } else {
+                    setChanged(false);
+                }
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+                //auto generated stub
+            }
+        });
+
+        etPassword.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+                //Auto generated stub
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                String content = etPassword.getText().toString();
+                if (!content.equals("") && !content.equals(userPassword)) {
+                    setChanged(true);
+                } else {
+                    setChanged(false);
+                }
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+                //auto generated stub
+            }
+        });
+
+        etFirstName.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+                //Auto generated stub
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                String content = etFirstName.getText().toString();
+                if (!content.equals("") && !content.equals(userFirstName)) {
+                    setChanged(true);
+                } else {
+                    setChanged(false);
+                }
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+                //auto generated stub
+            }
+        });
+
+        etLastName.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+                //Auto generated stub
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                String content = etLastName.getText().toString();
+                if (!content.equals("") && !content.equals(userLastName)) {
+                    setChanged(true);
+                } else {
+                    setChanged(false);
+                }
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+                //auto generated stub
+            }
+        });
+
+        etEmail.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+                //Auto generated stub
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                String content = etEmail.getText().toString();
+                if (!content.equals("") && !content.equals(userEmail)) {
+                    setChanged(true);
+                } else {
+                    setChanged(false);
+                }
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+                //auto generated stub
+            }
+        });
+
+        etContactEmail.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+                //Auto generated stub
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                String content = etContactEmail.getText().toString();
+                if (!content.equals("") && !content.equals(userParentEmail)) {
+                    setChanged(true);
+                } else {
+                    setChanged(false);
+                }
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+                //auto generated stub
+            }
+        });
     }
 
     public void setNewUser(boolean value){
@@ -317,6 +383,23 @@ public class UserActivity extends AppCompatActivity {
 
     public void setChanged(boolean value){
         changed = value;
+        if(changed && newUser){
+            bEditUser.setEnabled(false);
+            bDeleteUser.setEnabled(false);
+            bRegisterUser.setEnabled(true);
+        } else if(changed) {
+            bEditUser.setEnabled(true);
+            bDeleteUser.setEnabled(true);
+            bRegisterUser.setEnabled(false);
+        } else if(newUser) {
+            bEditUser.setEnabled(false);
+            bDeleteUser.setEnabled(false);
+            bRegisterUser.setEnabled(false);
+        } else {
+            bEditUser.setEnabled(false);
+            bDeleteUser.setEnabled(true);
+            bRegisterUser.setEnabled(false);
+        }
         Log.d("Changed value", String.valueOf(changed));
     }
 
@@ -330,13 +413,11 @@ public class UserActivity extends AppCompatActivity {
                     public void onClick(DialogInterface dialog, int which) {
                         callback.dialogResponse(true);
                     }
-
                 })
                 .setNegativeButton("No", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         callback.dialogResponse(false);
-
                     }
                 })
                 .show();
@@ -387,9 +468,8 @@ public class UserActivity extends AppCompatActivity {
                     userList.add(userInfo);
                 }
                 userListAdapter.notifyDataSetChanged();
-                customUserListAdapter.notifyDataSetChanged();
             }
-        }, context).execute("FETCH","","","","","","","","","","",""); //Nothing within "" to get every text - see php script
+        }, context).executeTask("FETCH","","","","","","","","","","",""); //Nothing within "" to get every text - see php script
     }
 
     public boolean createUser() {
@@ -416,7 +496,7 @@ public class UserActivity extends AppCompatActivity {
                 @Override
                 public void userTaskDone(Map<String, HashMap<String, String>> users) {
                 }
-            }, context).execute("CREATE", role, "", "", "", "", username, password, lastName, firstName,
+            }, context).executeTask("CREATE", role, "", "", "", "", username, password, lastName, firstName,
                     email, parentEmail);
             return true;
         } else if (!role.equals("student") && general) {
@@ -424,7 +504,7 @@ public class UserActivity extends AppCompatActivity {
                 @Override
                 public void userTaskDone(Map<String, HashMap<String, String>> users) {
                 }
-            }, context).execute("CREATE", role, "", "", "", "", username, password, lastName, firstName,
+            }, context).executeTask("CREATE", role, "", "", "", "", username, password, lastName, firstName,
                     email, "");
             return true;
         } else {
@@ -448,7 +528,7 @@ public class UserActivity extends AppCompatActivity {
             @Override
             public void userTaskDone(Map<String, HashMap<String, String>> users) {
             }
-        }, context).execute("UPDATE", "", "", "", "", "", username, password, lastName, firstName,
+        }, context).execute("UPDATE", "", userUserId, "", "", "", username, password, lastName, firstName,
                 email, parentEmail);
         return true;
     }
@@ -466,21 +546,20 @@ public class UserActivity extends AppCompatActivity {
                             @Override
                             public void userTaskDone(Map<String, HashMap<String, String>> users) {
                             }
-                        }, context).execute("DELETE",userId,"","","","","","","","","","");
+                        }, context).executeTask("DELETE", userRole, userUserId,"","","","","","","","","");
                         getUsers();
                         etUsername.setText("");
                         etFirstName.setText("");
                         etLastName.setText("");
                         etEmail.setText("");
                         etContactEmail.setText("");
+                        Log.d("id", userUserId);
                         Log.d("username", userUsername);
-                        Log.d("userId", userId);
                         setNewUser(true);
                         setChanged(false);
                         bDeleteUser.setEnabled(false);
                         userUsername = "";
                     }
-
                 })
                 .setNegativeButton("No", null)
                 .show();
@@ -489,13 +568,17 @@ public class UserActivity extends AppCompatActivity {
     public void setContentPane(int position){
         if(position >= 0) {
             Map<String, String> userData = userList.get(position);
+            userUserId = userData.get("userId");
+            userTeacherId = userData.get("teacherId");
+            userStudentId = userData.get("studentId");
+            userClassId = userData.get("classId");
             userRole = userData.get("role");
             userUsername = userData.get("username");
             userPassword = userData.get("password");
             userFirstName = userData.get("firstName");
             userLastName = userData.get("lastName");
             userEmail = userData.get("email");
-            userParentEmail = userData.get("parentemail");
+            userParentEmail = userData.get("parentEmail");
             tvRole.setText(userRole);
             etUsername.setText(userUsername);
             etPassword.setText(userPassword);
@@ -503,22 +586,39 @@ public class UserActivity extends AppCompatActivity {
             etLastName.setText(userLastName);
             etEmail.setText(userEmail);
             etContactEmail.setText(userParentEmail);
+            tvTitleEdit.setVisibility(View.VISIBLE);
+            tvRole.setVisibility(View.VISIBLE);
+            etContactEmail.setVisibility(View.VISIBLE);
+            bEditUser.setVisibility(View.VISIBLE);
+            bDeleteUser.setVisibility(View.VISIBLE);
+            bEditUser.setEnabled(false);
             bDeleteUser.setEnabled(true);
+            tvTitleRegister.setVisibility(View.GONE);
+            spinnerRole.setVisibility(View.GONE);
+            bRegisterUser.setVisibility(View.GONE);
+            if (tvRole.getText().toString().equals("student")) {
+                etContactEmail.setVisibility(View.VISIBLE);
+            } else {
+                etContactEmail.setVisibility(View.GONE);
+            }
             setChanged(false);
             setNewUser(false);
-            //get question from db and add to listview.
         } else {
             etUsername.setText("");
+            etPassword.setText("");
+            etPassword.setText("");
             etFirstName.setText("");
             etLastName.setText("");
             etEmail.setText("");
             etContactEmail.setText("");
-            bDeleteUser.setEnabled(false);
-            bEditUser.setEnabled(false);
-            etContactEmail.setVisibility(View.VISIBLE);
-            if (spinnerRole.getSelectedItem().toString().equals("teacher")) {
-                etContactEmail.setVisibility(View.GONE);
-            }
+            tvTitleRegister.setVisibility(View.VISIBLE);
+            spinnerRole.setVisibility(View.VISIBLE);
+            bRegisterUser.setVisibility(View.VISIBLE);
+            tvTitleEdit.setVisibility(View.GONE);
+            bEditUser.setVisibility(View.GONE);
+            bDeleteUser.setVisibility(View.GONE);
+            tvRole.setVisibility(View.GONE);
+            bRegisterUser.setEnabled(false);
             setChanged(false);
             setNewUser(true);
         }

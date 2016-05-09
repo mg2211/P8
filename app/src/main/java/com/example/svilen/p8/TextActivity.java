@@ -137,8 +137,7 @@ public class TextActivity extends AppCompatActivity {
                                        }
                                    }, context).executeTask("delete", "", textId, "", "");
                                }
-                            }
-                            if (clear) {
+                            } if (clear) {
                                 setContentPane(position);
 
                             }

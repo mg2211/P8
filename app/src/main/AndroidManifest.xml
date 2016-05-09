@@ -23,6 +23,9 @@
         <activity android:name=".StudentActivity" />
         <activity android:name=".TeacherActivity" />
         <activity android:name=".Register" />
+        <activity android:name=".UserActivity"
+            android:screenOrientation="landscape"
+            android:windowSoftInputMode="stateUnchanged" />
         <activity
             android:name=".TextActivity"
             android:screenOrientation="landscape"

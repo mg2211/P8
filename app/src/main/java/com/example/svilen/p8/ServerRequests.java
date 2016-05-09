@@ -849,20 +849,17 @@ class UserTask extends AsyncTask<String, Void, Map<String,HashMap<String, String
                     System.out.println(result);
                 }
 
-                HashMap<String, String> serverResponse = new HashMap<>();
-                serverResponse.put("generalResponse", generalResponse);
-                System.out.println("generalResponse: " + generalResponse);
-                serverResponse.put("responseCode", String.valueOf(responseCode));
-                result.put("response", serverResponse);
-                System.out.println("response: " + response);
 
                 Log.d("response", result.toString());
             }
-
-        } catch(IOException|JSONException e) {
-            e.printStackTrace();
-        }
-        return result;
+            HashMap<String, String> serverResponse = new HashMap<>();
+            serverResponse.put("generalResponse", generalResponse);
+            serverResponse.put("responseCode", String.valueOf(responseCode));
+            result.put("response", serverResponse);
+            } catch(IOException|JSONException e) {
+                e.printStackTrace();
+            }
+            return result;
     }
 
     protected void onPostExecute(Map<String,HashMap<String, String>> result) {
@@ -873,12 +870,14 @@ class UserTask extends AsyncTask<String, Void, Map<String,HashMap<String, String
         progressDialog.dismiss();
 
         if (Integer.parseInt(responseCode) == 100) {
+            int duration = Toast.LENGTH_LONG;
+            Toast toast = Toast.makeText(context, generalResponse, duration);
+            toast.show();
             result.remove("response");
             delegate.userTaskDone(result);
         } else if (Integer.parseInt(responseCode) != 100) {
             int duration = Toast.LENGTH_LONG;
             Toast toast = Toast.makeText(context, "Response code " + responseCode +", " + "Error message: " + generalResponse, duration);
-            toast.show();
         }
         else {
             int duration = Toast.LENGTH_LONG;
