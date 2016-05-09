@@ -35,16 +35,19 @@ public class UserActivity extends AppCompatActivity {
     Button bAddUser, bRegisterUser, bEditUser, bDeleteUser;
     EditText etSearch, etUsername, etPassword, etFirstName, etLastName, etEmail, etContactEmail;
     Spinner spinnerRole;
-    ListView lvListUsers, lvListClasses, listUsers;
+    ListView lvListUsers, lvListClasses/*, listUsers*/;
     TextView tvRole;
     List<String> roleList = new ArrayList<>();
     ArrayAdapter roleAdapter;
     SimpleAdapter userListAdapter;
-    UserAdapter customUserListAdapter;
+    //UserAdapter customUserListAdapter;
     List<Map<String, String>> userList = new ArrayList<>();
     UserActivity CustomListView = null;
 
-    String userId;
+    String userUserId;
+    String userTeacherId;
+    String userStudentId;
+    String userClassId;
     String userRole;
     String userUsername;
     String userPassword;
@@ -73,7 +76,7 @@ public class UserActivity extends AppCompatActivity {
 
         etSearch = (EditText) findViewById(R.id.etSearch);
 
-        //tvRole = (TextView) findViewById(R.id.tvRole);
+        tvRole = (TextView) findViewById(R.id.tvRole);
         spinnerRole = (Spinner) findViewById(R.id.spinnerRole);
         etUsername = (EditText) findViewById(R.id.etUserName);
         etPassword = (EditText) findViewById(R.id.etPassword);
@@ -87,7 +90,7 @@ public class UserActivity extends AppCompatActivity {
         bDeleteUser = (Button) findViewById(R.id.bDeleteUser);
 
         lvListUsers = (ListView) findViewById(R.id.lvListUsers);
-        listUsers = (ListView) findViewById(R.id.userList);
+        //listUsers = (ListView) findViewById(R.id.userList);
 
         lvListClasses = (ListView) findViewById(R.id.lvListClasses);
 
@@ -116,11 +119,12 @@ public class UserActivity extends AppCompatActivity {
         userListAdapter = new SimpleAdapter(this,
                 userList,
                 android.R.layout.simple_list_item_2,
-                new String[]{"username", "firstName"}, new int[]{android.R.id.text1, android.R.id.text2}) {
+                new String[]{"firstName", "lastName"}, new int[]{android.R.id.text1, android.R.id.text2}) {
         };
         lvListUsers.setAdapter(userListAdapter);
         lvListUsers.setChoiceMode(AbsListView.CHOICE_MODE_SINGLE);
 
+        /*
         CustomListView = this;
         Resources res =getResources();
 
@@ -129,9 +133,11 @@ public class UserActivity extends AppCompatActivity {
 
         listUsers.setAdapter(customUserListAdapter);
         listUsers.setChoiceMode(AbsListView.CHOICE_MODE_SINGLE);
+        */
 
         getUsers();
 
+        /*
         listUsers.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, final int position, long id) {
@@ -174,6 +180,7 @@ public class UserActivity extends AppCompatActivity {
                 }
             }
         });
+        */
 
 
         lvListUsers.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -268,6 +275,7 @@ public class UserActivity extends AppCompatActivity {
             }
         });
 
+        /*
         etSearch.addTextChangedListener(new TextWatcher() {
 
             @Override
@@ -289,8 +297,8 @@ public class UserActivity extends AppCompatActivity {
                 // TODO Auto-generated method stub
             }
         });
+        */
 
-        /*
         etSearch.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
@@ -307,7 +315,6 @@ public class UserActivity extends AppCompatActivity {
                 //Auto generated stub
             }
         });
-        */
     }
 
     public void setNewUser(boolean value){
@@ -387,9 +394,8 @@ public class UserActivity extends AppCompatActivity {
                     userList.add(userInfo);
                 }
                 userListAdapter.notifyDataSetChanged();
-                customUserListAdapter.notifyDataSetChanged();
             }
-        }, context).execute("FETCH","","","","","","","","","","",""); //Nothing within "" to get every text - see php script
+        }, context).executeTask("FETCH","","","","","","","","","","",""); //Nothing within "" to get every text - see php script
     }
 
     public boolean createUser() {
@@ -416,7 +422,7 @@ public class UserActivity extends AppCompatActivity {
                 @Override
                 public void userTaskDone(Map<String, HashMap<String, String>> users) {
                 }
-            }, context).execute("CREATE", role, "", "", "", "", username, password, lastName, firstName,
+            }, context).executeTask("CREATE", role, "", "", "", "", username, password, lastName, firstName,
                     email, parentEmail);
             return true;
         } else if (!role.equals("student") && general) {
@@ -424,7 +430,7 @@ public class UserActivity extends AppCompatActivity {
                 @Override
                 public void userTaskDone(Map<String, HashMap<String, String>> users) {
                 }
-            }, context).execute("CREATE", role, "", "", "", "", username, password, lastName, firstName,
+            }, context).executeTask("CREATE", role, "", "", "", "", username, password, lastName, firstName,
                     email, "");
             return true;
         } else {
@@ -448,7 +454,7 @@ public class UserActivity extends AppCompatActivity {
             @Override
             public void userTaskDone(Map<String, HashMap<String, String>> users) {
             }
-        }, context).execute("UPDATE", "", "", "", "", "", username, password, lastName, firstName,
+        }, context).execute("UPDATE", "", userUserId, "", "", "", username, password, lastName, firstName,
                 email, parentEmail);
         return true;
     }
@@ -466,15 +472,15 @@ public class UserActivity extends AppCompatActivity {
                             @Override
                             public void userTaskDone(Map<String, HashMap<String, String>> users) {
                             }
-                        }, context).execute("DELETE",userId,"","","","","","","","","","");
+                        }, context).executeTask("DELETE", userRole, userUserId,"","","","","","","","","");
                         getUsers();
                         etUsername.setText("");
                         etFirstName.setText("");
                         etLastName.setText("");
                         etEmail.setText("");
                         etContactEmail.setText("");
+                        Log.d("id", userUserId);
                         Log.d("username", userUsername);
-                        Log.d("userId", userId);
                         setNewUser(true);
                         setChanged(false);
                         bDeleteUser.setEnabled(false);
@@ -489,13 +495,17 @@ public class UserActivity extends AppCompatActivity {
     public void setContentPane(int position){
         if(position >= 0) {
             Map<String, String> userData = userList.get(position);
+            userUserId = userData.get("userId");
+            userTeacherId = userData.get("teacherId");
+            userStudentId = userData.get("studentId");
+            userClassId = userData.get("classId");
             userRole = userData.get("role");
             userUsername = userData.get("username");
             userPassword = userData.get("password");
             userFirstName = userData.get("firstName");
             userLastName = userData.get("lastName");
             userEmail = userData.get("email");
-            userParentEmail = userData.get("parentemail");
+            userParentEmail = userData.get("parentEmail");
             tvRole.setText(userRole);
             etUsername.setText(userUsername);
             etPassword.setText(userPassword);
@@ -503,7 +513,12 @@ public class UserActivity extends AppCompatActivity {
             etLastName.setText(userLastName);
             etEmail.setText(userEmail);
             etContactEmail.setText(userParentEmail);
+            tvRole.setVisibility(View.VISIBLE);
+            etContactEmail.setVisibility(View.VISIBLE);
+            spinnerRole.setVisibility(View.GONE);
+            bEditUser.setEnabled(true);
             bDeleteUser.setEnabled(true);
+            bRegisterUser.setEnabled(false);
             setChanged(false);
             setNewUser(false);
             //get question from db and add to listview.
@@ -513,9 +528,12 @@ public class UserActivity extends AppCompatActivity {
             etLastName.setText("");
             etEmail.setText("");
             etContactEmail.setText("");
+            bRegisterUser.setEnabled(true);
             bDeleteUser.setEnabled(false);
             bEditUser.setEnabled(false);
+            spinnerRole.setVisibility(View.VISIBLE);
             etContactEmail.setVisibility(View.VISIBLE);
+            tvRole.setVisibility(View.GONE);
             if (spinnerRole.getSelectedItem().toString().equals("teacher")) {
                 etContactEmail.setVisibility(View.GONE);
             }

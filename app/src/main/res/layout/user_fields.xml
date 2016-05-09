@@ -17,6 +17,12 @@
         android:id="@+id/spinnerRole"
         android:spinnerMode="dropdown" />
 
+    <TextView
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/tvRole"
+        android:singleLine="true"/>
+
     <EditText
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"

@@ -86,7 +86,7 @@ public class TeacherActivity extends AppCompatActivity {
         bUsers.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent (context, Register.class);
+                Intent intent = new Intent (context, UserActivity.class);
                 startActivity(intent);
                 //new UserTask().execute("");
             }
