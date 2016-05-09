@@ -506,8 +506,8 @@ public class AssignmentActivity extends AppCompatActivity {
         dialog.show();
         ListView lvDialogClasses = (ListView) layout.findViewById(R.id.lvDialogClasses);
         ListView lvDialogStudents = (ListView) layout.findViewById(R.id.lvDialogStudents);
-        EditText etDialogDateFrom = (EditText) layout.findViewById(R.id.etDialogDateFrom);
-        EditText etDialogDateTo = (EditText) layout.findViewById(R.id.etDialogDateTo);
+        final EditText etDialogDateFrom = (EditText) layout.findViewById(R.id.etDialogDateFrom);
+        final EditText etDialogDateTo = (EditText) layout.findViewById(R.id.etDialogDateTo);
 
 
         Button bDialogAssign = (Button) layout.findViewById(R.id.bDialogAssign);
@@ -535,7 +535,10 @@ public class AssignmentActivity extends AppCompatActivity {
                     @Override
                     public void dateSelected(Long timestamp) {
                        assignmentFrom = timestamp;
-                        Log.d("assignment from", String.valueOf(assignmentFrom));
+                        SimpleDateFormat dateFormatter = new SimpleDateFormat("yyyy-MM-dd-HH:mm");
+                        Date date = new Date(timestamp*1000);
+                        String formattedDate = dateFormatter.format(date);
+                        etDialogDateFrom.setText(formattedDate);
                     }
                 });
             }
@@ -551,7 +554,10 @@ public class AssignmentActivity extends AppCompatActivity {
                         @Override
                         public void dateSelected(Long timestamp) {
                             assignmentTo = timestamp;
-                            Log.d("assignment to", String.valueOf(assignmentTo));
+                            SimpleDateFormat dateFormatter = new SimpleDateFormat("yyyy-MM-dd-HH:mm");
+                            Date date = new Date(timestamp*1000);
+                            String formattedDate = dateFormatter.format(date);
+                            etDialogDateTo.setText(formattedDate);
                         }
                     });
             }
@@ -649,7 +655,7 @@ public class AssignmentActivity extends AppCompatActivity {
                 int hour;
                 int minute;
                 int day = datePicker.getDayOfMonth();
-                int month = datePicker.getMonth()+1;
+                int month = datePicker.getMonth();
                 int year = datePicker.getYear();
 
                 if (Build.VERSION.SDK_INT >= 23 ) {
@@ -671,7 +677,10 @@ public class AssignmentActivity extends AppCompatActivity {
                 Log.d("day",String.valueOf(day));
 
                 if(day == offsetDay && month == offsetMonth && year == offsetYear && hour <= offsetHour && minute <= offsetMinute){
-                    Log.d("time is past","dhfdhfkhd");
+                    int duration = Toast.LENGTH_LONG;
+                    CharSequence alert = "The time selected has passed";
+                    Toast toast = Toast.makeText(context, alert, duration);
+                    toast.show();
                 } else {
                     //converting all times and dates to Strings and adding leading zeroes
                     String monthString;
