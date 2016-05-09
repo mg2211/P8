@@ -1,10 +1,12 @@
 package com.example.svilen.p8;
 
+import android.annotation.TargetApi;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
-import android.graphics.Color;
+import android.os.Build;
 import android.os.Bundle;
+import android.os.SystemClock;
 import android.support.v7.app.AppCompatActivity;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -15,27 +17,37 @@ import android.view.WindowManager;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.SimpleAdapter;
+import android.widget.Spinner;
 import android.widget.TextView;
+import android.widget.TimePicker;
 import android.widget.Toast;
 
 import com.github.mikephil.charting.charts.BarChart;
 import com.github.mikephil.charting.components.XAxis;
 import com.github.mikephil.charting.components.YAxis;
 import com.github.mikephil.charting.data.BarData;
-import com.github.mikephil.charting.data.BarDataSet;
 import com.github.mikephil.charting.data.BarEntry;
 import com.github.mikephil.charting.data.Entry;
 import com.github.mikephil.charting.highlight.Highlight;
 import com.github.mikephil.charting.interfaces.datasets.IBarDataSet;
 import com.github.mikephil.charting.listener.OnChartValueSelectedListener;
 
+import java.sql.Time;
+import java.sql.Timestamp;
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.TimeZone;
 
 public class AssignmentActivity extends AppCompatActivity {
 
@@ -65,6 +77,8 @@ public class AssignmentActivity extends AppCompatActivity {
     ArrayList<BarEntry> yVal = new ArrayList<>();
     ArrayList<String> xVals = new ArrayList<>();
     ArrayList<IBarDataSet> dataSets = new ArrayList<>();
+    Long assignmentFrom;
+    Long assignmentTo;
 
     boolean newAssignment;
     boolean changed;
@@ -492,8 +506,14 @@ public class AssignmentActivity extends AppCompatActivity {
         dialog.show();
         ListView lvDialogClasses = (ListView) layout.findViewById(R.id.lvDialogClasses);
         ListView lvDialogStudents = (ListView) layout.findViewById(R.id.lvDialogStudents);
+        EditText etDialogDateFrom = (EditText) layout.findViewById(R.id.etDialogDateFrom);
+        EditText etDialogDateTo = (EditText) layout.findViewById(R.id.etDialogDateTo);
+
+
+        Button bDialogAssign = (Button) layout.findViewById(R.id.bDialogAssign);
         lvDialogClasses.setAdapter(classAdapter);
         lvDialogStudents.setAdapter(studentAdapter);
+
         getClasses();
 
         lvDialogClasses.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -505,9 +525,44 @@ public class AssignmentActivity extends AppCompatActivity {
             }
         });
 
+        etDialogDateFrom.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(assignmentFrom == null) {
+                    assignmentFrom = (System.currentTimeMillis() / 1000) - 1000;
+                }
+                datePicker("from", assignmentFrom, new DatePickerCallback() {
+                    @Override
+                    public void dateSelected(Long timestamp) {
+                       assignmentFrom = timestamp;
+                        Log.d("assignment from", String.valueOf(assignmentFrom));
+                    }
+                });
+            }
+        });
 
-        Log.d("classes",classList.toString());
+        etDialogDateTo.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(assignmentFrom == null){
+                    assignmentFrom = (System.currentTimeMillis()/1000)-1000;
+                }
+                    datePicker("to",assignmentFrom, new DatePickerCallback() {
+                        @Override
+                        public void dateSelected(Long timestamp) {
+                            assignmentTo = timestamp;
+                            Log.d("assignment to", String.valueOf(assignmentTo));
+                        }
+                    });
+            }
+        });
 
+
+        bDialogAssign.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+            }
+        });
     }
     private void getStudents(String classId){
         new StudentTask(new StudentCallback() {
@@ -544,9 +599,130 @@ public class AssignmentActivity extends AppCompatActivity {
                     classInfo.put("Number of students", "Number of students: "+ specificClassStudents);
                     classList.add(classInfo);
                 }
-                Log.d("classes",classList.toString());
                 classAdapter.notifyDataSetChanged();
             }
         },context).execute(teacherId);
+    }
+    private void datePicker(String mode, final Long offsetDate, final DatePickerCallback callback) {
+        AlertDialog.Builder builder = new AlertDialog.Builder(context);
+        LayoutInflater inflater = getLayoutInflater();
+        final View layout = inflater.inflate(R.layout.dialog_time, null);
+        builder.setView(layout);
+        final AlertDialog dialog = builder.create();
+        dialog.setCanceledOnTouchOutside(true);
+        dialog.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_UNCHANGED);
+        dialog.show();
+        final DatePicker datePicker = (DatePicker) layout.findViewById(R.id.datePicker);
+        final TimePicker timePicker = (TimePicker) layout.findViewById(R.id.timePicker);
+        Button bDialogOk = (Button) layout.findViewById(R.id.bDialogOk);
+        Button bDialogCancel = (Button) layout.findViewById(R.id.bDialogCancel);
+
+        Long offset = offsetDate*1000; //timestamp converted to microseconds.
+
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTimeInMillis(offset);
+
+        final int offsetDay = calendar.get(Calendar.DATE);
+        final int offsetMonth = calendar.get(Calendar.MONTH);
+        final int offsetYear = calendar.get(Calendar.YEAR);
+        final int offsetHour = calendar.get(Calendar.HOUR_OF_DAY);
+        final int offsetMinute = calendar.get(Calendar.MINUTE);
+        if(mode.equals("from")) {
+            datePicker.setMinDate(System.currentTimeMillis()-1000);
+        } else {
+            datePicker.setMinDate(offset);
+        }
+        datePicker.init(offsetYear,offsetMonth,offsetDay,null);
+
+        Log.d("off day", String.valueOf(offsetDay));
+        Log.d("off month", String.valueOf(offsetMonth));
+        Log.d("off year", String.valueOf(offsetYear));
+        Log.d("off hour", String.valueOf(offsetHour));
+        Log.d("off min", String.valueOf(offsetMinute));
+
+
+        bDialogOk.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                long time;
+                Log.d("clicked","true");
+                int hour;
+                int minute;
+                int day = datePicker.getDayOfMonth();
+                int month = datePicker.getMonth()+1;
+                int year = datePicker.getYear();
+
+                if (Build.VERSION.SDK_INT >= 23 ) {
+                    hour = timePicker.getHour();
+                } else {
+                    hour = timePicker.getCurrentHour();
+                }
+
+                if(Build.VERSION.SDK_INT >= 23){
+                    minute = timePicker.getMinute();
+                } else {
+                    minute = timePicker.getCurrentMinute();
+                }
+
+                Log.d("minute", String.valueOf(minute));
+                Log.d("hour", String.valueOf(hour));
+                Log.d("year", String.valueOf(year));
+                Log.d("month",String.valueOf(month));
+                Log.d("day",String.valueOf(day));
+
+                if(day == offsetDay && month == offsetMonth && year == offsetYear && hour <= offsetHour && minute <= offsetMinute){
+                    Log.d("time is past","dhfdhfkhd");
+                } else {
+                    //converting all times and dates to Strings and adding leading zeroes
+                    String monthString;
+                    String dayString;
+                    String hourString;
+                    String minString;
+                    String yearString = String.valueOf(year);
+
+                        if(month < 10){
+                            monthString = "0"+String.valueOf(month);
+                        } else {
+                            monthString = String.valueOf(month);
+                        }
+
+                        if(day < 10){
+                            dayString = "0"+String.valueOf(day);
+                        } else {
+                            dayString = String.valueOf(day);
+                        }
+
+                        if(hour < 10){
+                            hourString = "0"+String.valueOf(hour);
+                        } else {
+                            hourString = String.valueOf(hour);
+                        }
+                        if(minute < 10){
+                            minString = "0"+String.valueOf(minute);
+                        } else {
+                            minString = String.valueOf(minute);
+                        }
+
+                    String dateAndTime = yearString+monthString+dayString+hourString+minString;
+                        try {
+
+                            SimpleDateFormat dateFormatter = new SimpleDateFormat("yyyyMMddHHmm");
+                            Date date = dateFormatter.parse(dateAndTime);
+                            time = date.getTime()/1000;
+                            callback.dateSelected(time);
+                            dialog.dismiss();
+                        } catch (ParseException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                }
+        });
+
+        bDialogCancel.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                dialog.dismiss();
+            }
+        });
     }
 }
