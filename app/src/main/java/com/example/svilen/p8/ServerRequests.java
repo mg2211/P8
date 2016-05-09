@@ -870,12 +870,14 @@ class UserTask extends AsyncTask<String, Void, Map<String,HashMap<String, String
         progressDialog.dismiss();
 
         if (Integer.parseInt(responseCode) == 100) {
+            int duration = Toast.LENGTH_LONG;
+            Toast toast = Toast.makeText(context, generalResponse, duration);
+            toast.show();
             result.remove("response");
             delegate.userTaskDone(result);
         } else if (Integer.parseInt(responseCode) != 100) {
             int duration = Toast.LENGTH_LONG;
             Toast toast = Toast.makeText(context, "Response code " + responseCode +", " + "Error message: " + generalResponse, duration);
-            toast.show();
         }
         else {
             int duration = Toast.LENGTH_LONG;

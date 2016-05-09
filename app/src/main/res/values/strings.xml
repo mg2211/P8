@@ -5,13 +5,15 @@
     <string name="Yes">Yes</string>
     <string name="No">No</string>
 
+    <!--Labels for tirles-->
+    <string name="registerUser">Register a new user</string>
+    <string name="editUser">Edit this user</string>
+
     <!--Labels for buttons-->
     <string name="login">Login</string>
     <string name="register">Register</string>
-    <string name="registerUser">Register a new user</string>
     <string name="showClasses">Show my classes</string>
     <string name="showStudents">Show my students</string>
-    <string name="editUser">Edit this user</string>
     <string name="saveUser">Save changes</string>
     <string name="deleteUser">Delete user</string>
 
