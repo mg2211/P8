@@ -40,9 +40,9 @@ public class UserActivity extends AppCompatActivity {
     List<String> roleList = new ArrayList<>();
     ArrayAdapter roleAdapter;
     SimpleAdapter userListAdapter;
-    //UserAdapter customUserListAdapter;
+    SimpleAdapter classListAdapter;
     List<Map<String, String>> userList = new ArrayList<>();
-    UserActivity CustomListView = null;
+    List<Map<String, String>> classList = new ArrayList<>();
 
     String userUserId;
     String userTeacherId;
@@ -55,14 +55,10 @@ public class UserActivity extends AppCompatActivity {
     String userLastName;
     String userEmail;
     String userParentEmail;
-    Map<String, HashMap<String, String>> users;
 
     boolean newUser;
     boolean changed;
     boolean clear;
-
-    //Intent intent = getIntent();
-    //String roleId = intent.getStringExtra("roleId");
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -128,6 +124,16 @@ public class UserActivity extends AppCompatActivity {
 
         getUsers();
         setContentPane(-1);
+
+        classListAdapter = new SimpleAdapter(this,
+                classList,
+                android.R.layout.simple_list_item_2,
+                new String[]{"className", "classId"}, new int[]{android.R.id.text1, android.R.id.text2}) {
+        };
+        lvListClasses.setAdapter(classListAdapter);
+        lvListClasses.setChoiceMode(AbsListView.CHOICE_MODE_SINGLE);
+
+        getAllClasses();
 
         lvListUsers.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
@@ -438,6 +444,46 @@ public class UserActivity extends AppCompatActivity {
         }, context).execute(); //roleID
     }
 
+    public void getAllClasses() {
+        new ClassTaskNew(new ClassCallbackNew() {
+            @Override
+            public void classListDone(Map<String, HashMap<String, String>> classes) {
+                classList.clear();
+                for (Map.Entry<String, HashMap<String, String>> classData : classes.entrySet())  {
+                    Map<String, String> classInfo = new HashMap<>();
+                    String classId = classData.getValue().get("classId");
+                    String teacherId = classData.getValue().get("teacherId");
+                    String className = classData.getValue().get("className");
+                    classInfo.put("classId", classId);
+                    classInfo.put("teacherId", teacherId);
+                    classInfo.put("className", className);
+                    classList.add(classInfo);
+                }
+                classListAdapter.notifyDataSetChanged();
+            }
+        }, context).executeTask("FETCH","","","","","");
+    }
+
+    public void getUserClasses(String userId) {
+        new ClassTaskNew(new ClassCallbackNew() {
+            @Override
+            public void classListDone(Map<String, HashMap<String, String>> classes) {
+                classList.clear();
+                for (Map.Entry<String, HashMap<String, String>> classData : classes.entrySet())  {
+                    Map<String, String> classInfo = new HashMap<>();
+                    String classId = classData.getValue().get("classId");
+                    String teacherId = classData.getValue().get("teacherId");
+                    String className = classData.getValue().get("className");
+                    classInfo.put("classId", classId);
+                    classInfo.put("teacherId", teacherId);
+                    classInfo.put("className", className);
+                    classList.add(classInfo);
+                }
+                classListAdapter.notifyDataSetChanged();
+            }
+        }, context).executeTask("FETCH","","","","",userId);
+    }
+
     public void getUsers() {
         new UserTask(new UserCallback() {
             @Override
@@ -603,6 +649,8 @@ public class UserActivity extends AppCompatActivity {
             }
             setChanged(false);
             setNewUser(false);
+            getUserClasses(userUserId);
+            classListAdapter.notifyDataSetChanged();
         } else {
             etUsername.setText("");
             etPassword.setText("");

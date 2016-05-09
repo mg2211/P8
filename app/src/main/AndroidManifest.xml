@@ -22,7 +22,6 @@
         </activity>
         <activity android:name=".StudentActivity" />
         <activity android:name=".TeacherActivity" />
-        <activity android:name=".Register" />
         <activity android:name=".UserActivity"
             android:screenOrientation="landscape"
             android:windowSoftInputMode="stateUnchanged" />
@@ -36,7 +35,8 @@
         <activity
             android:name=".AssignmentActivity"
             android:windowSoftInputMode="stateUnchanged|adjustPan" />
-        <activity android:name=".ReadingActivity"></activity>
+        <activity
+            android:name=".ReadingActivity" />
     </application>
 
 </manifest>

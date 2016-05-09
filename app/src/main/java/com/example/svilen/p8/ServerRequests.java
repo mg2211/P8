@@ -175,123 +175,7 @@ class LoginTask extends AsyncTask<String, Void, HashMap<String, String>> {
         }
     }
 }
-class RegisterTask extends AsyncTask<String, Void, HashMap<String, String>> {
-    ProgressDialog progressDialog;
-    final Context context;
 
-    @Override
-    protected void onPreExecute() {
-        super.onPreExecute();
-        progressDialog = new ProgressDialog(context);
-        progressDialog.setCancelable(true);
-        progressDialog.setTitle("Processing...");
-        progressDialog.setMessage("Please wait...");
-        progressDialog.show();
-    }
-
-    RegisterTask(Context context) {
-        this.context = context;
-    }
-
-    @Override
-    protected HashMap<String, String> doInBackground(String... userdata) {
-        String role = userdata[0];
-        String username = userdata[1];
-        String password = userdata[2];
-        String firstname = userdata[3];
-        String lastname = userdata[4];
-        String email = userdata[5];
-        String parentemail = userdata[6];
-
-        String generalResponse = null;
-        int responseCode = 0;
-
-        try {
-            URL url = new URL("http://emilsiegenfeldt.dk/p8/newUser.php");
-            HttpURLConnection connection = (HttpURLConnection) url.openConnection();
-            connection.setRequestMethod("POST");
-
-            Uri.Builder builder = new Uri.Builder().appendQueryParameter("username", username)
-                    .appendQueryParameter("role", role)
-                    .appendQueryParameter("password", password)
-                    .appendQueryParameter("firstname", firstname)
-                    .appendQueryParameter("lastname", lastname)
-                    .appendQueryParameter("email", email)
-                    .appendQueryParameter("parentemail", parentemail);
-
-            String query = builder.build().getEncodedQuery();
-            OutputStream os = connection.getOutputStream();
-            BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(os, "UTF-8"));
-            writer.write(query);
-            writer.flush();
-            writer.close();
-            os.close();
-
-            connection.connect();
-
-            //Catch server response
-            InputStream in = new BufferedInputStream(connection.getInputStream());
-
-            String response = IOUtils.toString(in, "UTF-8"); //convert to readable string
-
-            //convert to JSON object
-            JSONObject JSONResult = new JSONObject(response);
-
-            //extract variables from JSONObject result var
-            generalResponse = JSONResult.getString("generalResponse");
-            responseCode = JSONResult.getInt("responseCode");
-            username = JSONResult.getString("username");
-
-        } catch (IOException e) {
-            responseCode = 300;
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-        HashMap<String, String> result = new HashMap<>();
-
-        result.put("generalResponse", generalResponse);
-        result.put("responseCode", String.valueOf(responseCode));
-        result.put("username", username);
-        //result.put("name",name);
-
-        return result;
-    }
-
-    protected void onPostExecute(HashMap<String, String> result) {
-
-        if(progressDialog.isShowing()){
-            progressDialog.dismiss();
-        }
-
-        String responseCode = result.get("responseCode");
-        String generalResponse = result.get("generalResponse");
-        String username = result.get("username");
-
-        if (Integer.parseInt(responseCode) == 100) {
-            //if everything is alright
-            int duration = Toast.LENGTH_LONG;
-            Toast toast = Toast.makeText(context, generalResponse, duration);
-            toast.show();
-        } else if (Integer.parseInt(responseCode) == 200) {
-            //if somethings wrong e.g. username already in use
-            int duration = Toast.LENGTH_LONG;
-            Toast toast = Toast.makeText(context, generalResponse, duration);
-            toast.show();
-        } else if (Integer.parseInt(responseCode) == 300) {
-            //If server connection fails.
-            int duration = Toast.LENGTH_LONG;
-            CharSequence alert = "Server connection failed - Please try again later";
-            Toast toast = Toast.makeText(context, alert, duration);
-            toast.show();
-        } else if (Integer.parseInt(responseCode) == 400) {
-            //If server connection fails.
-            int duration = Toast.LENGTH_LONG;
-            Toast toast = Toast.makeText(context, generalResponse, duration);
-            toast.show();
-        }
-
-    }
-}
 class ClassTask extends AsyncTask<String, Void, HashMap<String, HashMap<String, String>>> {
 
         ClassCallback delegate;
@@ -609,19 +493,27 @@ class RoleTask extends AsyncTask<String, Void, Map<String,HashMap<String, String
 
         String generalResponse = result.get("response").get("generalResponse");
         String responseCode = result.get("response").get("responseCode");
+
         progressDialog.dismiss();
 
         if (Integer.parseInt(responseCode) == 100) {
-            result.remove("response");
-            delegate.roleListDone(result);
-        } else if (Integer.parseInt(responseCode) == 200) {
             int duration = Toast.LENGTH_LONG;
             Toast toast = Toast.makeText(context, generalResponse, duration);
             toast.show();
+            result.remove("response");
+            delegate.roleListDone(result);
+        } else if (Integer.parseInt(responseCode) != 100) {
+            int duration = Toast.LENGTH_LONG;
+            Toast toast = Toast.makeText(context, "Response code " + responseCode +", " + "Error message: " + generalResponse, duration);
+        }
+        else {
+            int duration = Toast.LENGTH_LONG;
+            Toast toast = Toast.makeText(context, "Something went horribly wrong, no response code!", duration);
+            toast.show();
         }
     }
-
 }
+
 class TextTask extends AsyncTask<String, Void, HashMap<String, HashMap<String, String>>>{
 
     private final Context context;
@@ -846,11 +738,8 @@ class UserTask extends AsyncTask<String, Void, Map<String,HashMap<String, String
                         userInfo.put("parentEmail", user.getString("parentEmail"));
                     }
                     result.put("userId: " + userId, userInfo);
-                    System.out.println(result);
                 }
-
-
-                Log.d("response", result.toString());
+                Log.d("UserTask response", result.toString());
             }
             HashMap<String, String> serverResponse = new HashMap<>();
             serverResponse.put("generalResponse", generalResponse);
@@ -878,6 +767,136 @@ class UserTask extends AsyncTask<String, Void, Map<String,HashMap<String, String
         } else if (Integer.parseInt(responseCode) != 100) {
             int duration = Toast.LENGTH_LONG;
             Toast toast = Toast.makeText(context, "Response code " + responseCode +", " + "Error message: " + generalResponse, duration);
+            toast.show();
+        }
+        else {
+            int duration = Toast.LENGTH_LONG;
+            Toast toast = Toast.makeText(context, "Something went horribly wrong, no response code!", duration);
+            toast.show();
+        }
+    }
+}
+
+class ClassTaskNew extends AsyncTask<String, Void, Map<String,HashMap<String, String>>> {
+
+    ClassCallbackNew delegate;
+    private final Context context;
+    ProgressDialog progressDialog;
+
+    @Override
+    protected void onPreExecute() {
+    }
+
+    public ClassTaskNew(ClassCallbackNew delegate, Context context) {
+        this.context = context;
+        this.delegate = delegate;
+        progressDialog = new ProgressDialog(context);
+        progressDialog.setCancelable(false);
+        progressDialog.setTitle("Processing...");
+        progressDialog.setMessage("Please wait ...");
+        progressDialog.show();
+    }
+
+    public void executeTask(String method, String classId, String teacherId, String className,
+                            String studentId, String userId) {
+        this.execute(method, classId, teacherId, className, studentId, userId);
+    }
+
+    @Override
+    protected Map<String, HashMap<String, String>> doInBackground(String... params) {
+
+        String method;
+        String classId;
+        String teacherId;
+        String className;
+        String studentId;
+        String userId;
+
+        Map<String, HashMap<String, String>> result = new HashMap<>();
+
+        method = params[0];
+        classId = params[1];
+        teacherId = params[2];
+        className = params[3];
+        studentId = params[4];
+        userId = params[5];
+
+        try {
+            String generalResponse;
+            int responseCode;
+
+            URL url = new URL("http://emilsiegenfeldt.dk/p8/classes.php");
+            HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+            connection.setRequestMethod("POST");
+
+            Uri.Builder builder = new Uri.Builder().appendQueryParameter("method", method)
+                    .appendQueryParameter("classid", classId)
+                    .appendQueryParameter("teacherid", teacherId)
+                    .appendQueryParameter("classname", className)
+                    .appendQueryParameter("studentid", studentId)
+                    .appendQueryParameter("userid", userId);
+
+            String query = builder.build().getEncodedQuery();
+            OutputStream os = connection.getOutputStream();
+            BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(os, "UTF-8"));
+            writer.write(query);
+            writer.flush();
+            writer.close();
+            os.close();
+
+            connection.connect();
+            //catch server response
+            InputStream in = new BufferedInputStream(connection.getInputStream());
+
+            String response = IOUtils.toString(in, "UTF-8");
+
+            JSONObject JSONResult = new JSONObject(response);
+            generalResponse = JSONResult.getString("generalResponse");
+            responseCode = JSONResult.getInt("responseCode");
+
+            if (params[0].equals("FETCH")) {
+
+                JSONArray classes = JSONResult.getJSONArray("classes");
+                for (int i = 0; i < classes.length(); i++) {
+                    HashMap<String, String> classInfo = new HashMap<>();
+
+                    JSONObject classMap = classes.getJSONObject(i);
+                    classId = classMap.getString("classId");
+                    classInfo.put("classId", classId);
+                    classInfo.put("teacherId", classMap.getString("teacherId"));
+                    classInfo.put("className", classMap.getString("className"));
+
+                    result.put("classId: " + classId, classInfo);
+                }
+                Log.d("ClassTask response", result.toString());
+            }
+            HashMap<String, String> serverResponse = new HashMap<>();
+            serverResponse.put("generalResponse", generalResponse);
+            serverResponse.put("responseCode", String.valueOf(responseCode));
+            result.put("response", serverResponse);
+        } catch(IOException|JSONException e) {
+            e.printStackTrace();
+        }
+        return result;
+    }
+
+    protected void onPostExecute(Map<String,HashMap<String, String>> result) {
+
+        String generalResponse = result.get("response").get("generalResponse");
+        String responseCode = result.get("response").get("responseCode");
+
+        progressDialog.dismiss();
+
+        if (Integer.parseInt(responseCode) == 100) {
+            int duration = Toast.LENGTH_LONG;
+            Toast toast = Toast.makeText(context, generalResponse, duration);
+            toast.show();
+            result.remove("response");
+            delegate.classListDone(result);
+        } else if (Integer.parseInt(responseCode) != 100) {
+            int duration = Toast.LENGTH_LONG;
+            Toast toast = Toast.makeText(context, "Response code " + responseCode +", " + "Error message: " + generalResponse, duration);
+            toast.show();
         }
         else {
             int duration = Toast.LENGTH_LONG;
