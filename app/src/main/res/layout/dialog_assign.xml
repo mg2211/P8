@@ -74,7 +74,7 @@
 
         <LinearLayout
             android:orientation="vertical"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content">
 
             <LinearLayout
@@ -89,12 +89,14 @@
                     android:text="Available from"
                     android:id="@+id/textView11" />
 
-            </LinearLayout>
-
-            <LinearLayout
-                android:orientation="horizontal"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent">
+                <EditText
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:inputType="date"
+                    android:ems="10"
+                    android:id="@+id/etDialogDateFrom"
+                    android:focusable="false"
+                    android:layout_weight="1" />
 
                 <TextView
                     android:layout_width="wrap_content"
@@ -102,14 +104,25 @@
                     android:textAppearance="?android:attr/textAppearanceMedium"
                     android:text="Available to"
                     android:id="@+id/textView12" />
+
+                <EditText
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:inputType="date"
+                    android:ems="10"
+                    android:id="@+id/etDialogDateTo"
+                    android:focusable="false"
+                    android:layout_weight="1" />
+
             </LinearLayout>
+
         </LinearLayout>
 
         <Button
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Assign selected students"
-            android:id="@+id/button2"
+            android:id="@+id/bDialogAssign"
             android:layout_gravity="right"
             android:layout_marginRight="20dp" />
     </LinearLayout>
