@@ -67,7 +67,7 @@
                     android:layout_height="match_parent"
                     android:id="@+id/lvDialogStudents"
                     android:layout_weight="1"
-                    tools:listitem="@android:layout/simple_list_item_2" />
+                    tools:listitem="@android:layout/simple_list_item_checked" />
             </LinearLayout>
 
         </LinearLayout>

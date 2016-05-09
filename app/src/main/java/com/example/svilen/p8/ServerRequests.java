@@ -1049,6 +1049,8 @@ class AssignmentLibTask extends AsyncTask<String, Void, HashMap<String, HashMap<
 
             String serverResponse = IOUtils.toString(in, "UTF-8");
 
+            Log.d("serverresponse",serverResponse);
+
             JSONObject JSONResult = new JSONObject(serverResponse);
             String generalResponse = JSONResult.getString("generalResponse");
             String responseCode = String.valueOf(JSONResult.getInt("responseCode"));
@@ -1132,7 +1134,7 @@ class AssignmentLibTask extends AsyncTask<String, Void, HashMap<String, HashMap<
                 connection.setRequestMethod("POST");
 
                 Uri.Builder builder = new Uri.Builder().appendQueryParameter("studentId", studentId)
-                        .appendQueryParameter("assignmentLibId",assignmentLibId)
+                        .appendQueryParameter("assignmentlibraryid",assignmentLibId)
                         .appendQueryParameter("method",method);
 
                 String query = builder.build().getEncodedQuery();
@@ -1150,6 +1152,7 @@ class AssignmentLibTask extends AsyncTask<String, Void, HashMap<String, HashMap<
 
                 String response = IOUtils.toString(in, "UTF-8"); //convert to readable string
                 //convert to JSON object
+                Log.d("response",response);
                 JSONObject JSONResult = new JSONObject(response);
                 generalResponse = JSONResult.getString("generalResponse");
                 responseCode = JSONResult.getInt("responseCode");

@@ -1,12 +1,10 @@
 package com.example.svilen.p8;
 
-import android.annotation.TargetApi;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.os.Build;
 import android.os.Bundle;
-import android.os.SystemClock;
 import android.support.v7.app.AppCompatActivity;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -14,6 +12,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.WindowManager;
+import android.widget.AbsListView;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
@@ -21,7 +20,6 @@ import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.SimpleAdapter;
-import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.TimePicker;
 import android.widget.Toast;
@@ -36,9 +34,6 @@ import com.github.mikephil.charting.highlight.Highlight;
 import com.github.mikephil.charting.interfaces.datasets.IBarDataSet;
 import com.github.mikephil.charting.listener.OnChartValueSelectedListener;
 
-import java.sql.Time;
-import java.sql.Timestamp;
-import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -47,7 +42,6 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.TimeZone;
 
 public class AssignmentActivity extends AppCompatActivity {
 
@@ -77,8 +71,8 @@ public class AssignmentActivity extends AppCompatActivity {
     ArrayList<BarEntry> yVal = new ArrayList<>();
     ArrayList<String> xVals = new ArrayList<>();
     ArrayList<IBarDataSet> dataSets = new ArrayList<>();
-    Long assignmentFrom;
-    Long assignmentTo;
+    Long assignmentFrom = null;
+    Long assignmentTo = null;
 
     boolean newAssignment;
     boolean changed;
@@ -118,7 +112,7 @@ public class AssignmentActivity extends AppCompatActivity {
                 new String[]{"textname"},
                 new int[]{android.R.id.text1});
         studentAdapter = new SimpleAdapter(this, studentList,
-                android.R.layout.simple_list_item_1,
+                android.R.layout.simple_list_item_checked,
                 new String[] {"Name"},
                 new int[] {android.R.id.text1});
         classAdapter = new SimpleAdapter(this, classList,
@@ -355,6 +349,12 @@ public class AssignmentActivity extends AppCompatActivity {
             dataSets.clear();
             xVals.clear();
             yVal.clear();
+            studentsAssigned.clear();
+            getAssignedStudents();
+            Log.d("students",studentsAssigned.toString());
+
+
+
             if (assignmentList.get(position).get("assigned").equals("true")) {
                 etAssignmentName.setEnabled(false);
                 etAssignmentText.setEnabled(false);
@@ -506,6 +506,7 @@ public class AssignmentActivity extends AppCompatActivity {
         dialog.show();
         ListView lvDialogClasses = (ListView) layout.findViewById(R.id.lvDialogClasses);
         ListView lvDialogStudents = (ListView) layout.findViewById(R.id.lvDialogStudents);
+        lvDialogStudents.setChoiceMode(ListView.CHOICE_MODE_MULTIPLE);
         final EditText etDialogDateFrom = (EditText) layout.findViewById(R.id.etDialogDateFrom);
         final EditText etDialogDateTo = (EditText) layout.findViewById(R.id.etDialogDateTo);
 
@@ -524,6 +525,12 @@ public class AssignmentActivity extends AppCompatActivity {
                 getStudents(classId);
             }
         });
+        lvDialogStudents.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+
+            }
+        });
 
         etDialogDateFrom.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -539,6 +546,14 @@ public class AssignmentActivity extends AppCompatActivity {
                         Date date = new Date(timestamp*1000);
                         String formattedDate = dateFormatter.format(date);
                         etDialogDateFrom.setText(formattedDate);
+                        if(assignmentTo != null && assignmentTo < assignmentFrom){
+                            etDialogDateTo.setText("");
+                            assignmentTo = null;
+                            int duration = Toast.LENGTH_LONG;
+                            CharSequence alert = "Available to is no longer valid";
+                            Toast toast = Toast.makeText(context, alert, duration);
+                            toast.show();
+                        }
                     }
                 });
             }
@@ -690,9 +705,9 @@ public class AssignmentActivity extends AppCompatActivity {
                     String yearString = String.valueOf(year);
 
                         if(month < 10){
-                            monthString = "0"+String.valueOf(month);
+                            monthString = "0"+String.valueOf(month+1);
                         } else {
-                            monthString = String.valueOf(month);
+                            monthString = String.valueOf(month+1);
                         }
 
                         if(day < 10){
@@ -733,5 +748,17 @@ public class AssignmentActivity extends AppCompatActivity {
                 dialog.dismiss();
             }
         });
+    }
+    private void getAssignedStudents(){
+        new AssignmentTask(new AssignmentCallback() {
+            @Override
+            public void assignmentDone(HashMap<String, HashMap<String, String>> assignments) {
+                for (Map.Entry<String, HashMap<String, String>> assignment : assignments.entrySet()) {
+                    String studentId = assignment.getValue().get("studentId");
+                    studentsAssigned.add(studentId);
+                }
+                Log.d("studentsassigned",studentsAssigned.toString());
+            }
+        },context).executeTask("get","",assignmentLibId);
     }
 }
