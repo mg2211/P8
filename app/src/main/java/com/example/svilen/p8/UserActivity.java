@@ -384,28 +384,13 @@ public class UserActivity extends AppCompatActivity {
 
     public void setNewUser(boolean value){
         newUser = value;
+        setEnabledUiItems();
         Log.d("new user value", String.valueOf(newUser));
     }
 
     public void setChanged(boolean value){
         changed = value;
-        if(changed && newUser){
-            bEditUser.setEnabled(false);
-            bDeleteUser.setEnabled(false);
-            bRegisterUser.setEnabled(true);
-        } else if(changed) {
-            bEditUser.setEnabled(true);
-            bDeleteUser.setEnabled(true);
-            bRegisterUser.setEnabled(false);
-        } else if(newUser) {
-            bEditUser.setEnabled(false);
-            bDeleteUser.setEnabled(false);
-            bRegisterUser.setEnabled(false);
-        } else {
-            bEditUser.setEnabled(false);
-            bDeleteUser.setEnabled(true);
-            bRegisterUser.setEnabled(false);
-        }
+        setEnabledUiItems();
         Log.d("Changed value", String.valueOf(changed));
     }
 
@@ -465,10 +450,10 @@ public class UserActivity extends AppCompatActivity {
     }
 
     public void getUserClasses(String userId) {
+        classList.clear();
         new ClassTaskNew(new ClassCallbackNew() {
             @Override
             public void classListDone(Map<String, HashMap<String, String>> classes) {
-                classList.clear();
                 for (Map.Entry<String, HashMap<String, String>> classData : classes.entrySet())  {
                     Map<String, String> classInfo = new HashMap<>();
                     String classId = classData.getValue().get("classId");
@@ -479,9 +464,9 @@ public class UserActivity extends AppCompatActivity {
                     classInfo.put("className", className);
                     classList.add(classInfo);
                 }
-                classListAdapter.notifyDataSetChanged();
             }
         }, context).executeTask("FETCH","","","","",userId);
+        classListAdapter.notifyDataSetChanged();
     }
 
     public void getUsers() {
@@ -611,6 +596,50 @@ public class UserActivity extends AppCompatActivity {
                 .show();
     }
 
+    public void setEnabledUiItems(){
+        if(newUser) {
+            tvTitleRegister.setVisibility(View.VISIBLE);
+            spinnerRole.setVisibility(View.VISIBLE);
+            bRegisterUser.setVisibility(View.VISIBLE);
+            tvTitleEdit.setVisibility(View.GONE);
+            bEditUser.setVisibility(View.GONE);
+            bDeleteUser.setVisibility(View.GONE);
+            tvRole.setVisibility(View.GONE);
+            if (changed) {
+                bEditUser.setEnabled(false);
+                bDeleteUser.setEnabled(false);
+                bRegisterUser.setEnabled(true);
+            } else {
+                bEditUser.setEnabled(false);
+                bDeleteUser.setEnabled(false);
+                bRegisterUser.setEnabled(false);
+            }
+        } else {
+            tvTitleEdit.setVisibility(View.VISIBLE);
+            tvRole.setVisibility(View.VISIBLE);
+            etContactEmail.setVisibility(View.VISIBLE);
+            bEditUser.setVisibility(View.VISIBLE);
+            bDeleteUser.setVisibility(View.VISIBLE);
+            tvTitleRegister.setVisibility(View.GONE);
+            spinnerRole.setVisibility(View.GONE);
+            bRegisterUser.setVisibility(View.GONE);
+            if (tvRole.getText().toString().equals("student")) {
+                etContactEmail.setVisibility(View.VISIBLE);
+            } else {
+                etContactEmail.setVisibility(View.GONE);
+            }
+            if (changed) {
+                bEditUser.setEnabled(true);
+                bDeleteUser.setEnabled(true);
+                bRegisterUser.setEnabled(false);
+            } else {
+                bEditUser.setEnabled(false);
+                bDeleteUser.setEnabled(true);
+                bRegisterUser.setEnabled(false);
+            }
+        }
+    }
+
     public void setContentPane(int position){
         if(position >= 0) {
             Map<String, String> userData = userList.get(position);
@@ -632,21 +661,6 @@ public class UserActivity extends AppCompatActivity {
             etLastName.setText(userLastName);
             etEmail.setText(userEmail);
             etContactEmail.setText(userParentEmail);
-            tvTitleEdit.setVisibility(View.VISIBLE);
-            tvRole.setVisibility(View.VISIBLE);
-            etContactEmail.setVisibility(View.VISIBLE);
-            bEditUser.setVisibility(View.VISIBLE);
-            bDeleteUser.setVisibility(View.VISIBLE);
-            bEditUser.setEnabled(false);
-            bDeleteUser.setEnabled(true);
-            tvTitleRegister.setVisibility(View.GONE);
-            spinnerRole.setVisibility(View.GONE);
-            bRegisterUser.setVisibility(View.GONE);
-            if (tvRole.getText().toString().equals("student")) {
-                etContactEmail.setVisibility(View.VISIBLE);
-            } else {
-                etContactEmail.setVisibility(View.GONE);
-            }
             setChanged(false);
             setNewUser(false);
             getUserClasses(userUserId);
@@ -659,14 +673,6 @@ public class UserActivity extends AppCompatActivity {
             etLastName.setText("");
             etEmail.setText("");
             etContactEmail.setText("");
-            tvTitleRegister.setVisibility(View.VISIBLE);
-            spinnerRole.setVisibility(View.VISIBLE);
-            bRegisterUser.setVisibility(View.VISIBLE);
-            tvTitleEdit.setVisibility(View.GONE);
-            bEditUser.setVisibility(View.GONE);
-            bDeleteUser.setVisibility(View.GONE);
-            tvRole.setVisibility(View.GONE);
-            bRegisterUser.setEnabled(false);
             setChanged(false);
             setNewUser(true);
         }
