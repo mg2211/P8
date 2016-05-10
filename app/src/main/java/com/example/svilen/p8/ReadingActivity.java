@@ -29,6 +29,10 @@ import java.util.Map;
 
 public class ReadingActivity extends AppCompatActivity  {
 
+    /*
+    Just some text here...
+     */
+
     List<Map<String, String>> questionList = new ArrayList<>();
 
     Button bLogout;

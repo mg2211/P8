@@ -504,7 +504,7 @@ class RoleTask extends AsyncTask<String, Void, Map<String,HashMap<String, String
             delegate.roleListDone(result);
         } else if (Integer.parseInt(responseCode) != 100) {
             int duration = Toast.LENGTH_LONG;
-            Toast toast = Toast.makeText(context, "Response code " + responseCode +", " + "Error message: " + generalResponse, duration);
+            Toast toast = Toast.makeText(context, "Response code " + responseCode +", " + "Message: " + generalResponse, duration);
         }
         else {
             int duration = Toast.LENGTH_LONG;
@@ -766,7 +766,7 @@ class UserTask extends AsyncTask<String, Void, Map<String,HashMap<String, String
             delegate.userTaskDone(result);
         } else if (Integer.parseInt(responseCode) != 100) {
             int duration = Toast.LENGTH_LONG;
-            Toast toast = Toast.makeText(context, "Response code " + responseCode +", " + "Error message: " + generalResponse, duration);
+            Toast toast = Toast.makeText(context, "Response code " + responseCode +", " + "Message: " + generalResponse, duration);
             toast.show();
         }
         else {
@@ -895,7 +895,7 @@ class ClassTaskNew extends AsyncTask<String, Void, Map<String,HashMap<String, St
             delegate.classListDone(result);
         } else if (Integer.parseInt(responseCode) != 100) {
             int duration = Toast.LENGTH_LONG;
-            Toast toast = Toast.makeText(context, "Response code " + responseCode +", " + "Error message: " + generalResponse, duration);
+            Toast toast = Toast.makeText(context, "Response code " + responseCode +", " + "Message: " + generalResponse, duration);
             toast.show();
         }
         else {
