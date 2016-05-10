@@ -12,9 +12,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.WindowManager;
-import android.widget.AbsListView;
 import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.EditText;
@@ -61,8 +59,6 @@ public class AssignmentActivity extends AppCompatActivity {
     SimpleAdapter assignmentAdapter;
     List<Map<String, String>> assignmentList = new ArrayList<>();
     List<Map<String, String>> textList = new ArrayList<>();
-    ArrayList<String> studentsAssigned = new ArrayList<>();
-    ArrayList<String> assignmentIds = new ArrayList<>();
     SimpleAdapter textAdapter;
     int assignmentLibTextId;
     String assignmentLibId;
@@ -337,6 +333,7 @@ public class AssignmentActivity extends AppCompatActivity {
     }
     private void setContentPane(int position){
         barChart();
+
         if(position >= 0) {
             assignmentLibTextId = Integer.parseInt(assignmentList.get(position).get("assignmentText"));
             int textListPos = textListIds.get(assignmentLibTextId);
@@ -344,17 +341,12 @@ public class AssignmentActivity extends AppCompatActivity {
             assignmentLibId = assignmentList.get(position).get("assignmentLibId");
             etAssignmentText.setText(textList.get(textListPos).get("textname"));
             assignmentLibName = assignmentList.get(position).get("assignmentLibName");
+
             setChanged(false);
             setNew(false);
             dataSets.clear();
             xVals.clear();
             yVal.clear();
-            studentsAssigned.clear();
-            getAssignedStudents();
-            Log.d("students",studentsAssigned.toString());
-
-
-
             if (assignmentList.get(position).get("assigned").equals("true")) {
                 etAssignmentName.setEnabled(false);
                 etAssignmentText.setEnabled(false);
@@ -372,8 +364,6 @@ public class AssignmentActivity extends AppCompatActivity {
             mChart.notifyDataSetChanged();
             mChart.invalidate();
         } else {
-            studentsAssigned.clear();
-            assignmentIds.clear();
             mChart.setVisibility(View.INVISIBLE);
             etAssignmentName.setText("");
             etAssignmentName.setEnabled(true);
@@ -387,6 +377,7 @@ public class AssignmentActivity extends AppCompatActivity {
             assignmentLibId = "";
         }
     }
+
     private void barChart(){
         //design barChart
         mChart = (BarChart) findViewById(R.id.chart);
@@ -475,11 +466,10 @@ public class AssignmentActivity extends AppCompatActivity {
         new AssignmentLibTask(new AssignmentLibCallback() {
             @Override
             public void AssignmentLibDone(HashMap<String, HashMap<String, String>> results) {
-
                 results.remove("response");
                 assignmentList.clear();
                 for (Map.Entry<String, HashMap<String, String>> assignment : results.entrySet()) {
-                    Map<String, String> assignmentInfo = new HashMap<>();
+                    final Map<String, String> assignmentInfo = new HashMap<>();
                     String assignmentId = assignment.getValue().get("id");
                     String assignmentName = assignment.getValue().get("name");
                     String assignmentText = assignment.getValue().get("textId");
@@ -509,7 +499,6 @@ public class AssignmentActivity extends AppCompatActivity {
         lvDialogStudents.setChoiceMode(ListView.CHOICE_MODE_MULTIPLE);
         final EditText etDialogDateFrom = (EditText) layout.findViewById(R.id.etDialogDateFrom);
         final EditText etDialogDateTo = (EditText) layout.findViewById(R.id.etDialogDateTo);
-
 
         Button bDialogAssign = (Button) layout.findViewById(R.id.bDialogAssign);
         lvDialogClasses.setAdapter(classAdapter);
@@ -748,17 +737,5 @@ public class AssignmentActivity extends AppCompatActivity {
                 dialog.dismiss();
             }
         });
-    }
-    private void getAssignedStudents(){
-        new AssignmentTask(new AssignmentCallback() {
-            @Override
-            public void assignmentDone(HashMap<String, HashMap<String, String>> assignments) {
-                for (Map.Entry<String, HashMap<String, String>> assignment : assignments.entrySet()) {
-                    String studentId = assignment.getValue().get("studentId");
-                    studentsAssigned.add(studentId);
-                }
-                Log.d("studentsassigned",studentsAssigned.toString());
-            }
-        },context).executeTask("get","",assignmentLibId);
     }
 }
