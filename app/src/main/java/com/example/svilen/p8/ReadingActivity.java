@@ -175,6 +175,10 @@ public class ReadingActivity extends AppCompatActivity  {
 
                 getQuestions(textId);
 
+                finalPopUp();
+
+
+
 
 
             }
@@ -434,6 +438,24 @@ public class ReadingActivity extends AppCompatActivity  {
                 }
             }
         }, context).executeTask("get", s, "", "", "");
+    }
+
+    public void finalPopUp(){
+
+        AlertDialog.Builder builder = new AlertDialog.Builder(context);
+
+        builder.setMessage("You have finished your homework")
+                .setTitle("DONE")
+                .setNegativeButton("No", new DialogInterface.OnClickListener(){
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+
+                    }
+                });
+
+        AlertDialog dialog = builder.create();
+        dialog.setCanceledOnTouchOutside(true);
+        dialog.show();
     }
 
 }
