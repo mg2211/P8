@@ -650,13 +650,28 @@ public class AssignmentActivity extends AppCompatActivity {
         bDialogAssign.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                for(int i = 0; i<assignedList.size(); i++){
-                    Log.d("assignment list", assignedList.get(i).get("Name"));
-                    if(studentAssignmentsIds.get(assignedList.get(i).get("studentId")) != null){
-                        Log.d("student alread assigned","true");
-                    } else {
-                        Log.d("new student","true");
+                if(!assignedList.isEmpty() && assignmentFrom != null && assignmentTo != null) {
+                    for (int i = 0; i < assignedList.size(); i++) {
+                        if (studentAssignmentsIds.get(assignedList.get(i).get("studentId")) != null) {
+                            Log.d("student alread assigned", "true");
+
+                        } else {
+                            Log.d("new student", "true");
+                            new AssignmentTask(new AssignmentCallback() {
+                                @Override
+                                public void assignmentDone(HashMap<String, HashMap<String, String>> assignments) {
+
+                                }
+                            }, context).executeTask("assign", assignedList.get(i).get("studentId"), assignmentLibId, String.valueOf(assignmentFrom), String.valueOf(assignmentTo));
+                        }
                     }
+                    getAssignments();
+                    dialog.dismiss();
+                } else {
+                    int duration = Toast.LENGTH_LONG;
+                    CharSequence alert = "Please fill in all relevant information";
+                    Toast toast = Toast.makeText(context, alert, duration);
+                    toast.show();
                 }
             }
         });

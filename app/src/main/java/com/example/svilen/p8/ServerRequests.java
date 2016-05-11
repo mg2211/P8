@@ -1134,8 +1134,8 @@ class AssignmentLibTask extends AsyncTask<String, Void, HashMap<String, HashMap<
             progressDialog.setMessage("Please wait...");
             progressDialog.show();
         }
-        public void executeTask(String method, String studentId, String assignmentLibId){
-            this.execute(method, studentId, assignmentLibId);
+        public void executeTask(String method, String studentId, String assignmentLibId, String from, String to){
+            this.execute(method, studentId, assignmentLibId, from, to);
         }
 
         @Override
@@ -1144,6 +1144,8 @@ class AssignmentLibTask extends AsyncTask<String, Void, HashMap<String, HashMap<
             String method = params[0];
             String studentId = params[1];
             String assignmentLibId = params[2];
+            String from = params[3];
+            String to = params[4];
             String generalResponse = null;
             int responseCode = 0;
 
@@ -1156,7 +1158,9 @@ class AssignmentLibTask extends AsyncTask<String, Void, HashMap<String, HashMap<
 
                 Uri.Builder builder = new Uri.Builder().appendQueryParameter("studentId", studentId)
                         .appendQueryParameter("assignmentlibraryid",assignmentLibId)
-                        .appendQueryParameter("method",method);
+                        .appendQueryParameter("method",method)
+                        .appendQueryParameter("from",from)
+                        .appendQueryParameter("to",to);
 
                 String query = builder.build().getEncodedQuery();
                 OutputStream os = connection.getOutputStream();
@@ -1185,8 +1189,8 @@ class AssignmentLibTask extends AsyncTask<String, Void, HashMap<String, HashMap<
                     String assignmentId = String.valueOf(specificAssignment.getInt("id"));
                     String assignmentName = specificAssignment.getString("assignmentName");
                     String textId = specificAssignment.getString("textId");
-                    String from = specificAssignment.getString("from");
-                    String to = specificAssignment.getString("to");
+                    String assignmentFrom = specificAssignment.getString("from");
+                    String assignmentTo = specificAssignment.getString("to");
                     String assignmentStudentId = specificAssignment.getString("studentId");
                     String isComplete = specificAssignment.getString("isComplete");
 
@@ -1195,8 +1199,8 @@ class AssignmentLibTask extends AsyncTask<String, Void, HashMap<String, HashMap<
                     assignmentInfo.put("assignmentid", assignmentId);
                     assignmentInfo.put("assignmentLibName", assignmentName);
                     assignmentInfo.put("textId", textId);
-                    assignmentInfo.put("availableFrom", from);
-                    assignmentInfo.put("availableTo",to);
+                    assignmentInfo.put("availableFrom", assignmentFrom);
+                    assignmentInfo.put("availableTo",assignmentTo);
                     assignmentInfo.put("studentId", assignmentStudentId);
                     assignmentInfo.put("isComplete",isComplete);
 
