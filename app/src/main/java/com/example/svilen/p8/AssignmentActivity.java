@@ -663,24 +663,26 @@ public class AssignmentActivity extends AppCompatActivity {
         bDialogCancel.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                ArrayList<Integer> idsToDelete = new ArrayList<>();
-                for(int i = 0; i<assignedList.size(); i++){
-                    if(studentAssignmentsIds.get(assignedList.get(i).get("studentId")) == null){
-                        Log.d("id to delete", String.valueOf(i));
-                        idsToDelete.add(i);
-                    } else {
-                        Log.d("new student","true");
+                assignedList.clear();
+                for(int i=0; i<studentsAssigned.length; i++){
+                    studentAssignmentsIds.put(studentsAssigned[i],assignmentIds[i]);
+                    assignmentComplete.put(assignmentIds[i],assignmentIsComplete[i]);
+                    Map<String, String> studentAssigned = new HashMap<>();
+                    for(Map<String, String> map : studentList){
+                        if(map.get("studentId").equals(studentsAssigned[i])){
+                            if(assignmentComplete.get(studentAssignmentsIds.get(studentsAssigned[i])).equals("1")){
+                                studentAssigned.put("Name",map.get("Name")+" - Completed");
+                            } else {
+                                studentAssigned.put("Name",map.get("Name"));
+                            }
+                            studentAssigned.put("studentId",map.get("studentId"));
+                            assignedList.add(studentAssigned);
+                        }
                     }
+                    Log.d("assigned list",assignedList.toString());
+
                 }
-                for (int i = 0; i<idsToDelete.size(); i++){
-                    if(i>0){
-                        i = i-1;
-                    }
-                    Log.d("i", String.valueOf(idsToDelete.get(i)));
-                    Map<String, String> itemDelete = assignedList.get(idsToDelete.get(i));
-                    assignedList.remove(itemDelete);
-                    Log.d("assignedlist",assignedList.toString());
-                }
+                assignedAdapter.notifyDataSetChanged();
                 dialog.dismiss();
             }
         });
