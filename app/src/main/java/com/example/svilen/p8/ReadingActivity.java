@@ -78,11 +78,10 @@ public class ReadingActivity extends AppCompatActivity  {
     ArrayList<String> mylist = new ArrayList<String>();
     String s;
     Set<String> set = new HashSet<String>();
-    RelativeLayout rl;
-    LinearLayout lLayout;
-    //Set<String> set = new HashSet<String>();
+    List<Integer> correctOrNot = new ArrayList<Integer>();    //Set<String> set = new HashSet<String>();
+    ArrayList<String> loggedAnswers = new ArrayList<String>();
 
-    // Set<String> mylist = new HashSet<String>();
+
 
 
 
@@ -172,34 +171,7 @@ public class ReadingActivity extends AppCompatActivity  {
 
 
 
-               /* AlertDialog.Builder builder = new AlertDialog.Builder(context);
-                LayoutInflater inflater = getLayoutInflater();
-                 layout = inflater.inflate(R.layout.dialog_answering, null);
-                tvQuestionToStudent = (TextView)layout.findViewById(R.id.tvQuestionToStudent);
-                Button bDialogSubmit = (Button) layout.findViewById(R.id.bDialogSubmit);
-                builder.setView(layout);
-                final AlertDialog dialog = builder.create();
-                dialog.setCanceledOnTouchOutside(true); //remember to change to false after programming
-                dialog.show();
 
-
-                bDialogSubmit.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-
-                       // Log.d("TEXTRADIO: ", text1);
-                        //Log.d("textRADIOid: ", String.valueOf(answerId1));
-
-                        if(text1.equals(correctAnswer)){
-                            Log.d("YOU HAVE ANSWERED: ", "CORRECT!");
-                        }else {
-                            Log.d("YOU HAVE ANSWERED: ", "INCORRECT!");
-                        }
-
-
-
-                    }
-                });*/
 
                 getQuestions(textId);
 
@@ -247,22 +219,8 @@ public class ReadingActivity extends AppCompatActivity  {
                         answerId = answer[0];
                         isCorrrect = answer[2];
 
-                        createArrays(i);
 
-                        Log.d("isCorrect: ",isCorrrect);
 
-                        if(isCorrrect.equals("1")){
-                            Log.d("This is the ", "correct answer");
-                            correctAnswer = answerText;
-                            Log.d("CORRECTOOO", correctAnswer);
-
-                        }else{
-                            Log.d("This is not the correct", "answer");
-                        }
-
-                        // addRadioButtons(i);
-                        //addRB(i);
-                        // populateList(i);
                         createArrays(i);
 
                         Log.d("array: ", mylist.toString());
@@ -274,7 +232,6 @@ public class ReadingActivity extends AppCompatActivity  {
                     set = new HashSet<String>(mylist);
                     Log.d("setset: ", set.toString());
 
-//                    tvQuestionToStudent.setText(specificQuestionContent);
                     questionContent = specificQuestionContent;
                 }
                 for (String s: set){
@@ -300,7 +257,6 @@ public class ReadingActivity extends AppCompatActivity  {
             mylist.add(specificQuestionId);
 
         }
-        // Log.d("ARRAY: ", mylist.toString());
     }
 
     public void addRadioButtons(int number) {
@@ -313,61 +269,46 @@ public class ReadingActivity extends AppCompatActivity  {
                     RadioGroup.LayoutParams.WRAP_CONTENT,
                     RadioGroup.LayoutParams.WRAP_CONTENT);
 
-                RadioButton rdbtn = new RadioButton(this);
-                rdbtn.setId((row * 2) + number);
-                rdbtn.setText(answerText1);
-                int radioId = rdbtn.getId();
-                rg.addView(rdbtn, layoutParams);
-                Log.d("RADIONAME: ", answerText1);
-                Log.d("RADIOID: ", String.valueOf(radioId));
+            RadioButton rdbtn = new RadioButton(this);
+            rdbtn.setId((row * 2) + number);
+            rdbtn.setText(answerText1);
+            int radioId = rdbtn.getId();
+            rg.addView(rdbtn, layoutParams);
+            Log.d("RADIONAME: ", answerText1);
+            Log.d("RADIOID: ", String.valueOf(radioId));
+
+
+            rg.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
+                                              public void onCheckedChanged(RadioGroup rg, int checkedId) {
+                                                  for (int i = 0; i < rg.getChildCount(); i++) {
+                                                      RadioButton btn = (RadioButton) rg.getChildAt(i);
+
+                                                        if (btn.getId() == checkedId) {
+
+                                                          text1 = (String) btn.getText();
+                                                          answerId1 = btn.getId();
+                                                            Log.d("TEXT1: ", text1);
+//                                                            Log.d("RADIOisCorrectList", correctAnswer);
+                                                            Log.d("ANSWERID1: ", String.valueOf(answerId1));
+
+                                                          // do something with text
+                                                          return;
+                                                      }
+
+
+                                                  }
+                                              }
+
+                                          }
+            );
+
 
 
         }
 
-
-           // ((ViewGroup) findViewById(R.id.radiogroup)).removeView(ll);
-            //((ViewGroup) findViewById(R.id.radiogroup)).addView(ll);
-
-
-    }
-
-public void addRadio (int numbers) {
-
-    RadioGroup rg = (RadioGroup) layout.findViewById(R.id.radiogroup);
-    RadioGroup.LayoutParams layoutParams = new RadioGroup.LayoutParams(
-            RadioGroup.LayoutParams.WRAP_CONTENT,
-            RadioGroup.LayoutParams.WRAP_CONTENT);
-
-    // add 5 radio buttons to the group
-    RadioButton rb;
-    for (int i = 0; i < 5; i++){
-        rb = new RadioButton(context);
-        rb.setText("item set" + i);
-        rb.setId(i);
-        rg.addView(rb, layoutParams);
     }
 
 
-
-}
-
-    /*private void populateList(int number){
-
-        // get reference to radio group in layout
-        RadioGroup radiogroup = (RadioGroup) findViewById(R.id.radiogroup);
-        // layout params to use when adding each radio button
-        LinearLayout.LayoutParams layoutParams = new RadioGroup.LayoutParams(
-                RadioGroup.LayoutParams.WRAP_CONTENT,
-                RadioGroup.LayoutParams.WRAP_CONTENT);
-        // add 20 radio buttons to the group
-        for (int i = 0; i < 1; i++){
-            RadioButton newRadioButton = new RadioButton(this);
-            String label = "item " + i;
-            newRadioButton.setText(label);
-            newRadioButton.setId(i);
-            radiogroup.addView(newRadioButton, layoutParams);
-        }
-    }*/
 
 
     public void getText(){
@@ -423,7 +364,7 @@ public void addRadio (int numbers) {
                     Button bDialogSubmit = (Button) layout.findViewById(R.id.bDialogSubmit);
                     builder.setView(layout);
                     final AlertDialog dialog = builder.create();
-                    dialog.setCanceledOnTouchOutside(true); //remember to change to false after programming
+                    dialog.setCanceledOnTouchOutside(false); //remember to change to false after programming
                     dialog.show();
                     tvQuestionToStudent = (TextView)layout.findViewById(R.id.tvQuestionToStudent);
 
@@ -431,16 +372,22 @@ public void addRadio (int numbers) {
                         @Override
                         public void onClick(View v) {
 
-                            // Log.d("TEXTRADIO: ", text1);
-                            //Log.d("textRADIOid: ", String.valueOf(answerId1));
 
-                          /* if(text1.equals(correctAnswer)){
+                            Log.d("TEXT1 in Button: ", text1);
+//                            Log.d("CORRECT in Button", correctAnswer);
+                           if(loggedAnswers.contains(text1)){
                                 Log.d("YOU HAVE ANSWERED: ", "CORRECT!");
-                            }else {
+                               int intCorrectAnswer = 1;
+                                correctOrNot.add(intCorrectAnswer);
+                             }else {
                                 Log.d("YOU HAVE ANSWERED: ", "INCORRECT!");
-                            }*/
+                               int inCorrectAnswer = 0;
+                               correctOrNot.add(inCorrectAnswer);
+                            }
+                            Log.d("STUDENTANSWER: ", correctOrNot.toString());
 
 
+                            dialog.dismiss();
 
                         }
                     });
@@ -454,31 +401,32 @@ public void addRadio (int numbers) {
                         String answer[] = answers[i].split(";");
                         answerText1 = answer[1];
                         answerId = answer[0];
-                        isCorrrect = answer[2];
+                        isCorrrect1 = answer[2];
 
-                        addRadioButtons(i);
-                        createArrays(i);
 
-                        Log.d("isCorrect: ",isCorrrect);
 
-                        if(isCorrrect.equals("1")){
+                        Log.d("isCorrect: ",isCorrrect1);
+                        if(isCorrrect1.equals("1")){
                             Log.d("This is the ", "correct answer");
-                            correctAnswer = answerText;
-                            Log.d("CORRECTOOO", correctAnswer);
+
+                            loggedAnswers.add(answerText1);
+//                            Log.d("CORRECTOOO", correctAnswer);
+                            Log.d("LOGGEDANSWERS: ", loggedAnswers.toString());
 
                         }else{
                             Log.d("This is not the correct", "answer");
                         }
 
+                        addRadioButtons(i);
+                        createArrays(i);
 
-                        //addRB(i);
-                        // populateList(i);
+
 
                         Log.d("ARRAY: ", mylist.toString());
 
-
-
                     }
+
+
 
                     Log.d("Q2, answer: ", specificQuestionContent1);
 
