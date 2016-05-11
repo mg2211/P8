@@ -11,10 +11,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
-/**
- * Created by caroline on 17-04-2016.
- */
 public class ListViewAdapter extends SimpleAdapter {
     ArrayList<Integer> colors = new ArrayList<>();
 
