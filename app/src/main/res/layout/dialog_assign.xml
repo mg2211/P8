@@ -127,13 +127,26 @@
 
         </LinearLayout>
 
-        <Button
+        <LinearLayout
+            android:orientation="horizontal"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Assign selected students"
-            android:id="@+id/bDialogAssign"
-            android:layout_gravity="right"
-            android:layout_marginRight="20dp" />
+            android:layout_gravity="right">
+
+            <Button
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Cancel"
+                android:id="@+id/bDialogCancel" />
+
+            <Button
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Save"
+                android:id="@+id/bDialogAssign"
+                android:layout_gravity="right" />
+        </LinearLayout>
+
     </LinearLayout>
 
 </LinearLayout>
