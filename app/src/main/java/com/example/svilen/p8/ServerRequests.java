@@ -1134,8 +1134,8 @@ class AssignmentLibTask extends AsyncTask<String, Void, HashMap<String, HashMap<
             progressDialog.setMessage("Please wait...");
             progressDialog.show();
         }
-        public void executeTask(String method, String studentId, String assignmentLibId, String from, String to){
-            this.execute(method, studentId, assignmentLibId, from, to);
+        public void executeTask(String method, String studentId, String assignmentLibId, String from, String to, String assignmentId){
+            this.execute(method, studentId, assignmentLibId, from, to, assignmentId);
         }
 
         @Override
@@ -1146,6 +1146,7 @@ class AssignmentLibTask extends AsyncTask<String, Void, HashMap<String, HashMap<
             String assignmentLibId = params[2];
             String from = params[3];
             String to = params[4];
+            String id = params[5];
             String generalResponse = null;
             int responseCode = 0;
 
@@ -1160,7 +1161,8 @@ class AssignmentLibTask extends AsyncTask<String, Void, HashMap<String, HashMap<
                         .appendQueryParameter("assignmentlibraryid",assignmentLibId)
                         .appendQueryParameter("method",method)
                         .appendQueryParameter("from",from)
-                        .appendQueryParameter("to",to);
+                        .appendQueryParameter("to",to)
+                        .appendQueryParameter("id",id);
 
                 String query = builder.build().getEncodedQuery();
                 OutputStream os = connection.getOutputStream();

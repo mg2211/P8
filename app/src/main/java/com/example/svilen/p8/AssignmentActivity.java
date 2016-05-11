@@ -650,11 +650,10 @@ public class AssignmentActivity extends AppCompatActivity {
         bDialogAssign.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(!assignedList.isEmpty() && assignmentFrom != null && assignmentTo != null) {
+                if(!assignedList.isEmpty() && !etDialogDateFrom.getText().toString().equals("") && !etDialogDateTo.getText().toString().equals("")) {
                     for (int i = 0; i < assignedList.size(); i++) {
                         if (studentAssignmentsIds.get(assignedList.get(i).get("studentId")) != null) {
-                            Log.d("student alread assigned", "true");
-
+                            
                         } else {
                             Log.d("new student", "true");
                             new AssignmentTask(new AssignmentCallback() {
@@ -662,7 +661,7 @@ public class AssignmentActivity extends AppCompatActivity {
                                 public void assignmentDone(HashMap<String, HashMap<String, String>> assignments) {
 
                                 }
-                            }, context).executeTask("assign", assignedList.get(i).get("studentId"), assignmentLibId, String.valueOf(assignmentFrom), String.valueOf(assignmentTo));
+                            }, context).executeTask("assign", assignedList.get(i).get("studentId"), assignmentLibId, String.valueOf(assignmentFrom), String.valueOf(assignmentTo),"");
                         }
                     }
                     getAssignments();
