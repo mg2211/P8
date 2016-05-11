@@ -4,10 +4,14 @@
 
     <string name="Yes">Yes</string>
     <string name="No">No</string>
+    <string name="cancel">Cancel</string>
 
-    <!--Labels for tirles-->
+
+    <!--Labels for titles-->
     <string name="registerUser">Register a new user</string>
     <string name="editUser">Edit this user</string>
+    <string name="titleTeacherClasses">Classes this teacher is supervising</string>
+    <string name="titleStudentClass">Class this student is enrolled in</string>
 
     <!--Labels for buttons-->
     <string name="login">Login</string>
@@ -16,8 +20,8 @@
     <string name="showStudents">Show my students</string>
     <string name="saveUser">Save changes</string>
     <string name="deleteUser">Delete user</string>
-    <string name="assignClass">Add/Change class</string>
-
+    <string name="assignClass">Change student class</string>
+    <string name="modifyClasses">Modify classes</string>
 
     <!--Labels for defining users in text fields-->
     <string name="username">Username</string>
@@ -35,6 +39,11 @@
     <string name="delete_text">Delete Text</string>
     <string name="add_new">Add new</string>
     <string name="search">Search</string>
+
+    <!--Labels for defining classes in text fields-->
+    <string name="className">Class name</string>
+    <string name="teacherName">Teacher name</string>
+    <string name="teacherEmail">Teacher e-mail</string>
 
     <!-- Spinner content array-->
     <string-array name="role_array">
