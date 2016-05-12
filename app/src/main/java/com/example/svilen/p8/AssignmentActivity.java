@@ -698,7 +698,7 @@ public class AssignmentActivity extends AppCompatActivity {
                 studentAdapter.notifyDataSetChanged();
                 setContentPane(position);
             }
-        }, context).execute(classId);
+        }, context).execute(classId, teacherId);
         return true;
     }
     private void getClasses(){
@@ -746,11 +746,7 @@ public class AssignmentActivity extends AppCompatActivity {
         final int offsetYear = calendar.get(Calendar.YEAR);
         final int offsetHour = calendar.get(Calendar.HOUR_OF_DAY);
         final int offsetMinute = calendar.get(Calendar.MINUTE);
-        if(mode.equals("from")) {
-            datePicker.setMinDate(System.currentTimeMillis()-1000);
-        } else {
-            datePicker.setMinDate(offset);
-        }
+        datePicker.setMinDate(System.currentTimeMillis()-1000);
         datePicker.init(offsetYear,offsetMonth,offsetDay,null);
 
         Log.d("off day", String.valueOf(offsetDay));
