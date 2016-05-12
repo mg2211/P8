@@ -1,6 +1,7 @@
 package com.example.svilen.p8;
 
 import android.app.AlertDialog;
+import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -40,12 +41,12 @@ public class UserActivity extends AppCompatActivity {
     EditText etSearch, etUsername, etPassword, etFirstName, etLastName, etEmail, etContactEmail,
             etDialogSearch;
     Spinner spinnerRole;
-    ListView lvListUsers, lvListClasses, lvDialogListClasses;
-    TextView tvTitleRegister, tvTitleEdit, tvTitleStudentClass, tvTeacherName,
-            tvTeacherEmail, tvClassName;
-    List<String> roleList = new ArrayList<>();
+    ListView lvListUsers, lvDialogListClasses;
+    TextView tvTitleRegister, tvTitleEdit, tvTitleStudentClass, tvDialogClassTitle, tvUserClassName, tvDialogClassName, tvDialogTeacherName,
+            tvDialogTeacherEmail;
     ArrayAdapter roleAdapter;
-    SimpleAdapter userListAdapter, classListAdapter, dialogClassListAdapter;
+    SimpleAdapter userListAdapter, dialogClassListAdapter;
+    List<String> roleList = new ArrayList<>();
     List<Map<String, String>> userList = new ArrayList<>();
     List<Map<String, String>> classList = new ArrayList<>();
 
@@ -62,6 +63,7 @@ public class UserActivity extends AppCompatActivity {
     String userParentEmail;
     String userClassName;
 
+    String classClassId;
     String classClassName;
     String classTeacherFistName;
     String classTeacherLastName;
@@ -84,7 +86,7 @@ public class UserActivity extends AppCompatActivity {
         tvTitleRegister = (TextView) findViewById(R.id.tvTitleRegister);
         tvTitleEdit = (TextView) findViewById(R.id.tvTitleEdit);
         tvTitleStudentClass = (TextView) findViewById(R.id.tvTitleStudentClass);
-        tvClassName = (TextView) findViewById(R.id.tvClassName);
+        tvUserClassName = (TextView) findViewById(R.id.tvUserClassName);
 
         spinnerRole = (Spinner) findViewById(R.id.spinnerRole);
 
@@ -120,13 +122,13 @@ public class UserActivity extends AppCompatActivity {
                     etContactEmail.setVisibility(View.GONE);
                     bAssignClass.setVisibility(View.GONE);
                     tvTitleStudentClass.setVisibility(View.GONE);
-                    tvClassName.setVisibility(View.GONE);
+                    tvUserClassName.setVisibility(View.GONE);
                 } else if (spinnerRole.getSelectedItem().toString().equals("student")) {
                     bModifyClasses.setVisibility(View.VISIBLE);
                     etContactEmail.setVisibility(View.VISIBLE);
                     bAssignClass.setVisibility(View.VISIBLE);
                     tvTitleStudentClass.setVisibility(View.VISIBLE);
-                    tvClassName.setVisibility(View.VISIBLE);
+                    tvUserClassName.setVisibility(View.VISIBLE);
                 }
             }
             public void onNothingSelected(AdapterView<?> arg0) {
@@ -138,10 +140,9 @@ public class UserActivity extends AppCompatActivity {
         setChanged(false);
         getRoles();
 
-        userListAdapter = new SimpleAdapter(this,
-                userList,
-                android.R.layout.simple_list_item_2,
-                new String[]{"firstName", "lastName"}, new int[]{android.R.id.text1, android.R.id.text2}) {
+        userListAdapter = new SimpleAdapter(this, userList,
+                android.R.layout.simple_list_item_2, new String[]{"firstName", "lastName"},
+                new int[]{android.R.id.text1, android.R.id.text2}) {
         };
 
         lvListUsers.setAdapter(userListAdapter);
@@ -160,10 +161,9 @@ public class UserActivity extends AppCompatActivity {
         lvListClasses.setChoiceMode(AbsListView.CHOICE_MODE_SINGLE);
         */
 
-        dialogClassListAdapter = new SimpleAdapter(this,
-                classList,
-                android.R.layout.simple_list_item_2,
-                new String[]{"className", "teacherFirstName"}, new int[]{android.R.id.text1, android.R.id.text2}) {
+        dialogClassListAdapter = new SimpleAdapter(this, classList,
+                android.R.layout.simple_list_item_2, new String[]{"className", "teacherFirstName"},
+                new int[]{android.R.id.text1, android.R.id.text2}) {
         };
 
         getAllClasses();
@@ -497,9 +497,11 @@ public class UserActivity extends AppCompatActivity {
                     classInfo.put("teacherFirstName", teacherFirstName);
                     classInfo.put("teacherLastName", teacherLastName);
                     classInfo.put("teacherEmail", teacherEmail);
+                    Log.d("getAllClasses result", String.valueOf(classInfo));
                     classList.add(classInfo);
                 }
                 dialogClassListAdapter.notifyDataSetChanged();
+                Log.d("dialogClassListAdapter", "successfully updated");
             }
         }, context).executeTask("FETCH", "", "", "", "", "");
     }
@@ -592,6 +594,7 @@ public class UserActivity extends AppCompatActivity {
                 }
             }, context).executeTask("CREATE", role, "", "", "", "", username, password, lastName, firstName,
                     email, parentEmail);
+            getUsers();
             return true;
         } else if (!role.equals("student") && general) {
             new UserTask(new UserCallback() {
@@ -600,6 +603,7 @@ public class UserActivity extends AppCompatActivity {
                 }
             }, context).executeTask("CREATE", role, "", "", "", "", username, password, lastName, firstName,
                     email, "");
+            getUsers();
             return true;
         } else {
             int duration = Toast.LENGTH_LONG;
@@ -624,6 +628,19 @@ public class UserActivity extends AppCompatActivity {
             }
         }, context).execute("UPDATE", "", userUserId, "", "", "", username, password, lastName, firstName,
                 email, parentEmail);
+        getUsers();
+        return true;
+    }
+
+    public boolean updateUserClass(String userId, String classId){
+
+        new UserTask(new UserCallback() {
+            @Override
+            public void userTaskDone(Map<String, HashMap<String, String>> users) {
+            }
+        }, context).execute("UPDATE", "", userId, "", "", classId, "", "", "", "",
+                "", "");
+        getUsers();
         return true;
     }
 
@@ -665,7 +682,6 @@ public class UserActivity extends AppCompatActivity {
             tvTitleEdit.setVisibility(View.GONE);
             bEditUser.setVisibility(View.GONE);
             bDeleteUser.setVisibility(View.GONE);
-            tvClassName.setVisibility(View.GONE);
             if (changed) {
                 bEditUser.setEnabled(false);
                 bDeleteUser.setEnabled(false);
@@ -681,7 +697,6 @@ public class UserActivity extends AppCompatActivity {
             bDeleteUser.setVisibility(View.VISIBLE);
             tvTitleRegister.setVisibility(View.GONE);
             bRegisterUser.setVisibility(View.GONE);
-            tvClassName.setVisibility(View.VISIBLE);
             if (changed) {
                 bEditUser.setEnabled(true);
                 bDeleteUser.setEnabled(true);
@@ -696,7 +711,7 @@ public class UserActivity extends AppCompatActivity {
 
     public void setContentPane(int position) {
         if (position >= 0) {
-            Map<String, String> userData = userList.get(position);
+            Map<String, String> userData = (Map) userListAdapter.getItem(position);
             userUserId = userData.get("userId");
             userTeacherId = userData.get("teacherId");
             userStudentId = userData.get("studentId");
@@ -717,7 +732,7 @@ public class UserActivity extends AppCompatActivity {
             etLastName.setText(userLastName);
             etEmail.setText(userEmail);
             etContactEmail.setText(userParentEmail);
-            tvClassName.setText(userClassName);
+            tvUserClassName.setText(userClassName);
             setChanged(false);
             setNewUser(false);
         } else {
@@ -728,7 +743,7 @@ public class UserActivity extends AppCompatActivity {
             etLastName.setText("");
             etEmail.setText("");
             etContactEmail.setText("");
-            tvClassName.setText("");
+            //tvUserClassName.setText("");
             spinnerRole.setEnabled(true);
             setChanged(false);
             setNewUser(true);
@@ -737,7 +752,7 @@ public class UserActivity extends AppCompatActivity {
 
     private String getClassName(String userId, List<Map<String, String>> userList){
         String userTeacher = null;
-        String userNotInClass = "User currently not assigned to any classes";
+        String userNotInClass = "Not enrolled in class";
         if("teacher".equals(userRole)){
             Log.d("getClassName result", String.valueOf(userTeacher));
             return userTeacher;
@@ -773,6 +788,7 @@ public class UserActivity extends AppCompatActivity {
 
     //create a new classAssignmentDialog
     private void classAssignmentDialog(final String userId) {
+
         AlertDialog.Builder builder = new AlertDialog.Builder(context);
         LayoutInflater inflater = getLayoutInflater();
         final View layout = inflater.inflate(R.layout.dialog_assign_class, null);
@@ -785,10 +801,10 @@ public class UserActivity extends AppCompatActivity {
         lvDialogListClasses = (ListView) layout.findViewById(R.id.lvDialogListClasses);
 
         etDialogSearch = (EditText) layout.findViewById(R.id.etDialogSearch);
-
-        tvClassName = (TextView) layout.findViewById(R.id.tvClassName);
-        tvTeacherName = (TextView) layout.findViewById(R.id.tvTeacherName);
-        tvTeacherEmail = (TextView) layout.findViewById(R.id.tvTeacherEmail);
+        tvDialogClassTitle = (TextView) layout.findViewById(R.id.tvDialogClassTitle);
+        tvDialogClassName = (TextView) layout.findViewById(R.id.tvDialogClassName);
+        tvDialogTeacherName = (TextView) layout.findViewById(R.id.tvDialogTeacherName);
+        tvDialogTeacherEmail = (TextView) layout.findViewById(R.id.tvDialogTeacherEmail);
 
         bDialogAssignClass = (Button) layout.findViewById(R.id.bDialogAssignClass);
         bDialogCancel = (Button) layout.findViewById(R.id.bDialogCancel);
@@ -806,6 +822,38 @@ public class UserActivity extends AppCompatActivity {
                 setDialogContentPane(position);
             }
         });
+
+        etDialogSearch.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+                //Auto generated stub
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                dialogClassListAdapter.getFilter().filter(s);
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+                //Auto generated stub
+            }
+        });
+
+        bDialogCancel.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                dialog.dismiss();
+            }
+        });
+
+        bDialogAssignClass.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                updateUserClass(userUserId, classClassId);
+            }
+        });
+
         setDialogContentPane(getClassListPosition(userClassId, classList));
     }
 
@@ -821,18 +869,19 @@ public class UserActivity extends AppCompatActivity {
 
     public void setDialogContentPane(int position) {
         if (position >= 0) {
-            Map<String, String> classData = classList.get(position);
+            Map<String, String> classData = (Map) dialogClassListAdapter.getItem(position);
+            classClassId = classData.get("classId");
             classClassName = classData.get("className");
             classTeacherFistName = classData.get("teacherFirstName");
             classTeacherLastName = classData.get("teacherLastName");
             classTeacherEmail = classData.get("teacherEmail");
-            tvClassName.setText(classClassName);
-            tvTeacherName.setText(classTeacherFistName + " " + classTeacherLastName);
-            tvTeacherEmail.setText(classTeacherEmail);
+            tvDialogClassName.setText(classClassName);
+            tvDialogTeacherName.setText(classTeacherFistName + " " + classTeacherLastName);
+            tvDialogTeacherEmail.setText(classTeacherEmail);
         } else {
-            tvClassName.setText("");
-            tvTeacherName.setText("");
-            tvTeacherEmail.setText("");
+            tvDialogClassName.setText("");
+            tvDialogTeacherName.setText("");
+            tvDialogTeacherEmail.setText("");
         }
     }
 }

@@ -6,12 +6,11 @@
     <string name="No">No</string>
     <string name="cancel">Cancel</string>
 
-
     <!--Labels for titles-->
     <string name="registerUser">Register a new user</string>
     <string name="editUser">Edit this user</string>
-    <string name="titleTeacherClasses">Classes this teacher is supervising</string>
-    <string name="titleStudentClass">Class this student is enrolled in</string>
+    <string name="titleStudentClass">Enrolled in class</string>
+    <string name="classDetails">Class details</string>
 
     <!--Labels for buttons-->
     <string name="login">Login</string>
@@ -20,8 +19,9 @@
     <string name="showStudents">Show my students</string>
     <string name="saveUser">Save changes</string>
     <string name="deleteUser">Delete user</string>
-    <string name="assignClass">Change student class</string>
+    <string name="assignClass">Add/Change class</string>
     <string name="modifyClasses">Modify classes</string>
+    <string name="dialogAssignClass">Select class</string>
 
     <!--Labels for defining users in text fields-->
     <string name="username">Username</string>
@@ -29,7 +29,7 @@
     <string name="firstName">First name</string>
     <string name="lastName">Last name</string>
     <string name="email">E-mail address</string>
-    <string name="contactEmail">Parent/Caretaker E-mail address</string>
+    <string name="contactEmail">Parent/caretaker E-mail address</string>
     <string name="role">Role</string>
     <string name="text_name">Text name</string>
     <string name="text_content">Text content</string>
