@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools" android:layout_width="fill_parent"
-    android:layout_height="fill_parent" android:paddingLeft="0dp"
+    android:layout_height="fill_parent"
+    android:paddingLeft="0dp"
     android:paddingRight="0dp"
     android:paddingTop="-5dp"
     android:paddingBottom="-5dp">
@@ -58,12 +59,16 @@
 
         <LinearLayout
             android:orientation="vertical"
-            android:layout_width="301dp"
-            android:layout_height="wrap_content">
+            android:layout_width="320dp"
+            android:layout_height="wrap_content"
+            android:paddingLeft="6dp"
+            android:paddingRight="6dp"
+            android:paddingTop="6dp"
+            android:paddingBottom="6dp">
 
             <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
                 android:orientation="vertical"
-                android:layout_width="301dp"
+                android:layout_width="320dp"
                 android:layout_height="wrap_content"
                 android:id="@+id/llUserFields">
 
@@ -72,20 +77,36 @@
                     android:layout_height="wrap_content"
                     android:textAppearance="?android:attr/textAppearanceLarge"
                     android:text="@string/registerUser"
-                    android:id="@+id/tvTitleRegister" />
+                    android:id="@+id/tvTitleRegister"
+                    android:paddingBottom="6dp" />
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:textAppearance="?android:attr/textAppearanceLarge"
                     android:text="@string/editUser"
-                    android:id="@+id/tvTitleEdit" />
+                    android:id="@+id/tvTitleEdit"
+                    android:paddingBottom="6dp" />
 
                 <Spinner
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:id="@+id/spinnerRole"
                     android:spinnerMode="dropdown" />
+
+                <EditText
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/etFirstName"
+                    android:hint="@string/firstName"
+                    android:singleLine="true"/>
+
+                <EditText
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/etLastName"
+                    android:hint="@string/lastName"
+                    android:singleLine="true"/>
 
                 <EditText
                     android:layout_width="fill_parent"
@@ -100,25 +121,6 @@
                     android:id="@+id/etPassword"
                     android:hint="@string/password"
                     android:inputType="textPassword"
-                    android:layout_alignParentLeft="true"
-                    android:layout_alignParentStart="true"
-                    android:singleLine="true"/>
-
-                <EditText
-                    android:layout_width="fill_parent"
-                    android:layout_height="wrap_content"
-                    android:id="@+id/etFirstName"
-                    android:hint="@string/firstName"
-                    android:layout_below="@+id/etPassword"
-                    android:layout_alignParentLeft="true"
-                    android:layout_alignParentStart="true"
-                    android:singleLine="true"/>
-
-                <EditText
-                    android:layout_width="fill_parent"
-                    android:layout_height="wrap_content"
-                    android:id="@+id/etLastName"
-                    android:hint="@string/lastName"
                     android:layout_alignParentLeft="true"
                     android:layout_alignParentStart="true"
                     android:singleLine="true"/>
@@ -147,7 +149,9 @@
                     android:orientation="horizontal"
                     android:layout_width="301dp"
                     android:layout_height="wrap_content"
-                    android:id="@+id/llUserButtons">
+                    android:id="@+id/llUserButtons"
+                    android:paddingTop="6dp"
+                    android:paddingBottom="18dp" >
 
                     <Button
                         android:layout_width="wrap_content"
@@ -174,20 +178,24 @@
                     android:layout_height="wrap_content"
                     android:textAppearance="?android:attr/textAppearanceLarge"
                     android:text="@string/titleStudentClass"
-                    android:id="@+id/tvTitleStudentClass" />
+                    android:id="@+id/tvTitleStudentClass"
+                    android:paddingBottom="6dp" />
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:textAppearance="?android:attr/textAppearanceLarge"
+                    android:textAppearance="?android:attr/textAppearanceMedium"
                     android:text="@string/className"
-                    android:id="@+id/tvClassName" />
+                    android:id="@+id/tvUserClassName"
+                    android:inputType="none" />
 
                 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
                     android:orientation="horizontal"
                     android:layout_width="301dp"
                     android:layout_height="wrap_content"
-                    android:id="@+id/llClassButtons">
+                    android:id="@+id/llClassButtons"
+                    android:paddingTop="6dp"
+                    android:paddingBottom="18dp" >
 
                     <Button
                         android:layout_width="wrap_content"
@@ -208,14 +216,5 @@
         </LinearLayout>
 
     </LinearLayout>
-
-    <RadioButton
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="New RadioButton"
-        android:id="@+id/radioButton"
-        android:layout_below="@+id/linearLayout"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="334dp" />
 
 </RelativeLayout>

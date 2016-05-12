@@ -8,7 +8,7 @@
     android:paddingBottom="20dp">
 
     <LinearLayout
-        android:orientation="horizontal"
+        android:orientation="vertical"
         android:layout_width="251dp"
         android:layout_height="fill_parent"
         android:padding="0dp">
@@ -27,7 +27,7 @@
 
         <ListView
             android:layout_width="wrap_content"
-            android:layout_height="fill_parent"
+            android:layout_height="wrap_content"
             android:id="@+id/lvDialogListClasses"
             android:layout_marginTop="0dp"
             android:background="@color/colorBackground"
@@ -40,46 +40,63 @@
         android:orientation="vertical"
         android:layout_width="wrap_content"
         android:layout_height="fill_parent"
-        android:padding="0dp" >
+        android:paddingLeft="6dp"
+        android:paddingRight="6dp"
+        android:paddingTop="6dp"
+        android:paddingBottom="6dp" >
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textAppearance="?android:attr/textAppearanceLarge"
-            android:hint="@string/titleStudentClass"
-            android:id="@+id/tvClassName" />
+            android:text="@string/classDetails"
+            android:id="@+id/tvDialogClassTitle"
+            android:inputType="none"
+            android:paddingBottom="6dp" />
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textAppearance="?android:attr/textAppearanceLarge"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:hint="@string/className"
+            android:id="@+id/tvDialogClassName"
+            android:inputType="none" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceMedium"
             android:hint="@string/teacherName"
-            android:id="@+id/tvTeacherName" />
+            android:id="@+id/tvDialogTeacherName"
+            android:inputType="none" />
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textAppearance="?android:attr/textAppearanceLarge"
+            android:textAppearance="?android:attr/textAppearanceMedium"
             android:hint="@string/teacherEmail"
-            android:id="@+id/tvTeacherEmail" />
+            android:id="@+id/tvDialogTeacherEmail"
+            android:inputType="none" />
 
         <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
             android:orientation="horizontal"
             android:layout_width="301dp"
             android:layout_height="wrap_content"
-            android:id="@+id/llDialogClassButtons">
+            android:id="@+id/llDialogClassButtons"
+            android:paddingTop="6dp"
+            android:paddingBottom="18dp" >
 
             <Button
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@string/assignClass"
+                android:text="@string/dialogAssignClass"
                 android:id="@+id/bDialogAssignClass" />
 
             <Button
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/cancel"
-                android:id="@+id/bDialogGoBack" />
+                android:id="@+id/bDialogCancel" />
 
         </LinearLayout>
 
