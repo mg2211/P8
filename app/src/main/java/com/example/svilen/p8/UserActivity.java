@@ -1,11 +1,9 @@
 package com.example.svilen.p8;
 
 import android.app.AlertDialog;
-import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.res.Resources;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.text.Editable;
@@ -19,9 +17,7 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.LinearLayout;
 import android.widget.ListView;
-import android.widget.TableRow;
 import android.widget.TextView;
 import android.widget.SimpleAdapter;
 import android.widget.Spinner;
@@ -103,7 +99,6 @@ public class UserActivity extends AppCompatActivity {
         bModifyClasses = (Button) findViewById(R.id.bModifyClasses);
 
         lvListUsers = (ListView) findViewById(R.id.lvListUsers);
-        //lvListClasses = (ListView) findViewById(R.id.lvListClasses);
 
         roleAdapter = new ArrayAdapter<>(this,
                 android.R.layout.simple_spinner_item, roleList);
@@ -142,31 +137,14 @@ public class UserActivity extends AppCompatActivity {
                 R.layout.user_listview_item, new String[]{"username", "firstName", "lastName", "role"},
                 new int[]{R.id.clTvUsername, R.id.clTvFirstName, R.id.clTvLastName, R.id.clTvRole});
 
-        /*
-        userListAdapter = new SimpleAdapter(this, userList,
-                android.R.layout.simple_list_item_2, new String[]{"firstName", "lastName"},
-                new int[]{android.R.id.text1, android.R.id.text2}) {
-        };
-        */
-
         lvListUsers.setAdapter(userListAdapter);
         lvListUsers.setChoiceMode(AbsListView.CHOICE_MODE_SINGLE);
 
         getUsers();
         setContentPane(-1);
 
-        /*
-        classListAdapter = new SimpleAdapter(this,
-                classList,
-                android.R.layout.simple_list_item_2,
-                new String[]{"className", "teacherFirstName"}, new int[]{android.R.id.text1, android.R.id.text2}) {
-        };
-        lvListClasses.setAdapter(classListAdapter);
-        lvListClasses.setChoiceMode(AbsListView.CHOICE_MODE_SINGLE);
-        */
-
         dialogClassListAdapter = new SimpleAdapter(this, classList,
-                R.layout.user_class_listview_item, new String[]{"className", "teacherFirstName", "TeacherLastName"},
+                R.layout.user_class_listview_item, new String[]{"className", "teacherFirstName", "teacherLastName"},
                 new int[]{R.id.clTvClassName, R.id.clTvTeacherFirstName, R.id.clTvTeacherLastName}) {
         };
 
@@ -510,32 +488,6 @@ public class UserActivity extends AppCompatActivity {
         }, context).executeTask("FETCH", "", "", "", "", "");
     }
 
-    public void getUserClasses(String userId) {
-        classList.clear();
-        new ClassTaskNew(new ClassCallbackNew() {
-            @Override
-            public void classListDone(Map<String, HashMap<String, String>> classes) {
-                for (Map.Entry<String, HashMap<String, String>> classData : classes.entrySet()) {
-                    Map<String, String> classInfo = new HashMap<>();
-                    String classId = classData.getValue().get("classId");
-                    String teacherId = classData.getValue().get("teacherId");
-                    String className = classData.getValue().get("className");
-                    String teacherFirstName = classData.getValue().get("teacherFirstName");
-                    String teacherLastName = classData.getValue().get("teacherLastName");
-                    String teacherEmail = classData.getValue().get("teacherEmail");
-                    classInfo.put("classId", classId);
-                    classInfo.put("teacherId", teacherId);
-                    classInfo.put("className", className);
-                    classInfo.put("teacherFirstName", teacherFirstName);
-                    classInfo.put("teacherLastName", teacherLastName);
-                    classInfo.put("teacherEmail", teacherEmail);
-                    classList.add(classInfo);
-                }
-            }
-        }, context).executeTask("FETCH", "", "", "", "", userId);
-        //dialogClassListAdapter.notifyDataSetChanged();
-    }
-
     public void getUsers() {
         new UserTask(new UserCallback() {
             @Override
@@ -680,29 +632,6 @@ public class UserActivity extends AppCompatActivity {
                 .setNegativeButton("No", null)
                 .show();
     }
-
-    /*
-    public int getLastEntryPosition(List<Map<String, String>> userList) {
-        int highestEntry = 0;
-        int currentEntry;
-        int position = 0;
-        for (Map<String, String> userMap : userList) {
-            currentEntry = Integer.parseInt(userMap.get("UserId"));
-            if (currentEntry > highestEntry) {
-                highestEntry = currentEntry;
-            }
-        }
-        etDialogSearch.setText("");
-        for (int i = 0; i < userList.size(); i++) {
-            Map<String, String> userMap = userList.get(i);
-            if(Integer.toString(highestEntry).equals(userMap.get("userId"))){
-                return i;
-            }
-        }
-        return 0;
-    }
-    */
-
 
     public void setEnabledUiItems() {
         if (newUser) {
