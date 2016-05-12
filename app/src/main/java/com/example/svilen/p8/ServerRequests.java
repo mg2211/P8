@@ -301,6 +301,7 @@ class StudentTask extends AsyncTask<String, Void, HashMap<String, HashMap<String
         protected HashMap<String, HashMap<String, String>> doInBackground(String... params) {
             String classID = params[0];
             String generalResponse = null;
+            String teacherId = params[1];
             int responseCode = 0;
             HashMap<String, HashMap<String, String>> results = new HashMap<>();
 
@@ -309,7 +310,8 @@ class StudentTask extends AsyncTask<String, Void, HashMap<String, HashMap<String
                 HttpURLConnection connection = (HttpURLConnection) url.openConnection();
                 connection.setRequestMethod("POST");
 
-                Uri.Builder builder = new Uri.Builder().appendQueryParameter("classId", classID);
+                Uri.Builder builder = new Uri.Builder().appendQueryParameter("classId", classID)
+                        .appendQueryParameter("teacherId",teacherId);
 
                 String query = builder.build().getEncodedQuery();
                 OutputStream os = connection.getOutputStream();
@@ -325,6 +327,7 @@ class StudentTask extends AsyncTask<String, Void, HashMap<String, HashMap<String
 
                 InputStream in = new BufferedInputStream(connection.getInputStream());
                 String response = IOUtils.toString(in, "UTF-8"); // convert to string
+                Log.d("student response",response);
 
                 //convert to JSONobject
 
