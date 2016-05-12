@@ -76,8 +76,10 @@ public class AssignmentActivity extends AppCompatActivity {
     String[] studentsAssigned;
     String[] assignmentIds;
     String[] assignmentIsComplete;
+    String[] assignmentTimes;
     HashMap<String, String> studentAssignmentsIds = new HashMap<>();
     HashMap<String, String> assignmentComplete = new HashMap<>();
+    HashMap<String, String> assignedTimes = new HashMap<>();
 
     boolean newAssignment;
     boolean changed;
@@ -154,14 +156,6 @@ public class AssignmentActivity extends AppCompatActivity {
                 }
             }
         });
-
-        bAssign.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                assignmentDialog();
-            }
-        });
-
         //Left pane
         bAddAssignment.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -207,8 +201,7 @@ public class AssignmentActivity extends AppCompatActivity {
         getTexts();
         getAssignments();
         setNew(true);
-        setContentPane(-1);
-        getStudents("");
+        getStudents("",-1);
     }
 
     private void textDialog(final int textId) {
@@ -346,9 +339,14 @@ public class AssignmentActivity extends AppCompatActivity {
         }
 
     }
-    private void setContentPane(int position){
+    private void setContentPane(final int position){
         barChart();
-
+        bAssign.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                assignmentDialog(position);
+            }
+        });
         if(position >= 0) {
             assignmentLibTextId = Integer.parseInt(assignmentList.get(position).get("assignmentText"));
             int textListPos = textListIds.get(assignmentLibTextId);
@@ -359,29 +357,42 @@ public class AssignmentActivity extends AppCompatActivity {
             studentsAssigned = assignmentList.get(position).get("assignedStudents").split("#");
             assignmentIds = assignmentList.get(position).get("assignmentIds").split("#");
             assignmentIsComplete = assignmentList.get(position).get("isComplete").split("#");
+            assignmentTimes = assignmentList.get(position).get("assignmentTimes").split("#");
 
             assignedList.clear();
-            for(int i=0; i<studentsAssigned.length; i++){
-                Log.d("studentsassigned",studentsAssigned[i]);
-                studentAssignmentsIds.put(studentsAssigned[i],assignmentIds[i]);
-                assignmentComplete.put(assignmentIds[i],assignmentIsComplete[i]);
+            for(int i=0; i<studentsAssigned.length; i++) {
+                Log.d("studentsassigned", studentsAssigned[i]);
+                studentAssignmentsIds.put(studentsAssigned[i], assignmentIds[i]);
+                assignmentComplete.put(assignmentIds[i], assignmentIsComplete[i]);
+                assignedTimes.put(assignmentIds[i], assignmentTimes[i]);
 
                 Map<String, String> studentAssigned = new HashMap<>();
                 for(Map<String, String> map : studentList){
                     if(map.get("studentId").equals(studentsAssigned[i])){
-                        if(assignmentComplete.get(studentAssignmentsIds.get(studentsAssigned[i])).equals("1")){
-                            studentAssigned.put("Name",map.get("Name")+" - Completed");
-                        } else {
-                            studentAssigned.put("Name",map.get("Name"));
-                        }
+                        String assignmentId = studentAssignmentsIds.get(map.get("studentId"));
+                        String[] available = assignedTimes.get(assignmentId).split(";");
+                        String availableFrom = available[0];
+                        String availableTo = available[1];
+                        String isComplete = assignmentComplete.get(assignmentId);
+
                         studentAssigned.put("studentId",map.get("studentId"));
+                        studentAssigned.put("from",availableFrom);
+                        studentAssigned.put("to",availableTo);
+                        studentAssigned.put("complete",isComplete);
+                        studentAssigned.put("Name",map.get("Name"));
+                        map.put("from", availableFrom);
+                        map.put("to", availableTo);
+                        map.put("complete",isComplete);
                         assignedList.add(studentAssigned);
                     }
                 }
-                Log.d("assigned list",assignedList.toString());
 
             }
+            Log.d("assigned list", assignedList.toString());
+            Log.d("student List",studentList.toString());
+
             assignedAdapter.notifyDataSetChanged();
+            studentAdapter.notifyDataSetChanged();
             setChanged(false);
             setNew(false);
             dataSets.clear();
@@ -520,6 +531,7 @@ public class AssignmentActivity extends AppCompatActivity {
                     String assignedStudents = assignment.getValue().get("assignedStudents");
                     String assignmentIds = assignment.getValue().get("assignmentIds");
                     String isComplete = assignment.getValue().get("isComplete");
+                    String assignmentTimes = assignment.getValue().get("assignmentTimes");
 
                     assignmentInfo.put("assignmentLibId",assignmentId);
                     assignmentInfo.put("assignmentLibName",assignmentName);
@@ -527,6 +539,7 @@ public class AssignmentActivity extends AppCompatActivity {
                     assignmentInfo.put("assignedStudents",assignedStudents);
                     assignmentInfo.put("assignmentIds",assignmentIds);
                     assignmentInfo.put("isComplete",isComplete);
+                    assignmentInfo.put("assignmentTimes",assignmentTimes);
                     assignmentList.add(assignmentInfo);
                 }
                 Log.d("assignment List", assignmentList.toString());
@@ -534,7 +547,7 @@ public class AssignmentActivity extends AppCompatActivity {
             }
         },context).executeTask("get",teacherId,"","","");
     }
-    private void assignmentDialog(){
+    private void assignmentDialog(final int assignmentListPos){
         AlertDialog.Builder builder = new AlertDialog.Builder(context);
         LayoutInflater inflater = getLayoutInflater();
         final View layout = inflater.inflate(R.layout.dialog_assign, null);
@@ -545,8 +558,6 @@ public class AssignmentActivity extends AppCompatActivity {
         dialog.show();
         ListView lvDialogClasses = (ListView) layout.findViewById(R.id.lvDialogClasses);
         final ListView lvDialogStudents = (ListView) layout.findViewById(R.id.lvDialogStudents);
-        final EditText etDialogDateFrom = (EditText) layout.findViewById(R.id.etDialogDateFrom);
-        final EditText etDialogDateTo = (EditText) layout.findViewById(R.id.etDialogDateTo);
         ListView lvDialogAssigned = (ListView) layout.findViewById(R.id.lvDialogAssigned);
 
         Button bDialogCancel = (Button) layout.findViewById(R.id.bDialogCancel);
@@ -562,7 +573,7 @@ public class AssignmentActivity extends AppCompatActivity {
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 Map<String, String> classData = classList.get(position);
                 String classId = classData.get("ClassId");
-                if(getStudents(classId)){
+                if(getStudents(classId, assignmentListPos)){
                     Log.d("students",studentList.toString());
                 }
 
@@ -571,89 +582,52 @@ public class AssignmentActivity extends AppCompatActivity {
 
         lvDialogStudents.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+            public void onItemClick(AdapterView<?> parent, View view, final int position, long id) {
 
-                Map<String, String> studentData = studentList.get(position);
-                String assignmentId = studentAssignmentsIds.get(studentData.get("studentId"));
-                if(assignmentId != null){
-                    String isComplete = assignmentComplete.get(assignmentId);
-                    if(isComplete.equals("0")){
-                        if(assignedList.contains(studentData)){
-                            assignedList.remove(studentData);
-                        } else {
-                            assignedList.add(studentData);
-                        }
-                    } else {
-                        Log.d("..........","completed assignments cannot be removed");
-                    }
-                } else {
+                final Map<String, String> studentData = studentList.get(position);
+                Log.d("student data before",studentData.toString());
+                if(studentData.get("complete").equals("0")){
                     if(assignedList.contains(studentData)){
                         assignedList.remove(studentData);
                     } else {
-                        assignedList.add(studentData);
+                        datePicker("from", Long.valueOf(studentData.get("from")), new DatePickerCallback() {
+                            @Override
+                            public void dateSelected(final Long from) {
+
+                                if(from != null) {
+                                    datePicker("to", from, new DatePickerCallback() {
+                                        @Override
+                                        public void dateSelected(Long to) {
+                                            if(to != null){
+                                                studentData.put("from", String.valueOf(from));
+                                                studentData.put("to", String.valueOf(to));
+                                                assignedList.add(studentData);
+                                                assignedAdapter.notifyDataSetChanged();
+                                            }
+                                        }
+                                    });
+
+                                }
+                            }
+                        });
                     }
+                    assignedAdapter.notifyDataSetChanged();
+                } else {
+                    Log.d("..........","completed assignments cannot be removed");
                 }
 
-                assignedAdapter.notifyDataSetChanged();
                 Log.d("assignedList",assignedList.toString());
+
             }
         });
-
-
-        etDialogDateFrom.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if(assignmentFrom == null) {
-                    assignmentFrom = (System.currentTimeMillis() / 1000) - 1000;
-                }
-                datePicker("from", assignmentFrom, new DatePickerCallback() {
-                    @Override
-                    public void dateSelected(Long timestamp) {
-                       assignmentFrom = timestamp;
-                        SimpleDateFormat dateFormatter = new SimpleDateFormat("yyyy-MM-dd-HH:mm");
-                        Date date = new Date(timestamp*1000);
-                        String formattedDate = dateFormatter.format(date);
-                        etDialogDateFrom.setText(formattedDate);
-                        if(assignmentTo != null && assignmentTo < assignmentFrom){
-                            etDialogDateTo.setText("");
-                            assignmentTo = null;
-                            int duration = Toast.LENGTH_LONG;
-                            CharSequence alert = "Available to is no longer valid";
-                            Toast toast = Toast.makeText(context, alert, duration);
-                            toast.show();
-                        }
-                    }
-                });
-            }
-        });
-
-        etDialogDateTo.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if(assignmentFrom == null){
-                    assignmentFrom = (System.currentTimeMillis()/1000)-1000;
-                }
-                    datePicker("to",assignmentFrom, new DatePickerCallback() {
-                        @Override
-                        public void dateSelected(Long timestamp) {
-                            assignmentTo = timestamp;
-                            SimpleDateFormat dateFormatter = new SimpleDateFormat("yyyy-MM-dd-HH:mm");
-                            Date date = new Date(timestamp*1000);
-                            String formattedDate = dateFormatter.format(date);
-                            etDialogDateTo.setText(formattedDate);
-                        }
-                    });
-            }
-        });
-
 
         bDialogAssign.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(!assignedList.isEmpty() && assignmentFrom != null && assignmentTo != null) {
-                    for (int i = 0; i < assignedList.size(); i++) {
+                if(!assignedList.isEmpty()) {
+                    Log.d("assignments saved",assignedList.toString());
+                    /*for (int i = 0; i < assignedList.size(); i++) {
                         if (studentAssignmentsIds.get(assignedList.get(i).get("studentId")) != null) {
-                            Log.d("student alread assigned", "true");
 
                         } else {
                             Log.d("new student", "true");
@@ -662,9 +636,9 @@ public class AssignmentActivity extends AppCompatActivity {
                                 public void assignmentDone(HashMap<String, HashMap<String, String>> assignments) {
 
                                 }
-                            }, context).executeTask("assign", assignedList.get(i).get("studentId"), assignmentLibId, String.valueOf(assignmentFrom), String.valueOf(assignmentTo));
+                            }, context).executeTask("assign", assignedList.get(i).get("studentId"), assignmentLibId, String.valueOf(assignmentFrom), String.valueOf(assignmentTo),"");
                         }
-                    }
+                    }*/
                     getAssignments();
                     dialog.dismiss();
                 } else {
@@ -702,7 +676,7 @@ public class AssignmentActivity extends AppCompatActivity {
             }
         });
     }
-    private boolean getStudents(String classId){
+    private boolean getStudents(String classId, final int position){
         new StudentTask(new StudentCallback() {
             @Override
             public void studentListDone(HashMap<String, HashMap<String, String>> students) {
@@ -716,9 +690,13 @@ public class AssignmentActivity extends AppCompatActivity {
                     String studentId = student.getValue().get("studentId");
                     studentInfo.put("Name", studentName);
                     studentInfo.put("studentId",studentId);
+                    studentInfo.put("from","12345");
+                    studentInfo.put("complete","0");
+                    studentInfo.put("to","678910");
                     studentList.add(studentInfo);
                 }
                 studentAdapter.notifyDataSetChanged();
+                setContentPane(position);
             }
         }, context).execute(classId);
         return true;
@@ -824,48 +802,49 @@ public class AssignmentActivity extends AppCompatActivity {
                     String minString;
                     String yearString = String.valueOf(year);
 
-                        if(month < 10){
-                            monthString = "0"+String.valueOf(month+1);
-                        } else {
-                            monthString = String.valueOf(month+1);
-                        }
+                    if(month < 10){
+                        monthString = "0"+String.valueOf(month+1);
+                    } else {
+                        monthString = String.valueOf(month+1);
+                    }
 
-                        if(day < 10){
-                            dayString = "0"+String.valueOf(day);
-                        } else {
-                            dayString = String.valueOf(day);
-                        }
+                    if(day < 10){
+                        dayString = "0"+String.valueOf(day);
+                    } else {
+                        dayString = String.valueOf(day);
+                    }
 
-                        if(hour < 10){
-                            hourString = "0"+String.valueOf(hour);
-                        } else {
-                            hourString = String.valueOf(hour);
-                        }
-                        if(minute < 10){
-                            minString = "0"+String.valueOf(minute);
-                        } else {
-                            minString = String.valueOf(minute);
-                        }
+                    if(hour < 10){
+                        hourString = "0"+String.valueOf(hour);
+                    } else {
+                        hourString = String.valueOf(hour);
+                    }
+                    if(minute < 10){
+                        minString = "0"+String.valueOf(minute);
+                    } else {
+                        minString = String.valueOf(minute);
+                    }
 
                     String dateAndTime = yearString+monthString+dayString+hourString+minString;
-                        try {
+                    try {
 
-                            SimpleDateFormat dateFormatter = new SimpleDateFormat("yyyyMMddHHmm");
-                            Date date = dateFormatter.parse(dateAndTime);
-                            time = date.getTime()/1000;
-                            callback.dateSelected(time);
-                            dialog.dismiss();
-                        } catch (ParseException e) {
-                            e.printStackTrace();
-                        }
+                        SimpleDateFormat dateFormatter = new SimpleDateFormat("yyyyMMddHHmm");
+                        Date date = dateFormatter.parse(dateAndTime);
+                        time = date.getTime()/1000;
+                        callback.dateSelected(time);
+                        dialog.dismiss();
+                    } catch (ParseException e) {
+                        e.printStackTrace();
                     }
                 }
+            }
         });
 
         bDialogCancel.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 dialog.dismiss();
+                callback.dateSelected(null);
             }
         });
     }
