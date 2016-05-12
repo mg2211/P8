@@ -1090,6 +1090,7 @@ class AssignmentLibTask extends AsyncTask<String, Void, HashMap<String, HashMap<
                     assignmentInfo.put("assignedStudents",specificAssignment.getString("assignedStudents"));
                     assignmentInfo.put("assignmentIds", specificAssignment.getString("assignmentIds"));
                     assignmentInfo.put("isComplete",specificAssignment.getString("isComplete"));
+                    assignmentInfo.put("assignmentTimes",specificAssignment.getString("assignmentTimes"));
 
                     results.put("Assignment id" + specificAssignment.getString("id"), assignmentInfo);
                 }
