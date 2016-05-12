@@ -865,6 +865,9 @@ class ClassTaskNew extends AsyncTask<String, Void, Map<String,HashMap<String, St
                     classInfo.put("classId", classId);
                     classInfo.put("teacherId", classMap.getString("teacherId"));
                     classInfo.put("className", classMap.getString("className"));
+                    classInfo.put("teacherFirstName", classMap.getString("teacherFirstName"));
+                    classInfo.put("teacherLastName", classMap.getString("teacherLastName"));
+                    classInfo.put("teacherEmail", classMap.getString("teacherEmail"));
 
                     result.put("classId: " + classId, classInfo);
                 }

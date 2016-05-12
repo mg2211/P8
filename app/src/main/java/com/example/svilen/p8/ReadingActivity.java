@@ -69,7 +69,7 @@ public class ReadingActivity extends AppCompatActivity  {
     String isCorrrect;
     String text1;
     int answerId1;
-    String correctAnswer;
+   // String correctAnswer;
     RadioGroup ll;
     String specificQuestionContent;
     String specificQuestionAnswers;
@@ -80,6 +80,11 @@ public class ReadingActivity extends AppCompatActivity  {
     Set<String> set = new HashSet<String>();
     List<Integer> correctOrNot = new ArrayList<Integer>();    //Set<String> set = new HashSet<String>();
     ArrayList<String> loggedAnswers = new ArrayList<String>();
+    ArrayList<String> correctAnswer = new ArrayList<String>();
+    int noOfQuestions;
+    int clickCount = 0;
+
+
 
 
 
@@ -169,13 +174,28 @@ public class ReadingActivity extends AppCompatActivity  {
             public void onClick(View v) {
                 chronometer.stop();
 
+                int seconds = 0;
+
+                String chronoText = chronometer.getText().toString();
+                String timesplit[] = chronoText.split(":");
+
+                if (timesplit.length == 2) {
+                    seconds = Integer.parseInt(timesplit[0]) * 60 // change minutes to sec
+                            + Integer.parseInt(timesplit[1]); // secs
+                } else if (timesplit.length == 3) {
+                    seconds = Integer.parseInt(timesplit[0]) * 60 * 60 // change hours to sec
+                            + Integer.parseInt(timesplit[1]) * 60 // change min to sec
+                            + Integer.parseInt(timesplit[2]); // secs
+                }
+
+                Log.d("TOTAL time: ", String.valueOf(seconds));
+
 
 
 
 
                 getQuestions(textId);
 
-                finalPopUp();
 
 
 
@@ -227,21 +247,23 @@ public class ReadingActivity extends AppCompatActivity  {
 
                         createArrays(i);
 
-                        Log.d("array: ", mylist.toString());
+                        Log.d("array1: ", mylist.toString());
 
 
 
                     }
 
-                    set = new HashSet<String>(mylist);
+                    set = new HashSet<String>(mylist); // puts array with questionId into a set, removing all duplicates
                     Log.d("setset: ", set.toString());
+                     noOfQuestions = set.size(); // counts how many questions to calculate grade
+                    Log.d("number of questions: ", String.valueOf(noOfQuestions));
 
                     questionContent = specificQuestionContent;
                 }
                 for (String s: set){
                     System.out.println(s);
 
-                    getAnswers(s);
+                    getAnswers(s); // running getAnswer based on questionId from HashSet
 
 
                 }
@@ -258,12 +280,12 @@ public class ReadingActivity extends AppCompatActivity  {
 
         for (int row = 0; row < 1; row++) {
 
-            mylist.add(specificQuestionId);
+            mylist.add(specificQuestionId); // adds questionId from getQuestion() to an array
 
         }
     }
 
-    public void addRadioButtons(int number) {
+    public void addRadioButtons(int number) { //creates dynamic radio button depdending on how many anwswers to a question
 
 
         for (int row = 0; row < 1; row++) {
@@ -315,7 +337,7 @@ public class ReadingActivity extends AppCompatActivity  {
 
 
 
-    public void getText(){
+    public void getText(){ // get text for student to read
         new TextTask(new TextCallback() {
             @Override
             public void TextCallBack(HashMap<String, HashMap<String, String>> results) {
@@ -345,7 +367,7 @@ public class ReadingActivity extends AppCompatActivity  {
     }
 
 
-    public void getAnswers(String s) {
+    public void getAnswers(String s) { // get's answers to questions
         new QuestionTask(new QuestionCallback() {
             @Override
             public void QuestionTaskDone(HashMap<String, HashMap<String, String>> results) {
@@ -361,41 +383,9 @@ public class ReadingActivity extends AppCompatActivity  {
                     questionInfo.put("answers", specificQuestionAnswers1);
                     questionList.add(questionInfo);
 
-                    AlertDialog.Builder builder = new AlertDialog.Builder(context);
-                    LayoutInflater inflater = getLayoutInflater();
-                    layout = inflater.inflate(R.layout.dialog_answering, null);
 
-                    Button bDialogSubmit = (Button) layout.findViewById(R.id.bDialogSubmit);
-                    builder.setView(layout);
-                    final AlertDialog dialog = builder.create();
-                    dialog.setCanceledOnTouchOutside(false); //remember to change to false after programming
-                    dialog.show();
-                    tvQuestionToStudent = (TextView)layout.findViewById(R.id.tvQuestionToStudent);
+                    createDialog();
 
-                    bDialogSubmit.setOnClickListener(new View.OnClickListener() {
-                        @Override
-                        public void onClick(View v) {
-
-
-                            Log.d("TEXT1 in Button: ", text1);
-//                            Log.d("CORRECT in Button", correctAnswer);
-                           if(loggedAnswers.contains(text1)){
-                                Log.d("YOU HAVE ANSWERED: ", "CORRECT!");
-                               int intCorrectAnswer = 1;
-                                correctOrNot.add(intCorrectAnswer);
-                             }else {
-                                Log.d("YOU HAVE ANSWERED: ", "INCORRECT!");
-                               int inCorrectAnswer = 0;
-                               correctOrNot.add(inCorrectAnswer);
-                            }
-                            Log.d("STUDENTANSWER: ", correctOrNot.toString());
-
-
-                            dialog.dismiss();
-
-                        }
-                    });
-                    tvQuestionToStudent.setText(specificQuestionContent1);
 
 
                     String answers[] = specificQuestionAnswers1.split("#");
@@ -426,7 +416,7 @@ public class ReadingActivity extends AppCompatActivity  {
 
 
 
-                        Log.d("ARRAY: ", mylist.toString());
+                        Log.d("ARRAY2: ", mylist.toString());
 
                     }
 
@@ -435,12 +425,33 @@ public class ReadingActivity extends AppCompatActivity  {
                     Log.d("Q2, answer: ", specificQuestionContent1);
 
 
+                  /*  if(dialog.isShowing()){
+                        return;
+                    }else{
+                        AlertDialog.Builder builder1 = new AlertDialog.Builder(context);
+
+                        builder1.setMessage("You have finished your homework")
+                                .setTitle("DONE")
+                                .setNegativeButton("No", new DialogInterface.OnClickListener(){
+                                    @Override
+                                    public void onClick(DialogInterface dialog, int which) {
+
+                                    }
+                                });
+
+                        AlertDialog dialog1 = builder1.create();
+                        dialog1.setCanceledOnTouchOutside(true);
+                        dialog1.show();
+                    }*/
                 }
+
+
             }
         }, context).executeTask("get", s, "", "", "");
     }
 
     public void finalPopUp(){
+
 
         AlertDialog.Builder builder = new AlertDialog.Builder(context);
 
@@ -453,9 +464,80 @@ public class ReadingActivity extends AppCompatActivity  {
                     }
                 });
 
-        AlertDialog dialog = builder.create();
-        dialog.setCanceledOnTouchOutside(true);
+        AlertDialog dialog1 = builder.create();
+        dialog1.setCanceledOnTouchOutside(true);
+        dialog1.show();
+    }
+
+    public void createDialog(){
+
+
+        AlertDialog.Builder builder = new AlertDialog.Builder(context);
+        LayoutInflater inflater = getLayoutInflater();
+        layout = inflater.inflate(R.layout.dialog_answering, null);
+
+        Button bDialogSubmit = (Button) layout.findViewById(R.id.bDialogSubmit);
+        builder.setView(layout);
+        final AlertDialog dialog = builder.create();
+        dialog.setCanceledOnTouchOutside(false); //remember to change to false after programming
         dialog.show();
+        tvQuestionToStudent = (TextView)layout.findViewById(R.id.tvQuestionToStudent);
+
+        bDialogSubmit.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                clickCount= clickCount+1;
+
+                Log.d("TEXT1 in Button: ", text1);
+//                            Log.d("CORRECT in Button", correctAnswer);
+                if(loggedAnswers.contains(text1)){
+                    Log.d("YOU HAVE ANSWERED: ", "CORRECT!");
+                    int isCorrectAnswer = 1;
+                    correctOrNot.add(isCorrectAnswer);
+                    correctAnswer.add(String.valueOf(isCorrectAnswer));
+                }else {
+                    Log.d("YOU HAVE ANSWERED: ", "INCORRECT!");
+                    int inCorrectAnswer = 0;
+                    correctOrNot.add(inCorrectAnswer);
+                }
+                Log.d("STUDENTANSWER: ", correctOrNot.toString());
+
+
+
+
+
+
+                dialog.dismiss();
+
+                if (clickCount==noOfQuestions){
+                    AlertDialog.Builder builder = new AlertDialog.Builder(context);
+
+                    builder.setMessage("You have finished your homework")
+                            .setTitle("Done")
+                            .setPositiveButton("Yes", new DialogInterface.OnClickListener(){
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+
+                                    Intent intent = new Intent(ReadingActivity.this, StudentActivity.class);
+                                    startActivity(intent);
+
+                                }
+                            });
+                    AlertDialog dialog = builder.create();
+                    dialog.setCanceledOnTouchOutside(false);
+                    dialog.show();
+
+                    int totalCorrect = correctAnswer.size();
+                    double totalGrade= ((double) totalCorrect/ (double) noOfQuestions);
+                    Log.d("GRADE  many correct: ", String.valueOf(totalCorrect));
+                    Log.d("noOfQuestions: ", String.valueOf(noOfQuestions));
+                    Log.d("GRADE% FOR QUESTIONS: ", String.valueOf(totalGrade));
+                }
+
+            }
+        });
+        tvQuestionToStudent.setText(specificQuestionContent1);
     }
 
 }

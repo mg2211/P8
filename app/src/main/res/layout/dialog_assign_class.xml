@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="horizontal" android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:paddingLeft="20dp"
+    android:paddingTop="20dp"
+    android:paddingRight="20dp"
+    android:paddingBottom="20dp">
+
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="251dp"
+        android:layout_height="fill_parent"
+        android:padding="0dp">
+
+        <EditText
+            android:layout_width="fill_parent"
+            android:layout_height="60dp"
+            android:id="@+id/etDialogSearch"
+            android:hint="@string/search"
+            android:layout_marginTop="0dp"
+            android:layout_marginBottom="0dp"
+            android:background="#29b6f6"
+            android:paddingLeft="20dp"
+            android:drawableRight="@drawable/search"
+            android:paddingRight="20dp" />
+
+        <ListView
+            android:layout_width="wrap_content"
+            android:layout_height="fill_parent"
+            android:id="@+id/lvDialogListClasses"
+            android:layout_marginTop="0dp"
+            android:background="@color/colorBackground"
+            android:listSelector="@color/colorHighlight"
+            android:choiceMode="singleChoice" />
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:orientation="vertical"
+        android:layout_width="wrap_content"
+        android:layout_height="fill_parent"
+        android:padding="0dp" >
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceLarge"
+            android:hint="@string/titleStudentClass"
+            android:id="@+id/tvClassName" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceLarge"
+            android:hint="@string/teacherName"
+            android:id="@+id/tvTeacherName" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceLarge"
+            android:hint="@string/teacherEmail"
+            android:id="@+id/tvTeacherEmail" />
+
+        <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+            android:orientation="horizontal"
+            android:layout_width="301dp"
+            android:layout_height="wrap_content"
+            android:id="@+id/llDialogClassButtons">
+
+            <Button
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/assignClass"
+                android:id="@+id/bDialogAssignClass" />
+
+            <Button
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/cancel"
+                android:id="@+id/bDialogGoBack" />
+
+        </LinearLayout>
+
+    </LinearLayout>
+
+</LinearLayout>
