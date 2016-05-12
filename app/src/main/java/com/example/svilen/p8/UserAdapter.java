@@ -96,11 +96,11 @@ public class UserAdapter extends BaseAdapter implements Filterable {
             holder.firstName = (TextView) view.findViewById(R.id.clTvFirstName);
             holder.lastName = (TextView) view.findViewById(R.id.clTvLastName);
             holder.role = (TextView) view.findViewById(R.id.clTvRole);
-            holder.userId = (TextView) view.findViewById(R.id.clTvUserId);
-            holder.classId = (TextView) view.findViewById(R.id.clTvClassId);
-            holder.password = (TextView) view.findViewById(R.id.clTvPassword);
-            holder.email = (TextView) view.findViewById(R.id.clTvEmail);
-            holder.parentEmail = (TextView) view.findViewById(R.id.clTvParentEmail);
+            //holder.userId = (TextView) view.findViewById(R.id.clTvUserId);
+            //holder.classId = (TextView) view.findViewById(R.id.clTvClassId);
+            //holder.password = (TextView) view.findViewById(R.id.clTvPassword);
+            //holder.email = (TextView) view.findViewById(R.id.clTvEmail);
+            //holder.parentEmail = (TextView) view.findViewById(R.id.clTvParentEmail);
 
             holder.userId.setVisibility(View.GONE);
             holder.classId.setVisibility(View.GONE);

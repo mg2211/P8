@@ -8,7 +8,7 @@
     android:id="@+id/llUserListViewItem" >
 
     <TextView
-        android:id="@+id/clTvUsername"
+        android:id="@+id/clTvClassName"
         android:layout_height="wrap_content"
         android:layout_width="match_parent"
         android:layout_weight="1"
@@ -31,7 +31,7 @@
         android:layout_gravity="top" >
 
         <TextView
-            android:id="@+id/clTvFirstName"
+            android:id="@+id/clTvTeacherFirstName"
             android:layout_height="wrap_content"
             android:layout_width="wrap_content"
             android:layout_weight="1"
@@ -46,7 +46,7 @@
             android:text="First name"/>
 
         <TextView
-            android:id="@+id/clTvLastName"
+            android:id="@+id/clTvTeacherLastName"
             android:layout_height="wrap_content"
             android:layout_width="wrap_content"
             android:layout_weight="1"
@@ -60,21 +60,6 @@
             android:focusableInTouchMode="false"
             android:text="Last Name" />
 
-        </LinearLayout>
-
-    <TextView
-        android:id="@+id/clTvRole"
-        android:layout_height="wrap_content"
-        android:layout_width="match_parent"
-        android:layout_weight="1"
-        android:layout_gravity="start|center_vertical"
-        android:textSize="16sp"
-        android:layout_marginLeft="10dip"
-        android:layout_marginTop="4dip"
-        android:layout_marginBottom="4dip"
-        android:textColor="#000000"
-        android:focusable="false"
-        android:focusableInTouchMode="false"
-        android:text="Role" />
+    </LinearLayout>
 
 </LinearLayout>

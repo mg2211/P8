@@ -21,6 +21,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.ListView;
+import android.widget.TableRow;
 import android.widget.TextView;
 import android.widget.SimpleAdapter;
 import android.widget.Spinner;
@@ -35,7 +36,6 @@ public class UserActivity extends AppCompatActivity {
 
     Context context = this;
 
-    LinearLayout llUserFields;
     Button bAddUser, bRegisterUser, bEditUser, bDeleteUser, bAssignClass, bModifyClasses,
             bDialogAssignClass, bDialogCancel;
     EditText etSearch, etUsername, etPassword, etFirstName, etLastName, etEmail, etContactEmail,
@@ -78,8 +78,6 @@ public class UserActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
 
         setContentView(R.layout.activity_user);
-
-        llUserFields = (LinearLayout) findViewById(R.id.llUserFields);
 
         etSearch = (EditText) findViewById(R.id.etSearch);
 
@@ -141,9 +139,15 @@ public class UserActivity extends AppCompatActivity {
         getRoles();
 
         userListAdapter = new SimpleAdapter(this, userList,
+                R.layout.user_listview_item, new String[]{"username", "firstName", "lastName", "role"},
+                new int[]{R.id.clTvUsername, R.id.clTvFirstName, R.id.clTvLastName, R.id.clTvRole});
+
+        /*
+        userListAdapter = new SimpleAdapter(this, userList,
                 android.R.layout.simple_list_item_2, new String[]{"firstName", "lastName"},
                 new int[]{android.R.id.text1, android.R.id.text2}) {
         };
+        */
 
         lvListUsers.setAdapter(userListAdapter);
         lvListUsers.setChoiceMode(AbsListView.CHOICE_MODE_SINGLE);
@@ -162,8 +166,8 @@ public class UserActivity extends AppCompatActivity {
         */
 
         dialogClassListAdapter = new SimpleAdapter(this, classList,
-                android.R.layout.simple_list_item_2, new String[]{"className", "teacherFirstName"},
-                new int[]{android.R.id.text1, android.R.id.text2}) {
+                R.layout.user_class_listview_item, new String[]{"className", "teacherFirstName", "TeacherLastName"},
+                new int[]{R.id.clTvClassName, R.id.clTvTeacherFirstName, R.id.clTvTeacherLastName}) {
         };
 
         getAllClasses();
@@ -595,6 +599,7 @@ public class UserActivity extends AppCompatActivity {
             }, context).executeTask("CREATE", role, "", "", "", "", username, password, lastName, firstName,
                     email, parentEmail);
             getUsers();
+            //setContentPane(getLastEntryPosition(userList));
             return true;
         } else if (!role.equals("student") && general) {
             new UserTask(new UserCallback() {
@@ -604,6 +609,7 @@ public class UserActivity extends AppCompatActivity {
             }, context).executeTask("CREATE", role, "", "", "", "", username, password, lastName, firstName,
                     email, "");
             getUsers();
+            //setContentPane(getLastEntryPosition(userList));
             return true;
         } else {
             int duration = Toast.LENGTH_LONG;
@@ -675,6 +681,29 @@ public class UserActivity extends AppCompatActivity {
                 .show();
     }
 
+    /*
+    public int getLastEntryPosition(List<Map<String, String>> userList) {
+        int highestEntry = 0;
+        int currentEntry;
+        int position = 0;
+        for (Map<String, String> userMap : userList) {
+            currentEntry = Integer.parseInt(userMap.get("UserId"));
+            if (currentEntry > highestEntry) {
+                highestEntry = currentEntry;
+            }
+        }
+        etDialogSearch.setText("");
+        for (int i = 0; i < userList.size(); i++) {
+            Map<String, String> userMap = userList.get(i);
+            if(Integer.toString(highestEntry).equals(userMap.get("userId"))){
+                return i;
+            }
+        }
+        return 0;
+    }
+    */
+
+
     public void setEnabledUiItems() {
         if (newUser) {
             tvTitleRegister.setVisibility(View.VISIBLE);
@@ -736,6 +765,17 @@ public class UserActivity extends AppCompatActivity {
             setChanged(false);
             setNewUser(false);
         } else {
+            userUserId = null;
+            userTeacherId = null;
+            userStudentId = null;
+            userClassId = null;
+            userRole = null;
+            userUsername = null;
+            userPassword = null;
+            userFirstName = null;
+            userLastName = null;
+            userEmail = null;
+            userParentEmail = null;
             etUsername.setText("");
             etPassword.setText("");
             etPassword.setText("");
@@ -864,7 +904,7 @@ public class UserActivity extends AppCompatActivity {
                 return i;
             }
         }
-        return 0;
+        return -1;
     }
 
     public void setDialogContentPane(int position) {
