@@ -47,8 +47,6 @@ public class AssignmentListAdapter extends BaseAdapter {
         Long from = Long.parseLong(assignments.get(position).get("from"));
         Long to = Long.parseLong(assignments.get(position).get("to"));
 
-        Log.d("timestamps", String.valueOf(from) + "-------------"+ String.valueOf(to));
-
         Date fromDate = new Date(from*1000);
         Date toDate = new Date(to*1000);
 

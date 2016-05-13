@@ -3,6 +3,7 @@ package com.example.svilen.p8;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
@@ -201,7 +202,14 @@ public class AssignmentActivity extends AppCompatActivity {
         getTexts();
         getAssignments();
         setNew(true);
-        getStudents("",-1);
+        getStudents("");
+    }
+
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        Intent backIntent = new Intent(this,TeacherActivity.class);
+        startActivity(backIntent);
     }
 
     private void textDialog(final int textId) {
@@ -575,7 +583,7 @@ public class AssignmentActivity extends AppCompatActivity {
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 Map<String, String> classData = classList.get(position);
                 String classId = classData.get("ClassId");
-                if(getStudents(classId, assignmentListPos)){
+                if(getStudents(classId)){
                     Log.d("students",studentList.toString());
                 }
 
@@ -592,12 +600,12 @@ public class AssignmentActivity extends AppCompatActivity {
                     if(assignedList.contains(studentData)){
                         assignedList.remove(studentData);
                     } else {
-                        datePicker("from", Long.valueOf(studentData.get("from")), new DatePickerCallback() {
+                        datePicker(Long.valueOf(studentData.get("from")), new DatePickerCallback() {
                             @Override
                             public void dateSelected(final Long from) {
 
                                 if(from != null) {
-                                    datePicker("to", from, new DatePickerCallback() {
+                                    datePicker(from, new DatePickerCallback() {
                                         @Override
                                         public void dateSelected(Long to) {
                                             if(to != null){
@@ -671,11 +679,13 @@ public class AssignmentActivity extends AppCompatActivity {
                         }
 
                     }
-                    dialog.dismiss();
+                    Intent intent = new Intent(context, AssignmentActivity.class);
+                    intent.putExtra("position",assignmentListPos);
+                    startActivity(intent);
             }
         });
     }
-    private boolean getStudents(String classId, final int position){
+    private boolean getStudents(String classId){
         new StudentTask(new StudentCallback() {
             @Override
             public void studentListDone(HashMap<String, HashMap<String, String>> students) {
@@ -720,7 +730,7 @@ public class AssignmentActivity extends AppCompatActivity {
             }
         },context).execute(teacherId);
     }
-    private void datePicker(String mode, final Long offsetDate, final DatePickerCallback callback) {
+    private void datePicker(final Long offsetDate, final DatePickerCallback callback) {
         AlertDialog.Builder builder = new AlertDialog.Builder(context);
         LayoutInflater inflater = getLayoutInflater();
         final View layout = inflater.inflate(R.layout.dialog_time, null);
