@@ -903,8 +903,7 @@ class ClassTaskNew extends AsyncTask<String, Void, Map<String,HashMap<String, St
             int duration = Toast.LENGTH_LONG;
             Toast toast = Toast.makeText(context, "Response code " + responseCode +", " + "Message: " + generalResponse, duration);
             toast.show();
-        }
-        else {
+        } else {
             int duration = Toast.LENGTH_LONG;
             Toast toast = Toast.makeText(context, "Something went horribly wrong, no response code!", duration);
             toast.show();
@@ -1187,33 +1186,35 @@ class AssignmentLibTask extends AsyncTask<String, Void, HashMap<String, HashMap<
                 String response = IOUtils.toString(in, "UTF-8"); //convert to readable string
                 //convert to JSON object
                 Log.d("response",response);
+
                 JSONObject JSONResult = new JSONObject(response);
                 generalResponse = JSONResult.getString("generalResponse");
                 responseCode = JSONResult.getInt("responseCode");
+                if(method.equals("get")) {
+                    JSONArray assignments = JSONResult.getJSONArray("assignments");
+                    for (int i = 0; i < assignments.length(); i++) {
+                        JSONObject specificAssignment = assignments.getJSONObject(i);
+                        String assLibId = String.valueOf(specificAssignment.getInt("assignmentlibraryid"));
+                        String assignmentId = String.valueOf(specificAssignment.getInt("id"));
+                        String assignmentName = specificAssignment.getString("assignmentName");
+                        String textId = specificAssignment.getString("textId");
+                        String assignmentFrom = specificAssignment.getString("from");
+                        String assignmentTo = specificAssignment.getString("to");
+                        String assignmentStudentId = specificAssignment.getString("studentId");
+                        String isComplete = specificAssignment.getString("isComplete");
 
-                JSONArray assignments = JSONResult.getJSONArray("assignments");
-                for (int i = 0; i < assignments.length(); i++) {
-                    JSONObject specificAssignment = assignments.getJSONObject(i);
-                    String assLibId = String.valueOf(specificAssignment.getInt("assignmentlibraryid"));
-                    String assignmentId = String.valueOf(specificAssignment.getInt("id"));
-                    String assignmentName = specificAssignment.getString("assignmentName");
-                    String textId = specificAssignment.getString("textId");
-                    String assignmentFrom = specificAssignment.getString("from");
-                    String assignmentTo = specificAssignment.getString("to");
-                    String assignmentStudentId = specificAssignment.getString("studentId");
-                    String isComplete = specificAssignment.getString("isComplete");
+                        HashMap<String, String> assignmentInfo = new HashMap<>();
+                        assignmentInfo.put("assignmentlibraryid", assLibId);
+                        assignmentInfo.put("assignmentid", assignmentId);
+                        assignmentInfo.put("assignmentLibName", assignmentName);
+                        assignmentInfo.put("textId", textId);
+                        assignmentInfo.put("availableFrom", assignmentFrom);
+                        assignmentInfo.put("availableTo", assignmentTo);
+                        assignmentInfo.put("studentId", assignmentStudentId);
+                        assignmentInfo.put("isComplete", isComplete);
 
-                    HashMap<String, String> assignmentInfo = new HashMap<>();
-                    assignmentInfo.put("assignmentlibraryid", assLibId);
-                    assignmentInfo.put("assignmentid", assignmentId);
-                    assignmentInfo.put("assignmentLibName", assignmentName);
-                    assignmentInfo.put("textId", textId);
-                    assignmentInfo.put("availableFrom", assignmentFrom);
-                    assignmentInfo.put("availableTo",assignmentTo);
-                    assignmentInfo.put("studentId", assignmentStudentId);
-                    assignmentInfo.put("isComplete",isComplete);
-
-                    results.put("AssignmentId: " +  assignmentId, assignmentInfo);
+                        results.put("AssignmentId: " + assignmentId, assignmentInfo);
+                    }
                 }
 
 

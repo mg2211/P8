@@ -341,6 +341,7 @@ public class AssignmentActivity extends AppCompatActivity {
 
     }
     private void setContentPane(final int position){
+        Log.d("called with pos:", String.valueOf(position));
         barChart();
         bAssign.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -359,7 +360,6 @@ public class AssignmentActivity extends AppCompatActivity {
             assignmentIds = assignmentList.get(position).get("assignmentIds").split("#");
             assignmentIsComplete = assignmentList.get(position).get("isComplete").split("#");
             assignmentTimes = assignmentList.get(position).get("assignmentTimes").split("#");
-
             assignedList.clear();
             for(int i=0; i<studentsAssigned.length; i++) {
                 Log.d("studentsassigned", studentsAssigned[i]);
@@ -625,17 +625,32 @@ public class AssignmentActivity extends AppCompatActivity {
         bDialogAssign.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(!assignedList.isEmpty()) {
                     Log.d("assignments saved",assignedList.toString());
                     Log.d("Students assigned list", studentAssignmentsIds.toString());
                     for (int i = 0; i < assignedList.size(); i++) {
                         String assignmentId = studentAssignmentsIds.get(assignedList.get(i).get("studentId"));
+                        String from = assignedList.get(i).get("from");
+                        String to = assignedList.get(i).get("to");
+                        String studentId = assignedList.get(i).get("studentId");
+
                         if(assignmentId != null){
                             //update
                             Log.d("update assignemt",assignmentId);
+                            new AssignmentTask(new AssignmentCallback() {
+                                @Override
+                                public void assignmentDone(HashMap<String, HashMap<String, String>> assignments) {
+
+                                }
+                            },context).executeTask("update","",assignmentLibId,from,to,assignmentId);
                         } else {
                             //insert
                             Log.d("insert assignment", "true");
+                            new AssignmentTask(new AssignmentCallback() {
+                                @Override
+                                public void assignmentDone(HashMap<String, HashMap<String, String>> assignments) {
+
+                                }
+                            },context).executeTask("assign",studentId,assignmentLibId,from,to,"");
                         }
 
                         for (Map.Entry<String, String> entry : studentAssignmentsIds.entrySet()) {
@@ -645,6 +660,12 @@ public class AssignmentActivity extends AppCompatActivity {
                                 if(map.get("studentId").equals(student)){
                                     if(!assignedList.contains(map)){
                                         Log.d("delete assignment id",studentAssignmentId);
+                                        new AssignmentTask(new AssignmentCallback() {
+                                            @Override
+                                            public void assignmentDone(HashMap<String, HashMap<String, String>> assignments) {
+
+                                            }
+                                        },context).executeTask("delete","","","","",studentAssignmentId);
                                     }
                                 }
 
@@ -654,12 +675,6 @@ public class AssignmentActivity extends AppCompatActivity {
                     }
                     getAssignments();
                     dialog.dismiss();
-                } else {
-                    int duration = Toast.LENGTH_LONG;
-                    CharSequence alert = "Please fill in all relevant information";
-                    Toast toast = Toast.makeText(context, alert, duration);
-                    toast.show();
-                }
             }
         });
         bDialogCancel.setOnClickListener(new View.OnClickListener() {
