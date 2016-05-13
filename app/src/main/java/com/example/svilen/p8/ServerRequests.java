@@ -743,6 +743,19 @@ class UserTask extends AsyncTask<String, Void, Map<String,HashMap<String, String
                     result.put("userId: " + userId, userInfo);
                 }
                 Log.d("UserTask response", result.toString());
+
+            } else if (params[0].equals("CREATE")) {
+
+                String lastUserId;
+
+                lastUserId = JSONResult.getString("lastUserId");
+
+                HashMap<String, String> lastUser = new HashMap<>();
+
+                lastUser.put("lastUserId", lastUserId);
+                result.put("lastUserId: " + lastUserId, lastUser);
+
+                Log.d("UserTask response", result.toString());
             }
             HashMap<String, String> serverResponse = new HashMap<>();
             serverResponse.put("generalResponse", generalResponse);

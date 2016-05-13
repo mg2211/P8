@@ -21,6 +21,13 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+/*
+List Classes
+List Students
+List Assignments
+Add button to switch to student in User
+ */
+
 public class ClassActivity extends AppCompatActivity {
 
     Context context = this;

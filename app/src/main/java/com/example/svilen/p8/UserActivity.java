@@ -229,6 +229,7 @@ public class UserActivity extends AppCompatActivity {
             public void onClick(View v) {
                 createUser();
                 setChanged(false);
+                bAssignClass.setEnabled(true);
             }
         });
 
@@ -259,7 +260,7 @@ public class UserActivity extends AppCompatActivity {
         bAssignClass.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                classAssignmentDialog(userUserId);
+                classAssignmentDialog();
             }
         });
 
@@ -547,6 +548,9 @@ public class UserActivity extends AppCompatActivity {
             new UserTask(new UserCallback() {
                 @Override
                 public void userTaskDone(Map<String, HashMap<String, String>> users) {
+                    for (Map.Entry<String, HashMap<String, String>> user : users.entrySet()) {
+                        userUserId = user.getValue().get("lastUserId");
+                    }
                 }
             }, context).executeTask("CREATE", role, "", "", "", "", username, password, lastName, firstName,
                     email, parentEmail);
@@ -557,6 +561,9 @@ public class UserActivity extends AppCompatActivity {
             new UserTask(new UserCallback() {
                 @Override
                 public void userTaskDone(Map<String, HashMap<String, String>> users) {
+                    for (Map.Entry<String, HashMap<String, String>> user : users.entrySet()) {
+                        userUserId = user.getValue().get("lastUserId");
+                    }
                 }
             }, context).executeTask("CREATE", role, "", "", "", "", username, password, lastName, firstName,
                     email, "");
@@ -640,6 +647,7 @@ public class UserActivity extends AppCompatActivity {
             tvTitleEdit.setVisibility(View.GONE);
             bEditUser.setVisibility(View.GONE);
             bDeleteUser.setVisibility(View.GONE);
+            bAssignClass.setEnabled(false);
             if (changed) {
                 bEditUser.setEnabled(false);
                 bDeleteUser.setEnabled(false);
@@ -659,10 +667,12 @@ public class UserActivity extends AppCompatActivity {
                 bEditUser.setEnabled(true);
                 bDeleteUser.setEnabled(true);
                 bRegisterUser.setEnabled(false);
+                bAssignClass.setEnabled(false);
             } else {
                 bEditUser.setEnabled(false);
                 bDeleteUser.setEnabled(true);
                 bRegisterUser.setEnabled(false);
+                bAssignClass.setEnabled(true);
             }
         }
     }
@@ -694,7 +704,6 @@ public class UserActivity extends AppCompatActivity {
             setChanged(false);
             setNewUser(false);
         } else {
-            userUserId = null;
             userTeacherId = null;
             userStudentId = null;
             userClassId = null;
@@ -756,7 +765,7 @@ public class UserActivity extends AppCompatActivity {
     }
 
     //create a new classAssignmentDialog
-    private void classAssignmentDialog(final String userId) {
+    private void classAssignmentDialog() {
 
         AlertDialog.Builder builder = new AlertDialog.Builder(context);
         LayoutInflater inflater = getLayoutInflater();
@@ -820,6 +829,7 @@ public class UserActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 updateUserClass(userUserId, classClassId);
+                dialog.dismiss();
             }
         });
 
