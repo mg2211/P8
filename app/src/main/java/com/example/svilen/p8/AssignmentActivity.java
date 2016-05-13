@@ -343,6 +343,8 @@ public class AssignmentActivity extends AppCompatActivity {
     private void setContentPane(final int position){
         Log.d("called with pos:", String.valueOf(position));
         barChart();
+        getAssignments();
+        Log.d("assignment List from CP",assignmentList.toString());
         bAssign.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -518,7 +520,7 @@ public class AssignmentActivity extends AppCompatActivity {
             }
         },context).executeTask("get","","","",0);
     }
-    private void getAssignments(){
+    private boolean getAssignments(){
         new AssignmentLibTask(new AssignmentLibCallback() {
             @Override
             public void AssignmentLibDone(HashMap<String, HashMap<String, String>> results) {
@@ -547,6 +549,7 @@ public class AssignmentActivity extends AppCompatActivity {
                 assignmentAdapter.notifyDataSetChanged();
             }
         },context).executeTask("get",teacherId,"","","");
+        return true;
     }
     private void assignmentDialog(final int assignmentListPos){
         AlertDialog.Builder builder = new AlertDialog.Builder(context);
@@ -633,39 +636,36 @@ public class AssignmentActivity extends AppCompatActivity {
                         String to = assignedList.get(i).get("to");
                         String studentId = assignedList.get(i).get("studentId");
 
-                        if(assignmentId != null){
+                        if (assignmentId != null) {
                             //update
-                            Log.d("update assignemt",assignmentId);
+                            Log.d("update assignemt", assignmentId);
                             new AssignmentTask(new AssignmentCallback() {
                                 @Override
                                 public void assignmentDone(HashMap<String, HashMap<String, String>> assignments) {
-
                                 }
-                            },context).executeTask("update","",assignmentLibId,from,to,assignmentId);
+                            }, context).executeTask("update", "", assignmentLibId, from, to, assignmentId);
                         } else {
                             //insert
                             Log.d("insert assignment", "true");
                             new AssignmentTask(new AssignmentCallback() {
                                 @Override
                                 public void assignmentDone(HashMap<String, HashMap<String, String>> assignments) {
-
                                 }
-                            },context).executeTask("assign",studentId,assignmentLibId,from,to,"");
+                            }, context).executeTask("assign", studentId, assignmentLibId, from, to, "");
                         }
 
                         for (Map.Entry<String, String> entry : studentAssignmentsIds.entrySet()) {
                             String student = entry.getKey();
                             String studentAssignmentId = entry.getValue();
-                            for(Map<String, String> map : studentList){
-                                if(map.get("studentId").equals(student)){
-                                    if(!assignedList.contains(map)){
-                                        Log.d("delete assignment id",studentAssignmentId);
+                            for (Map<String, String> map : studentList) {
+                                if (map.get("studentId").equals(student)) {
+                                    if (!assignedList.contains(map)) {
+                                        Log.d("delete assignment id", studentAssignmentId);
                                         new AssignmentTask(new AssignmentCallback() {
                                             @Override
                                             public void assignmentDone(HashMap<String, HashMap<String, String>> assignments) {
-
                                             }
-                                        },context).executeTask("delete","","","","",studentAssignmentId);
+                                        }, context).executeTask("delete", "", "", "", "", studentAssignmentId);
                                     }
                                 }
 
@@ -673,7 +673,6 @@ public class AssignmentActivity extends AppCompatActivity {
                         }
 
                     }
-                    getAssignments();
                     dialog.dismiss();
             }
         });
