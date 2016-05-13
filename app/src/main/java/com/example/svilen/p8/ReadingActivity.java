@@ -24,11 +24,15 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.common.collect.Iterables;
+
 import org.w3c.dom.Text;
 
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -40,7 +44,6 @@ public class ReadingActivity extends AppCompatActivity  {
     String specificQuestionContent1;
     String specificQuestionId1;
     String specificQuestionAnswers1;
-    String answerId11;
     String answerText1;
     String isCorrrect1;
 
@@ -69,12 +72,11 @@ public class ReadingActivity extends AppCompatActivity  {
     String isCorrrect;
     String text1;
     int answerId1;
-   // String correctAnswer;
     RadioGroup ll;
     String specificQuestionContent;
     String specificQuestionAnswers;
     String specificQuestionId;
-    String specificAnswerId;
+
     ArrayList<String> mylist = new ArrayList<String>();
     String s;
     Set<String> set = new HashSet<String>();
@@ -83,6 +85,10 @@ public class ReadingActivity extends AppCompatActivity  {
     ArrayList<String> correctAnswer = new ArrayList<String>();
     int noOfQuestions;
     int clickCount = 0;
+    String assignmentId;
+    String correctAnswerId;
+    TextView tvQuestionId2Student;
+    String lastElement;
 
 
 
@@ -120,6 +126,7 @@ public class ReadingActivity extends AppCompatActivity  {
             tvTextId.setText(textId);
             assignmentName = (String) b.get("assignmentName");
             tvAssignmentName.setText(assignmentName);
+            assignmentId = (String) b.get("id");
         }
         chronometer.setBase(SystemClock.elapsedRealtime());
         chronometer.start();
@@ -247,7 +254,6 @@ public class ReadingActivity extends AppCompatActivity  {
 
                         createArrays(i);
 
-                        Log.d("array1: ", mylist.toString());
 
 
 
@@ -293,15 +299,15 @@ public class ReadingActivity extends AppCompatActivity  {
             rg.setOrientation(LinearLayout.HORIZONTAL);
             RadioGroup.LayoutParams layoutParams = new RadioGroup.LayoutParams(
                     RadioGroup.LayoutParams.WRAP_CONTENT,
-                    RadioGroup.LayoutParams.WRAP_CONTENT);
+                    RadioGroup.LayoutParams.MATCH_PARENT);
 
             RadioButton rdbtn = new RadioButton(this);
             rdbtn.setId((row * 2) + number);
             rdbtn.setText(answerText1);
             int radioId = rdbtn.getId();
             rg.addView(rdbtn, layoutParams);
-            Log.d("RADIONAME: ", answerText1);
-            Log.d("RADIOID: ", String.valueOf(radioId));
+
+
 
 
             rg.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
@@ -313,11 +319,7 @@ public class ReadingActivity extends AppCompatActivity  {
 
                                                           text1 = (String) btn.getText();
                                                           answerId1 = btn.getId();
-                                                            Log.d("TEXT1: ", text1);
-//                                                            Log.d("RADIOisCorrectList", correctAnswer);
-                                                            Log.d("ANSWERID1: ", String.valueOf(answerId1));
 
-                                                          // do something with text
                                                           return;
                                                       }
 
@@ -353,7 +355,6 @@ public class ReadingActivity extends AppCompatActivity  {
                     textInfo.put("textcontent", textContent);
                     textInfo.put("textname", textName);
                     // assignmentList.add(textInfo);
-                    Log.d("TEXTTASK", String.valueOf(textInfo));
 
                     etTextContent.setText(textContent);
                     tvTextName2.setText(textName);
@@ -383,14 +384,16 @@ public class ReadingActivity extends AppCompatActivity  {
                     questionInfo.put("answers", specificQuestionAnswers1);
                     questionList.add(questionInfo);
 
+                    Log.d("QUESTIONID: ", specificQuestionId1);
 
                     createDialog();
 
 
 
+
+
                     String answers[] = specificQuestionAnswers1.split("#");
                     for ( i = 0; i < answers.length; i++) {
-                        Log.d("ANSWERS!: ", answers[i].toString());
 
                         String answer[] = answers[i].split(";");
                         answerText1 = answer[1];
@@ -404,7 +407,8 @@ public class ReadingActivity extends AppCompatActivity  {
                             Log.d("This is the ", "correct answer");
 
                             loggedAnswers.add(answerText1);
-//                            Log.d("CORRECTOOO", correctAnswer);
+                            correctAnswerId = answerId;
+                            Log.d("CORRECT ANSWERID: ", correctAnswerId);
                             Log.d("LOGGEDANSWERS: ", loggedAnswers.toString());
 
                         }else{
@@ -416,33 +420,14 @@ public class ReadingActivity extends AppCompatActivity  {
 
 
 
-                        Log.d("ARRAY2: ", mylist.toString());
 
                     }
 
 
 
-                    Log.d("Q2, answer: ", specificQuestionContent1);
 
 
-                  /*  if(dialog.isShowing()){
-                        return;
-                    }else{
-                        AlertDialog.Builder builder1 = new AlertDialog.Builder(context);
 
-                        builder1.setMessage("You have finished your homework")
-                                .setTitle("DONE")
-                                .setNegativeButton("No", new DialogInterface.OnClickListener(){
-                                    @Override
-                                    public void onClick(DialogInterface dialog, int which) {
-
-                                    }
-                                });
-
-                        AlertDialog dialog1 = builder1.create();
-                        dialog1.setCanceledOnTouchOutside(true);
-                        dialog1.show();
-                    }*/
                 }
 
 
@@ -450,24 +435,6 @@ public class ReadingActivity extends AppCompatActivity  {
         }, context).executeTask("get", s, "", "", "");
     }
 
-    public void finalPopUp(){
-
-
-        AlertDialog.Builder builder = new AlertDialog.Builder(context);
-
-        builder.setMessage("You have finished your homework")
-                .setTitle("DONE")
-                .setNegativeButton("No", new DialogInterface.OnClickListener(){
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-
-                    }
-                });
-
-        AlertDialog dialog1 = builder.create();
-        dialog1.setCanceledOnTouchOutside(true);
-        dialog1.show();
-    }
 
     public void createDialog(){
 
@@ -482,25 +449,61 @@ public class ReadingActivity extends AppCompatActivity  {
         dialog.setCanceledOnTouchOutside(false); //remember to change to false after programming
         dialog.show();
         tvQuestionToStudent = (TextView)layout.findViewById(R.id.tvQuestionToStudent);
+        tvQuestionId2Student = (TextView) layout.findViewById(R.id.tvQuestionId2Student);
 
         bDialogSubmit.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
 
-                clickCount= clickCount+1;
+                clickCount= clickCount+1; // count number of clicks which will be used to match number of question to create the last alertdialog
 
-                Log.d("TEXT1 in Button: ", text1);
-//                            Log.d("CORRECT in Button", correctAnswer);
+               //assignmentId
+                //specificQuestionId1
+                //correctAnswerId
+
+
+                List<String> list = new ArrayList<String>(set);
+
+                for (int x = 0; x<clickCount; x++){ // breaks the HashSet and removes the last index which represents the questionId being answered
+
+
+
+                    if(list!=null) {
+
+                        lastElement = Iterables.getLast(list);
+                        list.remove(lastElement);
+
+                        Log.d("LASTELEMENT1 ", lastElement);
+                        Log.d("LASTELEMENT1", String.valueOf(list));
+                    }
+
+                }
+
                 if(loggedAnswers.contains(text1)){
                     Log.d("YOU HAVE ANSWERED: ", "CORRECT!");
                     int isCorrectAnswer = 1;
                     correctOrNot.add(isCorrectAnswer);
                     correctAnswer.add(String.valueOf(isCorrectAnswer));
+                    Log.d("1111", text1);
+
+
+                    new QuestionResultTask(new QuestionResultCallback() {
+                        @Override
+                        public void questresultdone(HashMap<String, HashMap<String, String>> questresult) {
+
+                        }
+                    }, context).execute(assignmentId, lastElement, "", correctAnswerId, "1", "1");
+
                 }else {
                     Log.d("YOU HAVE ANSWERED: ", "INCORRECT!");
                     int inCorrectAnswer = 0;
                     correctOrNot.add(inCorrectAnswer);
-                }
+                    new QuestionResultTask(new QuestionResultCallback() {
+                        @Override
+                        public void questresultdone(HashMap<String, HashMap<String, String>> questresult) {
+
+                        }
+                    }, context).execute(assignmentId, lastElement, "", correctAnswerId, "0", "1");                }
                 Log.d("STUDENTANSWER: ", correctOrNot.toString());
 
 
@@ -510,7 +513,7 @@ public class ReadingActivity extends AppCompatActivity  {
 
                 dialog.dismiss();
 
-                if (clickCount==noOfQuestions){
+                if (clickCount==noOfQuestions){ // creates the last alertdialog after all questions have been answered
                     AlertDialog.Builder builder = new AlertDialog.Builder(context);
 
                     builder.setMessage("You have finished your homework")
@@ -538,6 +541,7 @@ public class ReadingActivity extends AppCompatActivity  {
             }
         });
         tvQuestionToStudent.setText(specificQuestionContent1);
+        tvQuestionId2Student.setText(specificQuestionId1);
     }
 
 }
