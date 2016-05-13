@@ -91,7 +91,6 @@ public class AssignmentActivity extends AppCompatActivity {
     List<Map<String, String>> classList = new ArrayList<>();
     SimpleAdapter classAdapter;
     List<Map<String, String>> assignedList = new ArrayList<>();
-    //SimpleAdapter assignedAdapter;
     AssignmentListAdapter assignedAdapter;
 
 
@@ -564,7 +563,6 @@ public class AssignmentActivity extends AppCompatActivity {
         final ListView lvDialogStudents = (ListView) layout.findViewById(R.id.lvDialogStudents);
         ListView lvDialogAssigned = (ListView) layout.findViewById(R.id.lvDialogAssigned);
 
-        Button bDialogCancel = (Button) layout.findViewById(R.id.bDialogCancel);
         Button bDialogAssign = (Button) layout.findViewById(R.id.bDialogAssign);
         lvDialogClasses.setAdapter(classAdapter);
         lvDialogStudents.setAdapter(studentAdapter);
@@ -676,41 +674,6 @@ public class AssignmentActivity extends AppCompatActivity {
                     dialog.dismiss();
             }
         });
-        bDialogCancel.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                assignedList.clear();
-                for(int i=0; i<studentsAssigned.length; i++) {
-                    Log.d("studentsassigned", studentsAssigned[i]);
-                    studentAssignmentsIds.put(studentsAssigned[i], assignmentIds[i]);
-                    assignmentComplete.put(assignmentIds[i], assignmentIsComplete[i]);
-                    assignedTimes.put(assignmentIds[i], assignmentTimes[i]);
-
-                    Map<String, String> studentAssigned = new HashMap<>();
-                    for(Map<String, String> map : studentList){
-                        if(map.get("studentId").equals(studentsAssigned[i])){
-                            String assignmentId = studentAssignmentsIds.get(map.get("studentId"));
-                            String[] available = assignedTimes.get(assignmentId).split(";");
-                            String availableFrom = available[0];
-                            String availableTo = available[1];
-                            String isComplete = assignmentComplete.get(assignmentId);
-
-                            studentAssigned.put("studentId",map.get("studentId"));
-                            studentAssigned.put("from",availableFrom);
-                            studentAssigned.put("to",availableTo);
-                            studentAssigned.put("complete",isComplete);
-                            studentAssigned.put("Name",map.get("Name"));
-                            map.put("from", availableFrom);
-                            map.put("to", availableTo);
-                            map.put("complete",isComplete);
-                            assignedList.add(studentAssigned);
-                        }
-                    }
-
-                }
-                dialog.dismiss();
-            }
-        });
     }
     private boolean getStudents(String classId, final int position){
         new StudentTask(new StudentCallback() {
@@ -732,7 +695,6 @@ public class AssignmentActivity extends AppCompatActivity {
                     studentList.add(studentInfo);
                 }
                 studentAdapter.notifyDataSetChanged();
-                setContentPane(position);
             }
         }, context).execute(classId, teacherId);
         return true;
