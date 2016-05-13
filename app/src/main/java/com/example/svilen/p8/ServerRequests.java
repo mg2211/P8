@@ -22,8 +22,6 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.net.HttpURLConnection;
-import java.net.MalformedURLException;
-import java.net.ProtocolException;
 import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
@@ -916,8 +914,7 @@ class ClassTaskNew extends AsyncTask<String, Void, Map<String,HashMap<String, St
             int duration = Toast.LENGTH_LONG;
             Toast toast = Toast.makeText(context, "Response code " + responseCode +", " + "Message: " + generalResponse, duration);
             toast.show();
-        }
-        else {
+        } else {
             int duration = Toast.LENGTH_LONG;
             Toast toast = Toast.makeText(context, "Something went horribly wrong, no response code!", duration);
             toast.show();
@@ -1200,33 +1197,35 @@ class AssignmentLibTask extends AsyncTask<String, Void, HashMap<String, HashMap<
                 String response = IOUtils.toString(in, "UTF-8"); //convert to readable string
                 //convert to JSON object
                 Log.d("response",response);
+
                 JSONObject JSONResult = new JSONObject(response);
                 generalResponse = JSONResult.getString("generalResponse");
                 responseCode = JSONResult.getInt("responseCode");
+                if(method.equals("get")) {
+                    JSONArray assignments = JSONResult.getJSONArray("assignments");
+                    for (int i = 0; i < assignments.length(); i++) {
+                        JSONObject specificAssignment = assignments.getJSONObject(i);
+                        String assLibId = String.valueOf(specificAssignment.getInt("assignmentlibraryid"));
+                        String assignmentId = String.valueOf(specificAssignment.getInt("id"));
+                        String assignmentName = specificAssignment.getString("assignmentName");
+                        String textId = specificAssignment.getString("textId");
+                        String assignmentFrom = specificAssignment.getString("from");
+                        String assignmentTo = specificAssignment.getString("to");
+                        String assignmentStudentId = specificAssignment.getString("studentId");
+                        String isComplete = specificAssignment.getString("isComplete");
 
-                JSONArray assignments = JSONResult.getJSONArray("assignments");
-                for (int i = 0; i < assignments.length(); i++) {
-                    JSONObject specificAssignment = assignments.getJSONObject(i);
-                    String assLibId = String.valueOf(specificAssignment.getInt("assignmentlibraryid"));
-                    String assignmentId = String.valueOf(specificAssignment.getInt("id"));
-                    String assignmentName = specificAssignment.getString("assignmentName");
-                    String textId = specificAssignment.getString("textId");
-                    String assignmentFrom = specificAssignment.getString("from");
-                    String assignmentTo = specificAssignment.getString("to");
-                    String assignmentStudentId = specificAssignment.getString("studentId");
-                    String isComplete = specificAssignment.getString("isComplete");
+                        HashMap<String, String> assignmentInfo = new HashMap<>();
+                        assignmentInfo.put("assignmentlibraryid", assLibId);
+                        assignmentInfo.put("assignmentid", assignmentId);
+                        assignmentInfo.put("assignmentLibName", assignmentName);
+                        assignmentInfo.put("textId", textId);
+                        assignmentInfo.put("availableFrom", assignmentFrom);
+                        assignmentInfo.put("availableTo", assignmentTo);
+                        assignmentInfo.put("studentId", assignmentStudentId);
+                        assignmentInfo.put("isComplete", isComplete);
 
-                    HashMap<String, String> assignmentInfo = new HashMap<>();
-                    assignmentInfo.put("assignmentlibraryid", assLibId);
-                    assignmentInfo.put("assignmentid", assignmentId);
-                    assignmentInfo.put("assignmentLibName", assignmentName);
-                    assignmentInfo.put("textId", textId);
-                    assignmentInfo.put("availableFrom", assignmentFrom);
-                    assignmentInfo.put("availableTo",assignmentTo);
-                    assignmentInfo.put("studentId", assignmentStudentId);
-                    assignmentInfo.put("isComplete",isComplete);
-
-                    results.put("AssignmentId: " +  assignmentId, assignmentInfo);
+                        results.put("AssignmentId: " + assignmentId, assignmentInfo);
+                    }
                 }
 
 
@@ -1267,3 +1266,87 @@ class AssignmentLibTask extends AsyncTask<String, Void, HashMap<String, HashMap<
         }
 
     }
+
+class QuestionResultTask extends AsyncTask<String, Void, HashMap<String, HashMap<String, String>>> {
+    Context context;
+    ProgressDialog progressDialog;
+    QuestionResultCallback delegate;
+
+    public QuestionResultTask(QuestionResultCallback delegate, Context context) {
+        this.delegate = delegate;
+        this.context = context;
+        progressDialog = new ProgressDialog(context);
+        progressDialog.setCancelable(false);
+        progressDialog.setTitle("Processing...");
+        progressDialog.setMessage("Please wait ...");
+        progressDialog.show();
+    }
+
+    @Override
+    protected HashMap<String, HashMap<String, String>> doInBackground(String... params) {
+
+        String assignmentid = params[0];
+        String questionid = params[1];
+        String questionresultid = params[2];
+        String answerid = params[3];
+        String answeredcorrect = params[4];
+        String iscomplete = params[5];
+        HashMap<String, HashMap<String, String>> results = new HashMap<>();
+        HashMap<String, String> response = new HashMap<>();
+
+        try {
+            URL url = new URL("http://emilsiegenfeldt.dk/p8/questionresult.php");
+
+            HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+            connection.setRequestMethod("POST");
+            Uri.Builder builder = new Uri.Builder()
+                    .appendQueryParameter("assignmentid", assignmentid)
+                    .appendQueryParameter("questionid", questionid)
+                    .appendQueryParameter("id", questionresultid)
+                    .appendQueryParameter("answerid", answerid)
+                    .appendQueryParameter("answeredcorrect", answeredcorrect)
+                    .appendQueryParameter("iscomplete", iscomplete);
+
+            String query = builder.build().getEncodedQuery();
+            OutputStream os = connection.getOutputStream();
+
+            BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(os, "UTF-8"));
+            writer.write(query);
+            writer.flush();
+            writer.close();
+            os.close();
+            connection.connect();
+
+            InputStream in = new BufferedInputStream(connection.getInputStream());
+
+            String serverResponse = IOUtils.toString(in, "UTF-8");
+            Log.d("SERVERRESPONSE", serverResponse);
+
+            JSONObject JSONResult = new JSONObject(serverResponse);
+            String generalResponse = JSONResult.getString("generalResponse");
+            String responseCode = String.valueOf(JSONResult.getInt("responseCode"));
+
+            response.put("generalResponse", generalResponse);
+            response.put("responseCode", responseCode);
+
+
+        } catch (IOException e) {
+            response.put("generalResponse", "Server connection failed");
+            response.put("responseCode", "300");
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+        results.put("response", response);
+        return results;
+    }
+
+    protected void onPostExecute (HashMap<String, HashMap<String, String>> results){
+        progressDialog.dismiss();
+        int duration = Toast.LENGTH_LONG;
+        CharSequence alert = results.get("response").get("generalResponse");
+        Toast toast = Toast.makeText(context, alert, duration);
+        toast.show();
+        delegate.questresultdone(results);
+    }
+}
