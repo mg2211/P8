@@ -4,6 +4,7 @@ import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
@@ -22,6 +23,17 @@ import android.widget.SimpleAdapter;
 import android.widget.TextView;
 import android.widget.TimePicker;
 import android.widget.Toast;
+
+import com.github.mikephil.charting.charts.BarChart;
+import com.github.mikephil.charting.components.XAxis;
+import com.github.mikephil.charting.components.YAxis;
+import com.github.mikephil.charting.data.BarData;
+import com.github.mikephil.charting.data.BarDataSet;
+import com.github.mikephil.charting.data.BarEntry;
+import com.github.mikephil.charting.data.Entry;
+import com.github.mikephil.charting.highlight.Highlight;
+import com.github.mikephil.charting.interfaces.datasets.IBarDataSet;
+import com.github.mikephil.charting.listener.OnChartValueSelectedListener;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -72,6 +84,10 @@ public class AssignmentActivity extends AppCompatActivity {
     List<Map<String, String>> assignedList = new ArrayList<>();
     AssignmentListAdapter assignedAdapter;
     ArrayList<Integer> studentsAssigned = new ArrayList<>();
+    BarChart mChart;
+    ArrayList<BarEntry> yVal = new ArrayList<>();
+    ArrayList<String> xVals = new ArrayList<>();
+    ArrayList<IBarDataSet> dataSets = new ArrayList<>();
 
 
     @Override
@@ -89,6 +105,7 @@ public class AssignmentActivity extends AppCompatActivity {
         bSave = (Button) findViewById(R.id.bSave);
         bAssign = (Button) findViewById(R.id.bAssign);
         tvStudentPerformance = (TextView) findViewById(R.id.tvStudentPerformance);
+        mChart = (BarChart) findViewById(R.id.chart);
 
         assignmentAdapter= new SimpleAdapter(this, assignmentLibList,
                 android.R.layout.simple_list_item_1,
@@ -608,10 +625,16 @@ public class AssignmentActivity extends AppCompatActivity {
                 etAssignmentText.setEnabled(false);
                 etAssignmentName.setEnabled(false);
                 bSave.setEnabled(false);
+                mChart.setVisibility(View.VISIBLE);
+                tvStudentPerformance.setVisibility(View.VISIBLE);
+                barChart();
+                calculateStats();
             } else {
                 etAssignmentName.setEnabled(true);
                 etAssignmentText.setEnabled(true);
                 bSave.setEnabled(true);
+                mChart.setVisibility(View.INVISIBLE);
+                tvStudentPerformance.setVisibility(View.INVISIBLE);
             }
         } else {
             etAssignmentName.setText("");
@@ -627,6 +650,28 @@ public class AssignmentActivity extends AppCompatActivity {
         }
 
     }
+
+    private void calculateStats() {
+        yVal.clear();
+        xVals.clear();
+        dataSets.clear();
+        Log.d("assignedlist",assignedList.toString());
+        for(int i = 0; i<assignedList.size(); i++){
+            String studentName = assignedList.get(i).get("Name");
+            if(assignedList.get(i).get("isComplete").equals("1")){
+                int rand = (int)(Math.random()*101);
+                yVal.add(new BarEntry(rand,i));
+                xVals.add(studentName);
+
+            }
+
+        }
+        BarDataSet set = new BarDataSet(yVal,"Students");
+        dataSets.add(set);
+        mChart.notifyDataSetChanged();
+        mChart.invalidate();
+    }
+
     private void assignmentDialog(final int assignmentListPos){
         AlertDialog.Builder builder = new AlertDialog.Builder(context);
         LayoutInflater inflater = getLayoutInflater();
@@ -771,5 +816,49 @@ public class AssignmentActivity extends AppCompatActivity {
             e.printStackTrace();
         }
         return null;
+    }
+
+    private void barChart(){
+        //design barChart
+        mChart = (BarChart) findViewById(R.id.chart);
+        mChart.setPinchZoom(false);
+        mChart.setDoubleTapToZoomEnabled(false);
+        mChart.setScaleEnabled(false);
+        mChart.setDrawBarShadow(false);
+        mChart.setDrawGridBackground(false);
+        mChart.animateY(1250);
+        mChart.getLegend().setEnabled(false);
+        mChart.setDescription("");
+
+        XAxis xAxis = mChart.getXAxis();
+        xAxis.setPosition(XAxis.XAxisPosition.BOTTOM);
+        xAxis.setSpaceBetweenLabels(0);
+        xAxis.setDrawGridLines(false);
+
+        YAxis yaxisleft = mChart.getAxisLeft();
+        YAxis yaxisright = mChart.getAxisRight();
+        yaxisleft.setLabelCount(3, true);
+        yaxisright.setLabelCount(3,true);
+        yaxisleft.setAxisMaxValue(100);
+        yaxisright.setAxisMaxValue(100);
+        yaxisleft.setAxisMinValue(0);
+        yaxisright.setAxisMinValue(0);
+
+
+        mChart.getAxisLeft().setDrawGridLines(false);
+        BarData data = new BarData(xVals, dataSets);
+
+        mChart.setData(data);
+        mChart.setOnChartValueSelectedListener(new OnChartValueSelectedListener() {
+            @Override
+            public void onValueSelected(Entry entry, int i, Highlight highlight) {
+
+            }
+
+            @Override
+            public void onNothingSelected() {
+
+            }
+        });
     }
 }

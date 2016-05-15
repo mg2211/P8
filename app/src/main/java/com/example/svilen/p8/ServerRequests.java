@@ -1292,6 +1292,7 @@ class QuestionResultTask extends AsyncTask<String, Void, HashMap<String, HashMap
         String answeredcorrect = params[4];
         String iscomplete = params[5];
         String totaltimespent = params[6];
+        String method = params[7];
         HashMap<String, HashMap<String, String>> results = new HashMap<>();
         HashMap<String, String> response = new HashMap<>();
 
@@ -1301,6 +1302,7 @@ class QuestionResultTask extends AsyncTask<String, Void, HashMap<String, HashMap
             HttpURLConnection connection = (HttpURLConnection) url.openConnection();
             connection.setRequestMethod("POST");
             Uri.Builder builder = new Uri.Builder()
+                    .appendQueryParameter("method",method)
                     .appendQueryParameter("assignmentid", assignmentid)
                     .appendQueryParameter("questionid", questionid)
                     .appendQueryParameter("id", questionresultid)

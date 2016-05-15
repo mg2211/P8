@@ -420,7 +420,7 @@ public class ReadingActivity extends AppCompatActivity  {
                             public void questresultdone(HashMap<String, HashMap<String, String>> questresult) {
 
                             }
-                        }, context).execute(assignmentId, lastElement, "", answerIdtoChosenAnswer, "1", "1", "1");
+                        }, context).execute(assignmentId, lastElement, "", answerIdtoChosenAnswer, "1", "1", "1","insert");
 
                     } else {
                         Log.d("YOU HAVE ANSWERED ", "INCORRECT!");
@@ -431,7 +431,7 @@ public class ReadingActivity extends AppCompatActivity  {
                             public void questresultdone(HashMap<String, HashMap<String, String>> questresult) {
 
                             }
-                        }, context).execute(assignmentId, lastElement, "", answerIdtoChosenAnswer, "0", "1", "1");
+                        }, context).execute(assignmentId, lastElement, "", answerIdtoChosenAnswer, "0", "1", "1","insert");
                     }
                     Log.d("STUDENTANSWER: ", correctOrNot.toString());
 
@@ -468,7 +468,7 @@ public class ReadingActivity extends AppCompatActivity  {
                             public void questresultdone(HashMap<String, HashMap<String, String>> questresult) {
 
                             }
-                        }, context).execute(assignmentId, "", "", "", "", "", totalSeconds);
+                        }, context).execute(assignmentId, "", "", "", "", "", totalSeconds,"insert");
                     }
 
 
