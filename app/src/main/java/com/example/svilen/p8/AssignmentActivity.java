@@ -13,7 +13,6 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.WindowManager;
-import android.widget.AbsListView;
 import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.DatePicker;
@@ -24,27 +23,17 @@ import android.widget.TextView;
 import android.widget.TimePicker;
 import android.widget.Toast;
 
-import com.github.mikephil.charting.charts.BarChart;
-import com.github.mikephil.charting.components.XAxis;
-import com.github.mikephil.charting.components.YAxis;
-import com.github.mikephil.charting.data.BarData;
-import com.github.mikephil.charting.data.BarEntry;
-import com.github.mikephil.charting.data.Entry;
-import com.github.mikephil.charting.highlight.Highlight;
-import com.github.mikephil.charting.interfaces.datasets.IBarDataSet;
-import com.github.mikephil.charting.listener.OnChartValueSelectedListener;
-
-import org.apache.commons.lang3.ArrayUtils;
-
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
 
 public class AssignmentActivity extends AppCompatActivity {
 
@@ -62,37 +51,27 @@ public class AssignmentActivity extends AppCompatActivity {
     ListView lvAssignments;
     TextView tvStudentPerformance;
     SimpleAdapter assignmentAdapter;
-    List<Map<String, String>> assignmentList = new ArrayList<>();
+    List<Map<String, String>> assignmentLibList = new ArrayList<>();
     List<Map<String, String>> textList = new ArrayList<>();
+    HashMap<String,HashMap<String, String>> assignments;
+
     SimpleAdapter textAdapter;
     int assignmentLibTextId;
     String assignmentLibId;
     String assignmentLibName;
     int dialogSelected;
-    ArrayList<BarEntry> yVal = new ArrayList<>();
-    ArrayList<String> xVals = new ArrayList<>();
-    ArrayList<IBarDataSet> dataSets = new ArrayList<>();
-    Long assignmentFrom = null;
-    Long assignmentTo = null;
-    String[] studentsAssigned;
-    String[] assignmentIds;
-    String[] assignmentIsComplete;
-    String[] assignmentTimes;
-    HashMap<String, String> studentAssignmentsIds = new HashMap<>();
-    HashMap<String, String> assignmentComplete = new HashMap<>();
-    HashMap<String, String> assignedTimes = new HashMap<>();
 
     boolean newAssignment;
     boolean changed;
-    HashMap<Integer, Integer> textListIds = new HashMap<>();
-    BarChart mChart;
 
+    HashMap<Integer, Integer> textListIds = new HashMap<>();
     List<Map<String, String>> studentList = new ArrayList<>();
     SimpleAdapter studentAdapter;
     List<Map<String, String>> classList = new ArrayList<>();
     SimpleAdapter classAdapter;
     List<Map<String, String>> assignedList = new ArrayList<>();
     AssignmentListAdapter assignedAdapter;
+    ArrayList<Integer> studentsAssigned = new ArrayList<>();
 
 
     @Override
@@ -111,7 +90,7 @@ public class AssignmentActivity extends AppCompatActivity {
         bAssign = (Button) findViewById(R.id.bAssign);
         tvStudentPerformance = (TextView) findViewById(R.id.tvStudentPerformance);
 
-        assignmentAdapter= new SimpleAdapter(this, assignmentList,
+        assignmentAdapter= new SimpleAdapter(this, assignmentLibList,
                 android.R.layout.simple_list_item_1,
                 new String[]{"assignmentLibName"},
                 new int[]{android.R.id.text1});
@@ -126,7 +105,6 @@ public class AssignmentActivity extends AppCompatActivity {
                 android.R.layout.simple_list_item_1,
                 new String[] {"Name"},
                 new int[] {android.R.id.text1});
-        //assignedAdapter = new SimpleAdapter(this, assignedList,R.layout.assignment_list_item,new String[]{"Name"},new int[] {android.R.id.text1});
         assignedAdapter = new AssignmentListAdapter(this,assignedList);
         classAdapter = new SimpleAdapter(this, classList,
                 android.R.layout.simple_list_item_2,
@@ -200,7 +178,7 @@ public class AssignmentActivity extends AppCompatActivity {
             }
         });
         getTexts();
-        getAssignments();
+        getAssignmentLib();
         setNew(true);
         getStudents("");
     }
@@ -210,6 +188,26 @@ public class AssignmentActivity extends AppCompatActivity {
         super.onBackPressed();
         Intent backIntent = new Intent(this,TeacherActivity.class);
         startActivity(backIntent);
+    }
+    private void setChanged(boolean value){
+        changed = value;
+        Log.d(".......","changed value"+ String.valueOf(changed));
+        if(value) {
+            bAssign.setEnabled(false);
+            bAssign.setText("Please save before assigning to students");
+        } else {
+            bAssign.setEnabled(true);
+            bAssign.setText("Assign to students");
+        }
+    }
+    private void setNew(boolean value){
+        if(value){
+            bAssign.setEnabled(false);
+        } else {
+            bAssign.setEnabled(true);
+        }
+        newAssignment = value;
+        Log.d(".......","new value:"+ String.valueOf(newAssignment));
     }
 
     private void textDialog(final int textId) {
@@ -312,7 +310,7 @@ public class AssignmentActivity extends AppCompatActivity {
                     if(results.get("response").get("responseCode").equals("100")){
                         setChanged(false);
                         setNew(false);
-                        getAssignments();
+                        getAssignmentLib();
                     }
                 }
             },context).executeTask("create",teacherId,"",etAssignmentName.getText().toString(), String.valueOf(assignmentLibTextId));
@@ -333,7 +331,7 @@ public class AssignmentActivity extends AppCompatActivity {
                     if(results.get("response").get("responseCode").equals("100")){
                         setChanged(false);
                         setNew(false);
-                        getAssignments();
+                        getAssignmentLib();
                     }
                 }
             },context).executeTask("update",teacherId, assignmentLibId,etAssignmentName.getText().toString(), String.valueOf(assignmentLibTextId));
@@ -346,344 +344,6 @@ public class AssignmentActivity extends AppCompatActivity {
             return false;
         }
 
-    }
-    private void setContentPane(final int position){
-        Log.d("called with pos:", String.valueOf(position));
-        barChart();
-        getAssignments();
-        Log.d("assignment List from CP",assignmentList.toString());
-        bAssign.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                assignmentDialog(position);
-            }
-        });
-        if(position >= 0) {
-            assignmentLibTextId = Integer.parseInt(assignmentList.get(position).get("assignmentText"));
-            int textListPos = textListIds.get(assignmentLibTextId);
-            etAssignmentName.setText(assignmentList.get(position).get("assignmentLibName"));
-            assignmentLibId = assignmentList.get(position).get("assignmentLibId");
-            etAssignmentText.setText(textList.get(textListPos).get("textname"));
-            assignmentLibName = assignmentList.get(position).get("assignmentLibName");
-            studentsAssigned = assignmentList.get(position).get("assignedStudents").split("#");
-            assignmentIds = assignmentList.get(position).get("assignmentIds").split("#");
-            assignmentIsComplete = assignmentList.get(position).get("isComplete").split("#");
-            assignmentTimes = assignmentList.get(position).get("assignmentTimes").split("#");
-            assignedList.clear();
-            for(int i=0; i<studentsAssigned.length; i++) {
-                Log.d("studentsassigned", studentsAssigned[i]);
-                studentAssignmentsIds.put(studentsAssigned[i], assignmentIds[i]);
-                assignmentComplete.put(assignmentIds[i], assignmentIsComplete[i]);
-                assignedTimes.put(assignmentIds[i], assignmentTimes[i]);
-
-                Map<String, String> studentAssigned = new HashMap<>();
-                for(Map<String, String> map : studentList){
-                    if(map.get("studentId").equals(studentsAssigned[i])){
-                        String assignmentId = studentAssignmentsIds.get(map.get("studentId"));
-                        String[] available = assignedTimes.get(assignmentId).split(";");
-                        String availableFrom = available[0];
-                        String availableTo = available[1];
-                        String isComplete = assignmentComplete.get(assignmentId);
-
-                        studentAssigned.put("studentId",map.get("studentId"));
-                        studentAssigned.put("from",availableFrom);
-                        studentAssigned.put("to",availableTo);
-                        studentAssigned.put("complete",isComplete);
-                        studentAssigned.put("Name",map.get("Name"));
-                        map.put("from", availableFrom);
-                        map.put("to", availableTo);
-                        map.put("complete",isComplete);
-                        assignedList.add(studentAssigned);
-                    }
-                }
-
-            }
-            Log.d("assigned list", assignedList.toString());
-            Log.d("student List",studentList.toString());
-            assignedAdapter.notifyDataSetChanged();
-            Log.d("assigned list size", String.valueOf(assignedAdapter.getCount()));
-            studentAdapter.notifyDataSetChanged();
-            setChanged(false);
-            setNew(false);
-            dataSets.clear();
-            xVals.clear();
-            yVal.clear();
-            if (!assignmentList.get(position).get("assignedStudents").equals("")) {
-                etAssignmentName.setEnabled(false);
-                etAssignmentText.setEnabled(false);
-                bSave.setEnabled(false);
-                mChart.setVisibility(View.VISIBLE);
-                tvStudentPerformance.setVisibility(View.VISIBLE);
-            } else {
-                etAssignmentText.setEnabled(true);
-                etAssignmentName.setEnabled(true);
-                bSave.setEnabled(true);
-                mChart.setVisibility(View.INVISIBLE);
-                tvStudentPerformance.setVisibility(View.INVISIBLE);
-            }
-            mChart.notifyDataSetChanged();
-            mChart.invalidate();
-        } else {
-            mChart.setVisibility(View.INVISIBLE);
-            etAssignmentName.setText("");
-            etAssignmentName.setEnabled(true);
-            etAssignmentText.setText("");
-            etAssignmentText.setEnabled(true);
-            bSave.setEnabled(true);
-            setChanged(false);
-            setNew(true);
-            assignmentLibName = "";
-            assignmentLibTextId = 0;
-            assignmentLibId = "";
-        }
-    }
-
-    private void barChart(){
-        //design barChart
-        mChart = (BarChart) findViewById(R.id.chart);
-        mChart.setPinchZoom(false);
-        mChart.setDoubleTapToZoomEnabled(false);
-        mChart.setScaleEnabled(false);
-        mChart.setDrawBarShadow(false);
-        mChart.setDrawGridBackground(false);
-        mChart.animateY(1250);
-        mChart.getLegend().setEnabled(false);
-        mChart.setDescription("");
-
-        XAxis xAxis = mChart.getXAxis();
-        xAxis.setPosition(XAxis.XAxisPosition.BOTTOM);
-        xAxis.setSpaceBetweenLabels(0);
-        xAxis.setDrawGridLines(false);
-
-        YAxis yaxisleft = mChart.getAxisLeft();
-        YAxis yaxisright = mChart.getAxisRight();
-        yaxisleft.setLabelCount(3, true);
-        yaxisright.setLabelCount(3,true);
-        yaxisleft.setAxisMaxValue(100);
-        yaxisright.setAxisMaxValue(100);
-        yaxisleft.setAxisMinValue(0);
-        yaxisright.setAxisMinValue(0);
-
-
-        mChart.getAxisLeft().setDrawGridLines(false);
-        BarData data = new BarData(xVals, dataSets);
-
-        mChart.setData(data);
-        mChart.setOnChartValueSelectedListener(new OnChartValueSelectedListener() {
-            @Override
-            public void onValueSelected(Entry entry, int i, Highlight highlight) {
-            }
-
-            @Override
-            public void onNothingSelected() {
-
-            }
-        });
-    }
-    private void setChanged(boolean value){
-        changed = value;
-        Log.d(".......","changed value"+ String.valueOf(changed));
-        if(value) {
-            bAssign.setEnabled(false);
-            bAssign.setText("Please save before assigning to students");
-        } else {
-            bAssign.setEnabled(true);
-            bAssign.setText("Assign to students");
-        }
-    }
-    private void setNew(boolean value){
-        if(value){
-            bAssign.setEnabled(false);
-        } else {
-            bAssign.setEnabled(true);
-        }
-        newAssignment = value;
-        Log.d(".......","new value:"+ String.valueOf(newAssignment));
-    }
-    private void getTexts(){
-        new TextTask(new TextCallback() {
-            @Override
-            public void TextCallBack(HashMap<String, HashMap<String, String>> results) {
-                results.remove("response");
-                textList.clear();
-                int i = 0;
-                for (Map.Entry<String, HashMap<String, String>> text : results.entrySet()) {
-                    Map<String, String> textInfo = new HashMap<>();
-                    String textId = text.getValue().get("id");
-                    String textName = text.getValue().get("textname");
-                    String textContent = text.getValue().get("textcontent");
-                    String textBook = text.getValue().get("textbook");
-                    String complexity = text.getValue().get("complexity");
-                    textInfo.put("textname", textName);
-                    textInfo.put("textcontent", textContent);
-                    textInfo.put("textbook", textBook);
-                    textInfo.put("complexity", "Complexity: " + complexity);
-                    textInfo.put("textid", textId);
-                    textList.add(textInfo);
-                    textListIds.put(Integer.valueOf(textId),i);
-                    i++;
-                }
-                textAdapter.notifyDataSetChanged();
-            }
-        },context).executeTask("get","","","",0);
-    }
-    private boolean getAssignments(){
-        new AssignmentLibTask(new AssignmentLibCallback() {
-            @Override
-            public void AssignmentLibDone(HashMap<String, HashMap<String, String>> results) {
-                results.remove("response");
-                assignmentList.clear();
-                for (Map.Entry<String, HashMap<String, String>> assignment : results.entrySet()) {
-                    final Map<String, String> assignmentInfo = new HashMap<>();
-                    String assignmentId = assignment.getValue().get("id");
-                    String assignmentName = assignment.getValue().get("name");
-                    String assignmentText = assignment.getValue().get("textId");
-                    String assignedStudents = assignment.getValue().get("assignedStudents");
-                    String assignmentIds = assignment.getValue().get("assignmentIds");
-                    String isComplete = assignment.getValue().get("isComplete");
-                    String assignmentTimes = assignment.getValue().get("assignmentTimes");
-
-                    assignmentInfo.put("assignmentLibId",assignmentId);
-                    assignmentInfo.put("assignmentLibName",assignmentName);
-                    assignmentInfo.put("assignmentText",assignmentText);
-                    assignmentInfo.put("assignedStudents",assignedStudents);
-                    assignmentInfo.put("assignmentIds",assignmentIds);
-                    assignmentInfo.put("isComplete",isComplete);
-                    assignmentInfo.put("assignmentTimes",assignmentTimes);
-                    assignmentList.add(assignmentInfo);
-                }
-                Log.d("assignment List", assignmentList.toString());
-                assignmentAdapter.notifyDataSetChanged();
-            }
-        },context).executeTask("get",teacherId,"","","");
-        return true;
-    }
-    private void assignmentDialog(final int assignmentListPos){
-        AlertDialog.Builder builder = new AlertDialog.Builder(context);
-        LayoutInflater inflater = getLayoutInflater();
-        final View layout = inflater.inflate(R.layout.dialog_assign, null);
-        builder.setView(layout);
-        final AlertDialog dialog = builder.create();
-        dialog.setCanceledOnTouchOutside(false);
-        dialog.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_UNCHANGED);
-        dialog.show();
-        ListView lvDialogClasses = (ListView) layout.findViewById(R.id.lvDialogClasses);
-        final ListView lvDialogStudents = (ListView) layout.findViewById(R.id.lvDialogStudents);
-        ListView lvDialogAssigned = (ListView) layout.findViewById(R.id.lvDialogAssigned);
-
-        Button bDialogAssign = (Button) layout.findViewById(R.id.bDialogAssign);
-        lvDialogClasses.setAdapter(classAdapter);
-        lvDialogStudents.setAdapter(studentAdapter);
-        lvDialogAssigned.setAdapter(assignedAdapter);
-
-        getClasses();
-
-        lvDialogClasses.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                Map<String, String> classData = classList.get(position);
-                String classId = classData.get("ClassId");
-                if(getStudents(classId)){
-                    Log.d("students",studentList.toString());
-                }
-
-            }
-        });
-
-        lvDialogStudents.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, final int position, long id) {
-
-                final Map<String, String> studentData = studentList.get(position);
-                Log.d("student data before",studentData.toString());
-                if(studentData.get("complete").equals("0")){
-                    if(assignedList.contains(studentData)){
-                        assignedList.remove(studentData);
-                    } else {
-                        datePicker(Long.valueOf(studentData.get("from")), new DatePickerCallback() {
-                            @Override
-                            public void dateSelected(final Long from) {
-
-                                if(from != null) {
-                                    datePicker(from, new DatePickerCallback() {
-                                        @Override
-                                        public void dateSelected(Long to) {
-                                            if(to != null){
-                                                studentData.put("from", String.valueOf(from));
-                                                studentData.put("to", String.valueOf(to));
-                                                assignedList.add(studentData);
-                                                assignedAdapter.notifyDataSetChanged();
-                                            }
-                                        }
-                                    });
-
-                                }
-                            }
-                        });
-                    }
-                    assignedAdapter.notifyDataSetChanged();
-                } else {
-                    Log.d("..........","completed assignments cannot be removed");
-                }
-
-                Log.d("assignedList",assignedList.toString());
-
-            }
-        });
-
-        bDialogAssign.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                    Log.d("assignments saved",assignedList.toString());
-                    Log.d("Students assigned list", studentAssignmentsIds.toString());
-                    for (int i = 0; i < assignedList.size(); i++) {
-                        String assignmentId = studentAssignmentsIds.get(assignedList.get(i).get("studentId"));
-                        String from = assignedList.get(i).get("from");
-                        String to = assignedList.get(i).get("to");
-                        String studentId = assignedList.get(i).get("studentId");
-
-                        if (assignmentId != null) {
-                            //update
-                            Log.d("update assignemt", assignmentId);
-                            new AssignmentTask(new AssignmentCallback() {
-                                @Override
-                                public void assignmentDone(HashMap<String, HashMap<String, String>> assignments) {
-                                }
-                            }, context).executeTask("update", "", assignmentLibId, from, to, assignmentId);
-                        } else {
-                            //insert
-                            Log.d("insert assignment", "true");
-                            new AssignmentTask(new AssignmentCallback() {
-                                @Override
-                                public void assignmentDone(HashMap<String, HashMap<String, String>> assignments) {
-                                }
-                            }, context).executeTask("assign", studentId, assignmentLibId, from, to, "");
-                        }
-
-                        for (Map.Entry<String, String> entry : studentAssignmentsIds.entrySet()) {
-                            String student = entry.getKey();
-                            String studentAssignmentId = entry.getValue();
-                            for (Map<String, String> map : studentList) {
-                                if (map.get("studentId").equals(student)) {
-                                    if (!assignedList.contains(map)) {
-                                        Log.d("delete assignment id", studentAssignmentId);
-                                        new AssignmentTask(new AssignmentCallback() {
-                                            @Override
-                                            public void assignmentDone(HashMap<String, HashMap<String, String>> assignments) {
-                                            }
-                                        }, context).executeTask("delete", "", "", "", "", studentAssignmentId);
-                                    }
-                                }
-
-                            }
-                        }
-
-                    }
-                    Intent intent = new Intent(context, AssignmentActivity.class);
-                    intent.putExtra("position",assignmentListPos);
-                    startActivity(intent);
-            }
-        });
     }
     private boolean getStudents(String classId){
         new StudentTask(new StudentCallback() {
@@ -699,9 +359,6 @@ public class AssignmentActivity extends AppCompatActivity {
                     String studentId = student.getValue().get("studentId");
                     studentInfo.put("Name", studentName);
                     studentInfo.put("studentId",studentId);
-                    studentInfo.put("from","12345");
-                    studentInfo.put("complete","0");
-                    studentInfo.put("to","678910");
                     studentList.add(studentInfo);
                 }
                 studentAdapter.notifyDataSetChanged();
@@ -729,6 +386,63 @@ public class AssignmentActivity extends AppCompatActivity {
                 classAdapter.notifyDataSetChanged();
             }
         },context).execute(teacherId);
+    }
+    private boolean getAssignmentLib(){
+        new AssignmentLibTask(new AssignmentLibCallback() {
+            @Override
+            public void AssignmentLibDone(HashMap<String, HashMap<String, String>> results) {
+                results.remove("response");
+                assignmentLibList.clear();
+                for (Map.Entry<String, HashMap<String, String>> assignment : results.entrySet()) {
+                    final Map<String, String> assignmentInfo = new HashMap<>();
+                    String assignmentId = assignment.getValue().get("id");
+                    String assignmentName = assignment.getValue().get("name");
+                    String assignmentText = assignment.getValue().get("textId");
+                    String assignedStudents = assignment.getValue().get("assignedStudents");
+                    String assignmentIds = assignment.getValue().get("assignmentIds");
+                    String isComplete = assignment.getValue().get("isComplete");
+                    String assignmentTimes = assignment.getValue().get("assignmentTimes");
+
+                    assignmentInfo.put("assignmentLibId",assignmentId);
+                    assignmentInfo.put("assignmentLibName",assignmentName);
+                    assignmentInfo.put("assignmentText",assignmentText);
+                    assignmentInfo.put("assignedStudents",assignedStudents);
+                    assignmentInfo.put("assignmentIds",assignmentIds);
+                    assignmentInfo.put("isComplete",isComplete);
+                    assignmentInfo.put("assignmentTimes",assignmentTimes);
+                    assignmentLibList.add(assignmentInfo);
+                }
+                assignmentAdapter.notifyDataSetChanged();
+            }
+        },context).executeTask("get",teacherId,"","","");
+        return true;
+    }
+    private void getTexts(){
+        new TextTask(new TextCallback() {
+            @Override
+            public void TextCallBack(HashMap<String, HashMap<String, String>> results) {
+                results.remove("response");
+                textList.clear();
+                int i = 0;
+                for (Map.Entry<String, HashMap<String, String>> text : results.entrySet()) {
+                    Map<String, String> textInfo = new HashMap<>();
+                    String textId = text.getValue().get("id");
+                    String textName = text.getValue().get("textname");
+                    String textContent = text.getValue().get("textcontent");
+                    String textBook = text.getValue().get("textbook");
+                    String complexity = text.getValue().get("complexity");
+                    textInfo.put("textname", textName);
+                    textInfo.put("textcontent", textContent);
+                    textInfo.put("textbook", textBook);
+                    textInfo.put("complexity", "Complexity: " + complexity);
+                    textInfo.put("textid", textId);
+                    textList.add(textInfo);
+                    textListIds.put(Integer.valueOf(textId),i);
+                    i++;
+                }
+                textAdapter.notifyDataSetChanged();
+            }
+        },context).executeTask("get","","","",0);
     }
     private void datePicker(final Long offsetDate, final DatePickerCallback callback) {
         AlertDialog.Builder builder = new AlertDialog.Builder(context);
@@ -851,5 +565,211 @@ public class AssignmentActivity extends AppCompatActivity {
                 callback.dateSelected(null);
             }
         });
+    }
+
+    private void setContentPane(final int position){
+        bAssign.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                assignmentDialog(position);
+            }
+        });
+
+        if(position >= 0) {
+            assignmentLibTextId = Integer.parseInt(assignmentLibList.get(position).get("assignmentText"));
+            int textListPos = textListIds.get(assignmentLibTextId);
+            etAssignmentName.setText(assignmentLibList.get(position).get("assignmentLibName"));
+            assignmentLibId = assignmentLibList.get(position).get("assignmentLibId");
+            etAssignmentText.setText(textList.get(textListPos).get("textname"));
+            assignmentLibName = assignmentLibList.get(position).get("assignmentLibName");
+            assignedList.clear();
+            studentsAssigned.clear();
+            setChanged(false);
+            setNew(false);
+
+            assignments = new HashMap<>(getAssignments(assignmentLibId));
+            assignments.remove("response");
+
+           for (Map.Entry<String, HashMap<String, String>> assignment : assignments.entrySet()) {
+
+               HashMap<String, String> specificAssignment = assignment.getValue();
+               for(Map<String, String> student : studentList){
+                   if(specificAssignment.get("studentId").equals(student.get("studentId"))){
+                       specificAssignment.put("Name",student.get("Name"));
+                   }
+               }
+               assignedList.add(specificAssignment);
+               assignedAdapter.notifyDataSetChanged();
+
+           }
+            Log.d("ASSIGNED LIST",assignedList.toString());
+            Log.d("ASSIGNMENT HM",assignments.toString());
+            if(!assignments.isEmpty()){
+                etAssignmentText.setEnabled(false);
+                etAssignmentName.setEnabled(false);
+                bSave.setEnabled(false);
+            } else {
+                etAssignmentName.setEnabled(true);
+                etAssignmentText.setEnabled(true);
+                bSave.setEnabled(true);
+            }
+        } else {
+            etAssignmentName.setText("");
+            etAssignmentName.setEnabled(true);
+            etAssignmentText.setText("");
+            etAssignmentText.setEnabled(true);
+            bSave.setEnabled(true);
+            setChanged(false);
+            setNew(true);
+            assignmentLibName = "";
+            assignmentLibTextId = 0;
+            assignmentLibId = "";
+        }
+
+    }
+    private void assignmentDialog(final int assignmentListPos){
+        AlertDialog.Builder builder = new AlertDialog.Builder(context);
+        LayoutInflater inflater = getLayoutInflater();
+        final View layout = inflater.inflate(R.layout.dialog_assign, null);
+        builder.setView(layout);
+        final AlertDialog dialog = builder.create();
+        dialog.setCanceledOnTouchOutside(false);
+        dialog.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_UNCHANGED);
+        dialog.show();
+        ListView lvDialogClasses = (ListView) layout.findViewById(R.id.lvDialogClasses);
+        final ListView lvDialogStudents = (ListView) layout.findViewById(R.id.lvDialogStudents);
+        ListView lvDialogAssigned = (ListView) layout.findViewById(R.id.lvDialogAssigned);
+
+        Button bDialogAssign = (Button) layout.findViewById(R.id.bDialogAssign);
+        lvDialogClasses.setAdapter(classAdapter);
+        lvDialogStudents.setAdapter(studentAdapter);
+        lvDialogAssigned.setAdapter(assignedAdapter);
+        getClasses();
+
+        lvDialogClasses.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                Map<String, String> classData = classList.get(position);
+                String classId = classData.get("ClassId");
+                if(getStudents(classId)){
+                    Log.d("students",studentList.toString());
+                }
+
+            }
+        });
+
+        lvDialogStudents.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, final int position, long id) {
+                for(Map<String, String> assignments : assignedList){
+                    if(studentList.get(position).get("studentId").equals(assignments.get("studentId")) && assignments.get("isComplete").equals("0")){
+                        int duration = Toast.LENGTH_LONG;
+                        CharSequence alert = "Student already assigned - Please remove first";
+                        Toast toast = Toast.makeText(context, alert, duration);
+                        toast.show();
+                        return;
+                    }
+                }
+                datePicker((System.currentTimeMillis()-60000)/1000, new DatePickerCallback() {
+                    @Override
+                    public void dateSelected(final Long from) {
+                        if(from != null){
+                            datePicker(from, new DatePickerCallback() {
+                                @Override
+                                public void dateSelected(Long to) {
+                                    if(to != null){
+                                        HashMap<String, String> assignment = new HashMap<>();
+                                        assignment.put("availableFrom", String.valueOf(from));
+                                        assignment.put("availableTo", String.valueOf(to));
+                                        assignment.put("studentId",studentList.get(position).get("studentId"));
+                                        assignment.put("Name",studentList.get(position).get("Name"));
+                                        assignment.put("assignmentLibName",assignmentLibName);
+                                        assignment.put("assignmentLibId",assignmentLibId);
+                                        assignment.put("isComplete","0");
+                                        assignment.put("textId", String.valueOf(assignmentLibTextId));
+                                        assignment.put("new","true");
+                                        assignedList.add(assignment);
+                                        assignedAdapter.notifyDataSetChanged();
+                                    }
+                                }
+                            });
+                        }
+                    }
+                });
+            }
+
+        });
+
+        lvDialogAssigned.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, final int position, long id) {
+                new AlertDialog.Builder(context)
+                        .setIcon(android.R.drawable.ic_dialog_alert)
+                        .setTitle("Confirm")
+                        .setMessage("Are you sure that you want to delete the assignment?")
+                        .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                if(assignedList.get(position).get("assignmentid") != null) {
+                                    Log.d("assigned id", assignedList.get(position).get("assignmentid"));
+                                    String assignmentId = assignedList.get(position).get("assignmentid");
+                                    new AssignmentTask(new AssignmentCallback() {
+                                        @Override
+                                        public void assignmentDone(HashMap<String, HashMap<String, String>> assignments) {
+
+                                        }
+                                    }, context).executeTask("delete", "", "", "", "", assignmentId);
+                                }
+                                assignedList.remove(position);
+                                assignedAdapter.notifyDataSetChanged();
+                            }
+                        })
+                        .setNegativeButton("No", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+
+                            }
+                        })
+                        .show();
+            }
+        });
+
+        bDialogAssign.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                for(int i = 0; i<assignedList.size();i++){
+                    Map<String, String> assignment = assignedList.get(i);
+                    if(assignment.get("new") != null){
+                        new AssignmentTask(new AssignmentCallback() {
+                            @Override
+                            public void assignmentDone(HashMap<String, HashMap<String, String>> assignments) {
+
+                            }
+                        },context).executeTask("assign",assignment.get("studentId"),assignmentLibId,assignment.get("availableFrom"),assignment.get("availableTo"),"");
+                    }
+                }
+                setContentPane(assignmentListPos);
+                dialog.dismiss();
+            }
+        });
+    }
+
+
+    private HashMap<String, HashMap<String,String>> getAssignments(String assignmentLibId){
+        try {
+            return new AssignmentTask(new AssignmentCallback() {
+                @Override
+                public void assignmentDone(HashMap<String, HashMap<String, String>> assignments) {
+
+                }
+            },context).execute("get","",assignmentLibId,"","","").get(15, TimeUnit.SECONDS);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        } catch (ExecutionException e) {
+            e.printStackTrace();
+        } catch (TimeoutException e) {
+            e.printStackTrace();
+        }
+        return null;
     }
 }

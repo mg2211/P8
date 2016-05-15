@@ -38,14 +38,14 @@ public class AssignmentListAdapter extends BaseAdapter {
             holder = (ViewHolder) convertView.getTag();
         }
         int color;
-        if(assignments.get(position).get("complete").equals("0")){
+        if(assignments.get(position).get("isComplete").equals("0")){
             color = Color.RED;
         } else {
             color = Color.GREEN;
         }
 
-        Long from = Long.parseLong(assignments.get(position).get("from"));
-        Long to = Long.parseLong(assignments.get(position).get("to"));
+        Long from = Long.parseLong(assignments.get(position).get("availableFrom"));
+        Long to = Long.parseLong(assignments.get(position).get("availableTo"));
 
         Date fromDate = new Date(from*1000);
         Date toDate = new Date(to*1000);
