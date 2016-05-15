@@ -29,6 +29,7 @@ import com.google.common.collect.Iterables;
 import org.w3c.dom.Text;
 
 import java.lang.reflect.Array;
+import java.sql.Time;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -36,6 +37,9 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
 
 public class ReadingActivity extends AppCompatActivity  {
 
@@ -81,14 +85,15 @@ public class ReadingActivity extends AppCompatActivity  {
     String s;
     Set<String> set = new HashSet<String>();
     List<Integer> correctOrNot = new ArrayList<Integer>();    //Set<String> set = new HashSet<String>();
-    ArrayList<String> loggedAnswers = new ArrayList<String>();
+    ArrayList<String> loggedIdAnswers = new ArrayList<String>();
     ArrayList<String> correctAnswer = new ArrayList<String>();
     int noOfQuestions;
     int clickCount = 0;
     String assignmentId;
-    String correctAnswerId;
+    String answerIdtoChosenAnswer;
     TextView tvQuestionId2Student;
     String lastElement;
+
 
 
 
@@ -152,7 +157,6 @@ public class ReadingActivity extends AppCompatActivity  {
                 chronometer.stop();
 
                 final Long time = chronometer.getBase();
-                Log.d("logged time: ", String.valueOf(time));
                 chronometer.stop();
                 AlertDialog.Builder builder = new AlertDialog.Builder(context);
 
@@ -243,7 +247,6 @@ public class ReadingActivity extends AppCompatActivity  {
 
                     String answers[] = specificQuestionAnswers.split("#");
                     for ( i = 0; i < answers.length; i++) {
-                        Log.d("answers!: ", answers[i].toString());
 
                         String answer[] = answers[i].split(";");
                         answerText = answer[1];
@@ -337,12 +340,31 @@ public class ReadingActivity extends AppCompatActivity  {
     }
 
 
+public HashMap<String, HashMap<String, String>> getAnswerId(){ // used to retrieve answerId based on questionId and answertext while freezing everything else
 
+    try {
+      return  new AnswerTask(new AnswerCallback() {
+            @Override
+            public void answerdone(HashMap<String, HashMap<String, String>> results) {
+
+            }
+        }, context).execute(lastElement, text1, "").get(30, TimeUnit.SECONDS);
+    } catch (InterruptedException e) {
+        e.printStackTrace();
+    } catch (ExecutionException e) {
+        e.printStackTrace();
+    } catch (TimeoutException e) {
+        e.printStackTrace();
+    }
+
+    return null;
+}
 
     public void getText(){ // get text for student to read
         new TextTask(new TextCallback() {
             @Override
             public void TextCallBack(HashMap<String, HashMap<String, String>> results) {
+                results.remove("response");
 
                 //remove other hashmaps in results var to avoid the first returning null
 
@@ -368,7 +390,7 @@ public class ReadingActivity extends AppCompatActivity  {
     }
 
 
-    public void getAnswers(String s) { // get's answers to questions
+    public void getAnswers(String s) { // running getAnswer based on questionId from HashSet
         new QuestionTask(new QuestionCallback() {
             @Override
             public void QuestionTaskDone(HashMap<String, HashMap<String, String>> results) {
@@ -384,15 +406,11 @@ public class ReadingActivity extends AppCompatActivity  {
                     questionInfo.put("answers", specificQuestionAnswers1);
                     questionList.add(questionInfo);
 
-                    Log.d("QUESTIONID: ", specificQuestionId1);
 
                     createDialog();
 
 
-
-
-
-                    String answers[] = specificQuestionAnswers1.split("#");
+                    String answers[] = specificQuestionAnswers1.split("#"); //splits the string into useful pieces
                     for ( i = 0; i < answers.length; i++) {
 
                         String answer[] = answers[i].split(";");
@@ -400,16 +418,12 @@ public class ReadingActivity extends AppCompatActivity  {
                         answerId = answer[0];
                         isCorrrect1 = answer[2];
 
-
-
-                        Log.d("isCorrect: ",isCorrrect1);
                         if(isCorrrect1.equals("1")){
                             Log.d("This is the ", "correct answer");
 
-                            loggedAnswers.add(answerText1);
-                            correctAnswerId = answerId;
-                            Log.d("CORRECT ANSWERID: ", correctAnswerId);
-                            Log.d("LOGGEDANSWERS: ", loggedAnswers.toString());
+
+                            loggedIdAnswers.add(answerId); // saves the correct answerIds in a list
+                            Log.d("CorrectAnswerIds", loggedIdAnswers.toString());
 
                         }else{
                             Log.d("This is not the correct", "answer");
@@ -417,20 +431,8 @@ public class ReadingActivity extends AppCompatActivity  {
 
                         addRadioButtons(i);
                         createArrays(i);
-
-
-
-
                     }
-
-
-
-
-
-
                 }
-
-
             }
         }, context).executeTask("get", s, "", "", "");
     }
@@ -457,9 +459,8 @@ public class ReadingActivity extends AppCompatActivity  {
 
                 clickCount= clickCount+1; // count number of clicks which will be used to match number of question to create the last alertdialog
 
-               //assignmentId
-                //specificQuestionId1
-                //correctAnswerId
+
+
 
 
                 List<String> list = new ArrayList<String>(set);
@@ -470,21 +471,24 @@ public class ReadingActivity extends AppCompatActivity  {
 
                     if(list!=null) {
 
-                        lastElement = Iterables.getLast(list);
+                        lastElement = Iterables.getLast(list); // the last index on the list, is the first questionid being answered
                         list.remove(lastElement);
 
-                        Log.d("LASTELEMENT1 ", lastElement);
-                        Log.d("LASTELEMENT1", String.valueOf(list));
+                        Log.d("questionId ", lastElement);
+                        Log.d("Remaining questionIds", String.valueOf(list));
                     }
 
                 }
 
-                if(loggedAnswers.contains(text1)){
-                    Log.d("YOU HAVE ANSWERED: ", "CORRECT!");
+
+                answerIdtoChosenAnswer = getAnswerId().get("AnswerId").get("id");
+                Log.d("Choosen answerId", answerIdtoChosenAnswer);
+
+                if(loggedIdAnswers.contains(answerIdtoChosenAnswer)){ //checks if the answer submitted matches a answer in the correct answer array
+                    Log.d("YOU HAVE ANSWERED ", "CORRECT!");
                     int isCorrectAnswer = 1;
                     correctOrNot.add(isCorrectAnswer);
                     correctAnswer.add(String.valueOf(isCorrectAnswer));
-                    Log.d("1111", text1);
 
 
                     new QuestionResultTask(new QuestionResultCallback() {
@@ -492,10 +496,10 @@ public class ReadingActivity extends AppCompatActivity  {
                         public void questresultdone(HashMap<String, HashMap<String, String>> questresult) {
 
                         }
-                    }, context).execute(assignmentId, lastElement, "", correctAnswerId, "1", "1");
+                    }, context).execute(assignmentId, lastElement, "", answerIdtoChosenAnswer, "1", "1");
 
                 }else {
-                    Log.d("YOU HAVE ANSWERED: ", "INCORRECT!");
+                    Log.d("YOU HAVE ANSWERED ", "INCORRECT!");
                     int inCorrectAnswer = 0;
                     correctOrNot.add(inCorrectAnswer);
                     new QuestionResultTask(new QuestionResultCallback() {
@@ -503,7 +507,7 @@ public class ReadingActivity extends AppCompatActivity  {
                         public void questresultdone(HashMap<String, HashMap<String, String>> questresult) {
 
                         }
-                    }, context).execute(assignmentId, lastElement, "", correctAnswerId, "0", "1");                }
+                    }, context).execute(assignmentId, lastElement, "", answerIdtoChosenAnswer, "0", "1");                }
                 Log.d("STUDENTANSWER: ", correctOrNot.toString());
 
 
