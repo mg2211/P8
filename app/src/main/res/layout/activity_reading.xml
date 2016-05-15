@@ -15,33 +15,11 @@
 
         <LinearLayout
             android:orientation="vertical"
-            android:layout_width="251dp"
+            android:layout_width="wrap_content"
             android:layout_height="fill_parent"
             android:padding="0dp"
             android:id="@+id/menuLinear"
             android:background="#ffffff">
-
-            <EditText
-                android:layout_width="fill_parent"
-                android:layout_height="50dp"
-                android:id="@+id/etSearch"
-                android:background="#7ddfcd"
-                android:inputType="text"
-                android:hint="@string/search" />
-
-            <Button
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="Logout"
-                android:id="@+id/bLogOutStReading"
-                android:layout_marginLeft="0dp"
-                android:layout_marginRight="0dp"
-                android:layout_marginTop="0dp"
-                android:layout_marginBottom="0dp"
-                android:background="#9ccc65"
-                android:typeface="sans"
-                android:enabled="true"
-                android:textSize="20sp" />
 
 
             <Button
@@ -63,7 +41,9 @@
                 android:format="%s"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:textSize="40sp"/>
+                android:textSize="40sp"
+                android:visibility="invisible"
+                />
 
 
         </LinearLayout>
@@ -80,7 +60,7 @@
 
             <LinearLayout
                 android:orientation="vertical"
-                android:layout_width="750dp"
+                android:layout_width="fill_parent"
                 android:layout_height="match_parent"
                 android:id="@+id/TextPane">
 
@@ -100,25 +80,24 @@
                     android:text="Text name"
                     android:id="@+id/tvTextName2" />
 
-                <TextView
-                    android:layout_width="wrap_content"
+                <ScrollView
+                    android:id="@+id/SCROLLER_ID"
+                    android:layout_width="fill_parent"
                     android:layout_height="wrap_content"
-                    android:textAppearance="?android:attr/textAppearanceSmall"
-                    android:text="Text id"
-                    android:id="@+id/tvTextId1" />
+                    android:scrollbars="vertical"
+                    android:fillViewport="true">
 
-                <EditText
-                    android:layout_width="match_parent"
-                    android:layout_height="0dp"
-                    android:inputType="textMultiLine"
-                    android:ems="10"
-                    android:id="@+id/etTextContent1"
-                    android:layout_weight="1"
-                    android:background="@null"
-                    android:hint="@string/text_content"
-                    android:lines="10"
-                    android:gravity="top"
-                    android:text="Text content" />
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textAppearance="?android:attr/textAppearanceMedium"
+                        android:text="Text content"
+                        android:id="@+id/tvTextContent"
+                        android:scrollbars = "vertical"/>
+
+                </ScrollView>
+
+
 
 
             </LinearLayout>

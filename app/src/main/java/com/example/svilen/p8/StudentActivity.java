@@ -146,7 +146,6 @@ public class StudentActivity extends AppCompatActivity {
             @Override
             public void assignmentDone(HashMap<String, HashMap<String, String>> assignments) {
 
-                Log.d("PRUFA", "PRUFA");
                 if (!assignmentList.isEmpty()) {
                     assignmentList.clear();
                 }
