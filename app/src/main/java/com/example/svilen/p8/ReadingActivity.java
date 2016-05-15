@@ -71,6 +71,7 @@ public class ReadingActivity extends AppCompatActivity  {
     String lastElement;
     TextView tvTextContent;
     int booleanForButton = 0;
+    int seconds = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -150,7 +151,7 @@ public class ReadingActivity extends AppCompatActivity  {
             public void onClick(View v) {
                 chronometer.stop();
 
-                int seconds = 0;
+
 
                 String chronoText = chronometer.getText().toString();
                 String timesplit[] = chronoText.split(":");
@@ -419,7 +420,7 @@ public class ReadingActivity extends AppCompatActivity  {
                             public void questresultdone(HashMap<String, HashMap<String, String>> questresult) {
 
                             }
-                        }, context).execute(assignmentId, lastElement, "", answerIdtoChosenAnswer, "1", "1");
+                        }, context).execute(assignmentId, lastElement, "", answerIdtoChosenAnswer, "1", "1", "1");
 
                     } else {
                         Log.d("YOU HAVE ANSWERED ", "INCORRECT!");
@@ -430,7 +431,7 @@ public class ReadingActivity extends AppCompatActivity  {
                             public void questresultdone(HashMap<String, HashMap<String, String>> questresult) {
 
                             }
-                        }, context).execute(assignmentId, lastElement, "", answerIdtoChosenAnswer, "0", "1");
+                        }, context).execute(assignmentId, lastElement, "", answerIdtoChosenAnswer, "0", "1", "1");
                     }
                     Log.d("STUDENTANSWER: ", correctOrNot.toString());
 
@@ -459,6 +460,15 @@ public class ReadingActivity extends AppCompatActivity  {
                         Log.d("GRADE  many correct: ", String.valueOf(totalCorrect));
                         Log.d("noOfQuestions: ", String.valueOf(noOfQuestions));
                         Log.d("GRADE% FOR QUESTIONS: ", String.valueOf(totalGrade));
+
+                        String totalSeconds = String.valueOf(seconds);
+
+                        new QuestionResultTask(new QuestionResultCallback() {
+                            @Override
+                            public void questresultdone(HashMap<String, HashMap<String, String>> questresult) {
+
+                            }
+                        }, context).execute(assignmentId, "", "", "", "", "", totalSeconds);
                     }
 
 

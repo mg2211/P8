@@ -1291,6 +1291,7 @@ class QuestionResultTask extends AsyncTask<String, Void, HashMap<String, HashMap
         String answerid = params[3];
         String answeredcorrect = params[4];
         String iscomplete = params[5];
+        String totaltimespent = params[6];
         HashMap<String, HashMap<String, String>> results = new HashMap<>();
         HashMap<String, String> response = new HashMap<>();
 
@@ -1305,7 +1306,9 @@ class QuestionResultTask extends AsyncTask<String, Void, HashMap<String, HashMap
                     .appendQueryParameter("id", questionresultid)
                     .appendQueryParameter("answerid", answerid)
                     .appendQueryParameter("answeredcorrect", answeredcorrect)
-                    .appendQueryParameter("iscomplete", iscomplete);
+                    .appendQueryParameter("iscomplete", iscomplete)
+                    .appendQueryParameter("totaltimespent", totaltimespent);
+
 
             String query = builder.build().getEncodedQuery();
             OutputStream os = connection.getOutputStream();
