@@ -32,7 +32,7 @@ public class StudentActivity extends AppCompatActivity {
     String studentId;
     String textId;
     String assignmentName;
-
+    String specificAssignmentId;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -80,6 +80,7 @@ public class StudentActivity extends AppCompatActivity {
                         Intent intent = new Intent(StudentActivity.this, ReadingActivity.class);
                         intent.putExtra("textId", textId);
                         intent.putExtra("assignmentName", assignmentName);
+                        intent.putExtra("id", specificAssignmentId);
                         startActivity(intent);
 
                     }
@@ -153,12 +154,12 @@ public class StudentActivity extends AppCompatActivity {
                 for (Map.Entry<String, HashMap<String, String>> assignment : assignments.entrySet()) {
                     Map<String, String> assignmentInfo = new HashMap<>();
                     String specificAssignmentName = assignment.getValue().get("assignmentLibName");
-                    String specificAssignmentId = assignment.getValue().get("id");
+                     specificAssignmentId = assignment.getValue().get("assignmentid");
                     String specificAssLibId = assignment.getValue().get("assignmentlibraryid");
                     String specificTextId = assignment.getValue().get("textId");
 
                     assignmentInfo.put("assignmentLibName", specificAssignmentName);
-                    assignmentInfo.put("id", specificAssignmentId);
+                    assignmentInfo.put("assignmentid", specificAssignmentId);
                     assignmentInfo.put("assignmentlibraryid", specificAssLibId);
                     assignmentInfo.put("textId", specificTextId);
 
