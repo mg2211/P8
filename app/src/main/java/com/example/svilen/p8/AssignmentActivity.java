@@ -662,7 +662,6 @@ public class AssignmentActivity extends AppCompatActivity {
                 int rand = (int)(Math.random()*101);
                 yVal.add(new BarEntry(rand,i));
                 xVals.add(studentName);
-
             }
 
         }
