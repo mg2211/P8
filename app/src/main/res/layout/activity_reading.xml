@@ -69,7 +69,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:textAppearance="?android:attr/textAppearanceLarge"
-                    android:text="Assignment Name"
+                    android:text="Assignment name"
                     android:id="@+id/tvTextName1" />
 
                 <TextView
