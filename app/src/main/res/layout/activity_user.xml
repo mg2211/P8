@@ -45,7 +45,8 @@
                 android:background="#29b6f6"
                 android:paddingLeft="20dp"
                 android:drawableRight="@drawable/search"
-                android:paddingRight="20dp" />
+                android:paddingRight="20dp"
+                android:choiceMode="singleChoice" />
 
             <ListView
                 android:layout_width="wrap_content"
@@ -55,6 +56,7 @@
                 android:background="@color/colorBackground"
                 android:listSelector="@color/colorHighlight"
                 android:choiceMode="singleChoice" />
+
         </LinearLayout>
 
         <LinearLayout

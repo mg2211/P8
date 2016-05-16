@@ -298,8 +298,8 @@ class StudentTask extends AsyncTask<String, Void, HashMap<String, HashMap<String
         @Override
         protected HashMap<String, HashMap<String, String>> doInBackground(String... params) {
             String classID = params[0];
-            String generalResponse = null;
             String teacherId = params[1];
+            String generalResponse = null;
             int responseCode = 0;
             HashMap<String, HashMap<String, String>> results = new HashMap<>();
 
@@ -721,10 +721,9 @@ class UserTask extends AsyncTask<String, Void, Map<String,HashMap<String, String
 
                     JSONObject user = users.getJSONObject(i);
                     userId = user.getString("userId");
-                    userInfo.put("userId", user.getString("userId"));
+                    userInfo.put("userId", userId);
                     userInfo.put("username", user.getString("username"));
                     userInfo.put("password", user.getString("password"));
-                    userInfo.put("userId", userId);
                     userInfo.put("firstName", user.getString("firstName"));
                     userInfo.put("lastName", user.getString("lastName"));
                     userInfo.put("email", user.getString("email"));
@@ -735,8 +734,8 @@ class UserTask extends AsyncTask<String, Void, Map<String,HashMap<String, String
                         userInfo.put("teacherId", user.getString("teacherId"));
                     } else if (role.equals("student")) {
                         userInfo.put("studentId", user.getString("studentId"));
-                        userInfo.put("classId", user.getString("classId"));
                         userInfo.put("parentEmail", user.getString("parentEmail"));
+                        userInfo.put("classId", user.getString("classId"));
                     }
                     result.put("userId: " + userId, userInfo);
                 }
@@ -882,6 +881,7 @@ class ClassTaskNew extends AsyncTask<String, Void, Map<String,HashMap<String, St
                     classInfo.put("teacherFirstName", classMap.getString("teacherFirstName"));
                     classInfo.put("teacherLastName", classMap.getString("teacherLastName"));
                     classInfo.put("teacherEmail", classMap.getString("teacherEmail"));
+                    classInfo.put("numOfStudents", classMap.getString("numOfStudents"));
 
                     result.put("classId: " + classId, classInfo);
                 }

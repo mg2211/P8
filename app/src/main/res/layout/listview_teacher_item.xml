@@ -3,12 +3,13 @@
     android:orientation="vertical"
     android:layout_width="320dp"
     android:layout_height="wrap_content"
-    android:paddingTop="0dip"
+    android:paddingTop="2dip"
+    android:paddingBottom="8dip"
     android:layout_gravity="top"
     android:id="@+id/llUserListViewItem" >
 
     <TextView
-        android:id="@+id/clTvClassName"
+        android:id="@+id/clTvTeacherUsername"
         android:layout_height="wrap_content"
         android:layout_width="match_parent"
         android:layout_weight="1"
