@@ -11,6 +11,7 @@
     <string name="editUser">Edit this user</string>
     <string name="titleStudentClass">Enrolled in class</string>
     <string name="classDetails">Class details</string>
+    <string name="teacherClasses">Teacher classes</string>
 
     <!--Labels for buttons-->
     <string name="login">Login</string>
@@ -22,6 +23,7 @@
     <string name="assignClass">Add/Change class</string>
     <string name="modifyClasses">Modify classes</string>
     <string name="dialogAssignClass">Select class</string>
+    <string name="dialogCreateClass">Create class</string>
 
     <!--Labels for defining users in text fields-->
     <string name="username">Username</string>

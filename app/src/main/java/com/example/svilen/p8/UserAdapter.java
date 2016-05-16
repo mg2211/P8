@@ -87,9 +87,9 @@ public class UserAdapter extends BaseAdapter implements Filterable {
         if (convertView == null) {
 
             // Inflate user_listview_itemml file for each row (Defined below)
-            view = inflater.inflate(R.layout.user_listview_item, null);
+            view = inflater.inflate(R.layout.listview_user_item, null);
 
-            // View Holder Object to contain user_listview_item.xmlile elements
+            // View Holder Object to contain listview_user_item.xmlile elements
             holder = new ViewHolder();
 
             holder.username = (TextView) view.findViewById(R.id.clTvUsername);
