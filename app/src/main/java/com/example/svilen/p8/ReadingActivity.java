@@ -128,7 +128,7 @@ public class ReadingActivity extends AppCompatActivity  {
 
 
 
-         textContent22 = getText1().get("TextId").get("textcontent");
+         textContent22 = getText1().get("text0").get("textcontent");
         Log.d("7979 ", textContent22);
 
       /*  bLogout.setOnClickListener(new View.OnClickListener() {
