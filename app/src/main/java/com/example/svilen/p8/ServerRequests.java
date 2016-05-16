@@ -590,7 +590,7 @@ class TextTask extends AsyncTask<String, Void, HashMap<String, HashMap<String, S
                     textInfo.put("textcontent", specificTextContent);
                     textInfo.put("id", specificTextId);
                     textInfo.put("complexity", String.valueOf(specificTextComplexity));
-                    results.put("TextId: " + specificTextId, textInfo);
+                    results.put("TextId",textInfo);
                 }
             }
 
