@@ -33,6 +33,7 @@ public class StudentActivity extends AppCompatActivity {
     String textId;
     String assignmentName;
     String specificAssignmentId;
+    String assignmentId;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -61,6 +62,7 @@ public class StudentActivity extends AppCompatActivity {
                 Map<String, String> assignmentData = assignmentList.get(position);
                 textId = assignmentData.get("textId");
                 assignmentName = assignmentData.get("assignmentLibName");
+                assignmentId = assignmentData.get("assignmentid");
                 Log.d("TEXTID::: ", textId);
 
                 AlertDialog.Builder builder = new AlertDialog.Builder(context);
@@ -80,8 +82,9 @@ public class StudentActivity extends AppCompatActivity {
                         Intent intent = new Intent(StudentActivity.this, ReadingActivity.class);
                         intent.putExtra("textId", textId);
                         intent.putExtra("assignmentName", assignmentName);
-                        intent.putExtra("id", specificAssignmentId);
+                        intent.putExtra("id", assignmentId);
                         startActivity(intent);
+                        Log.d("8787", assignmentId);
 
                     }
                 });
@@ -141,12 +144,10 @@ public class StudentActivity extends AppCompatActivity {
 
     public void getAssignment() {
 
-        Log.d("HALLO", "HALLO");
         new AssignmentTask(new AssignmentCallback() {
             @Override
             public void assignmentDone(HashMap<String, HashMap<String, String>> assignments) {
 
-                Log.d("PRUFA", "PRUFA");
                 if (!assignmentList.isEmpty()) {
                     assignmentList.clear();
                 }
@@ -165,7 +166,8 @@ public class StudentActivity extends AppCompatActivity {
 
                     assignmentList.add(assignmentInfo);
 
-                    Log.d("TESTING111: ", String.valueOf(assignmentInfo));
+                    Log.d("2222: ", String.valueOf(assignmentInfo));
+                    Log.d("2222", specificAssignmentId);
 
                 }
 

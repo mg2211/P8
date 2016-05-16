@@ -1,52 +1,39 @@
 package com.example.svilen.p8;
 
 import android.app.AlertDialog;
-import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.SystemClock;
-import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
-import android.view.Window;
 import android.widget.Button;
 import android.widget.Chronometer;
-import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
-
 import com.google.common.collect.Iterables;
-
-import org.w3c.dom.Text;
-
-import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
 
 public class ReadingActivity extends AppCompatActivity  {
 
     List<Map<String, String>> questionList = new ArrayList<>();
-
     String specificQuestionContent1;
-    String specificQuestionId1;
-    String specificQuestionAnswers1;
     String answerText1;
     String isCorrrect1;
-
     Button bLogout;
     Button bPause;
     Button bFinish;
@@ -56,46 +43,32 @@ public class ReadingActivity extends AppCompatActivity  {
     String studentId;
     String textId;
     TextView tvTextName2;
-    TextView tvTextId;
+    Button bDialogSubmit;
+
     TextView tvAssignmentName;
     String textName;
     String assignmentName;
-    EditText etTextContent;
     Chronometer chronometer;
     long timeWhenStopped = 0;
     TextView tvQuestionToStudent;
     String questionContent;
-    String answerText;
     View layout;
     int i;
-    String answerId;
-    String isCorrrect;
-    String text1;
-    int answerId1;
-    RadioGroup ll;
-    String specificQuestionContent;
-    String specificQuestionAnswers;
+    String answerChoosen;
     String specificQuestionId;
-
     ArrayList<String> mylist = new ArrayList<String>();
-    String s;
     Set<String> set = new HashSet<String>();
     List<Integer> correctOrNot = new ArrayList<Integer>();    //Set<String> set = new HashSet<String>();
-    ArrayList<String> loggedAnswers = new ArrayList<String>();
+    ArrayList<String> loggedIdAnswers = new ArrayList<String>();
     ArrayList<String> correctAnswer = new ArrayList<String>();
     int noOfQuestions;
     int clickCount = 0;
     String assignmentId;
-    String correctAnswerId;
-    TextView tvQuestionId2Student;
+    String answerIdtoChosenAnswer;
     String lastElement;
-
-
-
-
-
-
-
+    TextView tvTextContent;
+    int booleanForButton = 0;
+    int seconds = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -107,43 +80,39 @@ public class ReadingActivity extends AppCompatActivity  {
         studentId = user.get("studentId");
         Log.d("StudentId:  ", studentId);
 
-        bLogout = (Button) findViewById(R.id.bLogOutStReading);
         bFinish = (Button) findViewById(R.id.bFinish);
         bPause = (Button) findViewById(R.id.bPause);
         tvAssignmentName = (TextView) findViewById(R.id.tvTextName1);
         tvTextName2 = (TextView) findViewById(R.id.tvTextName2);
-        tvTextId = (TextView) findViewById(R.id.tvTextId1);
-        etTextContent = (EditText) findViewById(R.id.etTextContent1);
+        tvTextContent = (TextView) findViewById(R.id.tvTextContent);
         chronometer = (Chronometer) findViewById(R.id.chronometer);
-        ll = new RadioGroup(this);
 
 
-        Intent intent = getIntent();
+
+
+        Intent intent = getIntent(); // recieving intent from student activity
         Bundle b = intent.getExtras();
+
         if(b!=null)
         {
             textId =(String) b.get("textId");
-            tvTextId.setText(textId);
             assignmentName = (String) b.get("assignmentName");
             tvAssignmentName.setText(assignmentName);
             assignmentId = (String) b.get("id");
+            Log.d("7878", assignmentId);
         }
-        chronometer.setBase(SystemClock.elapsedRealtime());
-        chronometer.start();
 
+        chronometer.setBase(SystemClock.elapsedRealtime()); // sets the base for the clock
+        chronometer.start(); // starts the clock
         getText();
 
-        bLogout.setOnClickListener(new View.OnClickListener() {
+      /*  bLogout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 UserInfo userinfo = new UserInfo(getApplicationContext());
                 userinfo.logOut();
             }
-        });
-
-
-
-
+        });*/
 
         bPause.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -152,7 +121,6 @@ public class ReadingActivity extends AppCompatActivity  {
                 chronometer.stop();
 
                 final Long time = chronometer.getBase();
-                Log.d("logged time: ", String.valueOf(time));
                 chronometer.stop();
                 AlertDialog.Builder builder = new AlertDialog.Builder(context);
 
@@ -181,7 +149,7 @@ public class ReadingActivity extends AppCompatActivity  {
             public void onClick(View v) {
                 chronometer.stop();
 
-                int seconds = 0;
+
 
                 String chronoText = chronometer.getText().toString();
                 String timesplit[] = chronoText.split(":");
@@ -197,27 +165,12 @@ public class ReadingActivity extends AppCompatActivity  {
 
                 Log.d("TOTAL time: ", String.valueOf(seconds));
 
-
-
-
-
                 getQuestions(textId);
-
-
-
-
-
 
             }
         });
 
     }
-
-
-
-
-
-
 
     public void getQuestions(String textId) {
         new QuestionTask(new QuestionCallback() {
@@ -227,37 +180,15 @@ public class ReadingActivity extends AppCompatActivity  {
                 questionList.clear();
                 for (Map.Entry<String, HashMap<String, String>> question : results.entrySet()) {
                     Map<String, String> questionInfo = new HashMap<>();
-                    specificQuestionContent = question.getValue().get("questionContent");
+                   String specificQuestionContent = question.getValue().get("questionContent");
                     specificQuestionId = question.getValue().get("questionId");
-                    specificQuestionAnswers = question.getValue().get("answers");
+                    String specificQuestionAnswers = question.getValue().get("answers");
                     questionInfo.put("Question", specificQuestionContent);
                     questionInfo.put("id", specificQuestionId);
                     questionInfo.put("answers", specificQuestionAnswers);
                     questionList.add(questionInfo);
 
-
-
-
-
-
-
-                    String answers[] = specificQuestionAnswers.split("#");
-                    for ( i = 0; i < answers.length; i++) {
-                        Log.d("answers!: ", answers[i].toString());
-
-                        String answer[] = answers[i].split(";");
-                        answerText = answer[1];
-                        answerId = answer[0];
-                        isCorrrect = answer[2];
-
-
-
-                        createArrays(i);
-
-
-
-
-                    }
+                    createArrays();
 
                     set = new HashSet<String>(mylist); // puts array with questionId into a set, removing all duplicates
                     Log.d("setset: ", set.toString());
@@ -280,9 +211,7 @@ public class ReadingActivity extends AppCompatActivity  {
 
     }
 
-    public void createArrays (int number) {
-
-
+    public void createArrays () {
 
         for (int row = 0; row < 1; row++) {
 
@@ -291,10 +220,10 @@ public class ReadingActivity extends AppCompatActivity  {
         }
     }
 
-    public void addRadioButtons(int number) { //creates dynamic radio button depdending on how many anwswers to a question
+    public void addRadioButtons() { //creates dynamic radio button depdending on how many anwswers to a question
 
 
-        for (int row = 0; row < 1; row++) {
+
             RadioGroup rg = (RadioGroup) layout.findViewById(R.id.radiogroup);
             rg.setOrientation(LinearLayout.HORIZONTAL);
             RadioGroup.LayoutParams layoutParams = new RadioGroup.LayoutParams(
@@ -302,12 +231,9 @@ public class ReadingActivity extends AppCompatActivity  {
                     RadioGroup.LayoutParams.MATCH_PARENT);
 
             RadioButton rdbtn = new RadioButton(this);
-            rdbtn.setId((row * 2) + number);
             rdbtn.setText(answerText1);
-            int radioId = rdbtn.getId();
             rg.addView(rdbtn, layoutParams);
-
-
+          //  rdbtn.setChecked(true); //checks the last created radiobutton
 
 
             rg.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
@@ -315,10 +241,16 @@ public class ReadingActivity extends AppCompatActivity  {
                                                   for (int i = 0; i < rg.getChildCount(); i++) {
                                                       RadioButton btn = (RadioButton) rg.getChildAt(i);
 
+
+
                                                         if (btn.getId() == checkedId) {
 
-                                                          text1 = (String) btn.getText();
-                                                          answerId1 = btn.getId();
+                                                            answerChoosen = (String) btn.getText();
+
+                                                            booleanForButton = 1; //Have to use this way, to set bdialogSubmit to (un)clickable, as setEnable and setClickable doesn't get called here
+                                                            Log.d("1111Radio", String.valueOf(booleanForButton));
+
+
 
                                                           return;
                                                       }
@@ -332,17 +264,35 @@ public class ReadingActivity extends AppCompatActivity  {
 
 
 
-        }
+
 
     }
 
+    public HashMap<String, HashMap<String, String>> getAnswerId(){ // used to retrieve answerId based on questionId and answertext while freezing everything else
 
+    try {
+      return  new AnswerTask(new AnswerCallback() {
+            @Override
+            public void answerdone(HashMap<String, HashMap<String, String>> results) {
 
+            }
+        }, context).execute(lastElement, answerChoosen, "").get(30, TimeUnit.SECONDS);
+    } catch (InterruptedException e) {
+        e.printStackTrace();
+    } catch (ExecutionException e) {
+        e.printStackTrace();
+    } catch (TimeoutException e) {
+        e.printStackTrace();
+    }
+
+    return null;
+}
 
     public void getText(){ // get text for student to read
         new TextTask(new TextCallback() {
             @Override
             public void TextCallBack(HashMap<String, HashMap<String, String>> results) {
+                results.remove("response");
 
                 //remove other hashmaps in results var to avoid the first returning null
 
@@ -356,7 +306,7 @@ public class ReadingActivity extends AppCompatActivity  {
                     textInfo.put("textname", textName);
                     // assignmentList.add(textInfo);
 
-                    etTextContent.setText(textContent);
+                    tvTextContent.setText(textContent);
                     tvTextName2.setText(textName);
 
 
@@ -367,8 +317,7 @@ public class ReadingActivity extends AppCompatActivity  {
         }, context).executeTask("get", textId, "", "", 0);
     }
 
-
-    public void getAnswers(String s) { // get's answers to questions
+    public void getAnswers(String s) { // running getAnswer based on questionId from HashSet
         new QuestionTask(new QuestionCallback() {
             @Override
             public void QuestionTaskDone(HashMap<String, HashMap<String, String>> results) {
@@ -377,64 +326,40 @@ public class ReadingActivity extends AppCompatActivity  {
                 for (Map.Entry<String, HashMap<String, String>> question : results.entrySet()) {
                     Map<String, String> questionInfo = new HashMap<>();
                     specificQuestionContent1 = question.getValue().get("questionContent");
-                    specificQuestionId1 = question.getValue().get("questionId");
-                    specificQuestionAnswers1 = question.getValue().get("answers");
+                    String specificQuestionId1 = question.getValue().get("questionId");
+                    String specificQuestionAnswers1 = question.getValue().get("answers");
                     questionInfo.put("Question", specificQuestionContent1);
                     questionInfo.put("id", specificQuestionId1);
                     questionInfo.put("answers", specificQuestionAnswers1);
                     questionList.add(questionInfo);
 
-                    Log.d("QUESTIONID: ", specificQuestionId1);
-
                     createDialog();
 
-
-
-
-
-                    String answers[] = specificQuestionAnswers1.split("#");
+                    String answers[] = specificQuestionAnswers1.split("#"); //splits the string into useful pieces
                     for ( i = 0; i < answers.length; i++) {
 
                         String answer[] = answers[i].split(";");
                         answerText1 = answer[1];
-                        answerId = answer[0];
+                       String answerId = answer[0];
                         isCorrrect1 = answer[2];
 
-
-
-                        Log.d("isCorrect: ",isCorrrect1);
                         if(isCorrrect1.equals("1")){
                             Log.d("This is the ", "correct answer");
 
-                            loggedAnswers.add(answerText1);
-                            correctAnswerId = answerId;
-                            Log.d("CORRECT ANSWERID: ", correctAnswerId);
-                            Log.d("LOGGEDANSWERS: ", loggedAnswers.toString());
+
+                            loggedIdAnswers.add(answerId); // saves the correct answerIds in a list
+                            Log.d("CorrectAnswerIds", loggedIdAnswers.toString());
 
                         }else{
                             Log.d("This is not the correct", "answer");
                         }
 
-                        addRadioButtons(i);
-                        createArrays(i);
-
-
-
-
+                        addRadioButtons();
                     }
-
-
-
-
-
-
                 }
-
-
             }
         }, context).executeTask("get", s, "", "", "");
     }
-
 
     public void createDialog(){
 
@@ -443,105 +368,116 @@ public class ReadingActivity extends AppCompatActivity  {
         LayoutInflater inflater = getLayoutInflater();
         layout = inflater.inflate(R.layout.dialog_answering, null);
 
-        Button bDialogSubmit = (Button) layout.findViewById(R.id.bDialogSubmit);
+        bDialogSubmit = (Button) layout.findViewById(R.id.bDialogSubmit);
+
         builder.setView(layout);
         final AlertDialog dialog = builder.create();
         dialog.setCanceledOnTouchOutside(false); //remember to change to false after programming
         dialog.show();
         tvQuestionToStudent = (TextView)layout.findViewById(R.id.tvQuestionToStudent);
-        tvQuestionId2Student = (TextView) layout.findViewById(R.id.tvQuestionId2Student);
+
+
 
         bDialogSubmit.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
 
-                clickCount= clickCount+1; // count number of clicks which will be used to match number of question to create the last alertdialog
+                if(booleanForButton == 1){
 
-               //assignmentId
-                //specificQuestionId1
-                //correctAnswerId
+                    Log.d("1818", "Something chosen");
 
+                    clickCount = clickCount + 1; // count number of clicks which will be used to match number of question to create the last alertdialog
 
-                List<String> list = new ArrayList<String>(set);
+                    List<String> list = new ArrayList<String>(set);
 
-                for (int x = 0; x<clickCount; x++){ // breaks the HashSet and removes the last index which represents the questionId being answered
+                    for (int x = 0; x < clickCount; x++) { // breaks the HashSet and removes the last index which represents the questionId being answered
 
+                        if (list != null) {
 
+                            lastElement = Iterables.getLast(list); // the last index on the list, is the first questionid being answered
+                            list.remove(lastElement);
 
-                    if(list!=null) {
+                            Log.d("questionId ", lastElement);
+                            Log.d("Remaining questionIds", String.valueOf(list));
+                        }
 
-                        lastElement = Iterables.getLast(list);
-                        list.remove(lastElement);
-
-                        Log.d("LASTELEMENT1 ", lastElement);
-                        Log.d("LASTELEMENT1", String.valueOf(list));
                     }
 
+                    answerIdtoChosenAnswer = getAnswerId().get("AnswerId").get("id");
+                    Log.d("Choosen answerId", answerIdtoChosenAnswer);
+
+                    if (loggedIdAnswers.contains(answerIdtoChosenAnswer)) { //checks if the answer submitted matches a answer in the correct answer array
+                        Log.d("YOU HAVE ANSWERED ", "CORRECT!");
+                        int isCorrectAnswer = 1;
+                        correctOrNot.add(isCorrectAnswer);
+                        correctAnswer.add(String.valueOf(isCorrectAnswer));
+
+
+                        new QuestionResultTask(new QuestionResultCallback() {
+                            @Override
+                            public void questresultdone(HashMap<String, HashMap<String, String>> questresult) {
+
+                            }
+                        }, context).execute(assignmentId, lastElement, "", answerIdtoChosenAnswer, "1", "1", "1","insert"); // remember to change isCompletet to empty when done!!
+
+                    } else {
+                        Log.d("YOU HAVE ANSWERED ", "INCORRECT!");
+                        int inCorrectAnswer = 0;
+                        correctOrNot.add(inCorrectAnswer);
+                        new QuestionResultTask(new QuestionResultCallback() {
+                            @Override
+                            public void questresultdone(HashMap<String, HashMap<String, String>> questresult) {
+
+                            }
+                        }, context).execute(assignmentId, lastElement, "", answerIdtoChosenAnswer, "0", "1", "1","insert");// remember to change isCompletet to empty when done!!
+
+                    }
+                    Log.d("STUDENTANSWER: ", correctOrNot.toString());
+
+                    dialog.dismiss();
+
+                    if (clickCount == noOfQuestions) { // creates the last alertdialog after all questions have been answered
+                        AlertDialog.Builder builder = new AlertDialog.Builder(context);
+
+                        builder.setMessage("You have finished your homework")
+                                .setTitle("Done")
+                                .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                                    @Override
+                                    public void onClick(DialogInterface dialog, int which) {
+
+                                        Intent intent = new Intent(ReadingActivity.this, StudentActivity.class);
+                                        startActivity(intent);
+
+                                    }
+                                });
+                        AlertDialog dialog = builder.create();
+                        dialog.setCanceledOnTouchOutside(false);
+                        dialog.show();
+
+                        int totalCorrect = correctAnswer.size();
+                        double totalGrade = ((double) totalCorrect / (double) noOfQuestions);
+                        Log.d("GRADE  many correct: ", String.valueOf(totalCorrect));
+                        Log.d("noOfQuestions: ", String.valueOf(noOfQuestions));
+                        Log.d("GRADE% FOR QUESTIONS: ", String.valueOf(totalGrade));
+
+                        String totalSeconds = String.valueOf(seconds);
+
+                        new QuestionResultTask(new QuestionResultCallback() {
+                            @Override
+                            public void questresultdone(HashMap<String, HashMap<String, String>> questresult) {
+
+                            }
+                        }, context).execute(assignmentId, "", "", "", "", "1", totalSeconds,"insert");
+                    }
+
+
+                    booleanForButton = 0;
+                } else { Log.d("Nothing chosen", "9090");
+
+                    Toast.makeText(ReadingActivity.this, "Please select an answer.", Toast.LENGTH_SHORT).show();
                 }
-
-                if(loggedAnswers.contains(text1)){
-                    Log.d("YOU HAVE ANSWERED: ", "CORRECT!");
-                    int isCorrectAnswer = 1;
-                    correctOrNot.add(isCorrectAnswer);
-                    correctAnswer.add(String.valueOf(isCorrectAnswer));
-                    Log.d("1111", text1);
-
-
-                    new QuestionResultTask(new QuestionResultCallback() {
-                        @Override
-                        public void questresultdone(HashMap<String, HashMap<String, String>> questresult) {
-
-                        }
-                    }, context).execute(assignmentId, lastElement, "", correctAnswerId, "1", "1");
-
-                }else {
-                    Log.d("YOU HAVE ANSWERED: ", "INCORRECT!");
-                    int inCorrectAnswer = 0;
-                    correctOrNot.add(inCorrectAnswer);
-                    new QuestionResultTask(new QuestionResultCallback() {
-                        @Override
-                        public void questresultdone(HashMap<String, HashMap<String, String>> questresult) {
-
-                        }
-                    }, context).execute(assignmentId, lastElement, "", correctAnswerId, "0", "1");                }
-                Log.d("STUDENTANSWER: ", correctOrNot.toString());
-
-
-
-
-
-
-                dialog.dismiss();
-
-                if (clickCount==noOfQuestions){ // creates the last alertdialog after all questions have been answered
-                    AlertDialog.Builder builder = new AlertDialog.Builder(context);
-
-                    builder.setMessage("You have finished your homework")
-                            .setTitle("Done")
-                            .setPositiveButton("Yes", new DialogInterface.OnClickListener(){
-                                @Override
-                                public void onClick(DialogInterface dialog, int which) {
-
-                                    Intent intent = new Intent(ReadingActivity.this, StudentActivity.class);
-                                    startActivity(intent);
-
-                                }
-                            });
-                    AlertDialog dialog = builder.create();
-                    dialog.setCanceledOnTouchOutside(false);
-                    dialog.show();
-
-                    int totalCorrect = correctAnswer.size();
-                    double totalGrade= ((double) totalCorrect/ (double) noOfQuestions);
-                    Log.d("GRADE  many correct: ", String.valueOf(totalCorrect));
-                    Log.d("noOfQuestions: ", String.valueOf(noOfQuestions));
-                    Log.d("GRADE% FOR QUESTIONS: ", String.valueOf(totalGrade));
-                }
-
-            }
-        });
+        }  });
         tvQuestionToStudent.setText(specificQuestionContent1);
-        tvQuestionId2Student.setText(specificQuestionId1);
     }
 
 }
