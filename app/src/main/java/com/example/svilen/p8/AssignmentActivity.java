@@ -665,6 +665,7 @@ public class AssignmentActivity extends AppCompatActivity {
         lineSets.clear();
         lineY.clear();
 
+        ArrayList<Integer> colors = new ArrayList<>();
 
         int index = 0;
         double total = 0;
@@ -689,6 +690,13 @@ public class AssignmentActivity extends AppCompatActivity {
                 Log.d("percentage", String.valueOf(percentage));
                 yVal.add(new BarEntry((float) percentage,index));
                 xVals.add(studentName);
+                if(percentage >= 50 && percentage <= 75){
+                    colors.add(Color.rgb(255,235,69));
+                } else if(percentage > 75){
+                    colors.add(Color.rgb(156,204,101));
+                } else {
+                    colors.add(Color.rgb(239,83,80));
+                }
                 total = total+percentage;
                 index++;
             }
@@ -700,12 +708,16 @@ public class AssignmentActivity extends AppCompatActivity {
         }
 
         BarDataSet set = new BarDataSet(yVal,"Students");
-        LineDataSet lineSet = new LineDataSet(lineY,"average");
+        LineDataSet lineSet = new LineDataSet(lineY,"Average");
         lineSet.enableDashedLine(5,5,0);
         lineSet.setCircleColor(Color.GRAY);
         lineSet.setColor(Color.GRAY);
         lineSet.setValueTextColor(Color.GRAY);
         lineSet.setValueTextSize(10f);
+        lineSet.setDrawCircles(false);
+
+        set.setColors(colors);
+
         Log.d("data",set.toString());
         Log.d("lineset",lineSet.toString());
         dataSets.add(set);
