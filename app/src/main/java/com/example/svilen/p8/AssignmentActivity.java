@@ -25,14 +25,19 @@ import android.widget.TimePicker;
 import android.widget.Toast;
 
 import com.github.mikephil.charting.charts.BarChart;
+import com.github.mikephil.charting.charts.CombinedChart;
 import com.github.mikephil.charting.components.XAxis;
 import com.github.mikephil.charting.components.YAxis;
 import com.github.mikephil.charting.data.BarData;
 import com.github.mikephil.charting.data.BarDataSet;
 import com.github.mikephil.charting.data.BarEntry;
+import com.github.mikephil.charting.data.CombinedData;
 import com.github.mikephil.charting.data.Entry;
+import com.github.mikephil.charting.data.LineData;
+import com.github.mikephil.charting.data.LineDataSet;
 import com.github.mikephil.charting.highlight.Highlight;
 import com.github.mikephil.charting.interfaces.datasets.IBarDataSet;
+import com.github.mikephil.charting.interfaces.datasets.ILineDataSet;
 import com.github.mikephil.charting.listener.OnChartValueSelectedListener;
 
 import java.text.ParseException;
@@ -84,10 +89,12 @@ public class AssignmentActivity extends AppCompatActivity {
     List<Map<String, String>> assignedList = new ArrayList<>();
     AssignmentListAdapter assignedAdapter;
     ArrayList<Integer> studentsAssigned = new ArrayList<>();
-    BarChart mChart;
+    CombinedChart mChart;
     ArrayList<BarEntry> yVal = new ArrayList<>();
     ArrayList<String> xVals = new ArrayList<>();
     ArrayList<IBarDataSet> dataSets = new ArrayList<>();
+    ArrayList<Entry> lineY = new ArrayList<>();
+    ArrayList<ILineDataSet> lineSets = new ArrayList<>();
 
 
     @Override
@@ -105,7 +112,7 @@ public class AssignmentActivity extends AppCompatActivity {
         bSave = (Button) findViewById(R.id.bSave);
         bAssign = (Button) findViewById(R.id.bAssign);
         tvStudentPerformance = (TextView) findViewById(R.id.tvStudentPerformance);
-        mChart = (BarChart) findViewById(R.id.chart);
+        mChart = (CombinedChart) findViewById(R.id.chart);
 
         assignmentAdapter= new SimpleAdapter(this, assignmentLibList,
                 android.R.layout.simple_list_item_1,
@@ -655,6 +662,9 @@ public class AssignmentActivity extends AppCompatActivity {
         yVal.clear();
         xVals.clear();
         dataSets.clear();
+        lineSets.clear();
+        lineY.clear();
+
 
         int index = 0;
         double total = 0;
@@ -685,13 +695,33 @@ public class AssignmentActivity extends AppCompatActivity {
 
         }
         Log.d("average", String.valueOf((total/ xVals.size())));
-
-
+        for(int i=0; i<index; i++){
+            lineY.add(new Entry((float) (total/xVals.size()),i));
+        }
 
         BarDataSet set = new BarDataSet(yVal,"Students");
+        LineDataSet lineSet = new LineDataSet(lineY,"average");
+        lineSet.enableDashedLine(5,5,0);
+        lineSet.setCircleColor(Color.GRAY);
+        lineSet.setColor(Color.GRAY);
+        lineSet.setValueTextColor(Color.GRAY);
+        lineSet.setValueTextSize(10f);
+        Log.d("data",set.toString());
+        Log.d("lineset",lineSet.toString());
         dataSets.add(set);
+        lineSets.add(lineSet);
+        BarData data = new BarData(xVals, dataSets);
+        LineData lineData = new LineData(xVals,lineSets);
+        CombinedData combinedData = new CombinedData(xVals);
+        combinedData.setData(data);
+        if(xVals.size() > 1) {
+            combinedData.setData(lineData);
+        }
+
+        mChart.setData(combinedData);
         mChart.notifyDataSetChanged();
         mChart.invalidate();
+
     }
 
     private void assignmentDialog(final int assignmentListPos){
@@ -842,14 +872,14 @@ public class AssignmentActivity extends AppCompatActivity {
 
     private void barChart(){
         //design barChart
-        mChart = (BarChart) findViewById(R.id.chart);
+        mChart = (CombinedChart) findViewById(R.id.chart);
         mChart.setPinchZoom(false);
         mChart.setDoubleTapToZoomEnabled(false);
         mChart.setScaleEnabled(false);
         mChart.setDrawBarShadow(false);
         mChart.setDrawGridBackground(false);
         mChart.animateY(1250);
-        mChart.getLegend().setEnabled(false);
+        mChart.getLegend().setEnabled(true);
         mChart.setDescription("");
 
         XAxis xAxis = mChart.getXAxis();
@@ -868,13 +898,11 @@ public class AssignmentActivity extends AppCompatActivity {
 
 
         mChart.getAxisLeft().setDrawGridLines(false);
-        BarData data = new BarData(xVals, dataSets);
-
-        mChart.setData(data);
         mChart.setOnChartValueSelectedListener(new OnChartValueSelectedListener() {
             @Override
             public void onValueSelected(Entry entry, int i, Highlight highlight) {
-
+                Log.d("entry", String.valueOf(entry.getVal()));
+                Toast.makeText(context, entry.toString(), Toast.LENGTH_SHORT).show();
             }
 
             @Override

@@ -112,6 +112,7 @@
                         android:layout_height="wrap_content"
                         android:text="Assign to students"
                         android:id="@+id/bAssign" />
+
                 </LinearLayout>
 
                 <LinearLayout
@@ -131,7 +132,7 @@
                 android:id="@+id/tvStudentPerformance"
                 android:visibility="invisible" />
 
-            <com.github.mikephil.charting.charts.BarChart
+            <com.github.mikephil.charting.charts.CombinedChart
                 android:id="@+id/chart"
                 android:layout_width="match_parent"
                 android:layout_height="250dp"
