@@ -1330,10 +1330,20 @@ class QuestionResultTask extends AsyncTask<String, Void, HashMap<String, HashMap
             JSONObject JSONResult = new JSONObject(serverResponse);
             String generalResponse = JSONResult.getString("generalResponse");
             String responseCode = String.valueOf(JSONResult.getInt("responseCode"));
-
             response.put("generalResponse", generalResponse);
             response.put("responseCode", responseCode);
 
+            if(method.equals("get")) {
+                JSONArray questionResults = JSONResult.getJSONArray("results");
+                for (int i = 0; i < questionResults.length(); i++) {
+                    JSONObject result = questionResults.getJSONObject(i);
+                    String correct = String.valueOf(result.getInt("correct"));
+
+                    HashMap<String, String> resultInfo = new HashMap<>();
+                    resultInfo.put("correct", correct);
+                    results.put(""+i,resultInfo);
+                }
+            }
 
         } catch (IOException e) {
             response.put("generalResponse", "Server connection failed");

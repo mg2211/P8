@@ -655,16 +655,39 @@ public class AssignmentActivity extends AppCompatActivity {
         yVal.clear();
         xVals.clear();
         dataSets.clear();
-        Log.d("assignedlist",assignedList.toString());
+
+        int index = 0;
+        double total = 0;
         for(int i = 0; i<assignedList.size(); i++){
-            String studentName = assignedList.get(i).get("Name");
+            final String studentName = assignedList.get(i).get("Name");
+            String assignmentId = assignedList.get(i).get("assignmentid");
             if(assignedList.get(i).get("isComplete").equals("1")){
-                int rand = (int)(Math.random()*101);
-                yVal.add(new BarEntry(rand,i));
+                HashMap<String, HashMap<String, String>> result = new HashMap<>(getResult(assignmentId));
+                result.remove("response");
+                int numberOfQuestions = 0;
+                int numberOfCorrect = 0;
+                for (Map.Entry<String, HashMap<String, String>> questionResult : result.entrySet()){
+                    numberOfQuestions++;
+                    if(questionResult.getValue().get("correct").equals("1")){
+                        numberOfCorrect++;
+                    }
+                }
+                Log.d("correct answers", String.valueOf(numberOfCorrect));
+                Log.d("No. questions", String.valueOf(numberOfQuestions));
+
+                double percentage = ((double) numberOfCorrect/ (double)numberOfQuestions)*100;
+                Log.d("percentage", String.valueOf(percentage));
+                yVal.add(new BarEntry((float) percentage,index));
                 xVals.add(studentName);
+                total = total+percentage;
+                index++;
             }
 
         }
+        Log.d("average", String.valueOf((total/ xVals.size())));
+
+
+
         BarDataSet set = new BarDataSet(yVal,"Students");
         dataSets.add(set);
         mChart.notifyDataSetChanged();
@@ -859,5 +882,22 @@ public class AssignmentActivity extends AppCompatActivity {
 
             }
         });
+    }
+    private HashMap<String, HashMap<String, String>> getResult(String assignmentId){
+        try {
+            return new QuestionResultTask(new QuestionResultCallback() {
+                @Override
+                public void questresultdone(HashMap<String, HashMap<String, String>> questresult) {
+
+                }
+            }, context).execute(assignmentId,"","","","","","","get").get(30,TimeUnit.SECONDS);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        } catch (ExecutionException e) {
+            e.printStackTrace();
+        } catch (TimeoutException e) {
+            e.printStackTrace();
+        }
+        return null;
     }
 }
