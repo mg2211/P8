@@ -27,19 +27,18 @@ import java.util.HashMap;
 
 public class TeacherActivity extends AppCompatActivity {
 
-    Button bClasses;
-    Button bAssignments;
-    Button bTexts;
-    Button bUsers;
-    Button bLogOut;
-    Context context = this;
-    UserInfo userinfo;
-    HashMap<String, String> user;
-    ArrayList<Integer> assignments = new ArrayList<>();
-    ArrayList<BarEntry> yVal = new ArrayList<>();
-    ArrayList<String> xVals = new ArrayList<>();
-    ArrayList<IBarDataSet> dataSets = new ArrayList<>();
-    ArrayList<Integer> colors = new ArrayList<>();
+    private Button bClasses;
+    private Button bAssignments;
+    private Button bTexts;
+    private Button bUsers;
+    private Button bLogOut;
+    private final Context context = this;
+    private UserInfo userinfo;
+    private HashMap<String, String> user;
+    private final ArrayList<BarEntry> yVal = new ArrayList<>();
+    private final ArrayList<String> xVals = new ArrayList<>();
+    private final ArrayList<IBarDataSet> dataSets = new ArrayList<>();
+    private final ArrayList<Integer> colors = new ArrayList<>();
 
 
     @Override

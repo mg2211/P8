@@ -54,47 +54,47 @@ import java.util.concurrent.TimeoutException;
 
 public class AssignmentActivity extends AppCompatActivity {
 
-    Context context = this;
-    UserInfo userInfo;
-    HashMap<String, String> user;
-    String teacherId;
+    private final Context context = this;
+    private UserInfo userInfo;
+    private HashMap<String, String> user;
+    private String teacherId;
 
-    Button bAddAssignment;
-    Button bSave;
-    Button bAssign;
-    EditText etSearch;
-    EditText etAssignmentText;
-    EditText etAssignmentName;
-    ListView lvAssignments;
-    TextView tvStudentPerformance;
-    SimpleAdapter assignmentAdapter;
-    List<Map<String, String>> assignmentLibList = new ArrayList<>();
-    List<Map<String, String>> textList = new ArrayList<>();
-    HashMap<String,HashMap<String, String>> assignments;
+    private Button bAddAssignment;
+    private Button bSave;
+    private Button bAssign;
+    private EditText etSearch;
+    private EditText etAssignmentText;
+    private EditText etAssignmentName;
+    private ListView lvAssignments;
+    private TextView tvStudentPerformance;
+    private SimpleAdapter assignmentAdapter;
+    private final List<Map<String, String>> assignmentLibList = new ArrayList<>();
+    private final List<Map<String, String>> textList = new ArrayList<>();
+    private HashMap<String,HashMap<String, String>> assignments;
 
-    SimpleAdapter textAdapter;
-    int assignmentLibTextId;
-    String assignmentLibId;
-    String assignmentLibName;
-    int dialogSelected;
+    private SimpleAdapter textAdapter;
+    private int assignmentLibTextId;
+    private String assignmentLibId;
+    private String assignmentLibName;
+    private int dialogSelected;
 
-    boolean newAssignment;
-    boolean changed;
+    private boolean newAssignment;
+    private boolean changed;
 
-    HashMap<Integer, Integer> textListIds = new HashMap<>();
-    List<Map<String, String>> studentList = new ArrayList<>();
-    SimpleAdapter studentAdapter;
-    List<Map<String, String>> classList = new ArrayList<>();
-    SimpleAdapter classAdapter;
-    List<Map<String, String>> assignedList = new ArrayList<>();
-    AssignmentListAdapter assignedAdapter;
-    ArrayList<Integer> studentsAssigned = new ArrayList<>();
-    CombinedChart mChart;
-    ArrayList<BarEntry> yVal = new ArrayList<>();
-    ArrayList<String> xVals = new ArrayList<>();
-    ArrayList<IBarDataSet> dataSets = new ArrayList<>();
-    ArrayList<Entry> lineY = new ArrayList<>();
-    ArrayList<ILineDataSet> lineSets = new ArrayList<>();
+    private final HashMap<Integer, Integer> textListIds = new HashMap<>();
+    private final List<Map<String, String>> studentList = new ArrayList<>();
+    private SimpleAdapter studentAdapter;
+    private final List<Map<String, String>> classList = new ArrayList<>();
+    private SimpleAdapter classAdapter;
+    private final List<Map<String, String>> assignedList = new ArrayList<>();
+    private AssignmentListAdapter assignedAdapter;
+    private final ArrayList<Integer> studentsAssigned = new ArrayList<>();
+    private CombinedChart mChart;
+    private final ArrayList<BarEntry> yVal = new ArrayList<>();
+    private final ArrayList<String> xVals = new ArrayList<>();
+    private final ArrayList<IBarDataSet> dataSets = new ArrayList<>();
+    private final ArrayList<Entry> lineY = new ArrayList<>();
+    private final ArrayList<ILineDataSet> lineSets = new ArrayList<>();
 
 
     @Override
@@ -293,7 +293,7 @@ public class AssignmentActivity extends AppCompatActivity {
             }
         });
     }
-    public void confirm(final int position) {
+    private void confirm(final int position) {
         new AlertDialog.Builder(context)
                 .setIcon(android.R.drawable.ic_dialog_alert)
                 .setTitle("Confirm")
@@ -810,6 +810,8 @@ public class AssignmentActivity extends AppCompatActivity {
         });
 
         lvDialogAssigned.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+
+            //TODO CHECK COMPLETETION BEFORE DELETING
             @Override
             public void onItemClick(AdapterView<?> parent, View view, final int position, long id) {
                 new AlertDialog.Builder(context)

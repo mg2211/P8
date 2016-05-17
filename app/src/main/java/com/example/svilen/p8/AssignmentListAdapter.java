@@ -16,10 +16,10 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
-public class AssignmentListAdapter extends BaseAdapter {
+class AssignmentListAdapter extends BaseAdapter {
     private static List<Map<String,String>> assignments;
 
-    private LayoutInflater inflator;
+    private final LayoutInflater inflator;
 
     public AssignmentListAdapter(Context context, List<Map<String, String>> data) {
         assignments = data;

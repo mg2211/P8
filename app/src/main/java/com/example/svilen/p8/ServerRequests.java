@@ -29,8 +29,8 @@ import java.util.Map;
 public class ServerRequests {
 }
 class LoginTask extends AsyncTask<String, Void, HashMap<String, String>> {
-        ProgressDialog progressDialog;
-        final Context context;
+        private final ProgressDialog progressDialog;
+        private final Context context;
 
         LoginTask(Context context) {
             this.context = context;
@@ -153,7 +153,7 @@ class LoginTask extends AsyncTask<String, Void, HashMap<String, String>> {
             } else if (role.equals("student")) {
                 editor.putString("studentId", studentId);
             }
-            editor.commit();
+            editor.apply();
 
 
             intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
@@ -1035,7 +1035,7 @@ class AssignmentLibTask extends AsyncTask<String, Void, HashMap<String, HashMap<
 
     private final Context context;
     private final AssignmentLibCallback delegate;
-    ProgressDialog progressDialog;
+    private final ProgressDialog progressDialog;
 
     public AssignmentLibTask(AssignmentLibCallback delegate, Context context){
         this.delegate = delegate;
@@ -1138,9 +1138,9 @@ class AssignmentLibTask extends AsyncTask<String, Void, HashMap<String, HashMap<
     class AssignmentTask extends AsyncTask<String, Void, HashMap<String, HashMap<String, String>>> {
 
 
-        AssignmentCallback delegate;
-        ProgressDialog progressDialog;
-        Context context;
+        private final AssignmentCallback delegate;
+        private final ProgressDialog progressDialog;
+        private final Context context;
 
         AssignmentTask(AssignmentCallback delegate, Context context){
             this.delegate = delegate;
@@ -1368,9 +1368,9 @@ class QuestionResultTask extends AsyncTask<String, Void, HashMap<String, HashMap
 
 class AnswerTask extends AsyncTask<String, Void, HashMap<String, HashMap<String, String>>> {
 
-    Context context;
-    AnswerCallback delegate;
-    ProgressDialog progressDialog;
+    private Context context;
+    private AnswerCallback delegate;
+    private ProgressDialog progressDialog;
 
     public AnswerTask (AnswerCallback delegate, Context context){
         this.delegate = delegate;
