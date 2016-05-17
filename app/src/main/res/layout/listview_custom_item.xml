@@ -9,7 +9,7 @@
     android:id="@+id/llUserListViewItem" >
 
     <TextView
-        android:id="@+id/clTvTeacherUsername"
+        android:id="@+id/clTvRow1"
         android:layout_height="wrap_content"
         android:layout_width="match_parent"
         android:layout_weight="1"
@@ -20,8 +20,7 @@
         android:layout_marginTop="4dip"
         android:gravity="start"
         android:focusable="false"
-        android:focusableInTouchMode="false"
-        android:text="Username"/>
+        android:focusableInTouchMode="false"/>
 
     <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
         android:descendantFocusability="blocksDescendants"
@@ -32,7 +31,7 @@
         android:layout_gravity="top" >
 
         <TextView
-            android:id="@+id/clTvTeacherFirstName"
+            android:id="@+id/clTvRow2_1"
             android:layout_height="wrap_content"
             android:layout_width="wrap_content"
             android:layout_weight="1"
@@ -43,11 +42,10 @@
             android:layout_marginTop="4dip"
             android:gravity="start"
             android:focusable="false"
-            android:focusableInTouchMode="false"
-            android:text="First name"/>
+            android:focusableInTouchMode="false" />
 
         <TextView
-            android:id="@+id/clTvTeacherLastName"
+            android:id="@+id/clTvRow2_2"
             android:layout_height="wrap_content"
             android:layout_width="wrap_content"
             android:layout_weight="1"
@@ -58,9 +56,22 @@
             android:layout_marginTop="4dip"
             android:gravity="start"
             android:focusable="false"
-            android:focusableInTouchMode="false"
-            android:text="Last Name" />
+            android:focusableInTouchMode="false" />
 
-    </LinearLayout>
+        </LinearLayout>
+
+    <TextView
+        android:id="@+id/clTvRow3"
+        android:layout_height="wrap_content"
+        android:layout_width="match_parent"
+        android:layout_weight="1"
+        android:layout_gravity="start|center_vertical"
+        android:textSize="16sp"
+        android:layout_marginLeft="10dip"
+        android:layout_marginTop="4dip"
+        android:layout_marginBottom="4dip"
+        android:textColor="#000000"
+        android:focusable="false"
+        android:focusableInTouchMode="false" />
 
 </LinearLayout>

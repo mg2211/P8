@@ -99,9 +99,9 @@ public class ClassActivity extends AppCompatActivity {
         teacherListPosition = -1;
 
         classListAdapter = new SimpleAdapter(this, classList,
-                R.layout.listview_class_item,
+                R.layout.listview_custom_item,
                 new String[]{"className", "teacherFirstName", "teacherLastName", "NumOfStudents"},
-                new int[]{R.id.clTvClassName, R.id.clTvTeacherFirstName, R.id.clTvTeacherLastName, R.id.clTvNumberOfStudents});
+                new int[]{R.id.clTvRow1, R.id.clTvRow2_1, R.id.clTvRow2_2, R.id.clTvRow3});
         lvListClasses.setAdapter(classListAdapter);
         lvListClasses.setChoiceMode(AbsListView.CHOICE_MODE_SINGLE);
 
