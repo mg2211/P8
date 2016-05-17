@@ -12,6 +12,11 @@
     <string name="titleStudentClass">Enrolled in class</string>
     <string name="classDetails">Class details</string>
     <string name="teacherClasses">Teacher classes</string>
+    <string name="studentAssignmentResults">Student assignment results</string>
+    <string name="studentsInClass">Students in class</string>
+    <string name="editClass">Edit this class</string>
+    <string name="addClass">Create a new class</string>
+    <string name="allTeachers">Displaying all teachers</string>
 
     <!--Labels for buttons-->
     <string name="login">Login</string>
@@ -23,7 +28,11 @@
     <string name="assignClass">Add/Change class</string>
     <string name="modifyClasses">Modify classes</string>
     <string name="dialogAssignClass">Select class</string>
-    <string name="dialogCreateClass">Create class</string>
+    <string name="showTeacherClasses">Show teacher\'s classes</string>
+    <string name="showAllClasses">Show all classes</string>
+    <string name="deleteClass">Delete class</string>
+    <string name="saveClass">Save Changes</string>
+    <string name="createClass">Create class</string>
 
     <!--Labels for defining users in text fields-->
     <string name="username">Username</string>
