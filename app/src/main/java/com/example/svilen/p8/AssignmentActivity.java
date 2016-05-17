@@ -654,6 +654,8 @@ public class AssignmentActivity extends AppCompatActivity {
             assignmentLibName = "";
             assignmentLibTextId = 0;
             assignmentLibId = "";
+            mChart.setVisibility(View.INVISIBLE);
+            tvStudentPerformance.setVisibility(View.INVISIBLE);
         }
 
     }
@@ -669,47 +671,47 @@ public class AssignmentActivity extends AppCompatActivity {
 
         int index = 0;
         double total = 0;
-        for(int i = 0; i<assignedList.size(); i++){
+        for (int i = 0; i < assignedList.size(); i++) {
             final String studentName = assignedList.get(i).get("Name");
             String assignmentId = assignedList.get(i).get("assignmentid");
-            if(assignedList.get(i).get("isComplete").equals("1")){
+            if (assignedList.get(i).get("isComplete").equals("1")) {
                 HashMap<String, HashMap<String, String>> result = new HashMap<>(getResult(assignmentId));
                 result.remove("response");
                 int numberOfQuestions = 0;
                 int numberOfCorrect = 0;
-                for (Map.Entry<String, HashMap<String, String>> questionResult : result.entrySet()){
+                for (Map.Entry<String, HashMap<String, String>> questionResult : result.entrySet()) {
                     numberOfQuestions++;
-                    if(questionResult.getValue().get("correct").equals("1")){
+                    if (questionResult.getValue().get("correct").equals("1")) {
                         numberOfCorrect++;
                     }
                 }
                 Log.d("correct answers", String.valueOf(numberOfCorrect));
                 Log.d("No. questions", String.valueOf(numberOfQuestions));
 
-                double percentage = ((double) numberOfCorrect/ (double)numberOfQuestions)*100;
+                double percentage = ((double) numberOfCorrect / (double) numberOfQuestions) * 100;
                 Log.d("percentage", String.valueOf(percentage));
-                yVal.add(new BarEntry((float) percentage,index));
+                yVal.add(new BarEntry((float) percentage, index));
                 xVals.add(studentName);
-                if(percentage >= 50 && percentage <= 75){
-                    colors.add(Color.rgb(255,235,69));
-                } else if(percentage > 75){
-                    colors.add(Color.rgb(156,204,101));
+                if (percentage >= 50 && percentage <= 75) {
+                    colors.add(Color.rgb(255, 235, 69));
+                } else if (percentage > 75) {
+                    colors.add(Color.rgb(156, 204, 101));
                 } else {
-                    colors.add(Color.rgb(239,83,80));
+                    colors.add(Color.rgb(239, 83, 80));
                 }
-                total = total+percentage;
+                total = total + percentage;
                 index++;
             }
 
         }
-        Log.d("average", String.valueOf((total/ xVals.size())));
-        for(int i=0; i<index; i++){
-            lineY.add(new Entry((float) (total/xVals.size()),i));
+        Log.d("average", String.valueOf((total / xVals.size())));
+        for (int i = 0; i < index; i++) {
+            lineY.add(new Entry((float) (total / xVals.size()), i));
         }
 
-        BarDataSet set = new BarDataSet(yVal,"Students");
-        LineDataSet lineSet = new LineDataSet(lineY,"Average");
-        lineSet.enableDashedLine(5,5,0);
+        BarDataSet set = new BarDataSet(yVal, "Students");
+        LineDataSet lineSet = new LineDataSet(lineY, "Average");
+        lineSet.enableDashedLine(5, 5, 0);
         lineSet.setCircleColor(Color.GRAY);
         lineSet.setColor(Color.GRAY);
         lineSet.setValueTextColor(Color.GRAY);
@@ -718,19 +720,24 @@ public class AssignmentActivity extends AppCompatActivity {
 
         set.setColors(colors);
 
-        Log.d("data",set.toString());
-        Log.d("lineset",lineSet.toString());
+        Log.d("data", set.toString());
+        Log.d("lineset", lineSet.toString());
         dataSets.add(set);
         lineSets.add(lineSet);
         BarData data = new BarData(xVals, dataSets);
-        LineData lineData = new LineData(xVals,lineSets);
+        LineData lineData = new LineData(xVals, lineSets);
         CombinedData combinedData = new CombinedData(xVals);
         combinedData.setData(data);
-        if(xVals.size() > 1) {
+
+        Log.d("XVALS", String.valueOf(xVals.size()));
+        if (xVals.size() > 1) {
             combinedData.setData(lineData);
         }
-
-        mChart.setData(combinedData);
+        if (xVals.size() > 0){
+            mChart.setData(combinedData);
+        } else {
+            mChart.setData(null);
+        }
         mChart.notifyDataSetChanged();
         mChart.invalidate();
 
@@ -810,8 +817,6 @@ public class AssignmentActivity extends AppCompatActivity {
         });
 
         lvDialogAssigned.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-
-            //TODO CHECK COMPLETETION BEFORE DELETING
             @Override
             public void onItemClick(AdapterView<?> parent, View view, final int position, long id) {
                 new AlertDialog.Builder(context)
@@ -941,5 +946,15 @@ public class AssignmentActivity extends AppCompatActivity {
             e.printStackTrace();
         }
         return null;
+    }
+    private void statDialog(){
+        AlertDialog.Builder builder = new AlertDialog.Builder(context);
+        LayoutInflater inflater = getLayoutInflater();
+        final View layout = inflater.inflate(R.layout.dialog_text_overview, null);
+        builder.setView(layout);
+        final AlertDialog dialog = builder.create();
+        dialog.setCanceledOnTouchOutside(true);
+        dialog.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_UNCHANGED);
+        dialog.show();
     }
 }
