@@ -31,30 +31,30 @@ import java.util.Map;
 
 public class TextActivity extends AppCompatActivity {
 
-    EditText etContent;
+    private EditText etContent;
 
-    Context context = this;
-    ListView lvTexts;
-    List<Map<String, String>> textList = new ArrayList<>();
-    ArrayList<Integer> colors = new ArrayList<>();
-    ListViewAdapter textAdapter;
-    ListView lvQuestions;
-    List<Map<String, String>> questionList = new ArrayList<>();
-    SimpleAdapter questionAdapter;
-    Button bAddText;
-    Button bDelete;
-    Button bSave;
-    Button bAddQuestion;
-    EditText etTextName;
-    TextView tvComplexity;
-    EditText etSearch;
-    String textContent;
-    String textId;
-    String textName;
-    boolean newText;
-    boolean changed;
-    double lix;
-    boolean clear;
+    private Context context = this;
+    private ListView lvTexts;
+    private List<Map<String, String>> textList = new ArrayList<>();
+    private ArrayList<Integer> colors = new ArrayList<>();
+    private ListViewAdapter textAdapter;
+    private ListView lvQuestions;
+    private List<Map<String, String>> questionList = new ArrayList<>();
+    private SimpleAdapter questionAdapter;
+    private Button bAddText;
+    private Button bDelete;
+    private Button bSave;
+    private Button bAddQuestion;
+    private EditText etTextName;
+    private TextView tvComplexity;
+    private EditText etSearch;
+    private String textContent;
+    private String textId;
+    private String textName;
+    private boolean newText;
+    private boolean changed;
+    private double lix;
+    private boolean clear;
 
     @Override
     protected void onCreate(final Bundle savedInstanceState) {
@@ -294,7 +294,7 @@ public class TextActivity extends AppCompatActivity {
         });
     }
 
-    public void calculate() {
+    private void calculate() {
         String inputText = etContent.getText().toString();
         String cleanText;
         int P = StringUtils.countMatches(inputText, ".");
@@ -323,7 +323,7 @@ public class TextActivity extends AppCompatActivity {
         }
     }
 
-    public void getTexts() {
+    private void getTexts() {
         new TextTask(new TextCallback() {
             @Override
             public void TextCallBack(HashMap<String, HashMap<String, String>> results) {
@@ -361,7 +361,7 @@ public class TextActivity extends AppCompatActivity {
         },context).executeTask("get","","","",0);
     }
 
-    public boolean createText() {
+    private boolean createText() {
 
         if (!etTextName.getText().toString().equals("") && !etContent.getText().toString().equals("")) {
 
@@ -393,7 +393,7 @@ public class TextActivity extends AppCompatActivity {
 
     }
 
-    public boolean updateText() {
+    private boolean updateText() {
         if (!etTextName.getText().toString().equals("") && !etContent.getText().toString().equals("")) {
 
             new TextTask(new TextCallback() {
@@ -423,7 +423,7 @@ public class TextActivity extends AppCompatActivity {
 
     }
 
-    public void deleteText() {
+    private void deleteText() {
         new AlertDialog.Builder(context)
                 .setIcon(android.R.drawable.ic_dialog_alert)
                 .setTitle("Confirm")
@@ -452,15 +452,15 @@ public class TextActivity extends AppCompatActivity {
 
     }
 
-    public void setNewText(boolean value) {
+    private void setNewText(boolean value) {
         newText = value;
     }
 
-    public void setChanged(boolean value) {
+    private void setChanged(boolean value) {
         changed = value;
     }
 
-    public void confirm(final DialogCallback callback) {
+    private void confirm(final DialogCallback callback) {
         new AlertDialog.Builder(context)
                 .setIcon(android.R.drawable.ic_dialog_alert)
                 .setTitle("Confirm")
@@ -483,7 +483,7 @@ public class TextActivity extends AppCompatActivity {
     }
 
     //@param position - the position from the listview - pass -1 for new text
-    public void setContentPane(int position) {
+    private void setContentPane(int position) {
         if (position >= 0) {
             Map<String, String> textData = textList.get(position);
             textContent = textData.get("textcontent");
@@ -508,7 +508,7 @@ public class TextActivity extends AppCompatActivity {
         }
     }
 
-    public void getQuestions(String textId) {
+    private void getQuestions(String textId) {
         new QuestionTask(new QuestionCallback() {
             @Override
             public void QuestionTaskDone(HashMap<String, HashMap<String, String>> results) {
@@ -529,7 +529,7 @@ public class TextActivity extends AppCompatActivity {
         }, context).executeTask("get", "", textId, "", "");
     }
 
-    public int pxToDp(int px) {
+    private int pxToDp(int px) {
         return (int) (px / Resources.getSystem().getDisplayMetrics().density);
     }
 
@@ -596,11 +596,7 @@ public class TextActivity extends AppCompatActivity {
                 String answerText = answer[1];
                 String answerId = answer[0];
                 boolean answerCorrect;
-                if (answer[2].equals("1")) {
-                    answerCorrect = true;
-                } else {
-                    answerCorrect = false;
-                }
+                answerCorrect = answer[2].equals("1");
 
                 if (i == 0) {
                     etDialogAnswer0.setText(answerText);

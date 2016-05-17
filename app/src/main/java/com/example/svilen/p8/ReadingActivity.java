@@ -4,14 +4,22 @@ import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.os.Build;
 import android.os.SystemClock;
+import android.support.v4.view.PagerAdapter;
+import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.text.Html;
+import android.text.Spanned;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewTreeObserver;
 import android.widget.Button;
 import android.widget.Chronometer;
+import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
@@ -69,11 +77,23 @@ public class ReadingActivity extends AppCompatActivity  {
     TextView tvTextContent;
     int booleanForButton = 0;
     int seconds = 0;
+    ViewPager myPager;
+    PagerAdapter adapter;
+    String textContent1;
+
+    Pagination mPagination;
+    CharSequence mText;
+    int mCurrentIndex = 0;
+    TextView tvContent;
+    String textContent22;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_reading);
+
+
 
         userinfo = new UserInfo(context);
         user = userinfo.getUser();
@@ -84,8 +104,9 @@ public class ReadingActivity extends AppCompatActivity  {
         bPause = (Button) findViewById(R.id.bPause);
         tvAssignmentName = (TextView) findViewById(R.id.tvTextName1);
         tvTextName2 = (TextView) findViewById(R.id.tvTextName2);
-        tvTextContent = (TextView) findViewById(R.id.tvTextContent);
+        //tvContent = (TextView) findViewById(R.id.tvTextContent);
         chronometer = (Chronometer) findViewById(R.id.chronometer);
+
 
 
 
@@ -104,7 +125,11 @@ public class ReadingActivity extends AppCompatActivity  {
 
         chronometer.setBase(SystemClock.elapsedRealtime()); // sets the base for the clock
         chronometer.start(); // starts the clock
-        getText();
+
+
+
+         textContent22 = getText1().get("text0").get("textcontent");
+        Log.d("7979 ", textContent22);
 
       /*  bLogout.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -114,7 +139,10 @@ public class ReadingActivity extends AppCompatActivity  {
             }
         });*/
 
-        bPause.setOnClickListener(new View.OnClickListener() {
+        pager();
+
+
+    bPause.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 timeWhenStopped = chronometer.getBase() - SystemClock.elapsedRealtime();
@@ -268,6 +296,26 @@ public class ReadingActivity extends AppCompatActivity  {
 
     }
 
+    public HashMap<String, HashMap<String, String>> getText1(){ // used to retrieve answerId based on questionId and answertext while freezing everything else
+        try {
+            return new TextTask(new TextCallback() {
+                @Override
+                public void TextCallBack(HashMap<String, HashMap<String, String>> results) {
+
+                }
+            },context).execute("get", textId, "", "", "0").get(30,TimeUnit.SECONDS);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        } catch (ExecutionException e) {
+            e.printStackTrace();
+        } catch (TimeoutException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+
+
     public HashMap<String, HashMap<String, String>> getAnswerId(){ // used to retrieve answerId based on questionId and answertext while freezing everything else
 
     try {
@@ -299,15 +347,16 @@ public class ReadingActivity extends AppCompatActivity  {
                 // remove progressDial if possible
                 for (Map.Entry<String, HashMap<String, String>> text : results.entrySet()) {
                     Map<String, String> textInfo = new HashMap<>();
-                    String textContent = text.getValue().get("textcontent");
+                    textContent1 = text.getValue().get("textcontent");
                     textName = text.getValue().get("textname");
 
-                    textInfo.put("textcontent", textContent);
+                    textInfo.put("textcontent", textContent1);
                     textInfo.put("textname", textName);
                     // assignmentList.add(textInfo);
 
-                    tvTextContent.setText(textContent);
+                 //   tvTextContent.setText(textContent);
                     tvTextName2.setText(textName);
+                    Log.d("textInfo ", textInfo.toString());
 
 
 
@@ -418,7 +467,7 @@ public class ReadingActivity extends AppCompatActivity  {
                             public void questresultdone(HashMap<String, HashMap<String, String>> questresult) {
 
                             }
-                        }, context).execute(assignmentId, lastElement, "", answerIdtoChosenAnswer, "1", "1", "1","insert"); // remember to change isCompletet to empty when done!!
+                        }, context).execute(assignmentId, lastElement, "", answerIdtoChosenAnswer, "1", "1", "","insert"); // remember to change isCompletet to empty when done!!
 
                     } else {
                         Log.d("YOU HAVE ANSWERED ", "INCORRECT!");
@@ -429,7 +478,7 @@ public class ReadingActivity extends AppCompatActivity  {
                             public void questresultdone(HashMap<String, HashMap<String, String>> questresult) {
 
                             }
-                        }, context).execute(assignmentId, lastElement, "", answerIdtoChosenAnswer, "0", "1", "1","insert");// remember to change isCompletet to empty when done!!
+                        }, context).execute(assignmentId, lastElement, "", answerIdtoChosenAnswer, "0", "1", "","insert");// remember to change isCompletet to empty when done!!
 
                     }
                     Log.d("STUDENTANSWER: ", correctOrNot.toString());
@@ -467,7 +516,7 @@ public class ReadingActivity extends AppCompatActivity  {
                             public void questresultdone(HashMap<String, HashMap<String, String>> questresult) {
 
                             }
-                        }, context).execute(assignmentId, "", "", "", "", "1", totalSeconds,"insert");
+                        }, context).execute(assignmentId, "", "", "", "", "1", totalSeconds,"final");
                     }
 
 
@@ -479,5 +528,72 @@ public class ReadingActivity extends AppCompatActivity  {
         }  });
         tvQuestionToStudent.setText(specificQuestionContent1);
     }
+    private void update() {
+        final CharSequence text = mPagination.get(mCurrentIndex);
+        if (text != null) tvContent.setText(text);
+    }
 
-}
+    public void pager() {
+        StringBuilder sb = new StringBuilder();
+        for (int i = 0; i < 1; i++) {
+            sb.append(textContent22);
+        }
+        String book_content = sb.toString();
+
+        Spanned htmlString = Html.fromHtml(book_content);
+        mText = TextUtils.concat(htmlString);
+
+
+
+        tvContent = (TextView) findViewById(R.id.tvText1212);
+        tvContent.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
+            @Override
+            public void onGlobalLayout() {
+                // Removing layout listener to avoid multiple calls
+                if (Build.VERSION.SDK_INT < Build.VERSION_CODES.JELLY_BEAN) {
+                    tvContent.getViewTreeObserver().removeGlobalOnLayoutListener(this);
+                } else {
+                    tvContent.getViewTreeObserver().removeOnGlobalLayoutListener(this);
+                }
+                mPagination = new com.example.svilen.p8.Pagination(mText,
+                        tvContent.getWidth(),
+                        tvContent.getHeight(),
+                        tvContent.getPaint());
+
+                update();
+            }
+        });
+
+
+      //  LinearLayout previous = (LinearLayout) findViewById(R.id.menulinear1);
+        ImageButton previous = (ImageButton) findViewById(R.id.previous) ;
+        previous.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (mCurrentIndex > 0) {
+                    mCurrentIndex--;
+                    update();
+                }
+            }
+        });
+
+       // LinearLayout next = (LinearLayout) findViewById(R.id.next);
+        ImageButton next = (ImageButton) findViewById(R.id.next);
+        next.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (mCurrentIndex < mPagination.size()) {
+                    mCurrentIndex++;
+                    update();
+                }
+            }
+        });
+
+
+
+
+    }}
+
+
+
+

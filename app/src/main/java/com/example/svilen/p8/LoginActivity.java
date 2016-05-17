@@ -14,13 +14,13 @@ import java.util.HashMap;
 
 public class LoginActivity extends AppCompatActivity {
 
-    Button loginButton;
-    EditText usernameInput;
-    EditText passwordInput;
-    String username;
-    String password;
-    Context context = this;
-    UserInfo userInfo;
+    private Button loginButton;
+    private EditText usernameInput;
+    private EditText passwordInput;
+    private String username;
+    private String password;
+    private final Context context = this;
+    private UserInfo userInfo;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

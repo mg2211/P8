@@ -25,14 +25,19 @@ import android.widget.TimePicker;
 import android.widget.Toast;
 
 import com.github.mikephil.charting.charts.BarChart;
+import com.github.mikephil.charting.charts.CombinedChart;
 import com.github.mikephil.charting.components.XAxis;
 import com.github.mikephil.charting.components.YAxis;
 import com.github.mikephil.charting.data.BarData;
 import com.github.mikephil.charting.data.BarDataSet;
 import com.github.mikephil.charting.data.BarEntry;
+import com.github.mikephil.charting.data.CombinedData;
 import com.github.mikephil.charting.data.Entry;
+import com.github.mikephil.charting.data.LineData;
+import com.github.mikephil.charting.data.LineDataSet;
 import com.github.mikephil.charting.highlight.Highlight;
 import com.github.mikephil.charting.interfaces.datasets.IBarDataSet;
+import com.github.mikephil.charting.interfaces.datasets.ILineDataSet;
 import com.github.mikephil.charting.listener.OnChartValueSelectedListener;
 
 import java.text.ParseException;
@@ -49,45 +54,47 @@ import java.util.concurrent.TimeoutException;
 
 public class AssignmentActivity extends AppCompatActivity {
 
-    Context context = this;
-    UserInfo userInfo;
-    HashMap<String, String> user;
-    String teacherId;
+    private final Context context = this;
+    private UserInfo userInfo;
+    private HashMap<String, String> user;
+    private String teacherId;
 
-    Button bAddAssignment;
-    Button bSave;
-    Button bAssign;
-    EditText etSearch;
-    EditText etAssignmentText;
-    EditText etAssignmentName;
-    ListView lvAssignments;
-    TextView tvStudentPerformance;
-    SimpleAdapter assignmentAdapter;
-    List<Map<String, String>> assignmentLibList = new ArrayList<>();
-    List<Map<String, String>> textList = new ArrayList<>();
-    HashMap<String,HashMap<String, String>> assignments;
+    private Button bAddAssignment;
+    private Button bSave;
+    private Button bAssign;
+    private EditText etSearch;
+    private EditText etAssignmentText;
+    private EditText etAssignmentName;
+    private ListView lvAssignments;
+    private TextView tvStudentPerformance;
+    private SimpleAdapter assignmentAdapter;
+    private final List<Map<String, String>> assignmentLibList = new ArrayList<>();
+    private final List<Map<String, String>> textList = new ArrayList<>();
+    private HashMap<String,HashMap<String, String>> assignments;
 
-    SimpleAdapter textAdapter;
-    int assignmentLibTextId;
-    String assignmentLibId;
-    String assignmentLibName;
-    int dialogSelected;
+    private SimpleAdapter textAdapter;
+    private int assignmentLibTextId;
+    private String assignmentLibId;
+    private String assignmentLibName;
+    private int dialogSelected;
 
-    boolean newAssignment;
-    boolean changed;
+    private boolean newAssignment;
+    private boolean changed;
 
-    HashMap<Integer, Integer> textListIds = new HashMap<>();
-    List<Map<String, String>> studentList = new ArrayList<>();
-    SimpleAdapter studentAdapter;
-    List<Map<String, String>> classList = new ArrayList<>();
-    SimpleAdapter classAdapter;
-    List<Map<String, String>> assignedList = new ArrayList<>();
-    AssignmentListAdapter assignedAdapter;
-    ArrayList<Integer> studentsAssigned = new ArrayList<>();
-    BarChart mChart;
-    ArrayList<BarEntry> yVal = new ArrayList<>();
-    ArrayList<String> xVals = new ArrayList<>();
-    ArrayList<IBarDataSet> dataSets = new ArrayList<>();
+    private final HashMap<Integer, Integer> textListIds = new HashMap<>();
+    private final List<Map<String, String>> studentList = new ArrayList<>();
+    private SimpleAdapter studentAdapter;
+    private final List<Map<String, String>> classList = new ArrayList<>();
+    private SimpleAdapter classAdapter;
+    private final List<Map<String, String>> assignedList = new ArrayList<>();
+    private AssignmentListAdapter assignedAdapter;
+    private final ArrayList<Integer> studentsAssigned = new ArrayList<>();
+    private CombinedChart mChart;
+    private final ArrayList<BarEntry> yVal = new ArrayList<>();
+    private final ArrayList<String> xVals = new ArrayList<>();
+    private final ArrayList<IBarDataSet> dataSets = new ArrayList<>();
+    private final ArrayList<Entry> lineY = new ArrayList<>();
+    private final ArrayList<ILineDataSet> lineSets = new ArrayList<>();
 
 
     @Override
@@ -105,7 +112,7 @@ public class AssignmentActivity extends AppCompatActivity {
         bSave = (Button) findViewById(R.id.bSave);
         bAssign = (Button) findViewById(R.id.bAssign);
         tvStudentPerformance = (TextView) findViewById(R.id.tvStudentPerformance);
-        mChart = (BarChart) findViewById(R.id.chart);
+        mChart = (CombinedChart) findViewById(R.id.chart);
 
         assignmentAdapter= new SimpleAdapter(this, assignmentLibList,
                 android.R.layout.simple_list_item_1,
@@ -286,7 +293,7 @@ public class AssignmentActivity extends AppCompatActivity {
             }
         });
     }
-    public void confirm(final int position) {
+    private void confirm(final int position) {
         new AlertDialog.Builder(context)
                 .setIcon(android.R.drawable.ic_dialog_alert)
                 .setTitle("Confirm")
@@ -655,20 +662,78 @@ public class AssignmentActivity extends AppCompatActivity {
         yVal.clear();
         xVals.clear();
         dataSets.clear();
-        Log.d("assignedlist",assignedList.toString());
+        lineSets.clear();
+        lineY.clear();
+
+        ArrayList<Integer> colors = new ArrayList<>();
+
+        int index = 0;
+        double total = 0;
         for(int i = 0; i<assignedList.size(); i++){
-            String studentName = assignedList.get(i).get("Name");
+            final String studentName = assignedList.get(i).get("Name");
+            String assignmentId = assignedList.get(i).get("assignmentid");
             if(assignedList.get(i).get("isComplete").equals("1")){
-                int rand = (int)(Math.random()*101);
-                yVal.add(new BarEntry(rand,i));
+                HashMap<String, HashMap<String, String>> result = new HashMap<>(getResult(assignmentId));
+                result.remove("response");
+                int numberOfQuestions = 0;
+                int numberOfCorrect = 0;
+                for (Map.Entry<String, HashMap<String, String>> questionResult : result.entrySet()){
+                    numberOfQuestions++;
+                    if(questionResult.getValue().get("correct").equals("1")){
+                        numberOfCorrect++;
+                    }
+                }
+                Log.d("correct answers", String.valueOf(numberOfCorrect));
+                Log.d("No. questions", String.valueOf(numberOfQuestions));
+
+                double percentage = ((double) numberOfCorrect/ (double)numberOfQuestions)*100;
+                Log.d("percentage", String.valueOf(percentage));
+                yVal.add(new BarEntry((float) percentage,index));
                 xVals.add(studentName);
+                if(percentage >= 50 && percentage <= 75){
+                    colors.add(Color.rgb(255,235,69));
+                } else if(percentage > 75){
+                    colors.add(Color.rgb(156,204,101));
+                } else {
+                    colors.add(Color.rgb(239,83,80));
+                }
+                total = total+percentage;
+                index++;
             }
 
         }
+        Log.d("average", String.valueOf((total/ xVals.size())));
+        for(int i=0; i<index; i++){
+            lineY.add(new Entry((float) (total/xVals.size()),i));
+        }
+
         BarDataSet set = new BarDataSet(yVal,"Students");
+        LineDataSet lineSet = new LineDataSet(lineY,"Average");
+        lineSet.enableDashedLine(5,5,0);
+        lineSet.setCircleColor(Color.GRAY);
+        lineSet.setColor(Color.GRAY);
+        lineSet.setValueTextColor(Color.GRAY);
+        lineSet.setValueTextSize(10f);
+        lineSet.setDrawCircles(false);
+
+        set.setColors(colors);
+
+        Log.d("data",set.toString());
+        Log.d("lineset",lineSet.toString());
         dataSets.add(set);
+        lineSets.add(lineSet);
+        BarData data = new BarData(xVals, dataSets);
+        LineData lineData = new LineData(xVals,lineSets);
+        CombinedData combinedData = new CombinedData(xVals);
+        combinedData.setData(data);
+        if(xVals.size() > 1) {
+            combinedData.setData(lineData);
+        }
+
+        mChart.setData(combinedData);
         mChart.notifyDataSetChanged();
         mChart.invalidate();
+
     }
 
     private void assignmentDialog(final int assignmentListPos){
@@ -745,6 +810,8 @@ public class AssignmentActivity extends AppCompatActivity {
         });
 
         lvDialogAssigned.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+
+            //TODO CHECK COMPLETETION BEFORE DELETING
             @Override
             public void onItemClick(AdapterView<?> parent, View view, final int position, long id) {
                 new AlertDialog.Builder(context)
@@ -819,14 +886,14 @@ public class AssignmentActivity extends AppCompatActivity {
 
     private void barChart(){
         //design barChart
-        mChart = (BarChart) findViewById(R.id.chart);
+        mChart = (CombinedChart) findViewById(R.id.chart);
         mChart.setPinchZoom(false);
         mChart.setDoubleTapToZoomEnabled(false);
         mChart.setScaleEnabled(false);
         mChart.setDrawBarShadow(false);
         mChart.setDrawGridBackground(false);
         mChart.animateY(1250);
-        mChart.getLegend().setEnabled(false);
+        mChart.getLegend().setEnabled(true);
         mChart.setDescription("");
 
         XAxis xAxis = mChart.getXAxis();
@@ -845,13 +912,11 @@ public class AssignmentActivity extends AppCompatActivity {
 
 
         mChart.getAxisLeft().setDrawGridLines(false);
-        BarData data = new BarData(xVals, dataSets);
-
-        mChart.setData(data);
         mChart.setOnChartValueSelectedListener(new OnChartValueSelectedListener() {
             @Override
             public void onValueSelected(Entry entry, int i, Highlight highlight) {
-
+                Log.d("entry", String.valueOf(entry.getVal()));
+                Toast.makeText(context, entry.toString(), Toast.LENGTH_SHORT).show();
             }
 
             @Override
@@ -859,5 +924,22 @@ public class AssignmentActivity extends AppCompatActivity {
 
             }
         });
+    }
+    private HashMap<String, HashMap<String, String>> getResult(String assignmentId){
+        try {
+            return new QuestionResultTask(new QuestionResultCallback() {
+                @Override
+                public void questresultdone(HashMap<String, HashMap<String, String>> questresult) {
+
+                }
+            }, context).execute(assignmentId,"","","","","","","get").get(30,TimeUnit.SECONDS);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        } catch (ExecutionException e) {
+            e.printStackTrace();
+        } catch (TimeoutException e) {
+            e.printStackTrace();
+        }
+        return null;
     }
 }

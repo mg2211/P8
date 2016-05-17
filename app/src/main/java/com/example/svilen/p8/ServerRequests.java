@@ -29,8 +29,8 @@ import java.util.Map;
 public class ServerRequests {
 }
 class LoginTask extends AsyncTask<String, Void, HashMap<String, String>> {
-        ProgressDialog progressDialog;
-        final Context context;
+        private final ProgressDialog progressDialog;
+        private final Context context;
 
         LoginTask(Context context) {
             this.context = context;
@@ -153,7 +153,7 @@ class LoginTask extends AsyncTask<String, Void, HashMap<String, String>> {
             } else if (role.equals("student")) {
                 editor.putString("studentId", studentId);
             }
-            editor.commit();
+            editor.apply();
 
 
             intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
@@ -590,7 +590,7 @@ class TextTask extends AsyncTask<String, Void, HashMap<String, HashMap<String, S
                     textInfo.put("textcontent", specificTextContent);
                     textInfo.put("id", specificTextId);
                     textInfo.put("complexity", String.valueOf(specificTextComplexity));
-                    results.put("TextId: " + specificTextId, textInfo);
+                    results.put("text"+i,textInfo);
                 }
             }
 
@@ -1044,7 +1044,7 @@ class AssignmentLibTask extends AsyncTask<String, Void, HashMap<String, HashMap<
 
     private final Context context;
     private final AssignmentLibCallback delegate;
-    ProgressDialog progressDialog;
+    private final ProgressDialog progressDialog;
 
     public AssignmentLibTask(AssignmentLibCallback delegate, Context context){
         this.delegate = delegate;
@@ -1147,9 +1147,9 @@ class AssignmentLibTask extends AsyncTask<String, Void, HashMap<String, HashMap<
     class AssignmentTask extends AsyncTask<String, Void, HashMap<String, HashMap<String, String>>> {
 
 
-        AssignmentCallback delegate;
-        ProgressDialog progressDialog;
-        Context context;
+        private final AssignmentCallback delegate;
+        private final ProgressDialog progressDialog;
+        private final Context context;
 
         AssignmentTask(AssignmentCallback delegate, Context context){
             this.delegate = delegate;
@@ -1339,10 +1339,20 @@ class QuestionResultTask extends AsyncTask<String, Void, HashMap<String, HashMap
             JSONObject JSONResult = new JSONObject(serverResponse);
             String generalResponse = JSONResult.getString("generalResponse");
             String responseCode = String.valueOf(JSONResult.getInt("responseCode"));
-
             response.put("generalResponse", generalResponse);
             response.put("responseCode", responseCode);
 
+            if(method.equals("get")) {
+                JSONArray questionResults = JSONResult.getJSONArray("results");
+                for (int i = 0; i < questionResults.length(); i++) {
+                    JSONObject result = questionResults.getJSONObject(i);
+                    String correct = String.valueOf(result.getInt("correct"));
+
+                    HashMap<String, String> resultInfo = new HashMap<>();
+                    resultInfo.put("correct", correct);
+                    results.put(""+i,resultInfo);
+                }
+            }
 
         } catch (IOException e) {
             response.put("generalResponse", "Server connection failed");
@@ -1367,9 +1377,9 @@ class QuestionResultTask extends AsyncTask<String, Void, HashMap<String, HashMap
 
 class AnswerTask extends AsyncTask<String, Void, HashMap<String, HashMap<String, String>>> {
 
-    Context context;
-    AnswerCallback delegate;
-    ProgressDialog progressDialog;
+    private Context context;
+    private AnswerCallback delegate;
+    private ProgressDialog progressDialog;
 
     public AnswerTask (AnswerCallback delegate, Context context){
         this.delegate = delegate;
