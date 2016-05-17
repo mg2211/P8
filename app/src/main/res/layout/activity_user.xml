@@ -45,11 +45,10 @@
                 android:background="#29b6f6"
                 android:paddingLeft="20dp"
                 android:drawableRight="@drawable/search"
-                android:paddingRight="20dp"
-                android:choiceMode="singleChoice" />
+                android:paddingRight="20dp" />
 
             <ListView
-                android:layout_width="wrap_content"
+                android:layout_width="fill_parent"
                 android:layout_height="fill_parent"
                 android:id="@+id/lvListUsers"
                 android:layout_marginTop="0dp"

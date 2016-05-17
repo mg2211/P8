@@ -739,7 +739,6 @@ class UserTask extends AsyncTask<String, Void, Map<String,HashMap<String, String
                     }
                     result.put("userId: " + userId, userInfo);
                 }
-                Log.d("UserTask response", result.toString());
 
             } else if (params[0].equals("CREATE")) {
 
@@ -751,9 +750,8 @@ class UserTask extends AsyncTask<String, Void, Map<String,HashMap<String, String
 
                 lastUser.put("lastUserId", lastUserId);
                 result.put("lastUserId: " + lastUserId, lastUser);
-
-                Log.d("UserTask response", result.toString());
             }
+            Log.d("UserTask response", result.toString());
             HashMap<String, String> serverResponse = new HashMap<>();
             serverResponse.put("generalResponse", generalResponse);
             serverResponse.put("responseCode", String.valueOf(responseCode));
@@ -885,8 +883,19 @@ class ClassTaskNew extends AsyncTask<String, Void, Map<String,HashMap<String, St
 
                     result.put("classId: " + classId, classInfo);
                 }
-                Log.d("ClassTask response", result.toString());
+            } else if (params[0].equals("CREATE")) {
+
+                String lastClassId;
+
+                lastClassId = JSONResult.getString("lastClassId");
+                Log.d("lastClassId", JSONResult.getString("lastClassId"));
+
+                HashMap<String, String> lastClass = new HashMap<>();
+                lastClass.put("lastClassId", lastClassId);
+
+                result.put("lastClassId: " + lastClassId, lastClass);
             }
+            Log.d("ClassTask response", result.toString());
             HashMap<String, String> serverResponse = new HashMap<>();
             serverResponse.put("generalResponse", generalResponse);
             serverResponse.put("responseCode", String.valueOf(responseCode));

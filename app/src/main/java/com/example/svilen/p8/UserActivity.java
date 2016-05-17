@@ -3,6 +3,7 @@ package com.example.svilen.p8;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.text.Editable;
@@ -29,45 +30,65 @@ import java.util.Map;
 
 public class UserActivity extends AppCompatActivity {
 
-    Context context = this;
+    private Context context = this;
 
-    Button bAddUser, bRegisterUser, bEditUser, bDeleteUser, bAssignClass, bModifyClasses,
-            bDialogAssignClass, bDialogCancel;
-    EditText etSearch, etUsername, etPassword, etFirstName, etLastName, etEmail, etContactEmail,
-            etDialogSearch;
-    Spinner spinnerRole;
-    ListView lvListUsers, lvDialogListClasses, lvDialogListTeachers, lvDialogListTeacherClasses;
-    TextView tvTitleRegister, tvTitleEdit, tvTitleStudentClass, tvDialogClassTitle, tvUserClassName, tvDialogClassName, tvDialogTeacherName,
-            tvDialogTeacherEmail, tvTitleTeacherClasses;
-    ArrayAdapter roleAdapter;
-    SimpleAdapter userListAdapter, dialogClassListAdapter, dialogTeacherListAdapter, dialogTeacherClassListAdapter;
-    List<String> roleList = new ArrayList<>();
-    List<Map<String, String>> userList = new ArrayList<>();
-    List<Map<String, String>> classList = new ArrayList<>();
-    List<Map<String, String>> teacherList = new ArrayList<>();
+    private Button bAddUser;
+    private Button bRegisterUser;
+    private Button bEditUser;
+    private Button bDeleteUser;
+    private Button bAssignClass;
+    private Button bModifyClasses;
+    private Button bDialogAssignClass;
+    private Button bDialogCancel;
+    private EditText etSearch;
+    private EditText etUsername;
+    private EditText etPassword;
+    private EditText etFirstName;
+    private EditText etLastName;
+    private EditText etEmail;
+    private EditText etContactEmail;
+    private EditText etDialogSearch;
+    private Spinner spinnerRole;
+    private ListView lvListUsers;
+    private ListView lvDialogListClasses;
+    private TextView tvTitleRegister;
+    private TextView tvTitleEdit;
+    private TextView tvTitleStudentClass;
+    private TextView tvDialogClassTitle;
+    private TextView tvUserClassName;
+    private TextView tvDialogClassName;
+    private TextView tvDialogTeacherName;
+    private TextView tvDialogTeacherEmail;
+    private ArrayAdapter roleAdapter;
+    private SimpleAdapter userListAdapter;
+    private SimpleAdapter dialogClassListAdapter;
+    private List<String> roleList = new ArrayList<>();
+    private List<Map<String, String>> userList = new ArrayList<>();
+    private List<Map<String, String>> classList = new ArrayList<>();
+    private List<Map<String, String>> teacherList = new ArrayList<>();
 
-    String userUserId;
-    String userTeacherId;
-    String userStudentId;
-    String userClassId;
-    String userRole;
-    String userUsername;
-    String userPassword;
-    String userFirstName;
-    String userLastName;
-    String userEmail;
-    String userParentEmail;
-    String userClassName;
+    private String userUserId;
+    private String userTeacherId;
+    private String userStudentId;
+    private String userClassId;
+    private String userRole;
+    private String userUsername;
+    private String userPassword;
+    private String userFirstName;
+    private String userLastName;
+    private String userEmail;
+    private String userParentEmail;
+    private String userClassName;
 
-    String classClassId;
-    String classClassName;
-    String classTeacherFistName;
-    String classTeacherLastName;
-    String classTeacherEmail;
+    private String classClassId;
+    private String classClassName;
+    private String classTeacherFistName;
+    private String classTeacherLastName;
+    private String classTeacherEmail;
 
-    boolean newUser;
-    boolean changed;
-    boolean clear;
+    private boolean newUser;
+    private boolean changed;
+    private boolean clear;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -146,19 +167,9 @@ public class UserActivity extends AppCompatActivity {
         dialogClassListAdapter = new SimpleAdapter(this, classList,
                 R.layout.listview_class_item,
                 new String[] {"className", "teacherFirstName", "teacherLastName", "numOfStudents"},
-                new int[] {R.id.clTvClassName, R.id.clTvFirstName, R.id.clTvLastName, R.id.clTvNumberOfStudents });
+                new int[] {R.id.clTvClassName, R.id.clTvTeacherFirstName, R.id.clTvTeacherLastName, R.id.clTvNumberOfStudents });
 
         getAllClasses();
-
-        dialogTeacherListAdapter = new SimpleAdapter(this, teacherList,
-                R.layout.listview_teacher_item,
-                new String[] {"username", "firstName", "lastName"},
-                new int[] {R.id.clTvTeacherUsername, R.id.clTvTeacherFirstName, R.id.clTvTeacherLastName });
-
-        dialogTeacherClassListAdapter = new SimpleAdapter(this, classList,
-                R.layout.listview_class_item,
-                new String[] {"className", "numOfStudents"},
-                new int[] {R.id.clTvTeacherClassName, R.id.clTvTeacherClassNumberOfStudents });
         
         lvListUsers.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
@@ -262,7 +273,8 @@ public class UserActivity extends AppCompatActivity {
         bModifyClasses.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                classCreateModifyDialog();
+                Intent intent = new Intent(context, ClassActivity.class);
+                startActivity(intent);
             }
         });
 
@@ -423,19 +435,19 @@ public class UserActivity extends AppCompatActivity {
         });
     }
 
-    public void setNewUser(boolean value) {
+    private void setNewUser(boolean value) {
         newUser = value;
         setEnabledUiItems();
         Log.d("new user value", String.valueOf(newUser));
     }
 
-    public void setChanged(boolean value) {
+    private void setChanged(boolean value) {
         changed = value;
         setEnabledUiItems();
         Log.d("Changed value", String.valueOf(changed));
     }
 
-    public void confirm(final DialogCallback callback) {
+    private void confirm(final DialogCallback callback) {
         new AlertDialog.Builder(context)
                 .setIcon(android.R.drawable.ic_dialog_alert)
                 .setTitle("Confirm")
@@ -455,7 +467,7 @@ public class UserActivity extends AppCompatActivity {
                 .show();
     }
 
-    public void getRoles() {
+    private void getRoles() {
         new RoleTask(new RoleCallback() {
             @Override
             public void roleListDone(Map<String, HashMap<String, String>> roles) {
@@ -470,7 +482,7 @@ public class UserActivity extends AppCompatActivity {
         }, context).execute(); //roleID
     }
 
-    public void getAllClasses() {
+    private void getAllClasses() {
         new ClassTaskNew(new ClassCallbackNew() {
             @Override
             public void classListDone(Map<String, HashMap<String, String>> classes) {
@@ -481,7 +493,9 @@ public class UserActivity extends AppCompatActivity {
                     String teacherId = classData.getValue().get("teacherId");
                     String className = classData.getValue().get("className");
                     String teacherFirstName = classData.getValue().get("teacherFirstName");
+                    Log.d("teacherFirstName" , teacherFirstName);
                     String teacherLastName = classData.getValue().get("teacherLastName");
+                    Log.d("teacherFirstName" , teacherLastName);
                     String teacherEmail = classData.getValue().get("teacherEmail");
                     String numOfStudents = classData.getValue().get("numOfStudents");
                     classInfo.put("classId", classId);
@@ -490,7 +504,7 @@ public class UserActivity extends AppCompatActivity {
                     classInfo.put("teacherFirstName", teacherFirstName);
                     classInfo.put("teacherLastName", teacherLastName);
                     classInfo.put("teacherEmail", teacherEmail);
-                    classInfo.put("NumOfStudents", "Number of students: "+ numOfStudents);
+                    classInfo.put("numOfStudents", "number of students: "+ numOfStudents);
                     Log.d("getAllClasses result", String.valueOf(classInfo));
                     classList.add(classInfo);
                 }
@@ -500,7 +514,7 @@ public class UserActivity extends AppCompatActivity {
         }, context).executeTask("FETCH", "", "", "", "", "");
     }
 
-    public void getAllUsers() {
+    private void getAllUsers() {
         new UserTask(new UserCallback() {
             @Override
             public void userTaskDone(Map<String, HashMap<String, String>> users) {
@@ -536,36 +550,7 @@ public class UserActivity extends AppCompatActivity {
         }, context).executeTask("FETCH", "", "", "", "", "", "", "", "", "", "", ""); //Nothing within "" to get every text - see php script
     }
 
-    public void getAllTeachers() {
-        new UserTask(new UserCallback() {
-            @Override
-            public void userTaskDone(Map<String, HashMap<String, String>> users) {
-                teacherList.clear();
-                for (Map.Entry<String, HashMap<String, String>> teacher : users.entrySet()) {
-                    final Map<String, String> userInfo = new HashMap<>();
-                    String role = teacher.getValue().get("role");
-                    String userId = teacher.getValue().get("userId");
-                    String teacherId = teacher.getValue().get("teacherId");
-                    String username = teacher.getValue().get("username");
-                    String firstName = teacher.getValue().get("firstName");
-                    String lastName = teacher.getValue().get("lastName");
-                    String email = teacher.getValue().get("email");
-                    userInfo.put("role", role);
-                    userInfo.put("userId", userId);
-                    userInfo.put("teacherId", teacherId);
-                    userInfo.put("username", username);
-                    userInfo.put("firstName", firstName);
-                    userInfo.put("lastName", lastName);
-                    userInfo.put("email", email);
-
-                    teacherList.add(userInfo);
-                }
-                dialogTeacherListAdapter.notifyDataSetChanged();
-            }
-        }, context).executeTask("FETCH", "teacher", "", "", "", "", "", "", "", "", "", ""); //Nothing within "" to get every text - see php script
-    }
-
-    public boolean createUser() {
+    private boolean createUser() {
         String role = spinnerRole.getSelectedItem().toString();
         String username = etUsername.getText().toString();
         String password = etPassword.getText().toString();
@@ -619,7 +604,7 @@ public class UserActivity extends AppCompatActivity {
         }
     }
 
-    public boolean updateUser() {
+    private boolean updateUser() {
         String username = etUsername.getText().toString();
         String password = etPassword.getText().toString();
         String firstName = etFirstName.getText().toString();
@@ -637,8 +622,7 @@ public class UserActivity extends AppCompatActivity {
         return true;
     }
 
-    public boolean updateUserClass(String userId, String classId){
-
+    private boolean updateUserClass(String userId, String classId){
         new UserTask(new UserCallback() {
             @Override
             public void userTaskDone(Map<String, HashMap<String, String>> users) {
@@ -649,7 +633,7 @@ public class UserActivity extends AppCompatActivity {
         return true;
     }
 
-    public void deleteUser() {
+    private void deleteUser() {
         new AlertDialog.Builder(context)
                 .setIcon(android.R.drawable.ic_dialog_alert)
                 .setTitle("Confirm")
@@ -680,7 +664,7 @@ public class UserActivity extends AppCompatActivity {
                 .show();
     }
 
-    public void setEnabledUiItems() {
+    private void setEnabledUiItems() {
         if (newUser) {
             tvTitleRegister.setVisibility(View.VISIBLE);
             bRegisterUser.setVisibility(View.VISIBLE);
@@ -717,7 +701,7 @@ public class UserActivity extends AppCompatActivity {
         }
     }
 
-    public void setContentPane(int position) {
+    private void setContentPane(int position) {
         if (position >= 0) {
             Map<String, String> userData = (Map) userListAdapter.getItem(position);
             userUserId = userData.get("userId");
@@ -840,7 +824,7 @@ public class UserActivity extends AppCompatActivity {
             public void onItemClick(AdapterView<?> parent, View view, final int position, long id) {
                 lvListUsers.setItemChecked(position, true);
                 view.setSelected(true);
-                Log.d("position", String.valueOf(position));
+                Log.d("position lvDLC", String.valueOf(position));
                 setDialogContentPane(position);
             }
         });
@@ -873,6 +857,7 @@ public class UserActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 updateUserClass(userUserId, classClassId);
+                tvUserClassName.setText(classClassName);
                 dialog.dismiss();
             }
         });
@@ -880,17 +865,19 @@ public class UserActivity extends AppCompatActivity {
         setDialogContentPane(getClassListPosition(userClassId, classList));
     }
 
-    public int getClassListPosition(String classId, List<Map<String, String>> classList){
+    private int getClassListPosition(String classId, List<Map<String, String>> classList){
         for(int i = 0; i < classList.size(); i++){
             Map<String, String> map = classList.get(i);
             if(map.get("classId").equals(classId)){
+                Log.d("GetClassListPos result", String.valueOf(i));
                 return i;
             }
         }
+        Log.d("GetClassListPos result", String.valueOf(-1));
         return -1;
     }
 
-    public void setDialogContentPane(int position) {
+    private void setDialogContentPane(int position) {
         if (position >= 0) {
             Map<String, String> classData = (Map) dialogClassListAdapter.getItem(position);
             classClassId = classData.get("classId");
@@ -906,159 +893,5 @@ public class UserActivity extends AppCompatActivity {
             tvDialogTeacherName.setText("");
             tvDialogTeacherEmail.setText("");
         }
-    }
-
-    //create a new classCreateModifyDialog
-    private void classCreateModifyDialog() {
-
-        AlertDialog.Builder builder = new AlertDialog.Builder(context);
-        LayoutInflater inflater = getLayoutInflater();
-        final View layout = inflater.inflate(R.layout.dialog_create_modify_class, null);
-        builder.setView(layout);
-        final AlertDialog dialog = builder.create();
-        dialog.setCanceledOnTouchOutside(true);
-        dialog.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_UNCHANGED);
-        dialog.show();
-
-        lvDialogListClasses = (ListView) layout.findViewById(R.id.lvDialogListClasses);
-        lvDialogListTeacherClasses = (ListView) layout.findViewById(R.id.lvDialogListTeacherClasses);
-
-        tvTitleTeacherClasses = (TextView) layout.findViewById(R.id.tvTitleTeacherClasses);
-
-        etDialogSearch = (EditText) layout.findViewById(R.id.etDialogSearch);
-
-        tvDialogClassTitle = (TextView) layout.findViewById(R.id.tvDialogClassTitle);
-        tvDialogClassName = (TextView) layout.findViewById(R.id.tvDialogClassName);
-        tvDialogTeacherName = (TextView) layout.findViewById(R.id.tvDialogTeacherName);
-        tvDialogTeacherEmail = (TextView) layout.findViewById(R.id.tvDialogTeacherEmail);
-
-        bDialogAssignClass = (Button) layout.findViewById(R.id.bDialogAssignClass);
-        bDialogCancel = (Button) layout.findViewById(R.id.bDialogCancel);
-
-        lvDialogListTeachers.setAdapter(dialogTeacherListAdapter);
-        lvDialogListTeachers.setChoiceMode(AbsListView.CHOICE_MODE_SINGLE);
-
-        lvDialogListTeacherClasses.setAdapter(dialogTeacherClassListAdapter);
-        lvDialogListTeacherClasses.setChoiceMode(AbsListView.CHOICE_MODE_SINGLE);
-
-        getAllTeachers();
-
-        lvDialogListTeachers.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-
-                Map<String, String> teacherData = (Map) dialogTeacherListAdapter.getItem(position);
-                String teacherId = teacherData.get("classId");
-                String teacherName = teacherData.get("firstName") + " " + teacherData.get("lastName");
-                tvTitleTeacherClasses.setText("Classes for " + teacherName);
-
-                new ClassTaskNew(new ClassCallbackNew() {
-                    @Override
-                    public void classListDone(Map<String, HashMap<String, String>> classes) {
-                        if (!classList.isEmpty()) {
-                            classList.clear();
-                        }
-                        for (Map.Entry<String, HashMap<String, String>> classData : classes.entrySet()) {
-                            Map<String, String> classInfo = new HashMap<>();
-                            String teacherName = classData.getValue().get("teacherFirstName") + " " + classData.getValue().get("teacherLastName");
-                            classInfo.put("name", teacherName);
-                            Log.d("teacherName", teacherName);
-                            classInfo.put("class", classData.getValue().get("classId"));
-                            classList.add(classInfo);
-                        }
-                    }
-                }, context).execute("FETCH", "", teacherId, "", "");
-            }
-        });
-
-        /*
-        lvDialogListTeacherClasses.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, final int position, long id) {
-                lvListUsers.setItemChecked(position, true);
-                view.setSelected(true);
-                Log.d("position", String.valueOf(position));
-                if (dialogChanged) {
-                    confirm(new DialogCallback() {
-                        @Override
-                        public void dialogResponse(boolean dialogResponse) {
-                            if (dialogResponse) {
-                                if (newClass) {
-                                    if (createClass()) {
-                                        clear = true;
-                                        setDialogChanged(false);
-                                        setNewClass(false);
-                                    } else {
-                                        clear = false;
-                                    }
-                                }
-                                if (changed) {
-                                    if (updateClass()) {
-                                        clear = true;
-                                        setDialogChanged(false);
-                                        setNewClass(false);
-                                    } else {
-                                        clear = false;
-                                    }
-                                }
-                            }
-                            if (clear) {
-                                setDialogAddModifyClassContentPane(position);
-                            } else {
-                                clear = true;
-                            }
-                        }
-                    });
-                } else {
-                    setDialogAddModifyClassContentPane(position);
-                }
-            }
-        });
-        */
-
-        /*
-        lvDialogListTeachers.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            public void onItemClick(AdapterView<?> parent, View view, final int position, long id) {
-                lvListUsers.setItemChecked(position, true);
-                view.setSelected(true);
-                Log.d("position", String.valueOf(position));
-                setDialogContentPane(position);
-            }
-        });
-        */
-
-        etDialogSearch.addTextChangedListener(new TextWatcher() {
-            @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-                //Auto generated stub
-            }
-
-            @Override
-            public void onTextChanged(CharSequence s, int start, int before, int count) {
-                dialogClassListAdapter.getFilter().filter(s);
-            }
-
-            @Override
-            public void afterTextChanged(Editable s) {
-                //Auto generated stub
-            }
-        });
-
-        bDialogCancel.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                dialog.dismiss();
-            }
-        });
-
-        bDialogAssignClass.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                updateUserClass(userUserId, classClassId);
-                dialog.dismiss();
-            }
-        });
-
-        setDialogContentPane(getClassListPosition(userClassId, classList));
     }
 }
