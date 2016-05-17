@@ -91,7 +91,7 @@
                 android:layout_height="wrap_content"
                 android:textAppearance="?android:attr/textAppearanceLarge"
                 android:text="@string/studentsInClass"
-                android:id="@+id/tvTitleStudentsInClass"
+                android:id="@+id/tvTitleListStudents"
                 android:layout_marginTop="10dp"/>
 
             <ListView
@@ -112,16 +112,8 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:textAppearance="?android:attr/textAppearanceLarge"
-                android:text="@string/addClass"
-                android:id="@+id/tvTitleCreateClass"
-                android:layout_marginTop="10dp"/>
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:textAppearance="?android:attr/textAppearanceLarge"
                 android:text="@string/editClass"
-                android:id="@+id/tvTitleEditClass"
+                android:id="@+id/tvTitleCRUDClass"
                 android:layout_marginTop="10dp"/>
 
             <EditText
@@ -171,7 +163,7 @@
                 android:layout_height="wrap_content"
                 android:textAppearance="?android:attr/textAppearanceLarge"
                 android:text="@string/allTeachers"
-                android:id="@+id/tvTitleAllTeachers"
+                android:id="@+id/tvTitleListTeachers"
                 android:layout_marginTop="10dp"/>
 
             <EditText
