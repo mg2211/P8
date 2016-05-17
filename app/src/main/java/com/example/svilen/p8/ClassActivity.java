@@ -35,8 +35,7 @@ public class ClassActivity extends AppCompatActivity {
     HashMap<String, String> user;
     LinearLayout llListStudents;
     ListView lvListClasses, lvListStudents, lvListTeachers;
-    TextView tvTitleStudentsInClass, tvTitleAllTeachers, tvTitleCreateClass,
-    tvTitleEditClass, tvTeacherName, tvTeacherEmail;
+    TextView tvTitleListStudents, tvTitleListTeachers, tvTitleCRUDClass, tvTeacherName, tvTeacherEmail;
     EditText etSearch, etClassName, etSearchTeacher;
     SimpleAdapter classListAdapter, studentListAdapter, teacherListAdapter;
     Button bAddClass, bShowTeacherClasses, bShowAllClasses, bCreateClass, bEditClass, bDeleteClass;
@@ -69,10 +68,9 @@ public class ClassActivity extends AppCompatActivity {
 
         llListStudents = (LinearLayout) findViewById(R.id.llListStudents);
 
-        tvTitleStudentsInClass = (TextView) findViewById(R.id.tvTitleStudentsInClass);
-        tvTitleAllTeachers = (TextView) findViewById(R.id.tvTitleAllTeachers);
-        tvTitleCreateClass = (TextView) findViewById(R.id.tvTitleCreateClass);
-        tvTitleEditClass = (TextView) findViewById(R.id.tvTitleEditClass);
+        tvTitleListStudents = (TextView) findViewById(R.id.tvTitleListStudents);
+        tvTitleListTeachers = (TextView) findViewById(R.id.tvTitleListTeachers);
+        tvTitleCRUDClass = (TextView) findViewById(R.id.tvTitleCRUDClass);
         tvTeacherName = (TextView) findViewById(R.id.tvTeacherName);
         tvTeacherEmail = (TextView) findViewById(R.id.tvDialogTeacherEmail);
 
@@ -101,9 +99,9 @@ public class ClassActivity extends AppCompatActivity {
         teacherListPosition = -1;
 
         classListAdapter = new SimpleAdapter(this, classList,
-                R.layout.listview_class_item,
+                R.layout.listview_custom_item,
                 new String[]{"className", "teacherFirstName", "teacherLastName", "NumOfStudents"},
-                new int[]{R.id.clTvClassName, R.id.clTvTeacherFirstName, R.id.clTvTeacherLastName, R.id.clTvNumberOfStudents});
+                new int[]{R.id.clTvRow1, R.id.clTvRow2_1, R.id.clTvRow2_2, R.id.clTvRow3});
         lvListClasses.setAdapter(classListAdapter);
         lvListClasses.setChoiceMode(AbsListView.CHOICE_MODE_SINGLE);
 
@@ -113,6 +111,11 @@ public class ClassActivity extends AppCompatActivity {
                 new int[]{android.R.id.text1});
         lvListStudents.setAdapter(studentListAdapter);
         lvListStudents.setChoiceMode(AbsListView.CHOICE_MODE_SINGLE);
+
+        setNewClass(true);
+        setChanged(false);
+        getClassStudents(currentUserTeacherId, "");
+        tvTitleListStudents.setText("All students for " + currentUserFirstName);
 
         teacherListAdapter = new SimpleAdapter(this, teacherList,
                 android.R.layout.simple_list_item_1,
@@ -166,16 +169,12 @@ public class ClassActivity extends AppCompatActivity {
                 setContentPane(position, -1);
                 classListPosition = position;
 
-                getClassStudents(classClassId);
+                getClassStudents("", classClassId);
 
-                tvTitleStudentsInClass.setText("students in class " + classClassName);
-
+                tvTitleListStudents.setText("students in class " + classClassName);
 
                 setNewClass(false);
                 setChanged(false);
-
-                //tvTitleStudentsInClass.setText("Students in class " + classClassName);
-
             }
         });
 
@@ -199,6 +198,21 @@ public class ClassActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 getTeacherClasses();
+                getClassStudents(currentUserTeacherId,"");
+
+                lvListClasses.clearFocus();
+                lvListClasses.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        lvListClasses.requestFocusFromTouch();
+                        lvListClasses.setSelection(0);
+                        lvListClasses.requestFocus();
+                    }
+                });
+
+                setContentPane(-1, teacherListPosition);
+                tvTitleListStudents.setText("All students for " + currentUserFirstName);
+
             }
         });
 
@@ -206,6 +220,21 @@ public class ClassActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 getAllClasses();
+                getClassStudents("","");
+
+                lvListClasses.clearFocus();
+                lvListClasses.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        lvListClasses.requestFocusFromTouch();
+                        lvListClasses.setSelection(0);
+                        lvListClasses.requestFocus();
+                    }
+                });
+
+                lvListClasses.requestLayout();
+                setContentPane(-1, teacherListPosition);
+                tvTitleListStudents.setText("Students for all classes");
             }
         });
 
@@ -284,7 +313,7 @@ public class ClassActivity extends AppCompatActivity {
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
                 String content = etClassName.getText().toString();
-                if (!content.equals("") && !content.equals(classClassName)) {
+                if (!content.equals(classClassName) && !content.isEmpty()) {
                     setChanged(true);
                 } else {
                     setChanged(false);
@@ -307,7 +336,7 @@ public class ClassActivity extends AppCompatActivity {
             public void onTextChanged(CharSequence s, int start, int before, int count) {
                 String content = tvTeacherName.getText().toString();
                 Log.d("String teacherName", content);
-                if (!content.equals(currentTeacherFullName)) {
+                if (!content.equals(currentTeacherFullName) && !content.isEmpty()) {
                     setChanged(true);
                 } else {
                     setChanged(false);
@@ -330,7 +359,7 @@ public class ClassActivity extends AppCompatActivity {
             public void onTextChanged(CharSequence s, int start, int before, int count) {
                 String content = tvTeacherEmail.getText().toString();
                 Log.d("String teacherEmail", content);
-                if (!content.equals(currentTeacherEmail)) {
+                if (!content.equals(currentTeacherEmail) && !content.isEmpty()) {
                     setChanged(true);
                 } else {
                     setChanged(false);
@@ -400,16 +429,6 @@ public class ClassActivity extends AppCompatActivity {
             tvTeacherName.setText("");
             tvTeacherEmail.setText("");
         }
-    }
-
-    public int getTeacherPosition(String teacherId){
-        for(int i = 0; i < teacherList.size(); i++){
-            Map<String, String> map = teacherList.get(i);
-            if(map.get("teacherId").equals(teacherId)){
-                return i;
-            }
-        }
-        return -1;
     }
 
     public boolean createClass(int teacherListPos) {
@@ -512,6 +531,7 @@ public class ClassActivity extends AppCompatActivity {
                     classList.add(classInfo);
                 }
                 classListAdapter.notifyDataSetChanged();
+                Log.d("classList entries", String.valueOf(classList));
                 Log.d("classListAdapter", "successfully updated");
             }
         }, context).executeTask("FETCH", "", currentUserTeacherId, "", "", "");
@@ -519,9 +539,8 @@ public class ClassActivity extends AppCompatActivity {
 
     public void setEnabledUiItems() {
         if (newClass) {
-            tvTitleCreateClass.setVisibility(View.VISIBLE);
+            tvTitleCRUDClass.setText(R.string.createClass);
             bCreateClass.setVisibility(View.VISIBLE);
-            tvTitleEditClass.setVisibility(View.GONE);
             bEditClass.setVisibility(View.GONE);
             bDeleteClass.setVisibility(View.GONE);
             if (changed) {
@@ -534,10 +553,9 @@ public class ClassActivity extends AppCompatActivity {
                 bCreateClass.setEnabled(false);
             }
         } else {
-            tvTitleEditClass.setVisibility(View.VISIBLE);
+            tvTitleCRUDClass.setText(R.string.editClass);
             bEditClass.setVisibility(View.VISIBLE);
             bDeleteClass.setVisibility(View.VISIBLE);
-            tvTitleCreateClass.setVisibility(View.GONE);
             bCreateClass.setVisibility(View.GONE);
             if (changed) {
                 bEditClass.setEnabled(true);
@@ -616,7 +634,7 @@ public class ClassActivity extends AppCompatActivity {
                 .show();
     }
 
-    private void getClassStudents(String classId){
+    private void getClassStudents(String teacherId, String classId){
         new StudentTask(new StudentCallback() {
             @Override
             public void studentListDone(HashMap<String, HashMap<String, String>> students) {
@@ -626,7 +644,7 @@ public class ClassActivity extends AppCompatActivity {
                 for (Map.Entry<String, HashMap<String, String>> student : students.entrySet()) {
                     Map<String, String> studentInfo = new HashMap<>();
                     String studentId = student.getValue().get("studentId");
-                    String studentName = student.getValue().get("lastName") + ", " + student.getValue().get("firstName");
+                    String studentName = student.getValue().get("firstname") + " " + student.getValue().get("lastname");
                     studentInfo.put("studentId",studentId);
                     studentInfo.put("fullName", studentName);
                     studentList.add(studentInfo);
@@ -638,7 +656,7 @@ public class ClassActivity extends AppCompatActivity {
                 }
                 studentListAdapter.notifyDataSetChanged();
             }
-        }, context).execute(classId, currentUserTeacherId);
+        }, context).execute(classId, teacherId);
     }
 
     /*

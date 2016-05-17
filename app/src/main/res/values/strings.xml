@@ -6,10 +6,14 @@
     <string name="No">No</string>
     <string name="cancel">Cancel</string>
 
-    <!--Labels for titles-->
+    <!--Labels for general titles-->
+
+    <!--Labels for user titles-->
     <string name="registerUser">Register a new user</string>
     <string name="editUser">Edit this user</string>
     <string name="titleStudentClass">Enrolled in class</string>
+
+    <!--Labels for class titles-->
     <string name="classDetails">Class details</string>
     <string name="teacherClasses">Teacher classes</string>
     <string name="studentAssignmentResults">Student assignment results</string>
@@ -18,21 +22,30 @@
     <string name="addClass">Create a new class</string>
     <string name="allTeachers">Displaying all teachers</string>
 
-    <!--Labels for buttons-->
+    <!--Labels for general buttons-->
     <string name="login">Login</string>
     <string name="register">Register</string>
+    <string name="deleteUser">Delete user</string>
+
+    <!--Labels for User buttons-->
+    <string name="saveUser">Save changes</string>
+
+    <!--Labels for Class buttons-->
     <string name="showClasses">Show my classes</string>
     <string name="showStudents">Show my students</string>
-    <string name="saveUser">Save changes</string>
-    <string name="deleteUser">Delete user</string>
     <string name="assignClass">Add/Change class</string>
     <string name="modifyClasses">Modify classes</string>
     <string name="dialogAssignClass">Select class</string>
     <string name="showTeacherClasses">Show teacher\'s classes</string>
     <string name="showAllClasses">Show all classes</string>
     <string name="deleteClass">Delete class</string>
-    <string name="saveClass">Save Changes</string>
     <string name="createClass">Create class</string>
+    <string name="saveClass">Save Changes</string>
+
+    <!--Labels for general text fields-->
+    <string name="save">Save</string>
+    <string name="add_new">Add new</string>
+    <string name="search">Search</string>
 
     <!--Labels for defining users in text fields-->
     <string name="username">Username</string>
@@ -42,25 +55,17 @@
     <string name="email">E-mail address</string>
     <string name="contactEmail">Parent/caretaker E-mail address</string>
     <string name="role">Role</string>
+
+    <!--Labels for defining texts in text fields-->
     <string name="text_name">Text name</string>
     <string name="text_content">Text content</string>
     <string name="complexity">Complexity:</string>
     <string name="add_question">Add Question</string>
-    <string name="save">Save</string>
     <string name="delete_text">Delete Text</string>
-    <string name="add_new">Add new</string>
-    <string name="search">Search</string>
 
     <!--Labels for defining classes in text fields-->
     <string name="className">Class name</string>
     <string name="teacherName">Teacher name</string>
     <string name="teacherEmail">Teacher e-mail</string>
-
-    <!-- Spinner content array-->
-    <string-array name="role_array">
-        <item><string name="student">Student</string></item>
-        <item><string name="teacher">Teacher</string></item>
-    </string-array>
-
 
 </resources>

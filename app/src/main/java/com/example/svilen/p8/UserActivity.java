@@ -51,8 +51,7 @@ public class UserActivity extends AppCompatActivity {
     private Spinner spinnerRole;
     private ListView lvListUsers;
     private ListView lvDialogListClasses;
-    private TextView tvTitleRegister;
-    private TextView tvTitleEdit;
+    private TextView tvTitleCRUDUser;
     private TextView tvTitleStudentClass;
     private TextView tvDialogClassTitle;
     private TextView tvUserClassName;
@@ -98,8 +97,7 @@ public class UserActivity extends AppCompatActivity {
 
         etSearch = (EditText) findViewById(R.id.etSearch);
 
-        tvTitleRegister = (TextView) findViewById(R.id.tvTitleRegister);
-        tvTitleEdit = (TextView) findViewById(R.id.tvTitleEdit);
+        tvTitleCRUDUser = (TextView) findViewById(R.id.tvTitleCRUDUser);
         tvTitleStudentClass = (TextView) findViewById(R.id.tvTitleStudentClass);
         tvUserClassName = (TextView) findViewById(R.id.tvUserClassName);
 
@@ -155,8 +153,8 @@ public class UserActivity extends AppCompatActivity {
         getRoles();
 
         userListAdapter = new SimpleAdapter(this, userList,
-                R.layout.listview_user_item, new String[]{"username", "firstName", "lastName", "role"},
-                new int[]{R.id.clTvUsername, R.id.clTvFirstName, R.id.clTvLastName, R.id.clTvRole});
+                R.layout.listview_custom_item, new String[]{"username", "firstName", "lastName", "role"},
+                new int[]{R.id.clTvRow1, R.id.clTvRow2_1, R.id.clTvRow2_2, R.id.clTvRow3});
 
         lvListUsers.setAdapter(userListAdapter);
         lvListUsers.setChoiceMode(AbsListView.CHOICE_MODE_SINGLE);
@@ -165,9 +163,9 @@ public class UserActivity extends AppCompatActivity {
         setContentPane(-1);
 
         dialogClassListAdapter = new SimpleAdapter(this, classList,
-                R.layout.listview_class_item,
+                R.layout.listview_custom_item,
                 new String[] {"className", "teacherFirstName", "teacherLastName", "numOfStudents"},
-                new int[] {R.id.clTvClassName, R.id.clTvTeacherFirstName, R.id.clTvTeacherLastName, R.id.clTvNumberOfStudents });
+                new int[] {R.id.clTvRow1, R.id.clTvRow2_1, R.id.clTvRow2_2, R.id.clTvRow3 });
 
         getAllClasses();
         
@@ -669,9 +667,8 @@ public class UserActivity extends AppCompatActivity {
 
     private void setEnabledUiItems() {
         if (newUser) {
-            tvTitleRegister.setVisibility(View.VISIBLE);
+            tvTitleCRUDUser.setText(R.string.registerUser);
             bRegisterUser.setVisibility(View.VISIBLE);
-            tvTitleEdit.setVisibility(View.GONE);
             bEditUser.setVisibility(View.GONE);
             bDeleteUser.setVisibility(View.GONE);
             bAssignClass.setEnabled(false);
@@ -685,10 +682,9 @@ public class UserActivity extends AppCompatActivity {
                 bRegisterUser.setEnabled(false);
             }
         } else {
-            tvTitleEdit.setVisibility(View.VISIBLE);
+            tvTitleCRUDUser.setText(R.string.editUser);
             bEditUser.setVisibility(View.VISIBLE);
             bDeleteUser.setVisibility(View.VISIBLE);
-            tvTitleRegister.setVisibility(View.GONE);
             bRegisterUser.setVisibility(View.GONE);
             if (changed) {
                 bEditUser.setEnabled(true);
