@@ -7,7 +7,6 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
-import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.Button;
@@ -155,23 +154,41 @@ public class StudentActivity extends AppCompatActivity {
                 for (Map.Entry<String, HashMap<String, String>> assignment : assignments.entrySet()) {
                     Map<String, String> assignmentInfo = new HashMap<>();
                     String specificAssignmentName = assignment.getValue().get("assignmentLibName");
-                     specificAssignmentId = assignment.getValue().get("assignmentid");
+                    specificAssignmentId = assignment.getValue().get("assignmentid");
                     String specificAssLibId = assignment.getValue().get("assignmentlibraryid");
                     String specificTextId = assignment.getValue().get("textId");
+                    String isComplete = assignment.getValue().get("isComplete");
+                    Long availablefrom = Long.valueOf(assignment.getValue().get("availableFrom"));
+                    Long availableto = Long.valueOf(assignment.getValue().get("availableTo"));
 
-                    assignmentInfo.put("assignmentLibName", specificAssignmentName);
-                    assignmentInfo.put("assignmentid", specificAssignmentId);
-                    assignmentInfo.put("assignmentlibraryid", specificAssLibId);
-                    assignmentInfo.put("textId", specificTextId);
+                    Log.d("1919 ", availablefrom.toString());
+                    Log.d("2020 ", availableto.toString());
 
-                    assignmentList.add(assignmentInfo);
 
-                    Log.d("2222: ", String.valueOf(assignmentInfo));
-                    Log.d("2222", specificAssignmentId);
+                    if (isComplete.equals("0")) {
+
+                        Long tsLong = System.currentTimeMillis() / 1000;
+                        String ts = tsLong.toString();
+                        Log.d("1818", tsLong.toString());
+
+                        if (tsLong <= availableto && availablefrom <= tsLong) {
+
+
+                            assignmentInfo.put("assignmentLibName", specificAssignmentName);
+                            assignmentInfo.put("assignmentid", specificAssignmentId);
+                            assignmentInfo.put("assignmentlibraryid", specificAssLibId);
+                            assignmentInfo.put("textId", specificTextId);
+
+                            assignmentList.add(assignmentInfo);
+
+                            Log.d("2222: ", String.valueOf(assignmentInfo));
+                            Log.d("2222", specificAssignmentId);
+                        }
+                    }
 
                 }
-
             }
+
         }, context).executeTask("get", studentId, "", "","","");
     }
 

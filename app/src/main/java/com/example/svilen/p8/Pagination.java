@@ -1,8 +1,6 @@
 package com.example.svilen.p8;
 
-/**
- * Created by Brandur on 5/16/2016.
- */
+
 
 import android.text.Layout;
 import android.text.StaticLayout;
@@ -11,9 +9,7 @@ import android.text.TextPaint;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * Created by joe on 03.09.15.
- */
+
 public class Pagination {
     private final boolean mIncludePad = true;
     private final int mWidth;
@@ -30,7 +26,7 @@ public class Pagination {
         this.mHeight = pageH;
         this.mPaint = paint;
 
-        this.mPages = new ArrayList<CharSequence>();
+        this.mPages = new ArrayList<>();
 
         layout();
     }

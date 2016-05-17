@@ -6,8 +6,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Build;
 import android.os.SystemClock;
-import android.support.v4.view.PagerAdapter;
-import android.support.v4.view.ViewPager;
+
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.text.Html;
@@ -42,7 +41,6 @@ public class ReadingActivity extends AppCompatActivity  {
     String specificQuestionContent1;
     String answerText1;
     String isCorrrect1;
-    Button bLogout;
     Button bPause;
     Button bFinish;
     Context context = this;
@@ -64,22 +62,18 @@ public class ReadingActivity extends AppCompatActivity  {
     int i;
     String answerChoosen;
     String specificQuestionId;
-    ArrayList<String> mylist = new ArrayList<String>();
-    Set<String> set = new HashSet<String>();
-    List<Integer> correctOrNot = new ArrayList<Integer>();    //Set<String> set = new HashSet<String>();
-    ArrayList<String> loggedIdAnswers = new ArrayList<String>();
-    ArrayList<String> correctAnswer = new ArrayList<String>();
+    ArrayList<String> mylist = new ArrayList<>();
+    Set<String> set = new HashSet<>();
+    List<Integer> correctOrNot = new ArrayList<>();    //Set<String> set = new HashSet<String>();
+    ArrayList<String> loggedIdAnswers = new ArrayList<>();
+    ArrayList<String> correctAnswer = new ArrayList<>();
     int noOfQuestions;
     int clickCount = 0;
     String assignmentId;
     String answerIdtoChosenAnswer;
     String lastElement;
-    TextView tvTextContent;
     int booleanForButton = 0;
     int seconds = 0;
-    ViewPager myPager;
-    PagerAdapter adapter;
-    String textContent1;
 
     Pagination mPagination;
     CharSequence mText;
@@ -104,14 +98,13 @@ public class ReadingActivity extends AppCompatActivity  {
         bPause = (Button) findViewById(R.id.bPause);
         tvAssignmentName = (TextView) findViewById(R.id.tvTextName1);
         tvTextName2 = (TextView) findViewById(R.id.tvTextName2);
-        //tvContent = (TextView) findViewById(R.id.tvTextContent);
         chronometer = (Chronometer) findViewById(R.id.chronometer);
 
 
 
 
 
-        Intent intent = getIntent(); // recieving intent from student activity
+        final Intent intent = getIntent(); // recieving intent from student activity
         Bundle b = intent.getExtras();
 
         if(b!=null)
@@ -131,13 +124,6 @@ public class ReadingActivity extends AppCompatActivity  {
          textContent22 = getText1().get("text0").get("textcontent");
         Log.d("7979 ", textContent22);
 
-      /*  bLogout.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                UserInfo userinfo = new UserInfo(getApplicationContext());
-                userinfo.logOut();
-            }
-        });*/
 
         pager();
 
@@ -148,7 +134,6 @@ public class ReadingActivity extends AppCompatActivity  {
                 timeWhenStopped = chronometer.getBase() - SystemClock.elapsedRealtime();
                 chronometer.stop();
 
-                final Long time = chronometer.getBase();
                 chronometer.stop();
                 AlertDialog.Builder builder = new AlertDialog.Builder(context);
 
@@ -195,6 +180,23 @@ public class ReadingActivity extends AppCompatActivity  {
 
                 getQuestions(textId);
 
+                if(clickCount == 0){
+
+                    String totalSeconds = String.valueOf(seconds);
+
+                    new QuestionResultTask(new QuestionResultCallback() {
+                        @Override
+                        public void questresultdone(HashMap<String, HashMap<String, String>> questresult) {
+
+                        }
+                    }, context).execute(assignmentId, "", "", "", "", "1", totalSeconds,"final");
+
+
+
+                Intent intent = new Intent(ReadingActivity.this, StudentActivity.class);
+                    startActivity(intent);
+                }
+
             }
         });
 
@@ -218,12 +220,11 @@ public class ReadingActivity extends AppCompatActivity  {
 
                     createArrays();
 
-                    set = new HashSet<String>(mylist); // puts array with questionId into a set, removing all duplicates
+                    set = new HashSet<>(mylist); // puts array with questionId into a set, removing all duplicates
                     Log.d("setset: ", set.toString());
                      noOfQuestions = set.size(); // counts how many questions to calculate grade
                     Log.d("number of questions: ", String.valueOf(noOfQuestions));
 
-                    questionContent = specificQuestionContent;
                 }
                 for (String s: set){
                     System.out.println(s);
@@ -336,35 +337,6 @@ public class ReadingActivity extends AppCompatActivity  {
     return null;
 }
 
-    public void getText(){ // get text for student to read
-        new TextTask(new TextCallback() {
-            @Override
-            public void TextCallBack(HashMap<String, HashMap<String, String>> results) {
-                results.remove("response");
-
-                //remove other hashmaps in results var to avoid the first returning null
-
-                // remove progressDial if possible
-                for (Map.Entry<String, HashMap<String, String>> text : results.entrySet()) {
-                    Map<String, String> textInfo = new HashMap<>();
-                    textContent1 = text.getValue().get("textcontent");
-                    textName = text.getValue().get("textname");
-
-                    textInfo.put("textcontent", textContent1);
-                    textInfo.put("textname", textName);
-                    // assignmentList.add(textInfo);
-
-                 //   tvTextContent.setText(textContent);
-                    tvTextName2.setText(textName);
-                    Log.d("textInfo ", textInfo.toString());
-
-
-
-
-                }
-            }
-        }, context).executeTask("get", textId, "", "", 0);
-    }
 
     public void getAnswers(String s) { // running getAnswer based on questionId from HashSet
         new QuestionTask(new QuestionCallback() {
@@ -437,7 +409,7 @@ public class ReadingActivity extends AppCompatActivity  {
 
                     clickCount = clickCount + 1; // count number of clicks which will be used to match number of question to create the last alertdialog
 
-                    List<String> list = new ArrayList<String>(set);
+                    List<String> list = new ArrayList<>(set);
 
                     for (int x = 0; x < clickCount; x++) { // breaks the HashSet and removes the last index which represents the questionId being answered
 
