@@ -391,16 +391,16 @@ public class AssignmentActivity extends AppCompatActivity {
         return true;
     }
     private void getClasses(){
-        new ClassTask(new ClassCallback() {
+        new ClassTaskNew(new ClassCallbackNew() {
             @Override
-            public void classListDone(HashMap<String, HashMap<String, String>> classes) {
+            public void classListDone(Map<String, HashMap<String, String>> classes) {
                 if(!classList.isEmpty()){
                     classList.clear();
                 }
                 for (Map.Entry<String, HashMap<String, String>> classId : classes.entrySet()) {
                     Map<String, String> classInfo = new HashMap<>();
                     String specificClassname = classId.getValue().get("className");
-                    String specificClassStudents = classId.getValue().get("studentsInClass");
+                    String specificClassStudents = classId.getValue().get("numOfStudents");
                     String specificClassId = classId.getValue().get("classId");
                     classInfo.put("ClassId", specificClassId);
                     classInfo.put("Class", specificClassname);
@@ -409,7 +409,7 @@ public class AssignmentActivity extends AppCompatActivity {
                 }
                 classAdapter.notifyDataSetChanged();
             }
-        },context).execute(teacherId);
+        },context).execute("FETCH", "", teacherId, "", "", "");
     }
     private boolean getAssignmentLib(){
         new AssignmentLibTask(new AssignmentLibCallback() {

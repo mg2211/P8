@@ -616,6 +616,32 @@ public class ClassActivity extends AppCompatActivity {
                 .show();
     }
 
+    private void getClassStudents(String classId){
+        new StudentTask(new StudentCallback() {
+            @Override
+            public void studentListDone(HashMap<String, HashMap<String, String>> students) {
+                if (!studentList.isEmpty()) {
+                    studentList.clear();
+                }
+                for (Map.Entry<String, HashMap<String, String>> student : students.entrySet()) {
+                    Map<String, String> studentInfo = new HashMap<>();
+                    String studentId = student.getValue().get("studentId");
+                    String studentName = student.getValue().get("lastName") + ", " + student.getValue().get("firstName");
+                    studentInfo.put("studentId",studentId);
+                    studentInfo.put("fullName", studentName);
+                    studentList.add(studentInfo);
+                }
+                if (studentList.isEmpty()){
+                    Map<String, String> userInfo = new HashMap<>();
+                    userInfo.put("fullName", "no students in this class");
+                    studentList.add(userInfo);
+                }
+                studentListAdapter.notifyDataSetChanged();
+            }
+        }, context).execute(classId, currentUserTeacherId);
+    }
+
+    /*
     public void getClassStudents(String classId){
         new UserTask(new UserCallback() {
             @Override
@@ -647,6 +673,7 @@ public class ClassActivity extends AppCompatActivity {
             }
         }, context).execute("FETCH", "", "", "", "", classId, "", "", "", "", "", "");
     }
+    */
 
     public void getAllTeachers(){
         new UserTask(new UserCallback() {
