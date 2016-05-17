@@ -26,6 +26,7 @@ import android.widget.Toast;
 
 import com.github.mikephil.charting.charts.BarChart;
 import com.github.mikephil.charting.charts.CombinedChart;
+import com.github.mikephil.charting.charts.PieChart;
 import com.github.mikephil.charting.components.XAxis;
 import com.github.mikephil.charting.components.YAxis;
 import com.github.mikephil.charting.data.BarData;
@@ -39,6 +40,8 @@ import com.github.mikephil.charting.highlight.Highlight;
 import com.github.mikephil.charting.interfaces.datasets.IBarDataSet;
 import com.github.mikephil.charting.interfaces.datasets.ILineDataSet;
 import com.github.mikephil.charting.listener.OnChartValueSelectedListener;
+
+import org.w3c.dom.Text;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -921,7 +924,7 @@ public class AssignmentActivity extends AppCompatActivity {
             @Override
             public void onValueSelected(Entry entry, int i, Highlight highlight) {
                 Log.d("entry", String.valueOf(entry.getVal()));
-                Toast.makeText(context, entry.toString(), Toast.LENGTH_SHORT).show();
+                statDialog();
             }
 
             @Override
@@ -950,11 +953,20 @@ public class AssignmentActivity extends AppCompatActivity {
     private void statDialog(){
         AlertDialog.Builder builder = new AlertDialog.Builder(context);
         LayoutInflater inflater = getLayoutInflater();
-        final View layout = inflater.inflate(R.layout.dialog_text_overview, null);
+        final View layout = inflater.inflate(R.layout.dialog_stats, null);
         builder.setView(layout);
         final AlertDialog dialog = builder.create();
         dialog.setCanceledOnTouchOutside(true);
         dialog.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_UNCHANGED);
         dialog.show();
+
+        ListView lvDialogQuestions = (ListView) layout.findViewById(R.id.lvDialogQuestions);
+        PieChart chartDialog = (PieChart) layout.findViewById(R.id.chartDialog);
+        TextView tvDialogTime = (TextView) layout.findViewById(R.id.tvDialogTime);
+        TextView tvDialogAverageTime = (TextView) layout.findViewById(R.id.tvDialogAverageTime);
+        TextView tvDialogCorrect = (TextView) layout.findViewById(R.id.tvDialogCorrect);
+        TextView tvDialogCorrectAverage = (TextView) layout.findViewById(R.id.tvDialogCorrectAverage);
+
+
     }
 }
