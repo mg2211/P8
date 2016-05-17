@@ -1018,7 +1018,7 @@ class QuestionTask extends AsyncTask<String, Void, HashMap<String, HashMap<Strin
                         }
                     }
                     questionInfo.put("answers",questionAnswersString);
-                    results.put("QuestionID:" + id, questionInfo);
+                    results.put("Question" + id, questionInfo);
                 }
             }
             HashMap<String, String> serverResponse = new HashMap<>();
@@ -1222,6 +1222,7 @@ class AssignmentLibTask extends AsyncTask<String, Void, HashMap<String, HashMap<
                         String assignmentTo = specificAssignment.getString("to");
                         String assignmentStudentId = specificAssignment.getString("studentId");
                         String isComplete = specificAssignment.getString("isComplete");
+                        String timeSpent = specificAssignment.getString("timeSpent");
 
                         HashMap<String, String> assignmentInfo = new HashMap<>();
                         assignmentInfo.put("assignmentlibraryid", assLibId);
@@ -1232,6 +1233,7 @@ class AssignmentLibTask extends AsyncTask<String, Void, HashMap<String, HashMap<
                         assignmentInfo.put("availableTo", assignmentTo);
                         assignmentInfo.put("studentId", assignmentStudentId);
                         assignmentInfo.put("isComplete", isComplete);
+                        assignmentInfo.put("timeSpent",timeSpent);
 
                         results.put("AssignmentId: " + assignmentId, assignmentInfo);
                     }
@@ -1347,9 +1349,11 @@ class QuestionResultTask extends AsyncTask<String, Void, HashMap<String, HashMap
                 for (int i = 0; i < questionResults.length(); i++) {
                     JSONObject result = questionResults.getJSONObject(i);
                     String correct = String.valueOf(result.getInt("correct"));
+                    String questionId = String.valueOf(result.getInt("questionid"));
 
                     HashMap<String, String> resultInfo = new HashMap<>();
                     resultInfo.put("correct", correct);
+                    resultInfo.put("questionId",questionId);
                     results.put(""+i,resultInfo);
                 }
             }

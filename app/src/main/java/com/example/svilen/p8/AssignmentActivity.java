@@ -24,7 +24,6 @@ import android.widget.TextView;
 import android.widget.TimePicker;
 import android.widget.Toast;
 
-import com.github.mikephil.charting.charts.BarChart;
 import com.github.mikephil.charting.charts.CombinedChart;
 import com.github.mikephil.charting.charts.PieChart;
 import com.github.mikephil.charting.components.XAxis;
@@ -41,8 +40,6 @@ import com.github.mikephil.charting.interfaces.datasets.IBarDataSet;
 import com.github.mikephil.charting.interfaces.datasets.ILineDataSet;
 import com.github.mikephil.charting.listener.OnChartValueSelectedListener;
 
-import org.w3c.dom.Text;
-
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -54,6 +51,7 @@ import java.util.Map;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
+import java.util.regex.Pattern;
 
 public class AssignmentActivity extends AppCompatActivity {
 
@@ -98,6 +96,9 @@ public class AssignmentActivity extends AppCompatActivity {
     private final ArrayList<IBarDataSet> dataSets = new ArrayList<>();
     private final ArrayList<Entry> lineY = new ArrayList<>();
     private final ArrayList<ILineDataSet> lineSets = new ArrayList<>();
+    private final ArrayList<String> assignmentIds = new ArrayList<>();
+    HashMap<String,HashMap<String, String>> questions = new HashMap<>();
+    HashMap<String,HashMap<String,String>> generalResults = new HashMap<>();
 
 
     @Override
@@ -613,6 +614,7 @@ public class AssignmentActivity extends AppCompatActivity {
             studentsAssigned.clear();
             setChanged(false);
             setNew(false);
+            getQuestions(assignmentLibTextId);
 
             assignments = new HashMap<>(getAssignments(assignmentLibId));
             assignments.remove("response");
@@ -663,15 +665,25 @@ public class AssignmentActivity extends AppCompatActivity {
 
     }
 
+    private void getQuestions(int assignmentLibTextId) {
+        new QuestionTask(new QuestionCallback() {
+            @Override
+            public void QuestionTaskDone(HashMap<String, HashMap<String, String>> results) {
+                results.remove("response");
+                questions = results;
+            }
+        },context).executeTask("get","", String.valueOf(assignmentLibTextId),"","");
+    }
+
     private void calculateStats() {
         yVal.clear();
         xVals.clear();
         dataSets.clear();
         lineSets.clear();
         lineY.clear();
+        assignmentIds.clear();
 
         ArrayList<Integer> colors = new ArrayList<>();
-
         int index = 0;
         double total = 0;
         for (int i = 0; i < assignedList.size(); i++) {
@@ -679,14 +691,19 @@ public class AssignmentActivity extends AppCompatActivity {
             String assignmentId = assignedList.get(i).get("assignmentid");
             if (assignedList.get(i).get("isComplete").equals("1")) {
                 HashMap<String, HashMap<String, String>> result = new HashMap<>(getResult(assignmentId));
+                HashMap<String, String> studentAnswers = new HashMap<>();
+                Log.d("results",result.toString());
                 result.remove("response");
                 int numberOfQuestions = 0;
                 int numberOfCorrect = 0;
                 for (Map.Entry<String, HashMap<String, String>> questionResult : result.entrySet()) {
                     numberOfQuestions++;
+                    studentAnswers.put("time",assignedList.get(i).get("timeSpent"));
+                    studentAnswers.put(numberOfQuestions+"- "+questionResult.getValue().get("questionId"),questionResult.getValue().get("correct"));
                     if (questionResult.getValue().get("correct").equals("1")) {
                         numberOfCorrect++;
                     }
+                    generalResults.put(assignmentId,studentAnswers);
                 }
                 Log.d("correct answers", String.valueOf(numberOfCorrect));
                 Log.d("No. questions", String.valueOf(numberOfQuestions));
@@ -695,6 +712,8 @@ public class AssignmentActivity extends AppCompatActivity {
                 Log.d("percentage", String.valueOf(percentage));
                 yVal.add(new BarEntry((float) percentage, index));
                 xVals.add(studentName);
+                assignmentIds.add(assignedList.get(i).get("assignmentid"));
+
                 if (percentage >= 50 && percentage <= 75) {
                     colors.add(Color.rgb(255, 235, 69));
                 } else if (percentage > 75) {
@@ -924,7 +943,10 @@ public class AssignmentActivity extends AppCompatActivity {
             @Override
             public void onValueSelected(Entry entry, int i, Highlight highlight) {
                 Log.d("entry", String.valueOf(entry.getVal()));
-                statDialog();
+                Log.d("xval", String.valueOf(entry.getXIndex()));
+                Log.d("studentid", assignmentIds.get(entry.getXIndex()));
+                String assignmentId = assignmentIds.get(entry.getXIndex());
+                statDialog(assignmentId);
             }
 
             @Override
@@ -950,7 +972,7 @@ public class AssignmentActivity extends AppCompatActivity {
         }
         return null;
     }
-    private void statDialog(){
+    private void statDialog(String assignmentId){
         AlertDialog.Builder builder = new AlertDialog.Builder(context);
         LayoutInflater inflater = getLayoutInflater();
         final View layout = inflater.inflate(R.layout.dialog_stats, null);
@@ -967,6 +989,47 @@ public class AssignmentActivity extends AppCompatActivity {
         TextView tvDialogCorrect = (TextView) layout.findViewById(R.id.tvDialogCorrect);
         TextView tvDialogCorrectAverage = (TextView) layout.findViewById(R.id.tvDialogCorrectAverage);
 
+        Log.d("questions",questions.toString());
+        Log.d("no. of questions", String.valueOf(questions.size()));
+        Log.d("generalResults",generalResults.toString());
+        Log.d("results for student",generalResults.get(assignmentId).toString());
+        Log.d("time for assignment",generalResults.get(assignmentId).get("time"));
 
+        int time = Integer.parseInt(generalResults.get(assignmentId).get("time"));
+        int hour = time/3600;
+        int remainder = time - hour*3600;
+        int minute = remainder/60;
+        remainder = remainder - minute * 60;
+        int second = remainder;
+
+        String hours,minutes,seconds;
+        if(hour < 10){
+            hours = "0"+hour;
+        } else {
+            hours = String.valueOf(hour);
+        }
+
+        if(minute<10){
+            minutes = "0"+minute;
+        } else {
+            minutes = String.valueOf(minute);
+        }
+
+        if(second<10){
+            seconds = "0"+second;
+        } else {
+            seconds = String.valueOf(second);
+        }
+        String timeConverted = hours+":"+minutes+":"+seconds;
+        Log.d("time",timeConverted);
+
+        generalResults.get(assignmentId).remove("time");
+        for(Map.Entry<String, String> map : generalResults.get(assignmentId).entrySet()){
+            Log.d("map value",map.getValue());
+            Log.d("map Key",map.getKey());
+            String[] questionId = map.getKey().split(" ");
+            Log.d("new key",questionId[1]);
+            Log.d("corresponding question",questions.get("Question"+questionId[1]).toString());
+        }
     }
 }
