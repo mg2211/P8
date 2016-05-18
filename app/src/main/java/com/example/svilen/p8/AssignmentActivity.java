@@ -51,7 +51,6 @@ import java.util.Map;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
-import java.util.regex.Pattern;
 
 public class AssignmentActivity extends AppCompatActivity {
 
@@ -699,7 +698,8 @@ public class AssignmentActivity extends AppCompatActivity {
                 for (Map.Entry<String, HashMap<String, String>> questionResult : result.entrySet()) {
                     numberOfQuestions++;
                     studentAnswers.put("time",assignedList.get(i).get("timeSpent"));
-                    studentAnswers.put(numberOfQuestions+"- "+questionResult.getValue().get("questionId"),questionResult.getValue().get("correct"));
+                    studentAnswers.put("Question: "+i,questionResult.getValue().get("correct"));
+                    studentAnswers.put("Answer: "+i,questionResult.getValue().get("answerText"));
                     if (questionResult.getValue().get("correct").equals("1")) {
                         numberOfCorrect++;
                     }
@@ -1018,6 +1018,17 @@ public class AssignmentActivity extends AppCompatActivity {
             numberOfStudents++;
 
         }
+        double averageTime = timeTotal/numberOfStudents;
+        if(time < averageTime){
+            double difference = ((averageTime-time)/time)*100;
+            tvDialogAverageTime.setText(Math.round(difference)+"% below average");
+        } else if(time > averageTime){
+            double difference = ((time-averageTime)/averageTime)*100;
+            tvDialogAverageTime.setText(Math.round(difference)+"% above average");
+        } else {
+            tvDialogAverageTime.setText("On average");
+        }
+
         Log.d("Average time", String.valueOf(timeTotal/numberOfStudents));
 /*        for(Map.Entry<String, String> map : generalResults.get(assignmentId).entrySet()){
             Log.d("map value",map.getValue());
