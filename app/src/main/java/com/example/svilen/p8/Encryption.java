@@ -27,7 +27,7 @@ public final class Encryption {
 
     private static String cryptoPass = "sup3rBr4ndur";
 
-    public static String encryptIt(String value) {
+     public static String encryptIt(String value) {
         try {
             DESKeySpec keySpec = new DESKeySpec(cryptoPass.getBytes("UTF8"));
             SecretKeyFactory keyFactory = SecretKeyFactory.getInstance("DES");

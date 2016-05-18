@@ -180,7 +180,7 @@ public class ReadingActivity extends AppCompatActivity  {
 
                 getQuestions(textId);
 
-                if(clickCount == 0){
+           /*     if(clickCount == 0){
 
                     String totalSeconds = String.valueOf(seconds);
 
@@ -195,7 +195,7 @@ public class ReadingActivity extends AppCompatActivity  {
 
                 Intent intent = new Intent(ReadingActivity.this, StudentActivity.class);
                     startActivity(intent);
-                }
+                }*/
 
             }
         });
