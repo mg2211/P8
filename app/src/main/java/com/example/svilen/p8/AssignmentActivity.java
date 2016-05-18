@@ -989,11 +989,17 @@ public class AssignmentActivity extends AppCompatActivity {
         TextView tvDialogCorrect = (TextView) layout.findViewById(R.id.tvDialogCorrect);
         TextView tvDialogCorrectAverage = (TextView) layout.findViewById(R.id.tvDialogCorrectAverage);
 
+
+
         Log.d("questions",questions.toString());
         Log.d("no. of questions", String.valueOf(questions.size()));
         Log.d("generalResults",generalResults.toString());
         Log.d("results for student",generalResults.get(assignmentId).toString());
         Log.d("time for assignment",generalResults.get(assignmentId).get("time"));
+
+
+
+
 
         int time = Integer.parseInt(generalResults.get(assignmentId).get("time"));
         int hour = time/3600;
@@ -1023,13 +1029,21 @@ public class AssignmentActivity extends AppCompatActivity {
         String timeConverted = hours+":"+minutes+":"+seconds;
         Log.d("time",timeConverted);
 
-        generalResults.get(assignmentId).remove("time");
-        for(Map.Entry<String, String> map : generalResults.get(assignmentId).entrySet()){
+        int timeTotal = 0;
+        int numberOfStudents = 0;
+
+        for(Map.Entry<String, HashMap<String, String>> hashMap : generalResults.entrySet()){
+            timeTotal = timeTotal+Integer.parseInt(hashMap.getValue().get("time"));
+            numberOfStudents++;
+        }
+        Log.d("Average time", String.valueOf(timeTotal/numberOfStudents));
+
+/*        for(Map.Entry<String, String> map : generalResults.get(assignmentId).entrySet()){
             Log.d("map value",map.getValue());
             Log.d("map Key",map.getKey());
-            String[] questionId = map.getKey().split(" ");
+           String[] questionId = map.getKey().split(" ");
             Log.d("new key",questionId[1]);
             Log.d("corresponding question",questions.get("Question"+questionId[1]).toString());
-        }
+        }*/
     }
 }
