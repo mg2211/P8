@@ -1023,13 +1023,18 @@ public class AssignmentActivity extends AppCompatActivity {
         String timeConverted = hours+":"+minutes+":"+seconds;
         Log.d("time",timeConverted);
 
-        generalResults.get(assignmentId).remove("time");
-        for(Map.Entry<String, String> map : generalResults.get(assignmentId).entrySet()){
+        int timetotal = 0;
+
+        for(Map.Entry<String, HashMap<String, String>> hashMap : generalResults.entrySet()){
+
+        }
+
+/*        for(Map.Entry<String, String> map : generalResults.get(assignmentId).entrySet()){
             Log.d("map value",map.getValue());
             Log.d("map Key",map.getKey());
-            String[] questionId = map.getKey().split(" ");
+           String[] questionId = map.getKey().split(" ");
             Log.d("new key",questionId[1]);
             Log.d("corresponding question",questions.get("Question"+questionId[1]).toString());
-        }
+        }*/
     }
 }
