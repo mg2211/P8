@@ -492,6 +492,7 @@ public class TextActivity extends AppCompatActivity {
             etContent.setText(textContent);
             etTextName.setText(textName);
             bDelete.setEnabled(true);
+            lix = 0;
             calculate();
             setChanged(false);
             setNewText(false);
@@ -502,6 +503,7 @@ public class TextActivity extends AppCompatActivity {
             bDelete.setEnabled(false);
             Long time = System.currentTimeMillis() / 1000; //setting a temporary unique id for new texts
             textId = time.toString();
+            lix = 0;
             setChanged(false);
             setNewText(true);
             getQuestions(textId);

@@ -744,6 +744,7 @@ public class AssignmentActivity extends AppCompatActivity {
 
         Log.d("data", set.toString());
         Log.d("lineset", lineSet.toString());
+        Log.d("XVALS", String.valueOf(xVals.size()));
         dataSets.add(set);
         lineSets.add(lineSet);
         BarData data = new BarData(xVals, dataSets);
@@ -751,7 +752,7 @@ public class AssignmentActivity extends AppCompatActivity {
         CombinedData combinedData = new CombinedData(xVals);
         combinedData.setData(data);
 
-        Log.d("XVALS", String.valueOf(xVals.size()));
+
         if (xVals.size() > 1) {
             combinedData.setData(lineData);
         }
@@ -988,20 +989,46 @@ public class AssignmentActivity extends AppCompatActivity {
         TextView tvDialogAverageTime = (TextView) layout.findViewById(R.id.tvDialogAverageTime);
         TextView tvDialogCorrect = (TextView) layout.findViewById(R.id.tvDialogCorrect);
         TextView tvDialogCorrectAverage = (TextView) layout.findViewById(R.id.tvDialogCorrectAverage);
-
+        int time = Integer.parseInt(generalResults.get(assignmentId).get("time"));
+        tvDialogTime.setText(convertTime(time));
+        List<Map<String, String>> questionList = new ArrayList<>();
 
 
         Log.d("questions",questions.toString());
         Log.d("no. of questions", String.valueOf(questions.size()));
         Log.d("generalResults",generalResults.toString());
         Log.d("results for student",generalResults.get(assignmentId).toString());
-        Log.d("time for assignment",generalResults.get(assignmentId).get("time"));
+
+        for(Map.Entry<String, HashMap<String, String>> question : questions.entrySet()){
+            Map<String, String> questionInfo = new HashMap<>();
+            questionInfo.put("id",question.getValue().get("questionId"));
+            questionInfo.put("questionContent",question.getValue().get("questionContent"));
+            questionInfo.put("answer",generalResults.get(assignmentId).get("answerText"));
+            questionList.add(questionInfo);
+        }
+
+        Log.d("question List",questionList.toString());
 
 
+        int timeTotal = 0;
+        int numberOfStudents = 0;
 
+        for(Map.Entry<String, HashMap<String, String>> hashMap : generalResults.entrySet()){
+            timeTotal = timeTotal+Integer.parseInt(hashMap.getValue().get("time"));
+            numberOfStudents++;
 
+        }
+        Log.d("Average time", String.valueOf(timeTotal/numberOfStudents));
+/*        for(Map.Entry<String, String> map : generalResults.get(assignmentId).entrySet()){
+            Log.d("map value",map.getValue());
+            Log.d("map Key",map.getKey());
+           String[] questionId = map.getKey().split(" ");
+            Log.d("new key",questionId[1]);
+            Log.d("corresponding question",questions.get("Question"+questionId[1]).toString());
+        }*/
+    }
 
-        int time = Integer.parseInt(generalResults.get(assignmentId).get("time"));
+    private String convertTime(int time){
         int hour = time/3600;
         int remainder = time - hour*3600;
         int minute = remainder/60;
@@ -1027,23 +1054,7 @@ public class AssignmentActivity extends AppCompatActivity {
             seconds = String.valueOf(second);
         }
         String timeConverted = hours+":"+minutes+":"+seconds;
-        Log.d("time",timeConverted);
-
-        int timeTotal = 0;
-        int numberOfStudents = 0;
-
-        for(Map.Entry<String, HashMap<String, String>> hashMap : generalResults.entrySet()){
-            timeTotal = timeTotal+Integer.parseInt(hashMap.getValue().get("time"));
-            numberOfStudents++;
-        }
-        Log.d("Average time", String.valueOf(timeTotal/numberOfStudents));
-
-/*        for(Map.Entry<String, String> map : generalResults.get(assignmentId).entrySet()){
-            Log.d("map value",map.getValue());
-            Log.d("map Key",map.getKey());
-           String[] questionId = map.getKey().split(" ");
-            Log.d("new key",questionId[1]);
-            Log.d("corresponding question",questions.get("Question"+questionId[1]).toString());
-        }*/
+        return timeConverted;
     }
+
 }
