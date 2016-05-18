@@ -51,7 +51,6 @@ import java.util.Map;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
-import java.util.regex.Pattern;
 
 public class AssignmentActivity extends AppCompatActivity {
 
@@ -138,6 +137,24 @@ public class AssignmentActivity extends AppCompatActivity {
                 android.R.layout.simple_list_item_2,
                 new String[] {"Class", "Number of students" },
                 new int[] {android.R.id.text1, android.R.id.text2 });
+        etSearch.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+                //Auto generated stub
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+
+                assignmentAdapter.getFilter().filter(s);
+
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+                //Auto generated stub
+            }
+        });
         //content pane
         etAssignmentText.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -604,12 +621,15 @@ public class AssignmentActivity extends AppCompatActivity {
         });
 
         if(position >= 0) {
-            assignmentLibTextId = Integer.parseInt(assignmentLibList.get(position).get("assignmentText"));
+            //assignmentLibTextId = Integer.parseInt(assignmentLibList.get(position).get("assignmentText"));
+            Map<String, String> assignmentLibData =(Map) assignmentAdapter.getItem(position);
+            assignmentLibTextId = Integer.parseInt(assignmentLibData.get("assignmentText"));
             int textListPos = textListIds.get(assignmentLibTextId);
-            etAssignmentName.setText(assignmentLibList.get(position).get("assignmentLibName"));
-            assignmentLibId = assignmentLibList.get(position).get("assignmentLibId");
+            //etAssignmentName.setText(assignmentLibList.get(position).get("assignmentLibName"));
+            etAssignmentName.setText(assignmentLibData.get("assignmentLibName"));
             etAssignmentText.setText(textList.get(textListPos).get("textname"));
-            assignmentLibName = assignmentLibList.get(position).get("assignmentLibName");
+            //assignmentLibName = assignmentLibList.get(position).get("assignmentLibName");
+            assignmentLibName = assignmentLibData.get("assignmentLibName");
             assignedList.clear();
             studentsAssigned.clear();
             setChanged(false);
@@ -699,7 +719,8 @@ public class AssignmentActivity extends AppCompatActivity {
                 for (Map.Entry<String, HashMap<String, String>> questionResult : result.entrySet()) {
                     numberOfQuestions++;
                     studentAnswers.put("time",assignedList.get(i).get("timeSpent"));
-                    studentAnswers.put(numberOfQuestions+"- "+questionResult.getValue().get("questionId"),questionResult.getValue().get("correct"));
+                    studentAnswers.put("Question: "+i,questionResult.getValue().get("correct"));
+                    studentAnswers.put("Answer: "+i,questionResult.getValue().get("answerText"));
                     if (questionResult.getValue().get("correct").equals("1")) {
                         numberOfCorrect++;
                     }
@@ -744,6 +765,7 @@ public class AssignmentActivity extends AppCompatActivity {
 
         Log.d("data", set.toString());
         Log.d("lineset", lineSet.toString());
+        Log.d("XVALS", String.valueOf(xVals.size()));
         dataSets.add(set);
         lineSets.add(lineSet);
         BarData data = new BarData(xVals, dataSets);
@@ -751,7 +773,7 @@ public class AssignmentActivity extends AppCompatActivity {
         CombinedData combinedData = new CombinedData(xVals);
         combinedData.setData(data);
 
-        Log.d("XVALS", String.valueOf(xVals.size()));
+
         if (xVals.size() > 1) {
             combinedData.setData(lineData);
         }
@@ -988,20 +1010,57 @@ public class AssignmentActivity extends AppCompatActivity {
         TextView tvDialogAverageTime = (TextView) layout.findViewById(R.id.tvDialogAverageTime);
         TextView tvDialogCorrect = (TextView) layout.findViewById(R.id.tvDialogCorrect);
         TextView tvDialogCorrectAverage = (TextView) layout.findViewById(R.id.tvDialogCorrectAverage);
-
+        int time = Integer.parseInt(generalResults.get(assignmentId).get("time"));
+        tvDialogTime.setText(convertTime(time));
+        List<Map<String, String>> questionList = new ArrayList<>();
 
 
         Log.d("questions",questions.toString());
         Log.d("no. of questions", String.valueOf(questions.size()));
         Log.d("generalResults",generalResults.toString());
         Log.d("results for student",generalResults.get(assignmentId).toString());
-        Log.d("time for assignment",generalResults.get(assignmentId).get("time"));
+
+        for(Map.Entry<String, HashMap<String, String>> question : questions.entrySet()){
+            Map<String, String> questionInfo = new HashMap<>();
+            questionInfo.put("id",question.getValue().get("questionId"));
+            questionInfo.put("questionContent",question.getValue().get("questionContent"));
+            questionInfo.put("answer",generalResults.get(assignmentId).get("answerText"));
+            questionList.add(questionInfo);
+        }
+
+        Log.d("question List",questionList.toString());
 
 
+        int timeTotal = 0;
+        int numberOfStudents = 0;
 
+        for(Map.Entry<String, HashMap<String, String>> hashMap : generalResults.entrySet()){
+            timeTotal = timeTotal+Integer.parseInt(hashMap.getValue().get("time"));
+            numberOfStudents++;
 
+        }
+        double averageTime = timeTotal/numberOfStudents;
+        if(time < averageTime){
+            double difference = ((averageTime-time)/time)*100;
+            tvDialogAverageTime.setText(Math.round(difference)+"% below average");
+        } else if(time > averageTime){
+            double difference = ((time-averageTime)/averageTime)*100;
+            tvDialogAverageTime.setText(Math.round(difference)+"% above average");
+        } else {
+            tvDialogAverageTime.setText("On average");
+        }
 
-        int time = Integer.parseInt(generalResults.get(assignmentId).get("time"));
+        Log.d("Average time", String.valueOf(timeTotal/numberOfStudents));
+/*        for(Map.Entry<String, String> map : generalResults.get(assignmentId).entrySet()){
+            Log.d("map value",map.getValue());
+            Log.d("map Key",map.getKey());
+           String[] questionId = map.getKey().split(" ");
+            Log.d("new key",questionId[1]);
+            Log.d("corresponding question",questions.get("Question"+questionId[1]).toString());
+        }*/
+    }
+
+    private String convertTime(int time){
         int hour = time/3600;
         int remainder = time - hour*3600;
         int minute = remainder/60;
@@ -1027,23 +1086,7 @@ public class AssignmentActivity extends AppCompatActivity {
             seconds = String.valueOf(second);
         }
         String timeConverted = hours+":"+minutes+":"+seconds;
-        Log.d("time",timeConverted);
-
-        int timeTotal = 0;
-        int numberOfStudents = 0;
-
-        for(Map.Entry<String, HashMap<String, String>> hashMap : generalResults.entrySet()){
-            timeTotal = timeTotal+Integer.parseInt(hashMap.getValue().get("time"));
-            numberOfStudents++;
-        }
-        Log.d("Average time", String.valueOf(timeTotal/numberOfStudents));
-
-/*        for(Map.Entry<String, String> map : generalResults.get(assignmentId).entrySet()){
-            Log.d("map value",map.getValue());
-            Log.d("map Key",map.getKey());
-           String[] questionId = map.getKey().split(" ");
-            Log.d("new key",questionId[1]);
-            Log.d("corresponding question",questions.get("Question"+questionId[1]).toString());
-        }*/
+        return timeConverted;
     }
+
 }

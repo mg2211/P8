@@ -190,6 +190,7 @@ public class ClassActivity extends AppCompatActivity {
             public void onClick(View v) {
                 setNewClass(true);
                 setChanged(false);
+                lvListClasses.setItemChecked(lvListClasses.getSelectedItemPosition(), false);
                 setContentPane(-1, -1);
             }
         });
@@ -205,8 +206,9 @@ public class ClassActivity extends AppCompatActivity {
                     @Override
                     public void run() {
                         lvListClasses.requestFocusFromTouch();
-                        lvListClasses.setSelection(0);
                         lvListClasses.requestFocus();
+                        lvListClasses.clearChoices();
+                        classListAdapter.notifyDataSetChanged();
                     }
                 });
 
@@ -226,9 +228,11 @@ public class ClassActivity extends AppCompatActivity {
                 lvListClasses.post(new Runnable() {
                     @Override
                     public void run() {
-                        lvListClasses.requestFocusFromTouch();
-                        lvListClasses.setSelection(0);
+                       lvListClasses.requestFocusFromTouch();
+                        //lvListClasses.setSelection(-1);
                         lvListClasses.requestFocus();
+                        lvListClasses. clearChoices();
+                        classListAdapter.notifyDataSetChanged();
                     }
                 });
 
@@ -336,7 +340,7 @@ public class ClassActivity extends AppCompatActivity {
             public void onTextChanged(CharSequence s, int start, int before, int count) {
                 String content = tvTeacherName.getText().toString();
                 Log.d("String teacherName", content);
-                if (!content.equals(currentTeacherFullName) && !content.isEmpty()) {
+                if (!content.equals(currentTeacherFullName) && !content.isEmpty() && etClassName.getText().toString().trim().length() != 0) {
                     setChanged(true);
                 } else {
                     setChanged(false);
@@ -359,7 +363,7 @@ public class ClassActivity extends AppCompatActivity {
             public void onTextChanged(CharSequence s, int start, int before, int count) {
                 String content = tvTeacherEmail.getText().toString();
                 Log.d("String teacherEmail", content);
-                if (!content.equals(currentTeacherEmail) && !content.isEmpty()) {
+                if (!content.equals(currentTeacherEmail) && !content.isEmpty() && etClassName.getText().toString().trim().length() != 0) {
                     setChanged(true);
                 } else {
                     setChanged(false);
@@ -377,7 +381,6 @@ public class ClassActivity extends AppCompatActivity {
         if (classListPos >= 0 && teacherListPos >= 0) {
             Map<String, String> classData = (Map) classListAdapter.getItem(classListPos);
             classClassId = classData.get("classId");
-            classClassName = classData.get("className");
 
             currentTeacherFullName = classData.get("teacherFullName");
             currentTeacherEmail = classData.get("teacherEmail");
@@ -387,10 +390,16 @@ public class ClassActivity extends AppCompatActivity {
             teacherTeacherFullName = teacherData.get("fullName");
             teacherTeacherEmail = teacherData.get("email");
 
-            etClassName.setText(classClassName);
             tvTeacherName.setText(teacherTeacherFullName);
             tvTeacherEmail.setText(teacherTeacherEmail);
 
+            if(!newClass) {
+                classClassName = classData.get("className");
+                etClassName.setText(classClassName);
+            } else {
+                classClassName = null;
+                etClassName.setText("");
+            }
         } else if (classListPos >= 0) {
             Map<String, String> classData = (Map) classListAdapter.getItem(classListPos);
             classClassId = classData.get("classId");

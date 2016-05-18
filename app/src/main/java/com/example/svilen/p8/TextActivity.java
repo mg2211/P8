@@ -485,13 +485,14 @@ public class TextActivity extends AppCompatActivity {
     //@param position - the position from the listview - pass -1 for new text
     private void setContentPane(int position) {
         if (position >= 0) {
-            Map<String, String> textData = textList.get(position);
+            Map<String, String> textData = (Map) textAdapter.getItem(position);
             textContent = textData.get("textcontent");
             textName = textData.get("textname");
             textId = textData.get("id");
             etContent.setText(textContent);
             etTextName.setText(textName);
             bDelete.setEnabled(true);
+            lix = 0;
             calculate();
             setChanged(false);
             setNewText(false);
@@ -502,6 +503,7 @@ public class TextActivity extends AppCompatActivity {
             bDelete.setEnabled(false);
             Long time = System.currentTimeMillis() / 1000; //setting a temporary unique id for new texts
             textId = time.toString();
+            lix = 0;
             setChanged(false);
             setNewText(true);
             getQuestions(textId);

@@ -540,6 +540,7 @@ class TextTask extends AsyncTask<String, Void, HashMap<String, HashMap<String, S
         String textName = params[2];
         String textContent = params[3];
         String complexity = params[4];
+
         HashMap<String, HashMap<String, String>> results = new HashMap<>();
         HashMap<String, String> response = new HashMap<>();
         try {
@@ -566,6 +567,9 @@ class TextTask extends AsyncTask<String, Void, HashMap<String, HashMap<String, S
             InputStream in = new BufferedInputStream(connection.getInputStream());
 
             String serverResponse = IOUtils.toString(in, "UTF-8");
+            if(method.equals("update")){
+                Log.d("SERVER RESPONSE",serverResponse);
+            }
 
             JSONObject JSONResult = new JSONObject(serverResponse);
             String generalResponse = JSONResult.getString("generalResponse");
@@ -987,8 +991,6 @@ class QuestionTask extends AsyncTask<String, Void, HashMap<String, HashMap<Strin
         InputStream in = new BufferedInputStream(connection.getInputStream());
 
         String response = IOUtils.toString(in, "UTF-8");
-        Log.d("response", response);
-        Log.d("query", query);
 
             JSONObject JSONResult = new JSONObject(response);
             generalResponse = JSONResult.getString("generalResponse");
@@ -1350,11 +1352,13 @@ class QuestionResultTask extends AsyncTask<String, Void, HashMap<String, HashMap
                     JSONObject result = questionResults.getJSONObject(i);
                     String correct = String.valueOf(result.getInt("correct"));
                     String questionId = String.valueOf(result.getInt("questionid"));
+                    String answerText = result.getString("answerText");
 
                     HashMap<String, String> resultInfo = new HashMap<>();
                     resultInfo.put("correct", correct);
-                    resultInfo.put("questionId",questionId);
-                    results.put(""+i,resultInfo);
+                    resultInfo.put("answerText",answerText);
+
+                    results.put(""+questionId,resultInfo);
                 }
             }
 
