@@ -1382,10 +1382,10 @@ class QuestionResultTask extends AsyncTask<String, Void, HashMap<String, HashMap
 class AnswerTask extends AsyncTask<String, Void, HashMap<String, HashMap<String, String>>> {
 
     private Context context;
-    private AnswerCallback delegate;
+    private Callback delegate;
     private ProgressDialog progressDialog;
 
-    public AnswerTask (AnswerCallback delegate, Context context){
+    public AnswerTask (Callback delegate, Context context){
         this.delegate = delegate;
         this.context = context;
         progressDialog = new ProgressDialog(context);
@@ -1473,7 +1473,7 @@ class AnswerTask extends AsyncTask<String, Void, HashMap<String, HashMap<String,
         CharSequence alert = results.get("response").get("generalResponse");
         Toast toast = Toast.makeText(context, alert, duration);
         toast.show();
-        delegate.answerdone(results);
+        delegate.asyncDone(results);
 
     }
 }

@@ -12,6 +12,7 @@ import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.ListView;
 import android.widget.SimpleAdapter;
+import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -25,6 +26,8 @@ public class StudentActivity extends AppCompatActivity {
     Context context = this;
     ListView lvAssToStudent;
     SimpleAdapter assignmentAdapter;
+    AssignmentListAdapter  assignedAdapter;
+
     List<Map<String, String>> assignmentList = new ArrayList<>();
     UserInfo userinfo;
     HashMap<String, String> user;
@@ -36,9 +39,9 @@ public class StudentActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
         setContentView(R.layout.activity_student);
-
-
+        //getWindow().setBackgroundDrawableResource(R.drawable.green);
         userinfo = new UserInfo(context);
         user = userinfo.getUser();
         studentId = user.get("studentId");
@@ -46,11 +49,18 @@ public class StudentActivity extends AppCompatActivity {
 
         lvAssToStudent = (ListView) findViewById(R.id.lvAssOverview);
 
-        assignmentAdapter = new SimpleAdapter(this, assignmentList,
+      /*  assignmentAdapter = new SimpleAdapter(this, assignmentList,
                 android.R.layout.simple_list_item_1,
                 new String[]{"assignmentLibName"},
                 new int[]{android.R.id.text1});
-        lvAssToStudent.setAdapter(assignmentAdapter);
+        lvAssToStudent.setAdapter(assignmentAdapter);*/
+
+        assignedAdapter = new AssignmentListAdapter(this,assignmentList);
+
+        lvAssToStudent.setAdapter(assignedAdapter);
+
+
+
         getAssignment();
 
         lvAssToStudent.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -62,36 +72,44 @@ public class StudentActivity extends AppCompatActivity {
                 textId = assignmentData.get("textId");
                 assignmentName = assignmentData.get("assignmentLibName");
                 assignmentId = assignmentData.get("assignmentid");
-                Log.d("TEXTID::: ", textId);
+                String isComplete = assignmentData.get("isComplete");
 
-                AlertDialog.Builder builder = new AlertDialog.Builder(context);
+                if(isComplete.equals("0")){
+                    Log.d("TEXTID::: ", textId);
 
-                builder.setMessage("Do you wish to start " + assignmentName + " homework?")
-                        .setTitle(assignmentName)
-                        .setNegativeButton("No", new DialogInterface.OnClickListener(){
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
+                    //add if statement is complete == 0{} else {toast= you have competed that assignment]
+                    AlertDialog.Builder builder = new AlertDialog.Builder(context);
 
-                    }
-                })
-                        .setPositiveButton("Yes", new DialogInterface.OnClickListener(){
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
+                    builder.setMessage("Do you wish to start " + assignmentName + " homework?")
+                            .setTitle(assignmentName)
+                            .setNegativeButton("No", new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
 
-                        Intent intent = new Intent(StudentActivity.this, ReadingActivity.class);
-                        intent.putExtra("textId", textId);
-                        intent.putExtra("assignmentName", assignmentName);
-                        intent.putExtra("id", assignmentId);
-                        startActivity(intent);
-                        Log.d("8787", assignmentId);
+                                }
+                            })
+                            .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
 
-                    }
-                });
+                                    Intent intent = new Intent(StudentActivity.this, ReadingActivity.class);
+                                    intent.putExtra("textId", textId);
+                                    intent.putExtra("assignmentName", assignmentName);
+                                    intent.putExtra("id", assignmentId);
+                                    startActivity(intent);
+                                    Log.d("8787", assignmentId);
 
-                AlertDialog dialog = builder.create();
-                dialog.setCanceledOnTouchOutside(true);
-                dialog.show();
+                                }
+                            });
 
+                    AlertDialog dialog = builder.create();
+                    dialog.setCanceledOnTouchOutside(true);
+                    dialog.show();
+
+                }else{
+                    Toast.makeText(StudentActivity.this, "You have finished this assignment", Toast.LENGTH_SHORT).show();
+
+                }
 
 
                 new TextTask(new TextCallback() {
@@ -165,7 +183,6 @@ public class StudentActivity extends AppCompatActivity {
                     Log.d("2020 ", availableto.toString());
 
 
-                    if (isComplete.equals("0")) {
 
                         Long tsLong = System.currentTimeMillis() / 1000;
                         String ts = tsLong.toString();
@@ -175,16 +192,20 @@ public class StudentActivity extends AppCompatActivity {
 
 
                             assignmentInfo.put("assignmentLibName", specificAssignmentName);
+                            assignmentInfo.put("Name", specificAssignmentName);
                             assignmentInfo.put("assignmentid", specificAssignmentId);
                             assignmentInfo.put("assignmentlibraryid", specificAssLibId);
                             assignmentInfo.put("textId", specificTextId);
+                            assignmentInfo.put("isComplete", isComplete);
+                            assignmentInfo.put("availableFrom", assignment.getValue().get("availableFrom"));
+                            assignmentInfo.put("availableTo", assignment.getValue().get("availableTo"));
 
                             assignmentList.add(assignmentInfo);
 
                             Log.d("2222: ", String.valueOf(assignmentInfo));
                             Log.d("2222", specificAssignmentId);
                         }
-                    }
+
 
                 }
             }

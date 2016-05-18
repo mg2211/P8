@@ -20,7 +20,11 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".StudentActivity" />
+        <activity android:name=".StudentActivity"
+            android:windowSoftInputMode="adjustResize|stateAlwaysHidden"
+            android:screenOrientation="landscape"
+
+        />
         <activity android:name=".TeacherActivity" />
         <activity android:name=".UserActivity"
             android:screenOrientation="landscape"
@@ -36,7 +40,9 @@
             android:name=".AssignmentActivity"
             android:windowSoftInputMode="stateUnchanged|adjustPan" />
         <activity
-            android:name=".ReadingActivity" />
+            android:name=".ReadingActivity"
+        android:screenOrientation="landscape"/>
+
     </application>
 
 </manifest>

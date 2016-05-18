@@ -320,9 +320,9 @@ public class ReadingActivity extends AppCompatActivity  {
     public HashMap<String, HashMap<String, String>> getAnswerId(){ // used to retrieve answerId based on questionId and answertext while freezing everything else
 
     try {
-      return  new AnswerTask(new AnswerCallback() {
+      return  new AnswerTask(new Callback() {
             @Override
-            public void answerdone(HashMap<String, HashMap<String, String>> results) {
+            public void asyncDone(HashMap<String, HashMap<String, String>> asyncResults) {
 
             }
         }, context).execute(lastElement, answerChoosen, "").get(30, TimeUnit.SECONDS);
