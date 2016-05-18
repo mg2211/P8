@@ -66,6 +66,11 @@ public class UserActivity extends AppCompatActivity {
     private List<Map<String, String>> classList = new ArrayList<>();
     private List<Map<String, String>> teacherList = new ArrayList<>();
 
+    private UserInfo userinfo;
+    private HashMap<String, String> user;
+
+    private String currentUserUsername;
+
     private String userUserId;
     private String userTeacherId;
     private String userStudentId;
@@ -119,6 +124,11 @@ public class UserActivity extends AppCompatActivity {
 
         lvListUsers = (ListView) findViewById(R.id.lvListUsers);
 
+        userinfo = new UserInfo(context);
+        user = userinfo.getUser();
+        Log.d("userinfo content", String.valueOf(user));
+        currentUserUsername = user.get("username");
+
         roleAdapter = new ArrayAdapter<>(this,
                 android.R.layout.simple_spinner_item, roleList);
         roleAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
@@ -143,6 +153,7 @@ public class UserActivity extends AppCompatActivity {
                     tvUserClassName.setVisibility(View.VISIBLE);
                 }
             }
+
             public void onNothingSelected(AdapterView<?> arg0) {
                 // noting to do do here...
             }
@@ -164,11 +175,11 @@ public class UserActivity extends AppCompatActivity {
 
         dialogClassListAdapter = new SimpleAdapter(this, classList,
                 R.layout.listview_custom_item,
-                new String[] {"className", "teacherFirstName", "teacherLastName", "numOfStudents"},
-                new int[] {R.id.clTvRow1, R.id.clTvRow2_1, R.id.clTvRow2_2, R.id.clTvRow3 });
+                new String[]{"className", "teacherFirstName", "teacherLastName", "numOfStudents"},
+                new int[]{R.id.clTvRow1, R.id.clTvRow2_1, R.id.clTvRow2_2, R.id.clTvRow3});
 
         getAllClasses();
-        
+
         lvListUsers.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, final int position, long id) {
@@ -226,19 +237,23 @@ public class UserActivity extends AppCompatActivity {
                                         setChanged(false);
                                         setNewUser(false);
                                         setContentPane(-1);
+                                        resetAdapter(lvListUsers, userListAdapter);
                                     } else {
                                         clear = false;
                                         setContentPane(-1);
+                                        resetAdapter(lvListUsers, userListAdapter);
                                     }
                                 }
                             } else {
                                 clear = true;
                                 setContentPane(-1);
+                                resetAdapter(lvListUsers, userListAdapter);
                             }
                         }
                     });
                 } else {
                     setContentPane(-1);
+                    resetAdapter(lvListUsers, userListAdapter);
                 }
             }
         });
@@ -491,9 +506,9 @@ public class UserActivity extends AppCompatActivity {
                     String teacherId = classData.getValue().get("teacherId");
                     String className = classData.getValue().get("className");
                     String teacherFirstName = classData.getValue().get("teacherFirstName");
-                    Log.d("teacherFirstName" , teacherFirstName);
+                    Log.d("teacherFirstName", teacherFirstName);
                     String teacherLastName = classData.getValue().get("teacherLastName");
-                    Log.d("teacherFirstName" , teacherLastName);
+                    Log.d("teacherFirstName", teacherLastName);
                     String teacherEmail = classData.getValue().get("teacherEmail");
                     String numOfStudents = classData.getValue().get("numOfStudents");
                     classInfo.put("classId", classId);
@@ -502,7 +517,7 @@ public class UserActivity extends AppCompatActivity {
                     classInfo.put("teacherFirstName", teacherFirstName);
                     classInfo.put("teacherLastName", teacherLastName);
                     classInfo.put("teacherEmail", teacherEmail);
-                    classInfo.put("numOfStudents", "number of students: "+ numOfStudents);
+                    classInfo.put("numOfStudents", "number of students: " + numOfStudents);
                     Log.d("getAllClasses result", String.valueOf(classInfo));
                     classList.add(classInfo);
                 }
@@ -619,11 +634,11 @@ public class UserActivity extends AppCompatActivity {
             }
         }, context).execute("UPDATE", "", userUserId, "", "", "", username, password, lastName, firstName,
                 email, parentEmail);
-        getAllUsers();
+        resetAdapter(lvListUsers, userListAdapter);
         return true;
     }
 
-    private boolean updateUserClass(String userId, String classId){
+    private boolean updateUserClass(String userId, String classId) {
         new UserTask(new UserCallback() {
             @Override
             public void userTaskDone(Map<String, HashMap<String, String>> users) {
@@ -635,34 +650,42 @@ public class UserActivity extends AppCompatActivity {
     }
 
     private void deleteUser() {
-        new AlertDialog.Builder(context)
-                .setIcon(android.R.drawable.ic_dialog_alert)
-                .setTitle("Confirm")
-                .setMessage("Are you sure you want to delete user " + userUsername)
-                .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        new UserTask(new UserCallback() {
-                            @Override
-                            public void userTaskDone(Map<String, HashMap<String, String>> users) {
-                            }
-                        }, context).executeTask("DELETE", userRole, userUserId, "", "", "", "", "", "", "", "", "");
-                        getAllUsers();
-                        etUsername.setText("");
-                        etFirstName.setText("");
-                        etLastName.setText("");
-                        etEmail.setText("");
-                        etContactEmail.setText("");
-                        Log.d("id", userUserId);
-                        Log.d("username", userUsername);
-                        setNewUser(true);
-                        setChanged(false);
-                        bDeleteUser.setEnabled(false);
-                        userUsername = "";
-                    }
-                })
-                .setNegativeButton("No", null)
-                .show();
+        if(userUsername.equals(currentUserUsername)){
+            int duration = Toast.LENGTH_LONG;
+            CharSequence alert = "You cannot delete yourself!";
+            Toast toast = Toast.makeText(context, alert, duration);
+            toast.show();
+        } else {
+            new AlertDialog.Builder(context)
+                    .setIcon(android.R.drawable.ic_dialog_alert)
+                    .setTitle("Confirm")
+                    .setMessage("Are you sure you want to delete user " + userUsername)
+                    .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            new UserTask(new UserCallback() {
+                                @Override
+                                public void userTaskDone(Map<String, HashMap<String, String>> users) {
+                                }
+                            }, context).executeTask("DELETE", userRole, userUserId, "", "", "", "", "", "", "", "", "");
+                            getAllUsers();
+                            etUsername.setText("");
+                            etFirstName.setText("");
+                            etLastName.setText("");
+                            etEmail.setText("");
+                            etContactEmail.setText("");
+                            Log.d("id", userUserId);
+                            Log.d("username", userUsername);
+                            setNewUser(true);
+                            setChanged(false);
+                            bDeleteUser.setEnabled(false);
+                            userUsername = "";
+                        }
+                    })
+                    .setNegativeButton("No", null)
+                    .show();
+            resetAdapter(lvListUsers, userListAdapter);
+        }
     }
 
     private void setEnabledUiItems() {
@@ -751,10 +774,10 @@ public class UserActivity extends AppCompatActivity {
         }
     }
 
-    private String getClassName(String userId, List<Map<String, String>> userList){
+    private String getClassName(String userId, List<Map<String, String>> userList) {
         String userTeacher = null;
         String userNotInClass = "Not enrolled in class";
-        if("teacher".equals(userRole)){
+        if ("teacher".equals(userRole)) {
             Log.d("getClassName result", String.valueOf(userTeacher));
             return userTeacher;
         } else {
@@ -778,12 +801,11 @@ public class UserActivity extends AppCompatActivity {
     }
 
     //set Spinner value
-    private int getIndex(Spinner spinner, String myString)
-    {
+    private int getIndex(Spinner spinner, String myString) {
         int index = 0;
 
-        for (int i=0;i<spinner.getCount();i++){
-            if (spinner.getItemAtPosition(i).toString().equalsIgnoreCase(myString)){
+        for (int i = 0; i < spinner.getCount(); i++) {
+            if (spinner.getItemAtPosition(i).toString().equalsIgnoreCase(myString)) {
                 index = i;
                 break;
             }
@@ -864,10 +886,10 @@ public class UserActivity extends AppCompatActivity {
         setDialogContentPane(getClassListPosition(userClassId, classList));
     }
 
-    private int getClassListPosition(String classId, List<Map<String, String>> classList){
-        for(int i = 0; i < classList.size(); i++){
+    private int getClassListPosition(String classId, List<Map<String, String>> classList) {
+        for (int i = 0; i < classList.size(); i++) {
             Map<String, String> map = classList.get(i);
-            if(map.get("classId").equals(classId)){
+            if (map.get("classId").equals(classId)) {
                 Log.d("GetClassListPos result", String.valueOf(i));
                 return i;
             }
@@ -892,5 +914,11 @@ public class UserActivity extends AppCompatActivity {
             tvDialogTeacherName.setText("");
             tvDialogTeacherEmail.setText("");
         }
+    }
+
+    public void resetAdapter(ListView lv, SimpleAdapter sa) {
+        lv.setChoiceMode(lv.CHOICE_MODE_NONE);
+        lv.setAdapter(sa);
+        lv.setChoiceMode(lv.CHOICE_MODE_SINGLE);
     }
 }
