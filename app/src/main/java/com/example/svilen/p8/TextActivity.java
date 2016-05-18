@@ -485,7 +485,7 @@ public class TextActivity extends AppCompatActivity {
     //@param position - the position from the listview - pass -1 for new text
     private void setContentPane(int position) {
         if (position >= 0) {
-            Map<String, String> textData = textList.get(position);
+            Map<String, String> textData = (Map) textAdapter.getItem(position);
             textContent = textData.get("textcontent");
             textName = textData.get("textname");
             textId = textData.get("id");

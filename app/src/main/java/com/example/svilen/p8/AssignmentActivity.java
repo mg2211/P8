@@ -138,6 +138,24 @@ public class AssignmentActivity extends AppCompatActivity {
                 android.R.layout.simple_list_item_2,
                 new String[] {"Class", "Number of students" },
                 new int[] {android.R.id.text1, android.R.id.text2 });
+        etSearch.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+                //Auto generated stub
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+
+                assignmentAdapter.getFilter().filter(s);
+
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+                //Auto generated stub
+            }
+        });
         //content pane
         etAssignmentText.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -604,12 +622,15 @@ public class AssignmentActivity extends AppCompatActivity {
         });
 
         if(position >= 0) {
-            assignmentLibTextId = Integer.parseInt(assignmentLibList.get(position).get("assignmentText"));
+            //assignmentLibTextId = Integer.parseInt(assignmentLibList.get(position).get("assignmentText"));
+            Map<String, String> assignmentLibData =(Map) assignmentAdapter.getItem(position);
+            assignmentLibTextId = Integer.parseInt(assignmentLibData.get("assignmentText"));
             int textListPos = textListIds.get(assignmentLibTextId);
-            etAssignmentName.setText(assignmentLibList.get(position).get("assignmentLibName"));
-            assignmentLibId = assignmentLibList.get(position).get("assignmentLibId");
+            //etAssignmentName.setText(assignmentLibList.get(position).get("assignmentLibName"));
+            etAssignmentName.setText(assignmentLibData.get("assignmentLibName"));
             etAssignmentText.setText(textList.get(textListPos).get("textname"));
-            assignmentLibName = assignmentLibList.get(position).get("assignmentLibName");
+            //assignmentLibName = assignmentLibList.get(position).get("assignmentLibName");
+            assignmentLibName = assignmentLibData.get("assignmentLibName");
             assignedList.clear();
             studentsAssigned.clear();
             setChanged(false);
