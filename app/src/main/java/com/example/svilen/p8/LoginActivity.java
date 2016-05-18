@@ -52,14 +52,17 @@ public class LoginActivity extends AppCompatActivity {
                 password = passwordInput.getText().toString();
 
 
+                String decryptPass = Encryption.encryptIt(password);
+                Log.d("2222", decryptPass);
                 if (!username.equals("") && !password.equals("")) {//check if both input fields has text
-                    new LoginTask(context).execute(username, password);
+                    new LoginTask(context).execute(username,password);
                 } else {
                     //make toast if one or both inputs are empty.
                     CharSequence alert = "Please fill in both username and password";
                     int duration = Toast.LENGTH_LONG;
                     Toast toast = Toast.makeText(context, alert, duration);
                     toast.show();
+
                 }
             }
         });

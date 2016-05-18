@@ -551,11 +551,14 @@ public class UserActivity extends AppCompatActivity {
     private boolean createUser() {
         String role = spinnerRole.getSelectedItem().toString();
         String username = etUsername.getText().toString();
-        String password = etPassword.getText().toString();
+        String password = etPassword.getText().toString(); //bfk
         String lastName = etLastName.getText().toString();
         String firstName = etFirstName.getText().toString();
         String email = etEmail.getText().toString();
         String parentEmail = etContactEmail.getText().toString();
+
+        String encryptedPass = Encryption.encryptIt(password); // bfk
+        Log.d("8989", encryptedPass);
 
         boolean general = false;
         boolean student = false;
@@ -575,7 +578,7 @@ public class UserActivity extends AppCompatActivity {
                         userUserId = user.getValue().get("lastUserId");
                     }
                 }
-            }, context).executeTask("CREATE", role, "", "", "", "", username, password, lastName, firstName,
+            }, context).executeTask("CREATE", role, "", "", "", "", username, password, lastName, firstName, // bfk
                     email, parentEmail);
             getAllUsers();
             //setContentPane(getLastEntryPosition(userList));
