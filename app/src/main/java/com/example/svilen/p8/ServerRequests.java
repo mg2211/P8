@@ -1356,10 +1356,9 @@ class QuestionResultTask extends AsyncTask<String, Void, HashMap<String, HashMap
 
                     HashMap<String, String> resultInfo = new HashMap<>();
                     resultInfo.put("correct", correct);
-                    resultInfo.put("questionId",questionId);
                     resultInfo.put("answerText",answerText);
 
-                    results.put(""+i,resultInfo);
+                    results.put(""+questionId,resultInfo);
                 }
             }
 
