@@ -130,9 +130,9 @@ public class TextActivity extends AppCompatActivity {
                             } else {
                                 clear = true;
                                if(newText) {
-                                   new QuestionTask(new QuestionCallback() {
+                                   new QuestionTask(new Callback() {
                                        @Override
-                                       public void QuestionTaskDone(HashMap<String, HashMap<String, String>> results) {
+                                       public void asyncDone(HashMap<String, HashMap<String, String>> results) {
 
                                        }
                                    }, context).executeTask("delete", "", textId, "", "");
@@ -180,9 +180,9 @@ public class TextActivity extends AppCompatActivity {
                             } else {
                                 clear = true;
                                 if(newText) {
-                                    new QuestionTask(new QuestionCallback() {
+                                    new QuestionTask(new Callback() {
                                         @Override
-                                        public void QuestionTaskDone(HashMap<String, HashMap<String, String>> results) {
+                                        public void asyncDone(HashMap<String, HashMap<String, String>> results) {
 
                                         }
                                     }, context).executeTask("delete", "", textId, "", "");
@@ -324,9 +324,9 @@ public class TextActivity extends AppCompatActivity {
     }
 
     private void getTexts() {
-        new TextTask(new TextCallback() {
+        new TextTask(new Callback() {
             @Override
-            public void TextCallBack(HashMap<String, HashMap<String, String>> results) {
+            public void asyncDone(HashMap<String, HashMap<String, String>> results) {
                 results.remove("response");
                 textList.clear();
                 colors.clear();
@@ -365,16 +365,16 @@ public class TextActivity extends AppCompatActivity {
 
         if (!etTextName.getText().toString().equals("") && !etContent.getText().toString().equals("")) {
 
-            new TextTask(new TextCallback() {
+            new TextTask(new Callback() {
                 @Override
-                public void TextCallBack(HashMap<String, HashMap<String, String>> results) {
+                public void asyncDone(HashMap<String, HashMap<String, String>> results) {
                    String id = results.get("response").get("insertedId");
                     if (questionList.size() > 0) {
                         for (int i = 0; i < questionList.size(); i++) {
                             String questionId = questionList.get(i).get("id");
-                            new QuestionTask(new QuestionCallback() {
+                            new QuestionTask(new Callback() {
                                 @Override
-                                public void QuestionTaskDone(HashMap<String, HashMap<String, String>> results) {
+                                public void asyncDone(HashMap<String, HashMap<String, String>> results) {
                                 }
                             }, context).executeTask("update", questionId, id, questionList.get(i).get("answers"), questionList.get(i).get("Question"));
                         }
@@ -396,15 +396,15 @@ public class TextActivity extends AppCompatActivity {
     private boolean updateText() {
         if (!etTextName.getText().toString().equals("") && !etContent.getText().toString().equals("")) {
 
-            new TextTask(new TextCallback() {
+            new TextTask(new Callback() {
                 @Override
-                public void TextCallBack(HashMap<String, HashMap<String, String>> results) {
+                public void asyncDone(HashMap<String, HashMap<String, String>> results) {
                     if (questionList.size() > 0) {
                         for (int i = 0; i < questionList.size(); i++) {
                             String questionId = questionList.get(i).get("id");
-                            new QuestionTask(new QuestionCallback() {
+                            new QuestionTask(new Callback() {
                                 @Override
-                                public void QuestionTaskDone(HashMap<String, HashMap<String, String>> results) {
+                                public void asyncDone(HashMap<String, HashMap<String, String>> results) {
                                 }
                             }, context).executeTask("update", questionId, textId, questionList.get(i).get("answers"), questionList.get(i).get("Question"));
                         }
@@ -431,12 +431,12 @@ public class TextActivity extends AppCompatActivity {
                 .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        new TextTask(new TextCallback() {
+                        new TextTask(new Callback() {
                             @Override
-                            public void TextCallBack(HashMap<String, HashMap<String, String>> results) {
-                                new QuestionTask(new QuestionCallback() {//delete questions
+                            public void asyncDone(HashMap<String, HashMap<String, String>> results) {
+                                new QuestionTask(new Callback() {//delete questions
                                     @Override
-                                    public void QuestionTaskDone(HashMap<String, HashMap<String, String>> results) {
+                                    public void asyncDone(HashMap<String, HashMap<String, String>> results) {
                                     }
                                 }, context).executeTask("delete", "", textId, "", ""); //delete the questions after the text is deleted
                             }
@@ -511,9 +511,9 @@ public class TextActivity extends AppCompatActivity {
     }
 
     private void getQuestions(String textId) {
-        new QuestionTask(new QuestionCallback() {
+        new QuestionTask(new Callback() {
             @Override
-            public void QuestionTaskDone(HashMap<String, HashMap<String, String>> results) {
+            public void asyncDone(HashMap<String, HashMap<String, String>> results) {
                 results.remove("response");
                 questionList.clear();
                 for (Map.Entry<String, HashMap<String, String>> question : results.entrySet()) {
@@ -690,9 +690,9 @@ public class TextActivity extends AppCompatActivity {
                             method = "create";
                             questionId = "";
                         }
-                        new QuestionTask(new QuestionCallback() {
+                        new QuestionTask(new Callback() {
                             @Override
-                            public void QuestionTaskDone(HashMap<String, HashMap<String, String>> results) {
+                            public void asyncDone(HashMap<String, HashMap<String, String>> results) {
 
                             }
                         }, context).executeTask(method, questionId, textId, answerString, etDialogQuestion.getText().toString());
@@ -728,9 +728,9 @@ public class TextActivity extends AppCompatActivity {
                         .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialogCallback, int which) {
-                                new QuestionTask(new QuestionCallback() {
+                                new QuestionTask(new Callback() {
                                     @Override
-                                    public void QuestionTaskDone(HashMap<String, HashMap<String, String>> results) {
+                                    public void asyncDone(HashMap<String, HashMap<String, String>> results) {
                                         dialog.dismiss();
                                         getQuestions(textId);
                                     }

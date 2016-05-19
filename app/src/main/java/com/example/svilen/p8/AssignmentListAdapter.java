@@ -39,9 +39,9 @@ class AssignmentListAdapter extends BaseAdapter {
         }
         int color;
         if(assignments.get(position).get("isComplete").equals("0")){
-            color = Color.RED;
+            color = Color.BLACK;
         } else {
-            color = Color.GREEN;
+            color = Color.LTGRAY;
         }
 
         Long from = Long.parseLong(assignments.get(position).get("availableFrom"));

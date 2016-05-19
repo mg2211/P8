@@ -281,11 +281,11 @@ class ClassTask extends AsyncTask<String, Void, HashMap<String, HashMap<String, 
         }
     }
 class StudentTask extends AsyncTask<String, Void, HashMap<String, HashMap<String, String>>> {
-        StudentCallback delegate;
+        Callback delegate;
         ProgressDialog progressDialog;
         final Context context;
 
-        StudentTask(StudentCallback delegate, Context context) {
+        StudentTask(Callback delegate, Context context) {
             this.delegate = delegate;
             this.context = context;
             progressDialog = new ProgressDialog(context);
@@ -384,7 +384,7 @@ class StudentTask extends AsyncTask<String, Void, HashMap<String, HashMap<String
                 int duration = Toast.LENGTH_LONG;
                 Toast toast = Toast.makeText(context, generalResponse, duration);
                 toast.show();
-                delegate.studentListDone(results);
+                delegate.asyncDone(results);
             } else if (Integer.parseInt(responseCode) == 200) {
                 int duration = Toast.LENGTH_LONG;
                 Toast toast = Toast.makeText(context, generalResponse, duration);
@@ -404,9 +404,9 @@ class StudentTask extends AsyncTask<String, Void, HashMap<String, HashMap<String
 
     }
 
-class RoleTask extends AsyncTask<String, Void, Map<String,HashMap<String, String>>> {
+class RoleTask extends AsyncTask<String, Void, HashMap<String,HashMap<String, String>>> {
 
-    RoleCallback delegate;
+    Callback delegate;
     ProgressDialog progressDialog;
     final Context context;
 
@@ -414,7 +414,7 @@ class RoleTask extends AsyncTask<String, Void, Map<String,HashMap<String, String
     protected void onPreExecute() {
     }
 
-    RoleTask(RoleCallback delegate, Context context) {
+    RoleTask(Callback delegate, Context context) {
         progressDialog = new ProgressDialog(context);
         this.delegate = delegate;
         this.context = context;
@@ -425,10 +425,10 @@ class RoleTask extends AsyncTask<String, Void, Map<String,HashMap<String, String
     }
 
     @Override
-    protected Map<String,HashMap<String, String>> doInBackground(String... params) {
+    protected HashMap<String,HashMap<String, String>> doInBackground(String... params) {
 
         //Initiating return vars.
-        Map<String, HashMap<String,String>> result = new HashMap<>();
+        HashMap<String, HashMap<String,String>> result = new HashMap<>();
         String generalResponse = null;
         int responseCode = 0;
         String role = null;
@@ -490,7 +490,7 @@ class RoleTask extends AsyncTask<String, Void, Map<String,HashMap<String, String
         return result;
     }
 
-    protected void onPostExecute(Map<String,HashMap<String, String>> result) {
+    protected void onPostExecute(HashMap<String,HashMap<String, String>> result) {
 
         String generalResponse = result.get("response").get("generalResponse");
         String responseCode = result.get("response").get("responseCode");
@@ -502,7 +502,7 @@ class RoleTask extends AsyncTask<String, Void, Map<String,HashMap<String, String
             Toast toast = Toast.makeText(context, generalResponse, duration);
             toast.show();
             result.remove("response");
-            delegate.roleListDone(result);
+            delegate.asyncDone(result);
         } else if (Integer.parseInt(responseCode) != 100) {
             int duration = Toast.LENGTH_LONG;
             Toast toast = Toast.makeText(context, "Response code " + responseCode +", " + "Message: " + generalResponse, duration);
@@ -518,10 +518,10 @@ class RoleTask extends AsyncTask<String, Void, Map<String,HashMap<String, String
 class TextTask extends AsyncTask<String, Void, HashMap<String, HashMap<String, String>>>{
 
     private final Context context;
-    private final TextCallback delegate;
+    private final Callback delegate;
     ProgressDialog progressDialog;
 
-    public TextTask(TextCallback delegate, Context context){
+    public TextTask(Callback delegate, Context context){
         this.delegate = delegate;
         this.context = context;
         progressDialog = new ProgressDialog(context);
@@ -614,7 +614,7 @@ class TextTask extends AsyncTask<String, Void, HashMap<String, HashMap<String, S
         CharSequence alert = results.get("response").get("generalResponse");
         Toast toast = Toast.makeText(context, alert, duration);
         toast.show();
-        delegate.TextCallBack(results);
+        delegate.asyncDone(results);
     }
 }
 
@@ -937,11 +937,11 @@ class ClassTaskNew extends AsyncTask<String, Void, Map<String,HashMap<String, St
 
 class QuestionTask extends AsyncTask<String, Void, HashMap<String, HashMap<String, String>>> {
 
-    QuestionCallback delegate;
+    Callback delegate;
     private final Context context;
     ProgressDialog progressDialog;
 
-    public QuestionTask(QuestionCallback delegate, Context context) {
+    public QuestionTask(Callback delegate, Context context) {
         this.delegate = delegate;
         this.context = context;
         progressDialog = new ProgressDialog(context);
@@ -1039,7 +1039,7 @@ class QuestionTask extends AsyncTask<String, Void, HashMap<String, HashMap<Strin
     protected void onPostExecute(HashMap<String, HashMap<String, String>> results) {
         Log.d("results",results.toString());
         progressDialog.dismiss();
-        delegate.QuestionTaskDone(results);
+        delegate.asyncDone(results);
     }
 }
 class AssignmentLibTask extends AsyncTask<String, Void, HashMap<String, HashMap<String, String>>>{
@@ -1283,9 +1283,9 @@ class AssignmentLibTask extends AsyncTask<String, Void, HashMap<String, HashMap<
 class QuestionResultTask extends AsyncTask<String, Void, HashMap<String, HashMap<String, String>>> {
     Context context;
     ProgressDialog progressDialog;
-    QuestionResultCallback delegate;
+    Callback delegate;
 
-    public QuestionResultTask(QuestionResultCallback delegate, Context context) {
+    public QuestionResultTask(Callback delegate, Context context) {
         this.delegate = delegate;
         this.context = context;
         progressDialog = new ProgressDialog(context);
@@ -1379,7 +1379,7 @@ class QuestionResultTask extends AsyncTask<String, Void, HashMap<String, HashMap
         CharSequence alert = results.get("response").get("generalResponse");
         Toast toast = Toast.makeText(context, alert, duration);
         toast.show();
-        delegate.questresultdone(results);
+        delegate.asyncDone(results);
     }
 }
 
