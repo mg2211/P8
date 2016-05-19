@@ -654,7 +654,7 @@ public class UserActivity extends AppCompatActivity {
     private void deleteUser() {
         if(userUsername.equals(currentUserUsername)){
             int duration = Toast.LENGTH_LONG;
-            CharSequence alert = "You cannot delete yourself!";
+            CharSequence alert = "You cannot delete the user currently logged in!";
             Toast toast = Toast.makeText(context, alert, duration);
             toast.show();
         } else {

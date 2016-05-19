@@ -276,9 +276,6 @@ class StudentTask extends AsyncTask<String, Void, HashMap<String, HashMap<String
             results.remove("response");
 
             if (Integer.parseInt(responseCode) == 100) {
-                int duration = Toast.LENGTH_LONG;
-                Toast toast = Toast.makeText(context, generalResponse, duration);
-                toast.show();
                 delegate.asyncDone(results);
             } else if (Integer.parseInt(responseCode) == 200) {
                 int duration = Toast.LENGTH_LONG;
@@ -669,17 +666,19 @@ class UserTask extends AsyncTask<String, Void, HashMap<String,HashMap<String, St
         progressDialog.dismiss();
 
         if (Integer.parseInt(responseCode) == 100) {
+            result.remove("response");
+            delegate.asyncDone(result);
+        } else if (Integer.parseInt(responseCode) == 101) {
             int duration = Toast.LENGTH_LONG;
             Toast toast = Toast.makeText(context, generalResponse, duration);
             toast.show();
             result.remove("response");
             delegate.asyncDone(result);
-        } else if (Integer.parseInt(responseCode) != 100) {
+        } else if (Integer.parseInt(responseCode) > 101) {
             int duration = Toast.LENGTH_LONG;
-            Toast toast = Toast.makeText(context, "Response code " + responseCode +", " + "Message: " + generalResponse, duration);
+            Toast toast = Toast.makeText(context, "Response code " + responseCode + ", " + "Message: " + generalResponse, duration);
             toast.show();
-        }
-        else {
+        } else {
             int duration = Toast.LENGTH_LONG;
             Toast toast = Toast.makeText(context, "Something went horribly wrong, no response code!", duration);
             toast.show();
@@ -793,6 +792,15 @@ class ClassTask extends AsyncTask<String, Void, HashMap<String,HashMap<String, S
                 lastClass.put("lastClassId", lastClassId);
 
                 result.put("lastClassId: " + lastClassId, lastClass);
+
+                int duration = Toast.LENGTH_LONG;
+                Toast toast = Toast.makeText(context, "Response code " + responseCode +", " + "Message: " + generalResponse, duration);
+                toast.show();
+
+            } else if (params[0].equals("UPDATE") || (params[0].equals("DELETE"))) {
+                int duration = Toast.LENGTH_LONG;
+                Toast toast = Toast.makeText(context, "Response code " + responseCode +", " + "Message: " + generalResponse, duration);
+                toast.show();
             }
             Log.d("ClassTask1 response", result.toString());
             HashMap<String, String> serverResponse = new HashMap<>();
@@ -813,14 +821,17 @@ class ClassTask extends AsyncTask<String, Void, HashMap<String,HashMap<String, S
         progressDialog.dismiss();
 
         if (Integer.parseInt(responseCode) == 100) {
+            result.remove("response");
+            delegate.asyncDone(result);
+        } else if (Integer.parseInt(responseCode) == 101) {
             int duration = Toast.LENGTH_LONG;
             Toast toast = Toast.makeText(context, generalResponse, duration);
             toast.show();
             result.remove("response");
             delegate.asyncDone(result);
-        } else if (Integer.parseInt(responseCode) != 100) {
+        } else if (Integer.parseInt(responseCode) > 101) {
             int duration = Toast.LENGTH_LONG;
-            Toast toast = Toast.makeText(context, "Response code " + responseCode +", " + "Message: " + generalResponse, duration);
+            Toast toast = Toast.makeText(context, "Response code " + responseCode + ", " + "Message: " + generalResponse, duration);
             toast.show();
         } else {
             int duration = Toast.LENGTH_LONG;
@@ -1041,7 +1052,7 @@ class AssignmentLibTask extends AsyncTask<String, Void, HashMap<String, HashMap<
     }
 }
 
-    class AssignmentTask extends AsyncTask<String, Void, HashMap<String, HashMap<String, String>>> {
+class AssignmentTask extends AsyncTask<String, Void, HashMap<String, HashMap<String, String>>> {
 
 
         private final Callback delegate;
