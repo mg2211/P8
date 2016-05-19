@@ -22,6 +22,8 @@ import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import serverRequests.*;
+
 import org.apache.commons.lang3.StringUtils;
 
 import java.util.ArrayList;

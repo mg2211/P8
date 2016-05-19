@@ -11,6 +11,8 @@ import android.view.Display;
 import android.view.View;
 import android.widget.Button;
 
+import serverRequests.*;
+
 import com.github.mikephil.charting.charts.BarChart;
 import com.github.mikephil.charting.components.XAxis;
 import com.github.mikephil.charting.components.YAxis;

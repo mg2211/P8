@@ -10,6 +10,8 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import serverRequests.*;
+
 import java.util.HashMap;
 
 public class LoginActivity extends AppCompatActivity {

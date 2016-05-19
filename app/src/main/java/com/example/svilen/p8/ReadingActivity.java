@@ -7,6 +7,8 @@ import android.content.Intent;
 import android.os.Build;
 import android.os.SystemClock;
 
+import serverRequests.*;
+
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.text.Html;

@@ -20,6 +20,8 @@ import android.widget.SimpleAdapter;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import serverRequests.*;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
