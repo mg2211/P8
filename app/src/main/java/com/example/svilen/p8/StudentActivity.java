@@ -112,9 +112,9 @@ public class StudentActivity extends AppCompatActivity {
                 }
 
 
-                new TextTask(new TextCallback() {
+                new TextTask(new Callback() {
                     @Override
-                    public void TextCallBack(HashMap<String, HashMap<String, String>> results) {
+                    public void asyncDone(HashMap<String, HashMap<String, String>> results) {
 
                         //remove other hashmaps in results var to avoid the first returning null
 

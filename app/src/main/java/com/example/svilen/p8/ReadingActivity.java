@@ -299,9 +299,9 @@ public class ReadingActivity extends AppCompatActivity  {
 
     public HashMap<String, HashMap<String, String>> getText1(){ // used to retrieve answerId based on questionId and answertext while freezing everything else
         try {
-            return new TextTask(new TextCallback() {
+            return new TextTask(new Callback() {
                 @Override
-                public void TextCallBack(HashMap<String, HashMap<String, String>> results) {
+                public void asyncDone(HashMap<String, HashMap<String, String>> results) {
 
                 }
             },context).execute("get", textId, "", "", "0").get(30,TimeUnit.SECONDS);
@@ -434,9 +434,9 @@ public class ReadingActivity extends AppCompatActivity  {
                         correctAnswer.add(String.valueOf(isCorrectAnswer));
 
 
-                        new QuestionResultTask(new QuestionResultCallback() {
+                        new QuestionResultTask(new Callback() {
                             @Override
-                            public void questresultdone(HashMap<String, HashMap<String, String>> questresult) {
+                            public void asyncDone(HashMap<String, HashMap<String, String>> questresult) {
 
                             }
                         }, context).execute(assignmentId, lastElement, "", answerIdtoChosenAnswer, "1", "1", "","insert"); // remember to change isCompletet to empty when done!!
@@ -445,9 +445,9 @@ public class ReadingActivity extends AppCompatActivity  {
                         Log.d("YOU HAVE ANSWERED ", "INCORRECT!");
                         int inCorrectAnswer = 0;
                         correctOrNot.add(inCorrectAnswer);
-                        new QuestionResultTask(new QuestionResultCallback() {
+                        new QuestionResultTask(new Callback() {
                             @Override
-                            public void questresultdone(HashMap<String, HashMap<String, String>> questresult) {
+                            public void asyncDone(HashMap<String, HashMap<String, String>> questresult) {
 
                             }
                         }, context).execute(assignmentId, lastElement, "", answerIdtoChosenAnswer, "0", "1", "","insert");// remember to change isCompletet to empty when done!!
@@ -483,9 +483,9 @@ public class ReadingActivity extends AppCompatActivity  {
 
                         String totalSeconds = String.valueOf(seconds);
 
-                        new QuestionResultTask(new QuestionResultCallback() {
+                        new QuestionResultTask(new Callback() {
                             @Override
-                            public void questresultdone(HashMap<String, HashMap<String, String>> questresult) {
+                            public void asyncDone(HashMap<String, HashMap<String, String>> questresult) {
 
                             }
                         }, context).execute(assignmentId, "", "", "", "", "1", totalSeconds,"final");

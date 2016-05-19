@@ -324,9 +324,9 @@ public class TextActivity extends AppCompatActivity {
     }
 
     private void getTexts() {
-        new TextTask(new TextCallback() {
+        new TextTask(new Callback() {
             @Override
-            public void TextCallBack(HashMap<String, HashMap<String, String>> results) {
+            public void asyncDone(HashMap<String, HashMap<String, String>> results) {
                 results.remove("response");
                 textList.clear();
                 colors.clear();
@@ -365,9 +365,9 @@ public class TextActivity extends AppCompatActivity {
 
         if (!etTextName.getText().toString().equals("") && !etContent.getText().toString().equals("")) {
 
-            new TextTask(new TextCallback() {
+            new TextTask(new Callback() {
                 @Override
-                public void TextCallBack(HashMap<String, HashMap<String, String>> results) {
+                public void asyncDone(HashMap<String, HashMap<String, String>> results) {
                    String id = results.get("response").get("insertedId");
                     if (questionList.size() > 0) {
                         for (int i = 0; i < questionList.size(); i++) {
@@ -396,9 +396,9 @@ public class TextActivity extends AppCompatActivity {
     private boolean updateText() {
         if (!etTextName.getText().toString().equals("") && !etContent.getText().toString().equals("")) {
 
-            new TextTask(new TextCallback() {
+            new TextTask(new Callback() {
                 @Override
-                public void TextCallBack(HashMap<String, HashMap<String, String>> results) {
+                public void asyncDone(HashMap<String, HashMap<String, String>> results) {
                     if (questionList.size() > 0) {
                         for (int i = 0; i < questionList.size(); i++) {
                             String questionId = questionList.get(i).get("id");
@@ -431,9 +431,9 @@ public class TextActivity extends AppCompatActivity {
                 .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        new TextTask(new TextCallback() {
+                        new TextTask(new Callback() {
                             @Override
-                            public void TextCallBack(HashMap<String, HashMap<String, String>> results) {
+                            public void asyncDone(HashMap<String, HashMap<String, String>> results) {
                                 new QuestionTask(new Callback() {//delete questions
                                     @Override
                                     public void asyncDone(HashMap<String, HashMap<String, String>> results) {

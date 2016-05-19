@@ -464,9 +464,9 @@ public class AssignmentActivity extends AppCompatActivity {
         return true;
     }
     private void getTexts(){
-        new TextTask(new TextCallback() {
+        new TextTask(new Callback() {
             @Override
-            public void TextCallBack(HashMap<String, HashMap<String, String>> results) {
+            public void asyncDone(HashMap<String, HashMap<String, String>> results) {
                 results.remove("response");
                 textList.clear();
                 int i = 0;
@@ -980,9 +980,9 @@ public class AssignmentActivity extends AppCompatActivity {
     }
     private HashMap<String, HashMap<String, String>> getResult(String assignmentId){
         try {
-            return new QuestionResultTask(new QuestionResultCallback() {
+            return new QuestionResultTask(new Callback() {
                 @Override
-                public void questresultdone(HashMap<String, HashMap<String, String>> questresult) {
+                public void asyncDone(HashMap<String, HashMap<String, String>> questresult) {
 
                 }
             }, context).execute(assignmentId,"","","","","","","get").get(30,TimeUnit.SECONDS);
