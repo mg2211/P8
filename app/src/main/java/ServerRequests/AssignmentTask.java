@@ -61,7 +61,7 @@ public class AssignmentTask extends AsyncTask<String, Void, HashMap<String, Hash
         HashMap<String, HashMap<String, String>> results = new HashMap<>();
 
         try {
-            URL url = new URL("http://emilsiegenfeldt.dk/p8/assignment.php");
+            URL url = new URL("http://emilsiegenfeldt.dk/p8/assignments.php");
             HttpURLConnection connection = (HttpURLConnection) url.openConnection();
             connection.setRequestMethod("POST");
 

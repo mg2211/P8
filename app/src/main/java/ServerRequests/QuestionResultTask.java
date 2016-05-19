@@ -57,7 +57,7 @@ public class QuestionResultTask extends AsyncTask<String, Void, HashMap<String, 
         HashMap<String, String> response = new HashMap<>();
 
         try {
-            URL url = new URL("http://emilsiegenfeldt.dk/p8/questionresult.php");
+            URL url = new URL("http://emilsiegenfeldt.dk/p8/questionresults.php");
 
             HttpURLConnection connection = (HttpURLConnection) url.openConnection();
             connection.setRequestMethod("POST");

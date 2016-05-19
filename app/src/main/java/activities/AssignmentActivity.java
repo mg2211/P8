@@ -631,8 +631,9 @@ public class AssignmentActivity extends AppCompatActivity {
             Map<String, String> assignmentLibData =(Map) assignmentAdapter.getItem(position);
             assignmentLibTextId = Integer.parseInt(assignmentLibData.get("assignmentText"));
             assignmentLibName = assignmentLibData.get("assignmentLibName");
+            Log.d("assignmentLibName", assignmentLibName);
             assignmentLibId = assignmentLibData.get("assignmentLibId");
-            assignmentLibName = assignmentLibData.get("assignmentLibName");
+            Log.d("assignmentLibId", assignmentLibId);
             int textListPos = textListIds.get(assignmentLibTextId);
             etAssignmentName.setText(assignmentLibName);
             etAssignmentText.setText(textList.get(textListPos).get("textname"));

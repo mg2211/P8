@@ -56,7 +56,7 @@ public class TextTask extends AsyncTask<String, Void, HashMap<String, HashMap<St
         HashMap<String, HashMap<String, String>> results = new HashMap<>();
         HashMap<String, String> response = new HashMap<>();
         try {
-            URL url = new URL("http://emilsiegenfeldt.dk/p8/textTask.php");
+            URL url = new URL("http://emilsiegenfeldt.dk/p8/texts.php");
 
             HttpURLConnection connection = (HttpURLConnection) url.openConnection();
             connection.setRequestMethod("POST");
