@@ -621,15 +621,19 @@ public class AssignmentActivity extends AppCompatActivity {
         });
 
         if(position >= 0) {
-            //assignmentLibTextId = Integer.parseInt(assignmentLibList.get(position).get("assignmentText"));
             Map<String, String> assignmentLibData =(Map) assignmentAdapter.getItem(position);
             assignmentLibTextId = Integer.parseInt(assignmentLibData.get("assignmentText"));
-            int textListPos = textListIds.get(assignmentLibTextId);
-            //etAssignmentName.setText(assignmentLibList.get(position).get("assignmentLibName"));
-            etAssignmentName.setText(assignmentLibData.get("assignmentLibName"));
-            etAssignmentText.setText(textList.get(textListPos).get("textname"));
-            //assignmentLibName = assignmentLibList.get(position).get("assignmentLibName");
             assignmentLibName = assignmentLibData.get("assignmentLibName");
+            assignmentLibId = assignmentLibData.get("assignmentLibId");
+            assignmentLibName = assignmentLibData.get("assignmentLibName");
+            int textListPos = textListIds.get(assignmentLibTextId);
+            etAssignmentName.setText(assignmentLibName);
+            etAssignmentText.setText(textList.get(textListPos).get("textname"));
+
+            //etAssignmentName.setText(assignmentLibList.get(position).get("assignmentLibName"));
+            //assignmentLibName = assignmentLibList.get(position).get("assignmentLibName");
+            //assignmentLibTextId = Integer.parseInt(assignmentLibList.get(position).get("assignmentText"));
+
             assignedList.clear();
             studentsAssigned.clear();
             setChanged(false);
@@ -899,6 +903,7 @@ public class AssignmentActivity extends AppCompatActivity {
             public void onClick(View v) {
                 for(int i = 0; i<assignedList.size();i++){
                     Map<String, String> assignment = assignedList.get(i);
+                    //Log.d("assignmentLibId", assignmentLibId);
                     if(assignment.get("new") != null){
                         new AssignmentTask(new AssignmentCallback() {
                             @Override
