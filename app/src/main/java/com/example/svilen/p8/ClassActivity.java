@@ -644,13 +644,13 @@ public class ClassActivity extends AppCompatActivity {
     }
 
     private void getClassStudents(String teacherId, String classId){
-        new StudentTask(new StudentCallback() {
+        new StudentTask(new Callback() {
             @Override
-            public void studentListDone(HashMap<String, HashMap<String, String>> students) {
+            public void asyncDone(HashMap<String, HashMap<String, String>> asyncResults) {
                 if (!studentList.isEmpty()) {
                     studentList.clear();
                 }
-                for (Map.Entry<String, HashMap<String, String>> student : students.entrySet()) {
+                for (Map.Entry<String, HashMap<String, String>> student : asyncResults.entrySet()) {
                     Map<String, String> studentInfo = new HashMap<>();
                     String studentId = student.getValue().get("studentId");
                     String studentName = student.getValue().get("firstname") + " " + student.getValue().get("lastname");
@@ -667,6 +667,7 @@ public class ClassActivity extends AppCompatActivity {
             }
         }, context).execute(classId, teacherId);
     }
+
 
     /*
     public void getClassStudents(String classId){

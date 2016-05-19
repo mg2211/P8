@@ -203,9 +203,9 @@ public class ReadingActivity extends AppCompatActivity  {
     }
 
     public void getQuestions(String textId) {
-        new QuestionTask(new QuestionCallback() {
+        new QuestionTask(new Callback() {
             @Override
-            public void QuestionTaskDone(HashMap<String, HashMap<String, String>> results) {
+            public void asyncDone(HashMap<String, HashMap<String, String>> results) {
                 results.remove("response");
                 questionList.clear();
                 for (Map.Entry<String, HashMap<String, String>> question : results.entrySet()) {
@@ -339,9 +339,9 @@ public class ReadingActivity extends AppCompatActivity  {
 
 
     public void getAnswers(String s) { // running getAnswer based on questionId from HashSet
-        new QuestionTask(new QuestionCallback() {
+        new QuestionTask(new Callback() {
             @Override
-            public void QuestionTaskDone(HashMap<String, HashMap<String, String>> results) {
+            public void asyncDone(HashMap<String, HashMap<String, String>> results) {
                 results.remove("response");
                 questionList.clear();
                 for (Map.Entry<String, HashMap<String, String>> question : results.entrySet()) {

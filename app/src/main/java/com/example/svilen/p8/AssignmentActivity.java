@@ -391,14 +391,14 @@ public class AssignmentActivity extends AppCompatActivity {
 
     }
     private boolean getStudents(String classId){
-        new StudentTask(new StudentCallback() {
-            @Override
-            public void studentListDone(HashMap<String, HashMap<String, String>> students) {
 
+        new StudentTask(new Callback() {
+            @Override
+            public void asyncDone(HashMap<String, HashMap<String, String>> asyncResults) {
                 if (!studentList.isEmpty()) {
                     studentList.clear();
                 }
-                for (Map.Entry<String, HashMap<String, String>> student : students.entrySet()) {
+                for (Map.Entry<String, HashMap<String, String>> student : asyncResults.entrySet()) {
                     Map<String, String> studentInfo = new HashMap<>();
                     String studentName = student.getValue().get("lastname") + ", " + student.getValue().get("firstname");
                     String studentId = student.getValue().get("studentId");
@@ -411,6 +411,7 @@ public class AssignmentActivity extends AppCompatActivity {
         }, context).execute(classId, teacherId);
         return true;
     }
+
     private void getClasses(){
         new ClassTaskNew(new ClassCallbackNew() {
             @Override
@@ -686,9 +687,9 @@ public class AssignmentActivity extends AppCompatActivity {
     }
 
     private void getQuestions(int assignmentLibTextId) {
-        new QuestionTask(new QuestionCallback() {
+        new QuestionTask(new Callback() {
             @Override
-            public void QuestionTaskDone(HashMap<String, HashMap<String, String>> results) {
+            public void asyncDone(HashMap<String, HashMap<String, String>> results) {
                 results.remove("response");
                 questions = results;
             }

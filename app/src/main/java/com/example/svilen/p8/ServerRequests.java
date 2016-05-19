@@ -281,11 +281,11 @@ class ClassTask extends AsyncTask<String, Void, HashMap<String, HashMap<String, 
         }
     }
 class StudentTask extends AsyncTask<String, Void, HashMap<String, HashMap<String, String>>> {
-        StudentCallback delegate;
+        Callback delegate;
         ProgressDialog progressDialog;
         final Context context;
 
-        StudentTask(StudentCallback delegate, Context context) {
+        StudentTask(Callback delegate, Context context) {
             this.delegate = delegate;
             this.context = context;
             progressDialog = new ProgressDialog(context);
@@ -384,7 +384,7 @@ class StudentTask extends AsyncTask<String, Void, HashMap<String, HashMap<String
                 int duration = Toast.LENGTH_LONG;
                 Toast toast = Toast.makeText(context, generalResponse, duration);
                 toast.show();
-                delegate.studentListDone(results);
+                delegate.asyncDone(results);
             } else if (Integer.parseInt(responseCode) == 200) {
                 int duration = Toast.LENGTH_LONG;
                 Toast toast = Toast.makeText(context, generalResponse, duration);
@@ -937,11 +937,11 @@ class ClassTaskNew extends AsyncTask<String, Void, Map<String,HashMap<String, St
 
 class QuestionTask extends AsyncTask<String, Void, HashMap<String, HashMap<String, String>>> {
 
-    QuestionCallback delegate;
+    Callback delegate;
     private final Context context;
     ProgressDialog progressDialog;
 
-    public QuestionTask(QuestionCallback delegate, Context context) {
+    public QuestionTask(Callback delegate, Context context) {
         this.delegate = delegate;
         this.context = context;
         progressDialog = new ProgressDialog(context);
@@ -1039,7 +1039,7 @@ class QuestionTask extends AsyncTask<String, Void, HashMap<String, HashMap<Strin
     protected void onPostExecute(HashMap<String, HashMap<String, String>> results) {
         Log.d("results",results.toString());
         progressDialog.dismiss();
-        delegate.QuestionTaskDone(results);
+        delegate.asyncDone(results);
     }
 }
 class AssignmentLibTask extends AsyncTask<String, Void, HashMap<String, HashMap<String, String>>>{
