@@ -386,7 +386,6 @@ public class ClassActivity extends AppCompatActivity {
             }
         });
 
-
         /*
         bShowAllClasses.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -404,6 +403,8 @@ public class ClassActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 createClass(teacherListPosition);
+                setChanged(false);
+                setNewClass(true);
             }
         });
 
@@ -411,6 +412,8 @@ public class ClassActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 updateClass();
+                setChanged(false);
+                setNewClass(false);
             }
         });
 
@@ -418,6 +421,8 @@ public class ClassActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 deleteClass();
+                setChanged(false);
+                setNewClass(true);
             }
         });
 
@@ -570,8 +575,6 @@ public class ClassActivity extends AppCompatActivity {
                     }
                 }, context).executeTask("CREATE", "", teacherId, className, "", "");
                 resetAdapter(lvListClasses, classListAdapter);
-                setChanged(false);
-                setNewClass(false);
                 return true;
             }
         } else {
@@ -594,8 +597,6 @@ public class ClassActivity extends AppCompatActivity {
         }, context).executeTask("UPDATE", classClassId, teacherTeacherId, className, "", "");
         classClassName = className;
         resetAdapter(lvListClasses, classListAdapter);
-        setChanged(false);
-        setNewClass(false);
         return true;
     }
 
@@ -628,8 +629,6 @@ public class ClassActivity extends AppCompatActivity {
                 .setNegativeButton("No", null)
                 .show();
         resetAdapter(lvListClasses, classListAdapter);
-        setChanged(false);
-        setNewClass(true);
     }
 
 
