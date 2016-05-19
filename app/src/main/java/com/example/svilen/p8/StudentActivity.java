@@ -161,9 +161,9 @@ public class StudentActivity extends AppCompatActivity {
 
     public void getAssignment() {
 
-        new AssignmentTask(new AssignmentCallback() {
+        new AssignmentTask(new Callback() {
             @Override
-            public void assignmentDone(HashMap<String, HashMap<String, String>> assignments) {
+            public void asyncDone(HashMap<String, HashMap<String, String>> assignments) {
 
                 if (!assignmentList.isEmpty()) {
                     assignmentList.clear();

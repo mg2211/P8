@@ -348,9 +348,9 @@ public class AssignmentActivity extends AppCompatActivity {
     }
     private boolean createAssignment(){
         if(assignmentLibTextId != 0 && !etAssignmentName.getText().toString().equals("")) {
-            new AssignmentLibTask(new AssignmentLibCallback() {
+            new AssignmentLibTask(new Callback() {
                 @Override
-                public void AssignmentLibDone(HashMap<String, HashMap<String, String>> results) {
+                public void asyncDone(HashMap<String, HashMap<String, String>> results) {
                     assignmentLibId = results.get("response").get("insertedId");
                     if(results.get("response").get("responseCode").equals("100")){
                         setChanged(false);
@@ -370,9 +370,9 @@ public class AssignmentActivity extends AppCompatActivity {
     }
     private boolean updateAssignment(){
         if(assignmentLibTextId != 0 && !etAssignmentName.getText().toString().equals("")) {
-            new AssignmentLibTask(new AssignmentLibCallback() {
+            new AssignmentLibTask(new Callback() {
                 @Override
-                public void AssignmentLibDone(HashMap<String, HashMap<String, String>> results) {
+                public void asyncDone(HashMap<String, HashMap<String, String>> results) {
                     if(results.get("response").get("responseCode").equals("100")){
                         setChanged(false);
                         setNew(false);
@@ -434,9 +434,9 @@ public class AssignmentActivity extends AppCompatActivity {
         },context).execute("FETCH", "", teacherId, "", "", "");
     }
     private boolean getAssignmentLib(){
-        new AssignmentLibTask(new AssignmentLibCallback() {
+        new AssignmentLibTask(new Callback() {
             @Override
-            public void AssignmentLibDone(HashMap<String, HashMap<String, String>> results) {
+            public void asyncDone(HashMap<String, HashMap<String, String>> results) {
                 results.remove("response");
                 assignmentLibList.clear();
                 for (Map.Entry<String, HashMap<String, String>> assignment : results.entrySet()) {
@@ -878,9 +878,9 @@ public class AssignmentActivity extends AppCompatActivity {
                                 if(assignedList.get(position).get("assignmentid") != null) {
                                     Log.d("assigned id", assignedList.get(position).get("assignmentid"));
                                     String assignmentId = assignedList.get(position).get("assignmentid");
-                                    new AssignmentTask(new AssignmentCallback() {
+                                    new AssignmentTask(new Callback() {
                                         @Override
-                                        public void assignmentDone(HashMap<String, HashMap<String, String>> assignments) {
+                                        public void asyncDone(HashMap<String, HashMap<String, String>> assignments) {
 
                                         }
                                     }, context).executeTask("delete", "", "", "", "", assignmentId);
@@ -906,9 +906,9 @@ public class AssignmentActivity extends AppCompatActivity {
                     Map<String, String> assignment = assignedList.get(i);
                     //Log.d("assignmentLibId", assignmentLibId);
                     if(assignment.get("new") != null){
-                        new AssignmentTask(new AssignmentCallback() {
+                        new AssignmentTask(new Callback() {
                             @Override
-                            public void assignmentDone(HashMap<String, HashMap<String, String>> assignments) {
+                            public void asyncDone(HashMap<String, HashMap<String, String>> assignments) {
 
                             }
                         },context).executeTask("assign",assignment.get("studentId"),assignmentLibId,assignment.get("availableFrom"),assignment.get("availableTo"),"");
@@ -923,9 +923,9 @@ public class AssignmentActivity extends AppCompatActivity {
 
     private HashMap<String, HashMap<String,String>> getAssignments(String assignmentLibId){
         try {
-            return new AssignmentTask(new AssignmentCallback() {
+            return new AssignmentTask(new Callback() {
                 @Override
-                public void assignmentDone(HashMap<String, HashMap<String, String>> assignments) {
+                public void asyncDone(HashMap<String, HashMap<String, String>> assignments) {
 
                 }
             },context).execute("get","",assignmentLibId,"","","").get(15, TimeUnit.SECONDS);

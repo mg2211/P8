@@ -184,9 +184,9 @@ public class ReadingActivity extends AppCompatActivity  {
 
                     String totalSeconds = String.valueOf(seconds);
 
-                    new QuestionResultTask(new QuestionResultCallback() {
+                    new QuestionResultTask(new Callback() {
                         @Override
-                        public void questresultdone(HashMap<String, HashMap<String, String>> questresult) {
+                        public void asyncDone(HashMap<String, HashMap<String, String>> questresult) {
 
                         }
                     }, context).execute(assignmentId, "", "", "", "", "1", totalSeconds,"final");
