@@ -1,8 +1,10 @@
-package com.example.svilen.p8;
+package helper;
 
 import android.content.Context;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+
+import com.example.svilen.p8.R;
 
 public class User extends AppCompatActivity {
 

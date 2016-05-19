@@ -1,4 +1,4 @@
-package com.example.svilen.p8;
+package activities;
 
 import android.app.AlertDialog;
 import android.content.Context;
@@ -23,6 +23,10 @@ import android.widget.SimpleAdapter;
 import android.widget.Spinner;
 import android.widget.Toast;
 
+import com.example.svilen.p8.R;
+
+import callback.*;
+import helper.*;
 import serverRequests.*;
 
 import java.util.ArrayList;

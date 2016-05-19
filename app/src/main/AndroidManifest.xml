@@ -12,7 +12,7 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.AppCompat.Light.NoActionBar">
         <activity
-            android:name=".LoginActivity"
+            android:name="activities.LoginActivity"
             android:screenOrientation="landscape">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -20,27 +20,27 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".StudentActivity"
+        <activity android:name="activities.StudentActivity"
             android:windowSoftInputMode="adjustResize|stateAlwaysHidden"
             android:screenOrientation="landscape"
 
         />
-        <activity android:name=".TeacherActivity" />
-        <activity android:name=".UserActivity"
+        <activity android:name="activities.TeacherActivity" />
+        <activity android:name="activities.UserActivity"
             android:screenOrientation="landscape"
             android:windowSoftInputMode="stateUnchanged" />
         <activity
-            android:name=".TextActivity"
+            android:name="activities.TextActivity"
             android:screenOrientation="landscape"
             android:windowSoftInputMode="stateUnchanged" />
         <activity
-            android:name=".ClassActivity"
+            android:name="activities.ClassActivity"
             android:windowSoftInputMode="stateUnchanged" />
         <activity
-            android:name=".AssignmentActivity"
+            android:name="activities.AssignmentActivity"
             android:windowSoftInputMode="stateUnchanged|adjustPan" />
         <activity
-            android:name=".ReadingActivity"
+            android:name="activities.ReadingActivity"
         android:screenOrientation="landscape"/>
 
     </application>

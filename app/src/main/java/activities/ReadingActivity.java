@@ -1,4 +1,4 @@
-package com.example.svilen.p8;
+package activities;
 
 import android.app.AlertDialog;
 import android.content.Context;
@@ -7,6 +7,8 @@ import android.content.Intent;
 import android.os.Build;
 import android.os.SystemClock;
 
+import callback.*;
+import helper.*;
 import serverRequests.*;
 
 import android.support.v7.app.AppCompatActivity;
@@ -26,6 +28,8 @@ import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import com.example.svilen.p8.R;
 import com.google.common.collect.Iterables;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -529,7 +533,7 @@ public class ReadingActivity extends AppCompatActivity  {
                 } else {
                     tvContent.getViewTreeObserver().removeOnGlobalLayoutListener(this);
                 }
-                mPagination = new com.example.svilen.p8.Pagination(mText,
+                mPagination = new Pagination(mText,
                         tvContent.getWidth(),
                         tvContent.getHeight(),
                         tvContent.getPaint());

@@ -1,4 +1,4 @@
-package com.example.svilen.p8;
+package activities;
 
 import android.app.AlertDialog;
 import android.content.Context;
@@ -20,6 +20,10 @@ import android.widget.SimpleAdapter;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.svilen.p8.R;
+
+import callback.*;
+import helper.*;
 import serverRequests.*;
 
 import java.util.ArrayList;
@@ -810,41 +814,6 @@ public class ClassActivity extends AppCompatActivity {
             }
         }, context).execute(classId, teacherId);
     }
-
-
-    /*
-    public void getClassStudents(String classId){
-        new UserTask(new UserCallback() {
-            @Override
-            public void userTaskDone(Map<String, HashMap<String, String>> users) {
-                if (!studentList.isEmpty()) {
-                    studentList.clear();
-                }
-                for (Map.Entry<String, HashMap<String, String>> user : users.entrySet()) {
-                    Map<String, String> userInfo = new HashMap<>();
-                    String userId = user.getValue().get("userId");
-                    String studentId = user.getValue().get("studentId");
-                    String firstName = user.getValue().get("firstName");
-                    String lastName = user.getValue().get("lastName");
-                    String fullName = (firstName + " " + lastName);
-                    userInfo.put("userId", userId);
-                    userInfo.put("studentId", studentId);
-                    userInfo.put("firstName", lastName);
-                    userInfo.put("lastName", lastName);
-                    userInfo.put("fullName", fullName);
-                    Log.d("full student name", fullName);
-                    studentList.add(userInfo);
-                }
-                if (studentList.isEmpty()){
-                    Map<String, String> userInfo = new HashMap<>();
-                    userInfo.put("fullName", "no students in this class");
-                    studentList.add(userInfo);
-                }
-                studentListAdapter.notifyDataSetChanged();
-            }
-        }, context).execute("FETCH", "", "", "", "", classId, "", "", "", "", "", "");
-    }
-    */
 
     public void getAllTeachers(){
         new UserTask(new Callback() {

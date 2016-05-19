@@ -9,8 +9,8 @@ import android.os.AsyncTask;
 import android.preference.PreferenceManager;
 import android.widget.Toast;
 
-import com.example.svilen.p8.StudentActivity;
-import com.example.svilen.p8.TeacherActivity;
+import activities.StudentActivity;
+import activities.TeacherActivity;
 
 import org.apache.commons.io.IOUtils;
 import org.json.JSONException;

@@ -1,4 +1,4 @@
-package com.example.svilen.p8;
+package activities;
 
 import android.content.Context;
 import android.content.Intent;
@@ -10,6 +10,10 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import com.example.svilen.p8.R;
+
+import callback.*;
+import helper.*;
 import serverRequests.*;
 
 import java.util.HashMap;

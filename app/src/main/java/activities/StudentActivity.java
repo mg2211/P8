@@ -1,4 +1,4 @@
-package com.example.svilen.p8;
+package activities;
 
 import android.app.AlertDialog;
 import android.content.Context;
@@ -14,6 +14,10 @@ import android.widget.ListView;
 import android.widget.SimpleAdapter;
 import android.widget.Toast;
 
+import com.example.svilen.p8.R;
+
+import callback.*;
+import helper.*;
 import serverRequests.*;
 
 import java.util.ArrayList;
@@ -28,7 +32,7 @@ public class StudentActivity extends AppCompatActivity {
     Context context = this;
     ListView lvAssToStudent;
     SimpleAdapter assignmentAdapter;
-    AssignmentListAdapter  assignedAdapter;
+    AssignmentListAdapter assignedAdapter;
 
     List<Map<String, String>> assignmentList = new ArrayList<>();
     UserInfo userinfo;

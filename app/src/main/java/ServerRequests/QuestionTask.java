@@ -6,7 +6,7 @@ import android.net.Uri;
 import android.os.AsyncTask;
 import android.util.Log;
 
-import com.example.svilen.p8.Callback;
+import callback.Callback;
 
 import org.apache.commons.io.IOUtils;
 import org.json.JSONArray;

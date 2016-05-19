@@ -1,4 +1,4 @@
-package com.example.svilen.p8;
+package activities;
 
 import android.content.Context;
 import android.content.Intent;
@@ -11,8 +11,11 @@ import android.view.Display;
 import android.view.View;
 import android.widget.Button;
 
+import callback.*;
+import helper.*;
 import serverRequests.*;
 
+import com.example.svilen.p8.R;
 import com.github.mikephil.charting.charts.BarChart;
 import com.github.mikephil.charting.components.XAxis;
 import com.github.mikephil.charting.components.YAxis;

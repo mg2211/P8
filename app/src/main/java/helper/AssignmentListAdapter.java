@@ -1,22 +1,22 @@
-package com.example.svilen.p8;
+package helper;
 
 import android.content.Context;
 import android.graphics.Color;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.TextView;
 
-import org.w3c.dom.Text;
+import com.example.svilen.p8.R;
+
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
-class AssignmentListAdapter extends BaseAdapter {
+public class AssignmentListAdapter extends BaseAdapter {
     private static List<Map<String,String>> assignments;
 
     private final LayoutInflater inflator;

@@ -7,7 +7,7 @@ import android.os.AsyncTask;
 import android.util.Log;
 import android.widget.Toast;
 
-import com.example.svilen.p8.Callback;
+import callback.Callback;
 
 import org.apache.commons.io.IOUtils;
 import org.json.JSONArray;

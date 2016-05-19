@@ -1,4 +1,4 @@
-package com.example.svilen.p8;
+package activities;
 
 import android.app.AlertDialog;
 import android.content.Context;
@@ -24,8 +24,12 @@ import android.widget.TextView;
 import android.widget.TimePicker;
 import android.widget.Toast;
 
+import callback.*;
+import helper.*;
 import serverRequests.*;
 
+
+import com.example.svilen.p8.R;
 import com.github.mikephil.charting.charts.CombinedChart;
 import com.github.mikephil.charting.charts.PieChart;
 import com.github.mikephil.charting.components.XAxis;

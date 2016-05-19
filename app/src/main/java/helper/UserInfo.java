@@ -1,12 +1,15 @@
-package com.example.svilen.p8;
+package helper;
 
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
+
+import activities.LoginActivity;
+
 import java.util.HashMap;
 
-class UserInfo {
+public class UserInfo {
 
     private Context context;
 
