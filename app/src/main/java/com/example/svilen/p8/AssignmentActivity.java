@@ -413,9 +413,9 @@ public class AssignmentActivity extends AppCompatActivity {
     }
 
     private void getClasses(){
-        new ClassTaskNew(new ClassCallbackNew() {
+        new ClassTask(new Callback() {
             @Override
-            public void classListDone(Map<String, HashMap<String, String>> classes) {
+            public void asyncDone(HashMap<String, HashMap<String, String>> classes) {
                 if(!classList.isEmpty()){
                     classList.clear();
                 }

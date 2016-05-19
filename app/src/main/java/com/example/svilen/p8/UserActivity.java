@@ -498,9 +498,9 @@ public class UserActivity extends AppCompatActivity {
 
 
     private void getAllClasses() {
-        new ClassTaskNew(new ClassCallbackNew() {
+        new ClassTask(new Callback() {
             @Override
-            public void classListDone(Map<String, HashMap<String, String>> classes) {
+            public void asyncDone(HashMap<String, HashMap<String, String>> classes) {
                 classList.clear();
                 for (Map.Entry<String, HashMap<String, String>> classData : classes.entrySet()) {
                     Map<String, String> classInfo = new HashMap<>();
@@ -530,9 +530,9 @@ public class UserActivity extends AppCompatActivity {
     }
 
     private void getAllUsers() {
-        new UserTask(new UserCallback() {
+        new UserTask(new Callback() {
             @Override
-            public void userTaskDone(Map<String, HashMap<String, String>> users) {
+            public void asyncDone(HashMap<String, HashMap<String, String>> users) {
                 userList.clear();
                 for (Map.Entry<String, HashMap<String, String>> user : users.entrySet()) {
                     final Map<String, String> userInfo = new HashMap<>();
@@ -588,9 +588,9 @@ public class UserActivity extends AppCompatActivity {
             student = true;
         }
         if (role.equals("student") && student) {
-            new UserTask(new UserCallback() {
+            new UserTask(new Callback() {
                 @Override
-                public void userTaskDone(Map<String, HashMap<String, String>> users) {
+                public void asyncDone(HashMap<String, HashMap<String, String>> users) {
                     for (Map.Entry<String, HashMap<String, String>> user : users.entrySet()) {
                         userUserId = user.getValue().get("lastUserId");
                     }
@@ -601,9 +601,9 @@ public class UserActivity extends AppCompatActivity {
             //setContentPane(getLastEntryPosition(userList));
             return true;
         } else if (!role.equals("student") && general) {
-            new UserTask(new UserCallback() {
+            new UserTask(new Callback() {
                 @Override
-                public void userTaskDone(Map<String, HashMap<String, String>> users) {
+                public void asyncDone(HashMap<String, HashMap<String, String>> users) {
                     for (Map.Entry<String, HashMap<String, String>> user : users.entrySet()) {
                         userUserId = user.getValue().get("lastUserId");
                     }
@@ -630,9 +630,9 @@ public class UserActivity extends AppCompatActivity {
         String email = etEmail.getText().toString();
         String parentEmail = etContactEmail.getText().toString();
 
-        new UserTask(new UserCallback() {
+        new UserTask(new Callback() {
             @Override
-            public void userTaskDone(Map<String, HashMap<String, String>> users) {
+            public void asyncDone(HashMap<String, HashMap<String, String>> users) {
             }
         }, context).execute("UPDATE", "", userUserId, "", "", "", username, password, lastName, firstName,
                 email, parentEmail);
@@ -641,9 +641,9 @@ public class UserActivity extends AppCompatActivity {
     }
 
     private boolean updateUserClass(String userId, String classId) {
-        new UserTask(new UserCallback() {
+        new UserTask(new Callback() {
             @Override
-            public void userTaskDone(Map<String, HashMap<String, String>> users) {
+            public void asyncDone(HashMap<String, HashMap<String, String>> users) {
             }
         }, context).execute("UPDATE", "", userId, "", "", classId, "", "", "", "",
                 "", "");
@@ -665,9 +665,9 @@ public class UserActivity extends AppCompatActivity {
                     .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
-                            new UserTask(new UserCallback() {
+                            new UserTask(new Callback() {
                                 @Override
-                                public void userTaskDone(Map<String, HashMap<String, String>> users) {
+                                public void asyncDone(HashMap<String, HashMap<String, String>> users) {
                                 }
                             }, context).executeTask("DELETE", userRole, userUserId, "", "", "", "", "", "", "", "", "");
                             getAllUsers();

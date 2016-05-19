@@ -3,17 +3,13 @@ package com.example.svilen.p8;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
-import android.content.Intent;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
-import android.os.Handler;
 import android.support.v7.app.AppCompatActivity;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
-import android.view.LayoutInflater;
 import android.view.View;
-import android.view.WindowManager;
 import android.widget.AbsListView;
 import android.widget.AdapterView;
 import android.widget.Button;
@@ -563,9 +559,9 @@ public class ClassActivity extends AppCompatActivity {
             String teacherId = teacherData.get("teacherId");
             String className = etClassName.getText().toString();
             if (!teacherId.equals("") && !className.equals("")) {
-                new ClassTaskNew(new ClassCallbackNew() {
+                new ClassTask(new Callback() {
                     @Override
-                    public void classListDone(Map<String, HashMap<String, String>> classes) {
+                    public void asyncDone(HashMap<String, HashMap<String, String>> classes) {
                         for (Map.Entry<String, HashMap<String, String>> classData : classes.entrySet()) {
                             classClassId = classData.getValue().get("lastClassId");
                             Log.d("lastClassId value", classData.getValue().get("lastClassId"));
@@ -588,9 +584,9 @@ public class ClassActivity extends AppCompatActivity {
 
     public boolean updateClass() {
        String className = etClassName.getText().toString();
-        new ClassTaskNew(new ClassCallbackNew() {
+        new ClassTask(new Callback() {
             @Override
-            public void classListDone(Map<String, HashMap<String, String>> classes) {
+            public void asyncDone(HashMap<String, HashMap<String, String>> classes) {
                 classListAdapter.notifyDataSetChanged();
                 Log.d("classListAdapter", "successfully updated");
             }
@@ -608,9 +604,9 @@ public class ClassActivity extends AppCompatActivity {
                 .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        new ClassTaskNew(new ClassCallbackNew() {
+                        new ClassTask(new Callback() {
                             @Override
-                            public void classListDone(Map<String, HashMap<String, String>> users) {
+                            public void asyncDone(HashMap<String, HashMap<String, String>> classes) {
                             }
                         }, context).executeTask("DELETE", classClassId, "", "", "", "");
                         getAllClasses();
@@ -633,9 +629,9 @@ public class ClassActivity extends AppCompatActivity {
 
 
     public void getTeacherClasses() {
-        new ClassTaskNew(new ClassCallbackNew() {
+        new ClassTask(new Callback() {
             @Override
-            public void classListDone(Map<String, HashMap<String, String>> classes) {
+            public void asyncDone(HashMap<String, HashMap<String, String>> classes) {
                 if (!classList.isEmpty()) {
                     classList.clear();
                 }
@@ -699,9 +695,9 @@ public class ClassActivity extends AppCompatActivity {
     }
 
     public void getAllClasses() {
-        new ClassTaskNew(new ClassCallbackNew() {
+        new ClassTask(new Callback() {
             @Override
-            public void classListDone(Map<String, HashMap<String, String>> classes) {
+            public void asyncDone(HashMap<String, HashMap<String, String>> classes) {
                 if (!classList.isEmpty()) {
                     classList.clear();
                 }
@@ -849,9 +845,9 @@ public class ClassActivity extends AppCompatActivity {
     */
 
     public void getAllTeachers(){
-        new UserTask(new UserCallback() {
+        new UserTask(new Callback() {
             @Override
-            public void userTaskDone(Map<String, HashMap<String, String>> users) {
+            public void asyncDone(HashMap<String, HashMap<String, String>> users) {
                 if (!teacherList.isEmpty()) {
                     teacherList.clear();
                 }
