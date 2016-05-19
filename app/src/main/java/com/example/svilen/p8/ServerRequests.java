@@ -404,9 +404,9 @@ class StudentTask extends AsyncTask<String, Void, HashMap<String, HashMap<String
 
     }
 
-class RoleTask extends AsyncTask<String, Void, Map<String,HashMap<String, String>>> {
+class RoleTask extends AsyncTask<String, Void, HashMap<String,HashMap<String, String>>> {
 
-    RoleCallback delegate;
+    Callback delegate;
     ProgressDialog progressDialog;
     final Context context;
 
@@ -414,7 +414,7 @@ class RoleTask extends AsyncTask<String, Void, Map<String,HashMap<String, String
     protected void onPreExecute() {
     }
 
-    RoleTask(RoleCallback delegate, Context context) {
+    RoleTask(Callback delegate, Context context) {
         progressDialog = new ProgressDialog(context);
         this.delegate = delegate;
         this.context = context;
@@ -425,10 +425,10 @@ class RoleTask extends AsyncTask<String, Void, Map<String,HashMap<String, String
     }
 
     @Override
-    protected Map<String,HashMap<String, String>> doInBackground(String... params) {
+    protected HashMap<String,HashMap<String, String>> doInBackground(String... params) {
 
         //Initiating return vars.
-        Map<String, HashMap<String,String>> result = new HashMap<>();
+        HashMap<String, HashMap<String,String>> result = new HashMap<>();
         String generalResponse = null;
         int responseCode = 0;
         String role = null;
@@ -490,7 +490,7 @@ class RoleTask extends AsyncTask<String, Void, Map<String,HashMap<String, String
         return result;
     }
 
-    protected void onPostExecute(Map<String,HashMap<String, String>> result) {
+    protected void onPostExecute(HashMap<String,HashMap<String, String>> result) {
 
         String generalResponse = result.get("response").get("generalResponse");
         String responseCode = result.get("response").get("responseCode");
@@ -502,7 +502,7 @@ class RoleTask extends AsyncTask<String, Void, Map<String,HashMap<String, String
             Toast toast = Toast.makeText(context, generalResponse, duration);
             toast.show();
             result.remove("response");
-            delegate.roleListDone(result);
+            delegate.asyncDone(result);
         } else if (Integer.parseInt(responseCode) != 100) {
             int duration = Toast.LENGTH_LONG;
             Toast toast = Toast.makeText(context, "Response code " + responseCode +", " + "Message: " + generalResponse, duration);

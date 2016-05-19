@@ -465,11 +465,12 @@ public class UserActivity extends AppCompatActivity {
                 .show();
     }
 
-    private void getRoles() {
-        new RoleTask(new RoleCallback() {
+    private void getRoles() { // To populate the spinner
+
+        new RoleTask(new Callback() {
             @Override
-            public void roleListDone(Map<String, HashMap<String, String>> roles) {
-                for (Map.Entry<String, HashMap<String, String>> line : roles.entrySet()) {
+            public void asyncDone(HashMap<String, HashMap<String, String>> asyncResults) {
+                for (Map.Entry<String, HashMap<String, String>> line : asyncResults.entrySet()) {
                     for (Map.Entry<String, String> role : line.getValue().entrySet()) {
                         String roleName = role.getValue();
                         roleList.add(roleName);
@@ -479,6 +480,7 @@ public class UserActivity extends AppCompatActivity {
             }
         }, context).execute(); //roleID
     }
+
 
     private void getAllClasses() {
         new ClassTaskNew(new ClassCallbackNew() {
