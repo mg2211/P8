@@ -514,7 +514,7 @@ class TextTask extends AsyncTask<String, Void, HashMap<String, HashMap<String, S
 }
 
 
-class UserTask extends AsyncTask<String, Void, Map<String,HashMap<String, String>>> {
+class UserTask extends AsyncTask<String, Void, HashMap<String,HashMap<String, String>>> {
 
     Callback delegate;
     private final Context context;
@@ -543,7 +543,7 @@ class UserTask extends AsyncTask<String, Void, Map<String,HashMap<String, String
     }
 
     @Override
-    protected Map<String, HashMap<String, String>> doInBackground(String... params) {
+    protected HashMap<String, HashMap<String, String>> doInBackground(String... params) {
 
         String method;
         String role;
@@ -558,7 +558,7 @@ class UserTask extends AsyncTask<String, Void, Map<String,HashMap<String, String
         String email;
         String parentEmail;
 
-        Map<String, HashMap<String, String>> result = new HashMap<>();
+        HashMap<String, HashMap<String, String>> result = new HashMap<>();
 
         method = params[0];
         role = params[1];
@@ -687,7 +687,7 @@ class UserTask extends AsyncTask<String, Void, Map<String,HashMap<String, String
     }
 }
 
-class ClassTask extends AsyncTask<String, Void, Map<String,HashMap<String, String>>> {
+class ClassTask extends AsyncTask<String, Void, HashMap<String,HashMap<String, String>>> {
 
     Callback delegate;
     private final Context context;
@@ -713,7 +713,7 @@ class ClassTask extends AsyncTask<String, Void, Map<String,HashMap<String, Strin
     }
 
     @Override
-    protected Map<String, HashMap<String, String>> doInBackground(String... params) {
+    protected HashMap<String, HashMap<String, String>> doInBackground(String... params) {
 
         String method;
         String classId;
@@ -722,7 +722,7 @@ class ClassTask extends AsyncTask<String, Void, Map<String,HashMap<String, Strin
         String studentId;
         String userId;
 
-        Map<String, HashMap<String, String>> result = new HashMap<>();
+        HashMap<String, HashMap<String, String>> result = new HashMap<>();
 
         method = params[0];
         classId = params[1];
