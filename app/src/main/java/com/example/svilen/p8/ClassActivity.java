@@ -876,6 +876,6 @@ public class ClassActivity extends AppCompatActivity {
     public void resetAdapter(ListView lv, SimpleAdapter sa) {
         lv.setChoiceMode(lv.CHOICE_MODE_NONE);
         lv.setAdapter(sa);
-        lv.setChoiceMode(lv.CHOICE_MODE_SINGLE);
+        lv.requestLayout();
     }
 }

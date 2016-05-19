@@ -98,8 +98,9 @@
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
                 android:id="@+id/lvListStudents"
-                android:listSelector="@color/colorHighlight"
-                android:choiceMode="singleChoice" />
+                android:choiceMode="none"
+                android:listSelector="@android:color/transparent"
+                android:cacheColorHint="@android:color/transparent" />
 
         </LinearLayout>
 

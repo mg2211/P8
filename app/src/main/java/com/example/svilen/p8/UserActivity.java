@@ -64,7 +64,6 @@ public class UserActivity extends AppCompatActivity {
     private List<String> roleList = new ArrayList<>();
     private List<Map<String, String>> userList = new ArrayList<>();
     private List<Map<String, String>> classList = new ArrayList<>();
-    private List<Map<String, String>> teacherList = new ArrayList<>();
 
     private UserInfo userinfo;
     private HashMap<String, String> user;

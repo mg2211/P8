@@ -792,15 +792,6 @@ class ClassTask extends AsyncTask<String, Void, HashMap<String,HashMap<String, S
                 lastClass.put("lastClassId", lastClassId);
 
                 result.put("lastClassId: " + lastClassId, lastClass);
-
-                int duration = Toast.LENGTH_LONG;
-                Toast toast = Toast.makeText(context, "Response code " + responseCode +", " + "Message: " + generalResponse, duration);
-                toast.show();
-
-            } else if (params[0].equals("UPDATE") || (params[0].equals("DELETE"))) {
-                int duration = Toast.LENGTH_LONG;
-                Toast toast = Toast.makeText(context, "Response code " + responseCode +", " + "Message: " + generalResponse, duration);
-                toast.show();
             }
             Log.d("ClassTask1 response", result.toString());
             HashMap<String, String> serverResponse = new HashMap<>();
