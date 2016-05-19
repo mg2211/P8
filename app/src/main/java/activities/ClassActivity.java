@@ -24,7 +24,7 @@ import com.example.svilen.p8.R;
 
 import callback.*;
 import helper.*;
-import somethingElse.*;
+import serverRequests.*;
 
 import java.util.ArrayList;
 import java.util.HashMap;

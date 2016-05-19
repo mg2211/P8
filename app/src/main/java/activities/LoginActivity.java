@@ -13,7 +13,7 @@ import android.widget.Toast;
 import com.example.svilen.p8.R;
 
 import helper.*;
-import somethingElse.*;
+import serverRequests.*;
 
 import java.util.HashMap;
 
