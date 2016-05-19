@@ -11,9 +11,7 @@ import android.view.Display;
 import android.view.View;
 import android.widget.Button;
 
-import callback.*;
 import helper.*;
-import serverRequests.*;
 
 import com.example.svilen.p8.R;
 import com.github.mikephil.charting.charts.BarChart;

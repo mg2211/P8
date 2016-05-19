@@ -1,4 +1,4 @@
-package serverRequests;
+package somethingElse;
 
 import android.app.ProgressDialog;
 import android.content.Context;

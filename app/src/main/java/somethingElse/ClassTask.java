@@ -1,4 +1,4 @@
-package serverRequests;
+package somethingElse;
 
 import android.app.ProgressDialog;
 import android.content.Context;
@@ -27,7 +27,7 @@ import java.util.HashMap;
 /**
  * Created by Ivo on 19-5-2016.
  */
-public class UserTask extends AsyncTask<String, Void, HashMap<String,HashMap<String, String>>> {
+public class ClassTask extends AsyncTask<String, Void, HashMap<String,HashMap<String, String>>> {
 
     Callback delegate;
     private final Context context;
@@ -37,7 +37,7 @@ public class UserTask extends AsyncTask<String, Void, HashMap<String,HashMap<Str
     protected void onPreExecute() {
     }
 
-    public UserTask(Callback delegate, Context context) {
+    public ClassTask(Callback delegate, Context context) {
         this.context = context;
         this.delegate = delegate;
         progressDialog = new ProgressDialog(context);
@@ -47,65 +47,44 @@ public class UserTask extends AsyncTask<String, Void, HashMap<String,HashMap<Str
         progressDialog.show();
     }
 
-
-    public void executeTask(String method, String role, String userId, String teacherId, String studentId,
-                            String classId, String username, String password, String lastName, String firstName,
-                            String email, String parentEmail) {
-        this.execute(method, role, userId, teacherId, studentId, classId, username, password, lastName,
-                firstName, email, parentEmail);
+    public void executeTask(String method, String classId, String teacherId, String className,
+                            String studentId, String userId) {
+        this.execute(method, classId, teacherId, className, studentId, userId);
     }
 
     @Override
     protected HashMap<String, HashMap<String, String>> doInBackground(String... params) {
 
         String method;
-        String role;
-        String userId;
-        String teacherId;
-        String studentId;
         String classId;
-        String username;
-        String password;
-        String lastName;
-        String firstName;
-        String email;
-        String parentEmail;
+        String teacherId;
+        String className;
+        String studentId;
+        String userId;
 
         HashMap<String, HashMap<String, String>> result = new HashMap<>();
 
         method = params[0];
-        role = params[1];
-        userId = params[2];
-        teacherId = params[3];
+        classId = params[1];
+        teacherId = params[2];
+        className = params[3];
         studentId = params[4];
-        classId = params[5];
-        username = params[6];
-        password = params[7];
-        lastName = params[8];
-        firstName = params[9];
-        email = params[10];
-        parentEmail = params[11];
+        userId = params[5];
 
         try {
             String generalResponse;
             int responseCode;
 
-            URL url = new URL("http://emilsiegenfeldt.dk/p8/users.php");
+            URL url = new URL("http://emilsiegenfeldt.dk/p8/classes.php");
             HttpURLConnection connection = (HttpURLConnection) url.openConnection();
             connection.setRequestMethod("POST");
 
             Uri.Builder builder = new Uri.Builder().appendQueryParameter("method", method)
-                    .appendQueryParameter("role", role)
-                    .appendQueryParameter("userid", userId)
-                    .appendQueryParameter("studentid", studentId)
-                    .appendQueryParameter("teacherid", teacherId)
                     .appendQueryParameter("classid", classId)
-                    .appendQueryParameter("username", username)
-                    .appendQueryParameter("password", password)
-                    .appendQueryParameter("lastname", lastName)
-                    .appendQueryParameter("firstname", firstName)
-                    .appendQueryParameter("email", email)
-                    .appendQueryParameter("parentemail", parentEmail);
+                    .appendQueryParameter("teacherid", teacherId)
+                    .appendQueryParameter("classname", className)
+                    .appendQueryParameter("studentid", studentId)
+                    .appendQueryParameter("userid", userId);
 
             String query = builder.build().getEncodedQuery();
             OutputStream os = connection.getOutputStream();
@@ -127,43 +106,35 @@ public class UserTask extends AsyncTask<String, Void, HashMap<String,HashMap<Str
 
             if (params[0].equals("FETCH")) {
 
-                JSONArray users = JSONResult.getJSONArray("users");
-                for (int i = 0; i < users.length(); i++) {
-                    HashMap<String, String> userInfo = new HashMap<>();
+                JSONArray classes = JSONResult.getJSONArray("classes");
+                for (int i = 0; i < classes.length(); i++) {
+                    HashMap<String, String> classInfo = new HashMap<>();
 
-                    JSONObject user = users.getJSONObject(i);
-                    userId = user.getString("userId");
-                    userInfo.put("userId", userId);
-                    userInfo.put("username", user.getString("username"));
-                    userInfo.put("password", user.getString("password"));
-                    userInfo.put("firstName", user.getString("firstName"));
-                    userInfo.put("lastName", user.getString("lastName"));
-                    userInfo.put("email", user.getString("email"));
+                    JSONObject classMap = classes.getJSONObject(i);
+                    classId = classMap.getString("classId");
+                    classInfo.put("classId", classId);
+                    classInfo.put("teacherId", classMap.getString("teacherId"));
+                    classInfo.put("className", classMap.getString("className"));
+                    classInfo.put("teacherFirstName", classMap.getString("teacherFirstName"));
+                    classInfo.put("teacherLastName", classMap.getString("teacherLastName"));
+                    classInfo.put("teacherEmail", classMap.getString("teacherEmail"));
+                    classInfo.put("numOfStudents", classMap.getString("numOfStudents"));
 
-                    role = user.getString("role");
-                    userInfo.put("role", role);
-                    if (role.equals("teacher")) {
-                        userInfo.put("teacherId", user.getString("teacherId"));
-                    } else if (role.equals("student")) {
-                        userInfo.put("studentId", user.getString("studentId"));
-                        userInfo.put("parentEmail", user.getString("parentEmail"));
-                        userInfo.put("classId", user.getString("classId"));
-                    }
-                    result.put("userId: " + userId, userInfo);
+                    result.put("classId: " + classId, classInfo);
                 }
-
             } else if (params[0].equals("CREATE")) {
 
-                String lastUserId;
+                String lastClassId;
 
-                lastUserId = JSONResult.getString("lastUserId");
+                lastClassId = JSONResult.getString("lastClassId");
+                Log.d("lastClassId", JSONResult.getString("lastClassId"));
 
-                HashMap<String, String> lastUser = new HashMap<>();
+                HashMap<String, String> lastClass = new HashMap<>();
+                lastClass.put("lastClassId", lastClassId);
 
-                lastUser.put("lastUserId", lastUserId);
-                result.put("lastUserId: " + lastUserId, lastUser);
+                result.put("lastClassId: " + lastClassId, lastClass);
             }
-            Log.d("UserTask response", result.toString());
+            Log.d("ClassTask1 response", result.toString());
             HashMap<String, String> serverResponse = new HashMap<>();
             serverResponse.put("generalResponse", generalResponse);
             serverResponse.put("responseCode", String.valueOf(responseCode));
