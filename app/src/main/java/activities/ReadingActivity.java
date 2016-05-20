@@ -440,23 +440,13 @@ public class ReadingActivity extends AppCompatActivity  {
                         correctAnswer.add(String.valueOf(isCorrectAnswer));
 
 
-                        new QuestionResultTask(new Callback() {
-                            @Override
-                            public void asyncDone(HashMap<String, HashMap<String, String>> questresult) {
-
-                            }
-                        }, context).execute(assignmentId, lastElement, "", answerIdtoChosenAnswer, "1", "1", "","insert"); // remember to change isCompletet to empty when done!!
+                        new QuestionResultTask(context).execute(assignmentId, lastElement, "", answerIdtoChosenAnswer, "1", "1", "","insert"); // remember to change isCompletet to empty when done!!
 
                     } else {
                         Log.d("YOU HAVE ANSWERED ", "INCORRECT!");
                         int inCorrectAnswer = 0;
                         correctOrNot.add(inCorrectAnswer);
-                        new QuestionResultTask(new Callback() {
-                            @Override
-                            public void asyncDone(HashMap<String, HashMap<String, String>> questresult) {
-
-                            }
-                        }, context).execute(assignmentId, lastElement, "", answerIdtoChosenAnswer, "0", "1", "","insert");// remember to change isCompletet to empty when done!!
+                        new QuestionResultTask(context).execute(assignmentId, lastElement, "", answerIdtoChosenAnswer, "0", "1", "","insert");// remember to change isCompletet to empty when done!!
 
                     }
                     Log.d("STUDENTANSWER: ", correctOrNot.toString());
@@ -489,12 +479,7 @@ public class ReadingActivity extends AppCompatActivity  {
 
                         String totalSeconds = String.valueOf(seconds);
 
-                        new QuestionResultTask(new Callback() {
-                            @Override
-                            public void asyncDone(HashMap<String, HashMap<String, String>> questresult) {
-
-                            }
-                        }, context).execute(assignmentId, "", "", "", "", "1", totalSeconds,"final");
+                        new QuestionResultTask(context).execute(assignmentId, "", "", "", "", "1", totalSeconds,"final");
                     }
 
 

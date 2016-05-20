@@ -659,7 +659,9 @@ public class AssignmentActivity extends AppCompatActivity {
                        specificAssignment.put("Name",student.get("Name"));
                    }
                }
-               assignedList.add(specificAssignment);
+               if(specificAssignment.get("Name") != null) {
+                   assignedList.add(specificAssignment);
+               }
                assignedAdapter.notifyDataSetChanged();
 
            }
@@ -713,53 +715,54 @@ public class AssignmentActivity extends AppCompatActivity {
         dataSets.clear();
         lineSets.clear();
         lineY.clear();
-        assignmentIds.clear();
+
+        HashMap<String, HashMap<String, HashMap<String, String>>> result = new HashMap<>(getResult(assignmentLibId));
+
+        result.remove("response");
+        Log.d("RESULT RESPONSE",result.toString());
+
 
         ArrayList<Integer> colors = new ArrayList<>();
         int index = 0;
         double total = 0;
-        for (int i = 0; i < assignedList.size(); i++) {
-            final String studentName = assignedList.get(i).get("Name");
-            String assignmentId = assignedList.get(i).get("assignmentid");
-            if (assignedList.get(i).get("isComplete").equals("1")) {
-                HashMap<String, HashMap<String, String>> result = new HashMap<>(getResult(assignmentId));
-                HashMap<String, String> studentAnswers = new HashMap<>();
-                Log.d("results",result.toString());
-                result.remove("response");
-                int numberOfQuestions = 0;
-                int numberOfCorrect = 0;
-                for (Map.Entry<String, HashMap<String, String>> questionResult : result.entrySet()) {
-                    numberOfQuestions++;
-                    studentAnswers.put("time",assignedList.get(i).get("timeSpent"));
-                    studentAnswers.put("Question: "+i,questionResult.getValue().get("correct"));
-                    studentAnswers.put("Answer: "+i,questionResult.getValue().get("answerText"));
-                    if (questionResult.getValue().get("correct").equals("1")) {
-                        numberOfCorrect++;
+
+        for(int i=0; i<assignedList.size(); i++){
+            Map<String, String> assignment = assignedList.get(i);
+            if(assignment.get("isComplete").equals("1")){
+                String assignmentId = assignment.get("assignmentid");
+                String studentName = assignment.get("Name");
+
+                HashMap<String, HashMap<String, String>> assignmentResult = result.get(assignmentId);
+                if(assignmentResult != null) {
+                    Log.d("assignment result", assignmentResult.toString());
+                    int numberOfQuestions = 0;
+                    int correctAnswers = 0;
+                    for (Map.Entry<String, HashMap<String, String>> questionResults : assignmentResult.entrySet()) {
+                        if(!questionResults.getKey().equals("time")) {
+                            if(questionResults.getValue().get("correct").equals("1")){
+                                correctAnswers++;
+                            }
+                            numberOfQuestions++;
+                        }
                     }
-                    generalResults.put(assignmentId,studentAnswers);
-                }
-                Log.d("correct answers", String.valueOf(numberOfCorrect));
-                Log.d("No. questions", String.valueOf(numberOfQuestions));
+                    double percentage = ((double) correctAnswers / (double) numberOfQuestions) * 100;
+                    yVal.add(new BarEntry((float) percentage, index));
+                    xVals.add(studentName);
 
-                double percentage = ((double) numberOfCorrect / (double) numberOfQuestions) * 100;
-                Log.d("percentage", String.valueOf(percentage));
-                yVal.add(new BarEntry((float) percentage, index));
-                xVals.add(studentName);
-                assignmentIds.add(assignedList.get(i).get("assignmentid"));
-
-                if (percentage >= 50 && percentage <= 75) {
-                    colors.add(Color.rgb(255, 235, 69));
-                } else if (percentage > 75) {
-                    colors.add(Color.rgb(156, 204, 101));
-                } else {
-                    colors.add(Color.rgb(239, 83, 80));
+                    if (percentage >= 50 && percentage <= 75) {
+                        colors.add(Color.rgb(255, 235, 69));
+                    } else if (percentage > 75) {
+                        colors.add(Color.rgb(156, 204, 101));
+                    } else {
+                        colors.add(Color.rgb(239, 83, 80));
+                    }
+                    total = total + percentage;
+                    index++;
+                    Log.d("Questions/correct ", String.valueOf(numberOfQuestions) + String.valueOf(correctAnswers));
                 }
-                total = total + percentage;
-                index++;
             }
-
         }
-        Log.d("average", String.valueOf((total / xVals.size())));
+
         for (int i = 0; i < index; i++) {
             lineY.add(new Entry((float) (total / xVals.size()), i));
         }
@@ -990,14 +993,9 @@ public class AssignmentActivity extends AppCompatActivity {
             }
         });
     }
-    private HashMap<String, HashMap<String, String>> getResult(String assignmentId){
+    private HashMap<String, HashMap<String, HashMap<String, String>>> getResult(String assignmentLibId){
         try {
-            return new QuestionResultTask(new Callback() {
-                @Override
-                public void asyncDone(HashMap<String, HashMap<String, String>> questresult) {
-
-                }
-            }, context).execute(assignmentId,"","","","","","","get").get(30,TimeUnit.SECONDS);
+            return new QuestionResultTask(context).execute("","","","","","","","get",assignmentLibId).get(30,TimeUnit.SECONDS);
         } catch (InterruptedException e) {
             e.printStackTrace();
         } catch (ExecutionException e) {
