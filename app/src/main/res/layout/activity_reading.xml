@@ -86,6 +86,12 @@
                     android:text="textContent"
                     android:id="@+id/tvText1212" />
 
+                <ImageButton
+                    android:id="@+id/previous"
+                    android:layout_width="100dp"
+                    android:layout_height="135dp"
+                    android:src="@drawable/arrow_alt_left" />
+
                 <ScrollView
                     android:id="@+id/SCROLLER_ID"
                     android:layout_width="fill_parent"
@@ -94,13 +100,6 @@
                     android:fillViewport="true">
 
                 </ScrollView>
-
-                <ImageButton
-                    android:id="@+id/previous"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:src="@drawable/arrow_alt_left"
-                    android:layout_gravity="right" />
 
 
             </LinearLayout>
@@ -128,8 +127,8 @@
 
                     <ImageButton
                         android:id="@+id/next"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
+                        android:layout_width="100dp"
+                        android:layout_height="135dp"
                         android:src="@drawable/arrow_alt_right1"
                         android:layout_gravity="bottom" />
                 </LinearLayout>

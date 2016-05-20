@@ -67,7 +67,7 @@ public class ReadingActivity extends AppCompatActivity  {
     View layout;
     int i;
     String answerChoosen;
-    String specificQuestionId;
+    String specificQuestionId = "empty";
     ArrayList<String> mylist = new ArrayList<>();
     Set<String> set = new HashSet<>();
     List<Integer> correctOrNot = new ArrayList<>();    //Set<String> set = new HashSet<String>();
@@ -128,6 +128,8 @@ public class ReadingActivity extends AppCompatActivity  {
 
 
          textContent22 = getText1().get("text0").get("textcontent");
+        String textname = getText1().get("text0").get("textname");
+        tvTextName2.setText(textname);
         Log.d("7979 ", textContent22);
 
 
@@ -185,6 +187,7 @@ public class ReadingActivity extends AppCompatActivity  {
                 Log.d("TOTAL time: ", String.valueOf(seconds));
 
                 getQuestions(textId);
+                Log.d("3333", textId);
 
            /*     if(clickCount == 0){
 
@@ -216,6 +219,7 @@ public class ReadingActivity extends AppCompatActivity  {
                 questionList.clear();
                 for (Map.Entry<String, HashMap<String, String>> question : results.entrySet()) {
                     Map<String, String> questionInfo = new HashMap<>();
+                    Log.d("8989 ", "9898");
                    String specificQuestionContent = question.getValue().get("questionContent");
                     specificQuestionId = question.getValue().get("questionId");
                     String specificQuestionAnswers = question.getValue().get("answers");
@@ -223,6 +227,10 @@ public class ReadingActivity extends AppCompatActivity  {
                     questionInfo.put("id", specificQuestionId);
                     questionInfo.put("answers", specificQuestionAnswers);
                     questionList.add(questionInfo);
+                    Log.d("2121 ", specificQuestionId);
+
+
+
 
                     createArrays();
 
@@ -232,6 +240,37 @@ public class ReadingActivity extends AppCompatActivity  {
                     Log.d("number of questions: ", String.valueOf(noOfQuestions));
 
                 }
+
+                if (specificQuestionId.equals("empty")){ // If there are no questions to an assignment
+
+                    AlertDialog.Builder builder = new AlertDialog.Builder(context);
+
+                    builder.setMessage("There are no questions to this assignment. You have finished your homework")
+                            .setTitle("Done")
+                            .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+
+                                    Intent intent = new Intent(ReadingActivity.this, StudentActivity.class);
+                                    startActivity(intent);
+
+                                }
+                            });
+                    AlertDialog dialog = builder.create();
+                    dialog.setCanceledOnTouchOutside(false);
+                    dialog.show();
+
+                    String totalSeconds = String.valueOf(seconds);
+
+                    new QuestionResultTask(new Callback() {
+                        @Override
+                        public void asyncDone(HashMap<String, HashMap<String, String>> questresult) {
+
+                        }
+                    }, context).execute(assignmentId, "", "", "", "", "1", totalSeconds,"final");
+
+                }
+
                 for (String s: set){
                     System.out.println(s);
 
@@ -409,7 +448,7 @@ public class ReadingActivity extends AppCompatActivity  {
             @Override
             public void onClick(View v) {
 
-                if(booleanForButton == 1){
+                if(booleanForButton == 1){ // checks if some radio button has been chosen
 
                     Log.d("1818", "Something chosen");
 
@@ -481,11 +520,11 @@ public class ReadingActivity extends AppCompatActivity  {
                         dialog.setCanceledOnTouchOutside(false);
                         dialog.show();
 
-                        int totalCorrect = correctAnswer.size();
+                   /*     int totalCorrect = correctAnswer.size();
                         double totalGrade = ((double) totalCorrect / (double) noOfQuestions);
                         Log.d("GRADE  many correct: ", String.valueOf(totalCorrect));
                         Log.d("noOfQuestions: ", String.valueOf(noOfQuestions));
-                        Log.d("GRADE% FOR QUESTIONS: ", String.valueOf(totalGrade));
+                        Log.d("GRADE% FOR QUESTIONS: ", String.valueOf(totalGrade));*/
 
                         String totalSeconds = String.valueOf(seconds);
 

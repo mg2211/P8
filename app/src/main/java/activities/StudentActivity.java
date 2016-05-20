@@ -79,6 +79,7 @@ public class StudentActivity extends AppCompatActivity {
                 assignmentName = assignmentData.get("assignmentLibName");
                 assignmentId = assignmentData.get("assignmentid");
                 String isComplete = assignmentData.get("isComplete");
+                Long availableto = Long.valueOf(assignmentData.get("availableTo"));
 
                 if(isComplete.equals("0")){
                     Log.d("TEXTID::: ", textId);
@@ -194,7 +195,7 @@ public class StudentActivity extends AppCompatActivity {
                         String ts = tsLong.toString();
                         Log.d("1818", tsLong.toString());
 
-                        if (tsLong <= availableto && availablefrom <= tsLong) {
+                        if (tsLong <= availableto && availablefrom <= tsLong) { // Only assignment that are still available within the timeframe will be displayed
 
 
                             assignmentInfo.put("assignmentLibName", specificAssignmentName);
