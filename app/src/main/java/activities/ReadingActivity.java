@@ -189,22 +189,7 @@ public class ReadingActivity extends AppCompatActivity  {
                 getQuestions(textId);
                 Log.d("3333", textId);
 
-           /*     if(clickCount == 0){
 
-                    String totalSeconds = String.valueOf(seconds);
-
-                    new QuestionResultTask(new Callback() {
-                        @Override
-                        public void asyncDone(HashMap<String, HashMap<String, String>> questresult) {
-
-                        }
-                    }, context).execute(assignmentId, "", "", "", "", "1", totalSeconds,"final");
-
-
-
-                Intent intent = new Intent(ReadingActivity.this, StudentActivity.class);
-                    startActivity(intent);
-                }*/
 
             }
         });
