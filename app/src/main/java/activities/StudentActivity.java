@@ -254,6 +254,8 @@ public class StudentActivity extends AppCompatActivity {
 
     public void getClassInfo(){
 
+
+
         new ClassTask(new Callback() {
             @Override
             public void asyncDone(HashMap<String, HashMap<String, String>> asyncResults) {
@@ -272,7 +274,7 @@ public class StudentActivity extends AppCompatActivity {
 
 
             }
-        }, context).executeTask("FETCH", "", "", "", studentId, "");
+        }, context).execute("FETCH", "", "", "", studentId, "");
     }
 
 }
