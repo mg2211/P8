@@ -3,9 +3,7 @@ package activities;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
-import android.content.Intent;
 import android.graphics.Color;
-import android.graphics.Typeface;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
@@ -15,7 +13,6 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.WindowManager;
-import android.webkit.HttpAuthHandler;
 import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.DatePicker;
@@ -25,11 +22,6 @@ import android.widget.SimpleAdapter;
 import android.widget.TextView;
 import android.widget.TimePicker;
 import android.widget.Toast;
-
-import callback.*;
-import helper.*;
-import serverRequests.*;
-
 
 import com.example.svilen.p8.R;
 import com.github.mikephil.charting.animation.Easing;
@@ -63,6 +55,19 @@ import java.util.Map;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
+
+import callback.Callback;
+import callback.DatePickerCallback;
+import helper.AssignmentListAdapter;
+import helper.QuestionListAdapter;
+import helper.UserInfo;
+import serverRequests.AssignmentLibTask;
+import serverRequests.AssignmentTask;
+import serverRequests.ClassTask;
+import serverRequests.QuestionResultTask;
+import serverRequests.QuestionTask;
+import serverRequests.StudentTask;
+import serverRequests.TextTask;
 
 public class AssignmentActivity extends AppCompatActivity {
 
@@ -241,13 +246,6 @@ public class AssignmentActivity extends AppCompatActivity {
         setNew(true);
         getStudents("");
     }
-
-    @Override
-    public void onBackPressed() {
-        super.onBackPressed();
-        Intent backIntent = new Intent(this,TeacherActivity.class);
-        startActivity(backIntent);
-    }
     private void setChanged(boolean value){
         changed = value;
         Log.d(".......","changed value"+ String.valueOf(changed));
@@ -328,6 +326,7 @@ public class AssignmentActivity extends AppCompatActivity {
             }
         });
     }
+
     private void confirm(final int position) {
         new AlertDialog.Builder(context)
                 .setIcon(android.R.drawable.ic_dialog_alert)
@@ -950,7 +949,6 @@ public class AssignmentActivity extends AppCompatActivity {
             }
         });
     }
-
 
     private HashMap<String, HashMap<String,String>> getAssignments(String assignmentLibId){
         try {
