@@ -117,9 +117,11 @@ public class QuestionResultTask extends AsyncTask<String, Void, HashMap<String, 
                         HashMap<String, String> specificQuestionResult = new HashMap<>();
                         String answerId = questionResult.getString("answerid");
                         String answerCorrect = questionResult.getString("answered correct");
+                        String answerContent = questionResult.getString("answercontent");
 
                         specificQuestionResult.put("answerId",answerId);
                         specificQuestionResult.put("correct",answerCorrect);
+                        specificQuestionResult.put("answerContent",answerContent);
                         assignmentResult.put(questionId,specificQuestionResult);
                     }
                     assignmentResult.put("time",time);

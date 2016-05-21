@@ -14,6 +14,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.WindowManager;
+import android.webkit.HttpAuthHandler;
 import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.DatePicker;
@@ -101,7 +102,9 @@ public class AssignmentActivity extends AppCompatActivity {
     private final ArrayList<IBarDataSet> dataSets = new ArrayList<>();
     private final ArrayList<Entry> lineY = new ArrayList<>();
     private final ArrayList<ILineDataSet> lineSets = new ArrayList<>();
-    private final ArrayList<String> assignmentIds = new ArrayList<>();
+    HashMap<String, HashMap<String, HashMap<String, String>>> result;
+
+    ArrayList<String> assignmentIds = new ArrayList<>();
     HashMap<String,HashMap<String, String>> questions = new HashMap<>();
     HashMap<String,HashMap<String,String>> generalResults = new HashMap<>();
 
@@ -715,8 +718,9 @@ public class AssignmentActivity extends AppCompatActivity {
         dataSets.clear();
         lineSets.clear();
         lineY.clear();
+        assignmentIds.clear();
 
-        HashMap<String, HashMap<String, HashMap<String, String>>> result = new HashMap<>(getResult(assignmentLibId));
+        result = new HashMap<>(getResult(assignmentLibId));
 
         result.remove("response");
         Log.d("RESULT RESPONSE",result.toString());
@@ -734,6 +738,7 @@ public class AssignmentActivity extends AppCompatActivity {
 
                 HashMap<String, HashMap<String, String>> assignmentResult = result.get(assignmentId);
                 if(assignmentResult != null) {
+                    assignmentIds.add(assignmentId);
                     Log.d("assignment result", assignmentResult.toString());
                     int numberOfQuestions = 0;
                     int correctAnswers = 0;
@@ -1021,54 +1026,55 @@ public class AssignmentActivity extends AppCompatActivity {
         TextView tvDialogAverageTime = (TextView) layout.findViewById(R.id.tvDialogAverageTime);
         TextView tvDialogCorrect = (TextView) layout.findViewById(R.id.tvDialogCorrect);
         TextView tvDialogCorrectAverage = (TextView) layout.findViewById(R.id.tvDialogCorrectAverage);
-        int time = Integer.parseInt(generalResults.get(assignmentId).get("time"));
-        tvDialogTime.setText(convertTime(time));
         List<Map<String, String>> questionList = new ArrayList<>();
+        QuestionListAdapter questionListAdapter = new QuestionListAdapter(this,questionList);
+        lvDialogQuestions.setAdapter(questionListAdapter);
 
-
-        Log.d("questions",questions.toString());
-        Log.d("no. of questions", String.valueOf(questions.size()));
-        Log.d("generalResults",generalResults.toString());
-        Log.d("results for student",generalResults.get(assignmentId).toString());
+        HashMap<String, HashMap<String, String>> studentResult = result.get(assignmentId);
 
         for(Map.Entry<String, HashMap<String, String>> question : questions.entrySet()){
+
+            Map<String, String> specificQuestion = question.getValue();
+            String questionContent = specificQuestion.get("questionContent");
+            String questionId = specificQuestion.get("questionId");
+            String answer = studentResult.get(questionId).get("answerContent");
+            String correct = studentResult.get(questionId).get("correct");
+
             Map<String, String> questionInfo = new HashMap<>();
-            questionInfo.put("id",question.getValue().get("questionId"));
-            questionInfo.put("questionContent",question.getValue().get("questionContent"));
-            questionInfo.put("answer",generalResults.get(assignmentId).get("answerText"));
+            questionInfo.put("id",questionId);
+            questionInfo.put("questionContent",questionContent);
+            questionInfo.put("answer",answer);
+            questionInfo.put("correct",correct);
+
             questionList.add(questionInfo);
+            questionListAdapter.notifyDataSetChanged();
         }
 
-        Log.d("question List",questionList.toString());
+        Log.d("questions", questionList.toString());
 
 
-        int timeTotal = 0;
-        int numberOfStudents = 0;
+        double totalTime = 0;
 
-        for(Map.Entry<String, HashMap<String, String>> hashMap : generalResults.entrySet()){
-            timeTotal = timeTotal+Integer.parseInt(hashMap.getValue().get("time"));
-            numberOfStudents++;
-
+        for(int i=0; i<assignmentIds.size(); i++){
+            HashMap<String, HashMap<String, String>> assignmentResult = result.get(assignmentIds.get(i));
+            totalTime = totalTime+Double.parseDouble(assignmentResult.get("time").get("time"));
         }
-        double averageTime = timeTotal/numberOfStudents;
-        if(time < averageTime){
-            double difference = ((averageTime-time)/time)*100;
+        double averageTime = totalTime/assignmentIds.size();
+        int studentTime = Integer.parseInt(studentResult.get("time").get("time"));
+        Log.d("studenttime", String.valueOf(studentTime));
+        Log.d("student time string",studentResult.get("time").get("time"));
+        tvDialogTime.setText(convertTime(studentTime));
+
+
+        if(studentTime < averageTime){
+            double difference = ((averageTime-studentTime)/studentTime)*100;
             tvDialogAverageTime.setText(Math.round(difference)+"% below average");
-        } else if(time > averageTime){
-            double difference = ((time-averageTime)/averageTime)*100;
+        } else if(studentTime > averageTime){
+            double difference = ((studentTime-averageTime)/averageTime)*100;
             tvDialogAverageTime.setText(Math.round(difference)+"% above average");
         } else {
             tvDialogAverageTime.setText("On average");
         }
-
-        Log.d("Average time", String.valueOf(timeTotal/numberOfStudents));
-/*        for(Map.Entry<String, String> map : generalResults.get(assignmentId).entrySet()){
-            Log.d("map value",map.getValue());
-            Log.d("map Key",map.getKey());
-           String[] questionId = map.getKey().split(" ");
-            Log.d("new key",questionId[1]);
-            Log.d("corresponding question",questions.get("Question"+questionId[1]).toString());
-        }*/
     }
 
     private String convertTime(int time){
