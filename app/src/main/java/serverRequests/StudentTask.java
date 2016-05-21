@@ -25,12 +25,12 @@ import java.net.URL;
 import java.util.HashMap;
 
 /**
- * Created by Ivo on 19-5-2016.
+ * Created by ida803f16
  */
 public class StudentTask extends AsyncTask<String, Void, HashMap<String, HashMap<String, String>>> {
-    Callback delegate;
-    ProgressDialog progressDialog;
-    final Context context;
+    private final Callback delegate;
+    private final ProgressDialog progressDialog;
+    private final Context context;
 
     public StudentTask(Callback delegate, Context context) {
         this.delegate = delegate;

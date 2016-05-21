@@ -11,7 +11,7 @@ import java.util.HashMap;
 
 public class UserInfo {
 
-    private Context context;
+    private final Context context;
 
     public UserInfo(Context context){
         this.context = context;

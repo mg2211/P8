@@ -19,13 +19,11 @@ import java.util.HashMap;
 
 public class LoginActivity extends AppCompatActivity {
 
-    private Button loginButton;
     private EditText usernameInput;
     private EditText passwordInput;
     private String username;
     private String password;
     private final Context context = this;
-    private UserInfo userInfo;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -33,7 +31,7 @@ public class LoginActivity extends AppCompatActivity {
         setContentView(R.layout.activity_login);
 
         //Check if a user is already logged in
-        userInfo = new UserInfo(this);
+        UserInfo userInfo = new UserInfo(this);
         HashMap<String, String> user = userInfo.getUser();
         String role = user.get("role");
         if (!user.isEmpty()) {
@@ -46,7 +44,7 @@ public class LoginActivity extends AppCompatActivity {
             startActivity(intent);
         }
 
-        loginButton = (Button) findViewById(R.id.loginButton);
+        Button loginButton = (Button) findViewById(R.id.loginButton);
         loginButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -59,11 +57,8 @@ public class LoginActivity extends AppCompatActivity {
 
               //  String decryptPass = Encryption.encryptIt(password);
 
-                String pass = "qqi7JAngXUA=" + "\n";
                 Log.d("password",password);
 
-                String encryptpass  = Encryption.encryptIt(password);
-                //Log.d("2222", decryptPass);
                 if (!username.equals("") && !password.equals("")) {//check if both input fields has text
                     new LoginTask(context).execute(username, password);
                 } else {

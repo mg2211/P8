@@ -17,15 +17,15 @@ import javax.crypto.SecretKeyFactory;
 import javax.crypto.spec.DESKeySpec;
 
 /**
- * Created by Brandur on 5/17/2016.
+ * Created by ida803f16
  */
 public final class Encryption {
 
     private Encryption(){
 
-    };
+    }
 
-    private static String cryptoPass = "sup3rBr4ndur";
+    private static final String cryptoPass = "sup3rBr4ndur";
 
      public static String encryptIt(String value) {
         try {
@@ -41,23 +41,11 @@ public final class Encryption {
             Log.d("12345", "Encrypted: " + value + " -> " + encrypedValue);
             return encrypedValue;
 
-        } catch (InvalidKeyException e) {
-            e.printStackTrace();
-        } catch (UnsupportedEncodingException e) {
-            e.printStackTrace();
-        } catch (InvalidKeySpecException e) {
-            e.printStackTrace();
-        } catch (NoSuchAlgorithmException e) {
-            e.printStackTrace();
-        } catch (BadPaddingException e) {
-            e.printStackTrace();
-        } catch (NoSuchPaddingException e) {
-            e.printStackTrace();
-        } catch (IllegalBlockSizeException e) {
+        } catch (InvalidKeyException | IllegalBlockSizeException | NoSuchPaddingException | BadPaddingException | NoSuchAlgorithmException | InvalidKeySpecException | UnsupportedEncodingException e) {
             e.printStackTrace();
         }
-        return value;
-    };
+         return value;
+    }
 
     public static String decryptIt(String value) {
         try {
@@ -75,19 +63,7 @@ public final class Encryption {
             Log.d("9898", "Decrypted: " + value + " -> " + decrypedValue);
             return decrypedValue;
 
-        } catch (InvalidKeyException e) {
-            e.printStackTrace();
-        } catch (UnsupportedEncodingException e) {
-            e.printStackTrace();
-        } catch (InvalidKeySpecException e) {
-            e.printStackTrace();
-        } catch (NoSuchAlgorithmException e) {
-            e.printStackTrace();
-        } catch (BadPaddingException e) {
-            e.printStackTrace();
-        } catch (NoSuchPaddingException e) {
-            e.printStackTrace();
-        } catch (IllegalBlockSizeException e) {
+        } catch (InvalidKeyException | IllegalBlockSizeException | NoSuchPaddingException | BadPaddingException | NoSuchAlgorithmException | InvalidKeySpecException | UnsupportedEncodingException e) {
             e.printStackTrace();
         }
         return value;

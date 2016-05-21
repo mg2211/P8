@@ -3,7 +3,7 @@ package callback;
 import java.util.HashMap;
 
 /**
- * Created by Brandur on 5/18/2016.
+ * Created by ida803f16
  */
 public interface Callback {
 

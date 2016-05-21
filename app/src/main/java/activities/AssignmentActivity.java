@@ -72,22 +72,16 @@ import serverRequests.TextTask;
 public class AssignmentActivity extends AppCompatActivity {
 
     private final Context context = this;
-    private UserInfo userInfo;
-    private HashMap<String, String> user;
     private String teacherId;
 
-    private Button bAddAssignment;
     private Button bSave;
     private Button bAssign;
-    private EditText etSearch;
     private EditText etAssignmentText;
     private EditText etAssignmentName;
-    private ListView lvAssignments;
     private TextView tvStudentPerformance;
     private SimpleAdapter assignmentAdapter;
     private final List<Map<String, String>> assignmentLibList = new ArrayList<>();
     private final List<Map<String, String>> textList = new ArrayList<>();
-    private HashMap<String,HashMap<String, String>> assignments;
 
     private SimpleAdapter textAdapter;
     private int assignmentLibTextId;
@@ -112,10 +106,10 @@ public class AssignmentActivity extends AppCompatActivity {
     private final ArrayList<IBarDataSet> dataSets = new ArrayList<>();
     private final ArrayList<Entry> lineY = new ArrayList<>();
     private final ArrayList<ILineDataSet> lineSets = new ArrayList<>();
-    HashMap<String, HashMap<String, HashMap<String, String>>> result;
+    private HashMap<String, HashMap<String, HashMap<String, String>>> result;
 
-    ArrayList<String> assignmentIds = new ArrayList<>();
-    HashMap<String,HashMap<String, String>> questions = new HashMap<>();
+    private final ArrayList<String> assignmentIds = new ArrayList<>();
+    private HashMap<String,HashMap<String, String>> questions = new HashMap<>();
     HashMap<String,HashMap<String,String>> generalResults = new HashMap<>();
 
 
@@ -123,13 +117,13 @@ public class AssignmentActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_assignment);
-        userInfo = new UserInfo(context);
-        user = userInfo.getUser();
+        UserInfo userInfo = new UserInfo(context);
+        HashMap<String, String> user = userInfo.getUser();
         teacherId = user.get("teacherId");
-        lvAssignments = (ListView) findViewById(R.id.lvAssignments);
-        bAddAssignment = (Button) findViewById(R.id.bAddAssignment);
+        ListView lvAssignments = (ListView) findViewById(R.id.lvAssignments);
+        Button bAddAssignment = (Button) findViewById(R.id.bAddAssignment);
         etAssignmentName = (EditText) findViewById(R.id.etAssignmentName);
-        etSearch = (EditText) findViewById(R.id.etSearch);
+        EditText etSearch = (EditText) findViewById(R.id.etSearch);
         etAssignmentText = (EditText) findViewById(R.id.etAssignmentText);
         bSave = (Button) findViewById(R.id.bSave);
         bAssign = (Button) findViewById(R.id.bAssign);
@@ -356,7 +350,7 @@ public class AssignmentActivity extends AppCompatActivity {
                 })
                 .show();
     }
-    private boolean createAssignment(){
+    private void createAssignment(){
         if(assignmentLibTextId != 0 && !etAssignmentName.getText().toString().equals("")) {
             try {
               HashMap<String, HashMap<String, String>> result= new AssignmentLibTask(new Callback() {
@@ -380,20 +374,18 @@ public class AssignmentActivity extends AppCompatActivity {
                 }
 
             } catch (InterruptedException e) {
-                return false;
+                e.printStackTrace();
             } catch (ExecutionException e) {
-               return false;
+                e.printStackTrace();
             } catch (TimeoutException e) {
-               return false;
+                e.printStackTrace();
             }
         } else {
             int duration = Toast.LENGTH_LONG;
             CharSequence alert = "Please fill in all relevant information";
             Toast toast = Toast.makeText(context, alert, duration);
             toast.show();
-            return false;
         }
-        return false;
     }
     private boolean updateAssignment(){
         if(assignmentLibTextId != 0 && !etAssignmentName.getText().toString().equals("")) {
@@ -406,7 +398,7 @@ public class AssignmentActivity extends AppCompatActivity {
                         getAssignmentLib();
                     }
                 }
-            },context).executeTask("update",teacherId, assignmentLibId,etAssignmentName.getText().toString(), String.valueOf(assignmentLibTextId));
+            },context).executeTask(teacherId, assignmentLibId,etAssignmentName.getText().toString(), String.valueOf(assignmentLibTextId));
             return true;
         } else {
             int duration = Toast.LENGTH_LONG;
@@ -417,7 +409,7 @@ public class AssignmentActivity extends AppCompatActivity {
         }
 
     }
-    private boolean getStudents(String classId){
+    private void getStudents(String classId){
 
         new StudentTask(new Callback() {
             @Override
@@ -436,7 +428,6 @@ public class AssignmentActivity extends AppCompatActivity {
                 studentAdapter.notifyDataSetChanged();
             }
         }, context).execute(classId, teacherId);
-        return true;
     }
 
     private void getClasses(){
@@ -666,7 +657,7 @@ public class AssignmentActivity extends AppCompatActivity {
             setNew(false);
             getQuestions(assignmentLibTextId);
 
-            assignments = new HashMap<>(getAssignments(assignmentLibId));
+            HashMap<String, HashMap<String, String>> assignments = new HashMap<>(getAssignments(assignmentLibId));
             assignments.remove("response");
 
            for (Map.Entry<String, HashMap<String, String>> assignment : assignments.entrySet()) {
@@ -684,7 +675,7 @@ public class AssignmentActivity extends AppCompatActivity {
 
            }
             Log.d("ASSIGNED LIST",assignedList.toString());
-            Log.d("ASSIGNMENT HM",assignments.toString());
+            Log.d("ASSIGNMENT HM", assignments.toString());
             if(!assignments.isEmpty()){
                 etAssignmentText.setEnabled(false);
                 etAssignmentName.setEnabled(false);
@@ -846,9 +837,6 @@ public class AssignmentActivity extends AppCompatActivity {
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 Map<String, String> classData = classList.get(position);
                 String classId = classData.get("ClassId");
-                if(getStudents(classId)){
-                    Log.d("students",studentList.toString());
-                }
 
             }
         });
@@ -958,11 +946,7 @@ public class AssignmentActivity extends AppCompatActivity {
 
                 }
             },context).execute("get","",assignmentLibId,"","","").get(15, TimeUnit.SECONDS);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        } catch (ExecutionException e) {
-            e.printStackTrace();
-        } catch (TimeoutException e) {
+        } catch (InterruptedException | TimeoutException | ExecutionException e) {
             e.printStackTrace();
         }
         return null;
@@ -1015,11 +999,7 @@ public class AssignmentActivity extends AppCompatActivity {
     private HashMap<String, HashMap<String, HashMap<String, String>>> getResult(String assignmentLibId){
         try {
             return new QuestionResultTask(context).execute("","","","","","","","get",assignmentLibId).get(30,TimeUnit.SECONDS);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        } catch (ExecutionException e) {
-            e.printStackTrace();
-        } catch (TimeoutException e) {
+        } catch (InterruptedException | TimeoutException | ExecutionException e) {
             e.printStackTrace();
         }
         return null;
@@ -1229,8 +1209,7 @@ public class AssignmentActivity extends AppCompatActivity {
         } else {
             seconds = String.valueOf(second);
         }
-        String timeConverted = hours+":"+minutes+":"+seconds;
-        return timeConverted;
+        return hours+":"+minutes+":"+seconds;
     }
 
 }

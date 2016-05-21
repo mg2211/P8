@@ -24,18 +24,27 @@ import java.net.URL;
 import java.util.HashMap;
 
 /**
- * Created by Ivo on 19-5-2016.
+ * Created by ida803f16
+ *
+ * The Role class allows for getting role data from and updating data in the database asynchronously
  */
 public class RoleTask extends AsyncTask<String, Void, HashMap<String,HashMap<String, String>>> {
 
-    Callback delegate;
-    ProgressDialog progressDialog;
-    final Context context;
+    /** callback */
+    private final Callback delegate;
 
-    @Override
-    protected void onPreExecute() {
-    }
+    /** context */
+    private final Context context;
 
+    /** dialog showing progress during task execution */
+    private final ProgressDialog progressDialog;
+
+    /**
+     * UserTask constructor
+     *
+     * @param delegate the result is delegated to
+     * @param context the execution context
+     */
     public RoleTask(Callback delegate, Context context) {
         progressDialog = new ProgressDialog(context);
         this.delegate = delegate;
@@ -46,14 +55,21 @@ public class RoleTask extends AsyncTask<String, Void, HashMap<String,HashMap<Str
         progressDialog.show();
     }
 
-    @Override
+
+    /**
+     * the doInBackground method creates a uri for making an HTTP-request to the server.
+     * It also fetches the server response and converts the returned JSON-array into a HashMap.
+     *
+     * @param params the parameters used in execution of the UserTask.
+     *               Since this method has only one way of execution, no parameter are passed.
+     * @return result a HashMap containing the result of the UserTask
+     */
     protected HashMap<String,HashMap<String, String>> doInBackground(String... params) {
 
         //Initiating return vars.
         HashMap<String, HashMap<String,String>> result = new HashMap<>();
         String generalResponse = null;
         int responseCode = 0;
-        String role = null;
 
         try {
             URL url = new URL("http://emilsiegenfeldt.dk/p8/roles.php");
@@ -112,6 +128,13 @@ public class RoleTask extends AsyncTask<String, Void, HashMap<String,HashMap<Str
         return result;
     }
 
+    /**
+     * onPostExecute uses the results returned by doInBackground,
+     * displays the server response code and message if necessary
+     * and delegates its results if everything is ok.
+     *
+     * @param result the HashMap returned by doInBackground
+     */
     protected void onPostExecute(HashMap<String,HashMap<String, String>> result) {
 
         String generalResponse = result.get("response").get("generalResponse");
@@ -128,6 +151,7 @@ public class RoleTask extends AsyncTask<String, Void, HashMap<String,HashMap<Str
         } else if (Integer.parseInt(responseCode) != 100) {
             int duration = Toast.LENGTH_LONG;
             Toast toast = Toast.makeText(context, "Response code " + responseCode +", " + "Message: " + generalResponse, duration);
+            toast.show();
         }
         else {
             int duration = Toast.LENGTH_LONG;

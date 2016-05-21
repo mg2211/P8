@@ -24,17 +24,15 @@ import java.net.URL;
 import java.util.HashMap;
 
 /**
- * Created by Ivo on 19-5-2016.
+ * Created by ida803f16
  */
 public class QuestionTask extends AsyncTask<String, Void, HashMap<String, HashMap<String, String>>> {
 
-    Callback delegate;
-    private final Context context;
-    ProgressDialog progressDialog;
+    private final Callback delegate;
+    private final ProgressDialog progressDialog;
 
     public QuestionTask(Callback delegate, Context context) {
         this.delegate = delegate;
-        this.context = context;
         progressDialog = new ProgressDialog(context);
         progressDialog.setCancelable(false);
         progressDialog.setTitle("Processing...");
