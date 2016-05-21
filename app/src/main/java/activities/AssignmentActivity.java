@@ -59,7 +59,7 @@ import java.util.concurrent.TimeoutException;
 import callback.Callback;
 import callback.DatePickerCallback;
 import helper.AssignmentListAdapter;
-import helper.SomethingElseEntirely;
+import helper.QuestionListAdapter;
 import helper.UserInfo;
 import serverRequests.AssignmentLibTask;
 import serverRequests.AssignmentTask;
@@ -1021,7 +1021,7 @@ public class AssignmentActivity extends AppCompatActivity {
         TextView tvDialogCorrect = (TextView) layout.findViewById(R.id.tvDialogCorrect);
         TextView tvDialogCorrectAverage = (TextView) layout.findViewById(R.id.tvDialogCorrectAverage);
         final List<Map<String, String>> questionList = new ArrayList<>();
-        SomethingElseEntirely questionListAdapter = new SomethingElseEntirely(this,questionList);
+        QuestionListAdapter questionListAdapter = new QuestionListAdapter(this,questionList);
         lvDialogQuestions.setAdapter(questionListAdapter);
 
         chartDialog.setUsePercentValues(true);
