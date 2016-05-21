@@ -12,9 +12,12 @@ import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.ListView;
 import android.widget.SimpleAdapter;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.svilen.p8.R;
+
+import org.w3c.dom.Text;
 
 import callback.*;
 import helper.*;
@@ -31,8 +34,8 @@ public class StudentActivity extends AppCompatActivity {
     Button bLogout;
     Context context = this;
     ListView lvAssToStudent;
-    SimpleAdapter assignmentAdapter;
-    AssignmentListAdapter assignedAdapter;
+    AssignmentListAdapterStudent assignedAdapter;
+
 
     List<Map<String, String>> assignmentList = new ArrayList<>();
     UserInfo userinfo;
@@ -42,6 +45,10 @@ public class StudentActivity extends AppCompatActivity {
     String assignmentName;
     String specificAssignmentId;
     String assignmentId;
+    TextView homeWork;
+    TextView teacherName;
+    TextView teacherEmail;
+    TextView className;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -51,7 +58,25 @@ public class StudentActivity extends AppCompatActivity {
         userinfo = new UserInfo(context);
         user = userinfo.getUser();
         studentId = user.get("studentId");
+        String firstName = user.get("firstname");
+        String lastName = user.get("lastname");
+        String emailAddress = user.get("email");
         Log.d("StudentId:  ", studentId);
+
+        getClassInfo();
+
+
+
+        teacherName = (TextView) findViewById(R.id.tvTeacherName);
+        teacherEmail = (TextView) findViewById(R.id.tvTeacherEmail);
+        className = (TextView) findViewById(R.id.tvClassName);
+        TextView name = (TextView) findViewById(R.id.tvFirst);
+        name.setText(firstName);
+        TextView surName = (TextView) findViewById(R.id.tvLast);
+        surName.setText(lastName);
+        TextView email = (TextView) findViewById(R.id.tvEmail);
+        email.setText(emailAddress);
+          homeWork = (TextView) findViewById(R.id.tvHomeWork) ;
 
         lvAssToStudent = (ListView) findViewById(R.id.lvAssOverview);
 
@@ -61,7 +86,7 @@ public class StudentActivity extends AppCompatActivity {
                 new int[]{android.R.id.text1});
         lvAssToStudent.setAdapter(assignmentAdapter);*/
 
-        assignedAdapter = new AssignmentListAdapter(this,assignmentList);
+        assignedAdapter = new AssignmentListAdapterStudent(this,assignmentList);
 
         lvAssToStudent.setAdapter(assignedAdapter);
 
@@ -83,6 +108,7 @@ public class StudentActivity extends AppCompatActivity {
 
                 if(isComplete.equals("0")){
                     Log.d("TEXTID::: ", textId);
+
 
                     //add if statement is complete == 0{} else {toast= you have competed that assignment]
                     AlertDialog.Builder builder = new AlertDialog.Builder(context);
@@ -207,6 +233,11 @@ public class StudentActivity extends AppCompatActivity {
                             assignmentInfo.put("availableFrom", assignment.getValue().get("availableFrom"));
                             assignmentInfo.put("availableTo", assignment.getValue().get("availableTo"));
 
+                            if (isComplete.equals("0")){
+                                homeWork.setText("You have unfinished assignments");
+                             //   homeWork.setTextColor(getResources().getColorStateList(R.color.UnfinishedRed));
+
+                            }
                             assignmentList.add(assignmentInfo);
 
                             Log.d("2222: ", String.valueOf(assignmentInfo));
@@ -221,6 +252,28 @@ public class StudentActivity extends AppCompatActivity {
     }
 
 
+    public void getClassInfo(){
+
+        new ClassTask(new Callback() {
+            @Override
+            public void asyncDone(HashMap<String, HashMap<String, String>> asyncResults) {
+                for (Map.Entry<String, HashMap<String, String>> classData : asyncResults.entrySet()) {
+
+                  String teacherName1 = classData.getValue().get("teacherFirstName");
+                    String className1 = classData.getValue().get("className");
+                    String teacherEmail1 = classData.getValue().get("teacherEmail");
+
+                    className.setText(className1);
+                    teacherName.setText(teacherName1);
+                    teacherEmail.setText(teacherEmail1);
+
+                    Log.d("123456", classData.getValue().get("teacherFirstName"));
+                }
+
+
+            }
+        }, context).executeTask("FETCH", "", "", "", studentId, "");
+    }
 
 }
 

@@ -2,6 +2,8 @@ package helper;
 
 import android.content.Context;
 import android.graphics.Color;
+import android.graphics.Paint;
+import android.graphics.Typeface;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -16,12 +18,12 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
-public class AssignmentListAdapter extends BaseAdapter {
+public class AssignmentListAdapterStudent extends BaseAdapter {
     private static List<Map<String,String>> assignments;
 
     private final LayoutInflater inflator;
 
-    public AssignmentListAdapter(Context context, List<Map<String, String>> data) {
+    public AssignmentListAdapterStudent(Context context, List<Map<String, String>> data) {
         assignments = data;
         inflator = LayoutInflater.from(context);
     }
@@ -39,9 +41,16 @@ public class AssignmentListAdapter extends BaseAdapter {
         }
         int color;
         if(assignments.get(position).get("isComplete").equals("0")){
-            color = Color.GREEN;
+            color = Color.WHITE;
+            holder.student.setTypeface(Typeface.DEFAULT_BOLD);
+
         } else {
-            color = Color.RED;
+            color = Color.LTGRAY;
+            holder.student.setPaintFlags(holder.student.getPaintFlags() | Paint.STRIKE_THRU_TEXT_FLAG);
+            holder.from.setPaintFlags(holder.from.getPaintFlags() | Paint.STRIKE_THRU_TEXT_FLAG);
+            holder.to.setPaintFlags(holder.to.getPaintFlags() | Paint.STRIKE_THRU_TEXT_FLAG);
+
+
         }
 
         Long from = Long.parseLong(assignments.get(position).get("availableFrom"));
@@ -55,9 +64,12 @@ public class AssignmentListAdapter extends BaseAdapter {
         String formattedToDate = dateFormatter.format(toDate);
 
         holder.student.setText(assignments.get(position).get("Name"));
+
         holder.student.setTextColor(color);
         holder.from.setText(formattedFromDate);
+        holder.from.setTextColor(Color.WHITE);
         holder.to.setText(formattedToDate);
+        holder.to.setTextColor(Color.WHITE);
 
         return convertView;
     }

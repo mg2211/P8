@@ -102,7 +102,7 @@ public class ReadingActivity extends AppCompatActivity  {
 
         bFinish = (Button) findViewById(R.id.bFinish);
         bPause = (Button) findViewById(R.id.bPause);
-        tvAssignmentName = (TextView) findViewById(R.id.tvTextName1);
+        tvAssignmentName = (TextView) findViewById(R.id.tvTextName21);
         tvTextName2 = (TextView) findViewById(R.id.tvTextName2);
         chronometer = (Chronometer) findViewById(R.id.chronometer);
 
@@ -262,12 +262,7 @@ public class ReadingActivity extends AppCompatActivity  {
 
                     String totalSeconds = String.valueOf(seconds);
 
-                    new QuestionResultTask(new Callback() {
-                        @Override
-                        public void asyncDone(HashMap<String, HashMap<String, String>> questresult) {
-
-                        }
-                    }, context).execute(assignmentId, "", "", "", "", "1", totalSeconds,"final");
+                    new QuestionResultTask(context).execute(assignmentId, "", "", "", "", "1", totalSeconds,"final", "");
 
                 }
 
@@ -479,13 +474,13 @@ public class ReadingActivity extends AppCompatActivity  {
                         correctAnswer.add(String.valueOf(isCorrectAnswer));
 
 
-                        new QuestionResultTask(context).execute(assignmentId, lastElement, "", answerIdtoChosenAnswer, "1", "1", "","insert"); // remember to change isCompletet to empty when done!!
+                        new QuestionResultTask(context).execute(assignmentId, lastElement, "", answerIdtoChosenAnswer, "1", "1", "","insert", ""); // remember to change isCompletet to empty when done!!
 
                     } else {
                         Log.d("YOU HAVE ANSWERED ", "INCORRECT!");
                         int inCorrectAnswer = 0;
                         correctOrNot.add(inCorrectAnswer);
-                        new QuestionResultTask(context).execute(assignmentId, lastElement, "", answerIdtoChosenAnswer, "0", "1", "","insert");// remember to change isCompletet to empty when done!!
+                        new QuestionResultTask(context).execute(assignmentId, lastElement, "", answerIdtoChosenAnswer, "0", "1", "","insert", "");// remember to change isCompletet to empty when done!!
 
                     }
                     Log.d("STUDENTANSWER: ", correctOrNot.toString());
@@ -518,7 +513,7 @@ public class ReadingActivity extends AppCompatActivity  {
 
                         String totalSeconds = String.valueOf(seconds);
 
-                        new QuestionResultTask(context).execute(assignmentId, "", "", "", "", "1", totalSeconds,"final");
+                        new QuestionResultTask(context).execute(assignmentId, "", "", "", "", "1", totalSeconds,"final", "");
                     }
 
 
@@ -580,7 +575,7 @@ public class ReadingActivity extends AppCompatActivity  {
         });
 
        // LinearLayout next = (LinearLayout) findViewById(R.id.next);
-        ImageButton next = (ImageButton) findViewById(R.id.next);
+        ImageButton next = (ImageButton) findViewById(R.id.next1);
         next.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

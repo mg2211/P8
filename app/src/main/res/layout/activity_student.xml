@@ -1,4 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
+
+
+
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools" android:layout_width="match_parent"
     android:layout_height="match_parent" android:paddingLeft="@dimen/activity_horizontal_margin"
@@ -6,6 +9,9 @@
     android:paddingTop="@dimen/activity_vertical_margin"
     android:paddingBottom="@dimen/activity_vertical_margin"
     tools:context="activities.StudentActivity"
+    android:background="@drawable/board"
+
+
 
     >
     <LinearLayout
@@ -16,45 +22,6 @@
         android:layout_marginBottom="-8dp"
         android:windowSoftInputMode="adjustPan"
                 >
-
-        <LinearLayout
-            android:orientation="vertical"
-            android:layout_width="251dp"
-            android:layout_height="fill_parent"
-            android:padding="0dp"
-            android:id="@+id/menuLinear"
-            >
-
-            <EditText
-                android:layout_width="fill_parent"
-                android:layout_height="50dp"
-                android:id="@+id/etSearch"
-                android:background="#7ddfcd"
-                android:inputType="text"
-                android:hint="@string/search" />
-
-            <Button
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="@string/add_new"
-                android:id="@+id/bAddText"
-                android:layout_marginLeft="0dp"
-                android:layout_marginRight="0dp"
-                android:layout_marginTop="0dp"
-                android:layout_marginBottom="0dp"
-                android:background="#9ccc65"
-                android:typeface="sans"
-                android:enabled="true"
-                android:textSize="20sp" />
-
-            <ListView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:id="@+id/lvAssOverview"
-                />
-
-
-        </LinearLayout>
 
         <LinearLayout
             android:orientation="horizontal"
@@ -81,14 +48,209 @@
                 android:id="@+id/rightPane"
                 >
 
-                <Button
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Log out"
-                    android:id="@+id/bLogout" />
             </LinearLayout>
         </LinearLayout>
 
     </LinearLayout>
+
+    <LinearLayout
+        android:orientation="vertical"
+        android:layout_width="321dp"
+        android:layout_height="fill_parent"
+        android:padding="0dp"
+        android:id="@+id/menuLinear"
+        >
+
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceLarge"
+            android:text="Assignments: "
+            android:id="@+id/textView16"
+            android:layout_above="@+id/relativeLayout"
+            android:layout_alignLeft="@+id/relativeLayout2"
+            android:layout_alignStart="@+id/relativeLayout2"
+            android:textColor="#ffffff" />
+
+        <ListView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/lvAssOverview"
+            android:layout_alignParentTop="true"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="true"
+            android:divider="@android:color/transparent"
+            android:dividerHeight="10.0sp"/>/>
+    </LinearLayout>
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Log out"
+            android:id="@+id/bLogout"
+            android:layout_alignParentBottom="true"
+            android:layout_alignParentRight="true"
+            android:layout_alignParentEnd="true" />
+
+        <RelativeLayout
+            android:layout_width="200dp"
+            android:layout_height="200dp"
+            android:layout_above="@+id/tvHomeWork"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="true"
+            android:layout_marginBottom="54dp"
+            android:id="@+id/relativeLayout"
+            android:gravity="right">
+
+            <RelativeLayout
+                android:layout_width="250dp"
+                android:layout_height="match_parent"
+                android:layout_alignParentTop="true"
+                android:layout_alignParentRight="true"
+                android:layout_alignParentEnd="true"
+                android:id="@+id/relativeLayout4">
+
+            </RelativeLayout>
+
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:layout_width="300dp"
+            android:layout_height="match_parent"
+            android:layout_alignParentTop="true"
+            android:layout_alignRight="@+id/bLogout"
+            android:layout_alignEnd="@+id/bLogout"
+            android:id="@+id/relativeLayout3">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textAppearance="?android:attr/textAppearanceMedium"
+                android:text="Student information: "
+                android:id="@+id/textView13"
+                android:textColor="#fdffffff"
+                android:layout_alignParentTop="true"
+                android:layout_alignParentLeft="true"
+                android:layout_alignParentStart="true" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textAppearance="?android:attr/textAppearanceLarge"
+                android:text="First name"
+                android:id="@+id/tvFirst"
+                android:paddingEnd="10dp"
+                android:paddingRight="10dp"
+                android:textColor="#fdffffff"
+                android:layout_below="@+id/textView13"
+                android:layout_alignParentLeft="true"
+                android:layout_alignParentStart="true" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textAppearance="?android:attr/textAppearanceLarge"
+                android:text="Last Name"
+                android:id="@+id/tvLast"
+                android:textColor="#fdffffff"
+
+                android:layout_below="@+id/textView13"
+                android:layout_toRightOf="@+id/tvFirst"
+                android:layout_toEndOf="@+id/tvFirst" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textAppearance="?android:attr/textAppearanceLarge"
+                android:text="Email"
+                android:id="@+id/tvEmail"
+                android:textColor="#fdffffff"
+
+                android:layout_below="@+id/tvFirst"
+                android:layout_alignParentLeft="true"
+                android:layout_alignParentStart="true" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textAppearance="?android:attr/textAppearanceMedium"
+                android:text="Teacher information: "
+                android:id="@+id/textView15"
+                android:textColor="#fdffffff"
+                android:paddingTop="30dp"
+                android:layout_below="@+id/tvEmail"
+                android:layout_alignParentLeft="true"
+                android:layout_alignParentStart="true" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textAppearance="?android:attr/textAppearanceMedium"
+                android:text="teacherName"
+                android:id="@+id/tvTeacherName"
+                android:paddingEnd="20dp"
+                android:paddingRight="20dp"
+                android:textColor="#fdffffff"
+                android:gravity="right"
+                android:layout_below="@+id/textView15"
+                android:layout_alignParentLeft="true"
+                android:layout_alignParentStart="true" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textAppearance="?android:attr/textAppearanceMedium"
+                android:text="teacherEmail"
+                android:id="@+id/tvTeacherEmail"
+                android:paddingEnd="20dp"
+                android:paddingRight="20dp"
+                android:textColor="#fdffffff"
+                android:gravity="right"
+                android:layout_below="@+id/tvTeacherName"
+                android:layout_alignParentLeft="true"
+                android:layout_alignParentStart="true" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textAppearance="?android:attr/textAppearanceMedium"
+                android:text="Class"
+                android:id="@+id/tvClassName"
+                android:textColor="#fdffffff"
+                android:gravity="right"
+                android:layout_below="@+id/tvTeacherEmail"
+                android:layout_alignParentLeft="true"
+                android:layout_alignParentStart="true" />
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:layout_width="550dp"
+            android:layout_height="300dp"
+            android:id="@+id/welcomebanner"
+            android:background="@drawable/welcome02"
+            android:layout_alignBottom="@+id/relativeLayout"
+            android:layout_centerHorizontal="true">
+
+
+        </RelativeLayout>
+
+    </RelativeLayout>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:text="No assignments waiting"
+        android:id="@+id/tvHomeWork"
+        android:textSize="25dp"
+        android:textColor="#fdffffff"
+        android:layout_centerVertical="true"
+        android:layout_centerHorizontal="true"
+        android:textStyle="bold" />
 
 </RelativeLayout>

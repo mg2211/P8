@@ -4,7 +4,8 @@
     android:layout_height="fill_parent" android:paddingLeft="0dp"
     android:paddingRight="0dp"
     android:paddingTop="-5dp"
-    android:paddingBottom="-5dp">
+    android:paddingBottom="-5dp"
+android:background="@color/Creamy"    >
 
     <LinearLayout
         android:orientation="horizontal"
@@ -20,7 +21,7 @@
             android:layout_height="fill_parent"
             android:padding="0dp"
             android:id="@+id/menulinear1"
-            android:background="#ffffff">
+            android:background="@color/Creamy" >
 
 
             <Button
@@ -48,7 +49,7 @@
 
         </LinearLayout>
 
-        <LinearLayout
+        <RelativeLayout
             android:orientation="horizontal"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
@@ -70,7 +71,7 @@
                     android:layout_height="wrap_content"
                     android:textAppearance="?android:attr/textAppearanceLarge"
                     android:text="Assignment name"
-                    android:id="@+id/tvTextName1" />
+                    android:id="@+id/tvTextName21" />
 
                 <TextView
                     android:layout_width="wrap_content"
@@ -84,13 +85,23 @@
                     android:layout_height="538dp"
                     android:textAppearance="?android:attr/textAppearanceMedium"
                     android:text="textContent"
-                    android:id="@+id/tvText1212" />
+                    android:id="@+id/tvText1212"
+                    android:textSize="30dp"
+                    android:textColor="@color/abc_input_method_navigation_guard"
+                    android:width="100dp"
+                    android:typeface="serif"
+                    android:singleLine="false"
+                    android:maxLines="7"
+                    android:lineSpacingExtra="20dp"
+                    android:maxWidth="100dp"/>
 
-                <ImageButton
-                    android:id="@+id/previous"
-                    android:layout_width="100dp"
-                    android:layout_height="135dp"
-                    android:src="@drawable/arrow_alt_left" />
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/la1234"
+                    android:background="@drawable/pencils">
+
+                </RelativeLayout>
 
                 <ScrollView
                     android:id="@+id/SCROLLER_ID"
@@ -119,22 +130,40 @@
 
                 </LinearLayout>
 
-                <LinearLayout
+                <RelativeLayout
                     android:orientation="horizontal"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:id="@+id/rightlinear">
 
                     <ImageButton
-                        android:id="@+id/next"
-                        android:layout_width="100dp"
-                        android:layout_height="135dp"
+                        android:id="@+id/previous"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:src="@drawable/arrow_alt_left"
+                        android:layout_gravity="bottom"
+                        android:layout_alignTop="@+id/next1"
+                        android:layout_toLeftOf="@+id/next1"
+                        android:layout_toStartOf="@+id/next1"
+                        android:background="@color/Creamy"/>
+
+                    <ImageButton
+                        android:id="@+id/next1"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
                         android:src="@drawable/arrow_alt_right1"
-                        android:layout_gravity="bottom" />
-                </LinearLayout>
+                        android:layout_gravity="bottom"
+                        android:layout_alignParentBottom="true"
+                        android:layout_alignParentRight="true"
+                        android:layout_alignParentEnd="true"
+                        android:layout_marginBottom="183dp"
+                        android:background="@color/Creamy"/>
+
+                </RelativeLayout>
 
             </LinearLayout>
-        </LinearLayout>
+
+        </RelativeLayout>
 
     </LinearLayout>
 
