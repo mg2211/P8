@@ -14,12 +14,12 @@ import com.example.svilen.p8.R;
 import java.util.List;
 import java.util.Map;
 
-public class QuestionListAdapter extends BaseAdapter {
+public class SomethingElseEntirely extends BaseAdapter {
     private static List<Map<String,String>> questions;
 
     private final LayoutInflater inflator;
 
-    public QuestionListAdapter(Context context, List<Map<String, String>> data) {
+    public SomethingElseEntirely(Context context, List<Map<String, String>> data) {
         questions = data;
         inflator = LayoutInflater.from(context);
     }
