@@ -36,54 +36,140 @@ import java.util.Map;
 
 public class UserActivity extends AppCompatActivity {
 
+    /** context */
     private final Context context = this;
 
+    /** Button used to start the process of creating a new user */
+    private Button bAddUser;
+
+    /** Button used to create a user */
     private Button bRegisterUser;
+
+    /** Button used to edit a user */
     private Button bEditUser;
+
+    /** Button used to delete a user */
     private Button bDeleteUser;
+
+    /** Button used to assign a class to a student */
     private Button bAssignClass;
+
+    /** Button used to modify classes */
     private Button bModifyClasses;
+
+    /** EditText field where username is entered */
     private EditText etUsername;
+
+    /** EditText field where password is entered */
     private EditText etPassword;
+
+    /** EditText field where first name is entered */
     private EditText etFirstName;
+
+    /** EditText field where last name is entered */
     private EditText etLastName;
+
+    /** EditText field where email is entered */
     private EditText etEmail;
+
+    /** EditText field where parent or contact email is entered */
     private EditText etContactEmail;
+
+    /** Spinner containing roles*/
     private Spinner spinnerRole;
+
+    /** ListView containing users */
     private ListView lvListUsers;
+
+    /** ListView containing classes - used in dialog */
     private ListView lvDialogListClasses;
+
+    /** TextView that displays the title for the current operation (edit/create user) */
     private TextView tvTitleCRUDUser;
+
+    /** TextView that displays the title of the class block */
     private TextView tvTitleStudentClass;
+
+    /** TextView that displays the name of the class the student is currently assigned to */
     private TextView tvUserClassName;
+
+    /** TextView that displays the name of the class the student is currently assigned to - used in dialog */
     private TextView tvDialogClassName;
+
+    /** TextView that displays the name of the teacher of class the student is currently assigned to */
     private TextView tvDialogTeacherName;
+
+    /** TextView that displays the email adress of the teacher of class the student is currently assigned to */
     private TextView tvDialogTeacherEmail;
+
+    /** Adapter for displaying roles in the role spinner */
     private ArrayAdapter roleAdapter;
+
+    /** Adapter for displaying users in the userList ListView */
     private SimpleAdapter userListAdapter;
+
+    /** Adapter for displaying classes in the dialogClassList adapter */
     private SimpleAdapter dialogClassListAdapter;
+
+    /** ArrayList for storing roles - used by roleAdapter*/
     private final List<String> roleList = new ArrayList<>();
+
+    /** ArrayList for storing users - used by userListAdapter */
     private final List<Map<String, String>> userList = new ArrayList<>();
+
+    /** ArrayList for storing classes - used by dialogClassListAdapter */
     private final List<Map<String, String>> classList = new ArrayList<>();
 
+    /** String for storing the username of the user currently logged in */
     private String currentUserUsername;
 
+    /** String for storing the user id of the user that has been selected from lvListUsers */
     private String userUserId;
+
+    /** String for storing the class id of the user that has been selected from lvListUsers */
     private String userClassId;
+
+    /** String for storing the role of the user that has been selected from lvListUsers */
     private String userRole;
+
+    /** String for storing the user name of the user that has been selected from lvListUsers */
     private String userUsername;
+
+    /** String for storing the user password of the user that has been selected from lvListUsers */
     private String userPassword;
+
+    /** String for storing the first name of the user that has been selected from lvListUsers */
     private String userFirstName;
+
+    /** String for storing the last name of the user that has been selected from lvListUsers */
     private String userLastName;
+
+    /** String for storing the email address of the user that has been selected from lvListUsers */
     private String userEmail;
+
+    /** String for storing the parent or caretaker email adress of the user that has been selected from lvListUsers */
     private String userParentEmail;
 
+    /** String for storing the id of the class that has been selected from lvDialogListClasses */
     private String classClassId;
+
+    /** String for storing the name of the class that has been selected from lvDialogListClasses */
     private String classClassName;
 
+    /** boolean for setting whether a new user is being created */
     private boolean newUser;
+
+    /** boolean for setting whether text has been changed */
     private boolean changed;
+
+    /** boolean for setting whether fields are clear */
     private boolean clear;
 
+    /**
+     * onCreate sets up the ui elements, populates them and describes what to do on click
+     *
+     * @param savedInstanceState
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -105,7 +191,7 @@ public class UserActivity extends AppCompatActivity {
         etEmail = (EditText) findViewById(R.id.etEmail);
         etContactEmail = (EditText) findViewById(R.id.etContactEmail);
 
-        Button bAddUser = (Button) findViewById(R.id.bAddUser);
+        bAddUser = (Button) findViewById(R.id.bAddUser);
         bRegisterUser = (Button) findViewById(R.id.bRegisterUser);
         bEditUser = (Button) findViewById(R.id.bEditUser);
         bDeleteUser = (Button) findViewById(R.id.bDeleteUser);
@@ -114,6 +200,7 @@ public class UserActivity extends AppCompatActivity {
 
         lvListUsers = (ListView) findViewById(R.id.lvListUsers);
 
+        /** create a new UserInfo to get information on the user currently logged in */
         UserInfo userinfo = new UserInfo(context);
         HashMap<String, String> user = userinfo.getUser();
         Log.d("userinfo content", String.valueOf(user));
@@ -122,8 +209,15 @@ public class UserActivity extends AppCompatActivity {
         roleAdapter = new ArrayAdapter<>(this,
                 android.R.layout.simple_spinner_item, roleList);
         roleAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+
+        /** assigns the roleAdapter to spinnerRole */
         spinnerRole.setAdapter(roleAdapter);
 
+        getRoles();
+
+        /**
+         * set OnItemSelectedListener to spinnerRole - changes ui elements appearance based on role
+         */
         spinnerRole.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View v,
@@ -149,18 +243,19 @@ public class UserActivity extends AppCompatActivity {
             }
         });
 
-        setNewUser(true);
-        setChanged(false);
-        getRoles();
-
         userListAdapter = new SimpleAdapter(this, userList,
                 R.layout.listview_custom_item, new String[]{"username", "firstName", "lastName", "role"},
                 new int[]{R.id.clTvRow1, R.id.clTvRow2_1, R.id.clTvRow2_2, R.id.clTvRow3});
 
+        /** assigns the userListAdapter to lvListUsers */
         lvListUsers.setAdapter(userListAdapter);
         lvListUsers.setChoiceMode(AbsListView.CHOICE_MODE_SINGLE);
 
         getAllUsers();
+
+        /** make sure activity is started in new user mode */
+        setNewUser(true);
+        setChanged(false);
         setContentPane(-1);
 
         dialogClassListAdapter = new SimpleAdapter(this, classList,
@@ -170,6 +265,10 @@ public class UserActivity extends AppCompatActivity {
 
         getAllClasses();
 
+        /**
+         * set OnItemSelectedListener to lvListUsers
+         * define behaviour if editTexts have been edited since last click
+         */
         lvListUsers.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, final int position, long id) {
@@ -213,6 +312,10 @@ public class UserActivity extends AppCompatActivity {
             }
         });
 
+        /**
+         * set OnItemSelectedListener to bAddUser
+         * define behaviour if editTexts have been edited since last click
+         */
         bAddUser.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -248,6 +351,7 @@ public class UserActivity extends AppCompatActivity {
             }
         });
 
+        /** call createUser() on click */
         bRegisterUser.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -257,6 +361,7 @@ public class UserActivity extends AppCompatActivity {
             }
         });
 
+        /** call updateUser() on click */
         bEditUser.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -265,6 +370,7 @@ public class UserActivity extends AppCompatActivity {
             }
         });
 
+        /** call deleteUser() on click */
         bDeleteUser.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -273,6 +379,7 @@ public class UserActivity extends AppCompatActivity {
             }
         });
 
+        /** start ClassActivity on click */
         bModifyClasses.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -281,6 +388,7 @@ public class UserActivity extends AppCompatActivity {
             }
         });
 
+        /** build a dialog where classes can be assigned after click */
         bAssignClass.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -288,6 +396,7 @@ public class UserActivity extends AppCompatActivity {
             }
         });
 
+        /** set addTextChangedListener to etSearch to allow for searching through lvListUser */
         etSearch.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
@@ -305,6 +414,7 @@ public class UserActivity extends AppCompatActivity {
             }
         });
 
+        /** add an addTextChangedListener to allow for throwing dialogs in case of unsaved changes */
         etUsername.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
@@ -327,6 +437,7 @@ public class UserActivity extends AppCompatActivity {
             }
         });
 
+        /** add an addTextChangedListener to allow for throwing dialogs in case of unsaved changes */
         etPassword.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
@@ -349,6 +460,7 @@ public class UserActivity extends AppCompatActivity {
             }
         });
 
+        /** add an addTextChangedListener to allow for throwing dialogs in case of unsaved changes */
         etFirstName.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
@@ -371,6 +483,7 @@ public class UserActivity extends AppCompatActivity {
             }
         });
 
+        /** add an addTextChangedListener to allow for throwing dialogs in case of unsaved changes */
         etLastName.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
@@ -393,6 +506,7 @@ public class UserActivity extends AppCompatActivity {
             }
         });
 
+        /** add an addTextChangedListener to allow for throwing dialogs in case of unsaved changes */
         etEmail.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
@@ -415,6 +529,7 @@ public class UserActivity extends AppCompatActivity {
             }
         });
 
+        /** add an addTextChangedListener to allow for throwing dialogs in case of unsaved changes */
         etContactEmail.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
@@ -438,18 +553,33 @@ public class UserActivity extends AppCompatActivity {
         });
     }
 
+    /**
+     * sets whether a new user is being created
+     *
+     * @param value the value to set the boolean to
+     */
     private void setNewUser(boolean value) {
         newUser = value;
         setEnabledUiItems();
         Log.d("new user value", String.valueOf(newUser));
     }
 
+    /**
+     * sets whether text has been changed since last button click
+     *
+     * @param value the value to set the boolean to
+     */
     private void setChanged(boolean value) {
         changed = value;
         setEnabledUiItems();
         Log.d("Changed value", String.valueOf(changed));
     }
 
+    /**
+     * creates a dialog asking the user is sure about discarding unsaved changes
+     *
+     * @param callback
+     */
     private void confirm(final DialogCallback callback) {
         new AlertDialog.Builder(context)
                 .setIcon(android.R.drawable.ic_dialog_alert)
@@ -470,6 +600,9 @@ public class UserActivity extends AppCompatActivity {
                 .show();
     }
 
+    /**
+     * launch a RoleTask to fetch all roles from the database and add them to roleList
+     */
     private void getRoles() { // To populate the spinner
 
         new RoleTask(new Callback() {
@@ -486,7 +619,9 @@ public class UserActivity extends AppCompatActivity {
         }, context).execute(); //roleID
     }
 
-
+    /**
+     * launch a ClassTask to fetch all classes from the database and add them to classList
+     */
     private void getAllClasses() {
         new ClassTask(new Callback() {
             @Override
@@ -519,6 +654,9 @@ public class UserActivity extends AppCompatActivity {
         }, context).executeTask("FETCH", "", "", "");
     }
 
+    /**
+     * launch a UserTask to fetch all users from the database and add them to userList
+     */
     private void getAllUsers() {
         new UserTask(new Callback() {
             @Override
@@ -555,6 +693,12 @@ public class UserActivity extends AppCompatActivity {
         }, context).executeTask("FETCH", "", "", "", "", "", "", "", "", ""); //Nothing within "" to get every text - see php script
     }
 
+    /**
+     * determine the role of the user to be created, get the contents of relevant EditTexts
+     * and feed them to a new UserTask
+     *
+     * @return true is a new user has been created, else false
+     */
     private boolean createUser() {
         String role = spinnerRole.getSelectedItem().toString();
         String username = etUsername.getText().toString();
@@ -612,6 +756,11 @@ public class UserActivity extends AppCompatActivity {
         }
     }
 
+    /**
+     * get the content of relevant EditTexts and create a new UserTask with this content
+     *
+     * @return true is a new user has been created
+     */
     private boolean updateUser() {
         String username = etUsername.getText().toString();
         String password = etPassword.getText().toString();
@@ -631,6 +780,12 @@ public class UserActivity extends AppCompatActivity {
         return true;
     }
 
+    /**
+     * updates or assigns the class a student is in through a new ClassTask
+     *
+     * @param userId the id of the user to be assigned a (new) class
+     * @param classId the class id the student is to be assigned to
+     */
     private void updateUserClass(String userId, String classId) {
         new UserTask(new Callback() {
             @Override
@@ -642,6 +797,11 @@ public class UserActivity extends AppCompatActivity {
         resetAdapter(lvDialogListClasses, dialogClassListAdapter);
     }
 
+    /**
+     * deletes a user from the database
+     * checks if the user to be deleted is not the one currently logged in, else throws a dialog
+     * alert for confirmation
+     */
     private void deleteUser() {
         if(userUsername.equals(currentUserUsername)){
             int duration = Toast.LENGTH_LONG;
@@ -682,6 +842,10 @@ public class UserActivity extends AppCompatActivity {
         }
     }
 
+    /**
+     * sets the UI items to be enabled based on whether a new user is being created and
+     * user information has been changed
+     */
     private void setEnabledUiItems() {
         if (newUser) {
             tvTitleCRUDUser.setText(R.string.registerUser);
@@ -717,6 +881,12 @@ public class UserActivity extends AppCompatActivity {
         }
     }
 
+    /**
+     * fills the user EditTexts based on the entry selected in lvListUsers
+     * empties the EditTexts if no entry is selected
+     *
+     * @param position the position of the user clicked in lvListUsers
+     */
     private void setContentPane(int position) {
         if (position >= 0) {
             Map<String, String> userData = (Map) userListAdapter.getItem(position);
@@ -763,6 +933,14 @@ public class UserActivity extends AppCompatActivity {
         }
     }
 
+    /**
+     * Get the class name for the class a student is currently enrolled in
+     *
+     * @param userId the user id of the user we want to get the associated class name for
+     * @param userList the list we want to loop through
+     * @return the name of the class the user is enrolled in, if not a student: null
+     * if a student but not enrolled in a class: String userNotInClass
+     */
     private String getClassName(String userId, List<Map<String, String>> userList) {
         String userNotInClass = "Not enrolled in class";
         if ("teacher".equals(userRole)) {
@@ -784,7 +962,13 @@ public class UserActivity extends AppCompatActivity {
         return userNotInClass;
     }
 
-    //set Spinner value
+    /**
+     * get the index of the item currently selected in a spinner
+     *
+     * @param spinner the spinner we want to get an index from
+     * @param myString the entry we want to find
+     * @return the index at which myString was found
+     */
     private int getIndex(Spinner spinner, String myString) {
         int index = 0;
 
@@ -797,10 +981,14 @@ public class UserActivity extends AppCompatActivity {
         return index;
     }
 
-    //create a new classAssignmentDialog
+    /**
+     * create a dialog window for assigning classes to students
+     */
     private void classAssignmentDialog() {
 
+        /** create a new alertDialog builder and inflate it */
         AlertDialog.Builder builder = new AlertDialog.Builder(context);
+
         LayoutInflater inflater = getLayoutInflater();
         final View layout = inflater.inflate(R.layout.dialog_assign_class, null);
         builder.setView(layout);
@@ -809,22 +997,31 @@ public class UserActivity extends AppCompatActivity {
         dialog.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_UNCHANGED);
         dialog.show();
 
-        lvDialogListClasses = (ListView) layout.findViewById(R.id.lvDialogListClasses);
 
+        /** EditText to allow for searching the list of classes */
         EditText etDialogSearch = (EditText) layout.findViewById(R.id.etDialogSearch);
+
+        /** TextView that will hold the title for this dialog */
         TextView tvDialogClassTitle = (TextView) layout.findViewById(R.id.tvDialogClassTitle);
+
+        /** Button to assign a student to a class */
+        Button bDialogAssignClass = (Button) layout.findViewById(R.id.bDialogAssignClass);
+
+        /** Button to cancel the assignment process */
+        Button bDialogCancel = (Button) layout.findViewById(R.id.bDialogCancel);
+
         tvDialogClassName = (TextView) layout.findViewById(R.id.tvDialogClassName);
         tvDialogTeacherName = (TextView) layout.findViewById(R.id.tvDialogTeacherName);
         tvDialogTeacherEmail = (TextView) layout.findViewById(R.id.tvDialogTeacherEmail);
+        lvDialogListClasses = (ListView) layout.findViewById(R.id.lvDialogListClasses);
 
-        Button bDialogAssignClass = (Button) layout.findViewById(R.id.bDialogAssignClass);
-        Button bDialogCancel = (Button) layout.findViewById(R.id.bDialogCancel);
-
+        /** Assign dialogClassListAdapter to lvDialogListClasses */
         lvDialogListClasses.setAdapter(dialogClassListAdapter);
         lvDialogListClasses.setChoiceMode(AbsListView.CHOICE_MODE_SINGLE);
 
         getAllClasses();
 
+        /** set OnItemClickListener to lvDialogListClasses */
         lvDialogListClasses.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             public void onItemClick(AdapterView<?> parent, View view, final int position, long id) {
                 lvListUsers.setItemChecked(position, true);
@@ -834,6 +1031,7 @@ public class UserActivity extends AppCompatActivity {
             }
         });
 
+        /** set addTextChangedListener to etDialogSearch to allow for searching through lvDialogListClasses */
         etDialogSearch.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
@@ -851,6 +1049,7 @@ public class UserActivity extends AppCompatActivity {
             }
         });
 
+        /** closes the dialog if clicked */
         bDialogCancel.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -858,6 +1057,7 @@ public class UserActivity extends AppCompatActivity {
             }
         });
 
+        /** calls updateUserClass() if clicked */
         bDialogAssignClass.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -870,6 +1070,14 @@ public class UserActivity extends AppCompatActivity {
         setDialogContentPane(getClassListPosition(userClassId, classList));
     }
 
+    /**
+     * get the index of a classId ArrayList<Map<String, String>> entry
+     * based on its id
+     *
+     * @param classId the id of the class we want to know the index of
+     * @param classList the list we look through
+     * @return the index at which classId was found
+     */
     private int getClassListPosition(String classId, List<Map<String, String>> classList) {
         for (int i = 0; i < classList.size(); i++) {
             Map<String, String> map = classList.get(i);
@@ -882,6 +1090,12 @@ public class UserActivity extends AppCompatActivity {
         return -1;
     }
 
+    /**
+     * fills the user EditTexts based on the entry selected in lvDialogListClasses
+     * empties the EditTexts if no entry is selected
+     *
+     * @param position the position of the currently selected item in lvDialogListClasses
+     */
     private void setDialogContentPane(int position) {
         if (position >= 0) {
             Map<String, String> classData = (Map) dialogClassListAdapter.getItem(position);
@@ -900,6 +1114,13 @@ public class UserActivity extends AppCompatActivity {
         }
     }
 
+    /**
+     * re-assign an adapter to a listview
+     * hacky method but the only way to clear selections in the list after list data is updated
+     *
+     * @param lv the ListView to which a new adapter is to be assigned
+     * @param sa the adapter that the ListView is to be assigned to
+     */
     private void resetAdapter(ListView lv, SimpleAdapter sa) {
         lv.setChoiceMode(AbsListView.CHOICE_MODE_NONE);
         lv.setAdapter(sa);

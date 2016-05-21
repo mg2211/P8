@@ -26,17 +26,27 @@ import java.util.HashMap;
 
 /**
  * Created by ida803f16
+ *
+ * The ClassTask class allows for getting class data from and updating data in the database asynchronously
  */
 public class ClassTask extends AsyncTask<String, Void, HashMap<String,HashMap<String, String>>> {
 
+    /** callback */
     private final Callback delegate;
+
+    /** context */
     private final Context context;
+
+    /** dialog showing progress during task execution */
     private final ProgressDialog progressDialog;
 
-    @Override
-    protected void onPreExecute() {
-    }
 
+    /**
+     * classTask constructor
+     *
+     * @param delegate the result is delegated to
+     * @param context the execution context
+     */
     public ClassTask(Callback delegate, Context context) {
         this.context = context;
         this.delegate = delegate;
@@ -47,10 +57,27 @@ public class ClassTask extends AsyncTask<String, Void, HashMap<String,HashMap<St
         progressDialog.show();
     }
 
+    /**
+     *
+     * The executeTask method will execute a specific ClassTask based on its parameters
+     *
+     * @param method the method for executing, can be FETCH, CREATE, UPDATE or DELETE
+     * @param classId the class id for the class to be fetched or updated
+     * @param teacherId the teacher id for the class to be fetched or updated
+     * @param className the class name for the class to be fetched or updated
+     */
     public void executeTask(String method, String classId, String teacherId, String className) {
         this.execute(method, classId, teacherId, className, "", "");
     }
 
+    /**
+     * the doInBackground method creates a uri based on the execution
+     * parameters for making an HTTP-request to the server.
+     * It also fetches the server response and converts the returned JSON-array into a HashMap.
+     *
+     * @param params the parameters used in execution of the UserTask
+     * @return result a HashMap containing the result of the UserTask
+     */
     @Override
     protected HashMap<String, HashMap<String, String>> doInBackground(String... params) {
 
@@ -144,6 +171,13 @@ public class ClassTask extends AsyncTask<String, Void, HashMap<String,HashMap<St
         return result;
     }
 
+    /**
+     * onPostExecute uses the results returned by doInBackground,
+     * displays the server response code and message if necessary
+     * and delegates its results if everything is ok.
+     *
+     * @param result the HashMap returned by doInBackground
+     */
     protected void onPostExecute(HashMap<String,HashMap<String, String>> result) {
 
         String generalResponse = result.get("response").get("generalResponse");

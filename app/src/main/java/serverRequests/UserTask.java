@@ -26,17 +26,26 @@ import java.util.HashMap;
 
 /**
  * Created by ida803f16
+ *
+ * The UserTask class allows for getting user data from and updating data in the database asynchronously
  */
 public class UserTask extends AsyncTask<String, Void, HashMap<String,HashMap<String, String>>> {
 
+    /** callback */
     private final Callback delegate;
+
+    /** context */
     private final Context context;
+
+    /** dialog showing progress during task execution */
     private final ProgressDialog progressDialog;
 
-    @Override
-    protected void onPreExecute() {
-    }
-
+    /**
+     * UserTask constructor
+     *
+     * @param delegate the result is delegated to
+     * @param context the execution context
+     */
     public UserTask(Callback delegate, Context context) {
         this.context = context;
         this.delegate = delegate;
@@ -48,6 +57,20 @@ public class UserTask extends AsyncTask<String, Void, HashMap<String,HashMap<Str
     }
 
 
+    /**
+     * The executeTask method will execute a specific UserTask based on its parameters
+     *
+     * @param method the method for executing, can be FETCH, CREATE, UPDATE or DELETE
+     * @param role the role for the user to be fetched or updated
+     * @param userId the user id for the user to be fetched or updated
+     * @param teacherId the teacher id for the user to be fetched or updated
+     * @param username the username for the user to be fetched or updated
+     * @param password the password for the user to be fetched or updated
+     * @param lastName the last name for the user to be fetched or updated
+     * @param firstName the first name for the user to be fetched or updated
+     * @param email the email address for the user to be fetched or updated
+     * @param parentEmail the email address for a parent or caretaker of the user to be fetched or updated
+     */
     public void executeTask(String method, String role, String userId, String teacherId,
                             String username, String password, String lastName, String firstName,
                             String email, String parentEmail) {
@@ -55,6 +78,14 @@ public class UserTask extends AsyncTask<String, Void, HashMap<String,HashMap<Str
                 firstName, email, parentEmail);
     }
 
+    /**
+     * the doInBackground method creates a uri based on the execution
+     * parameters for making an HTTP-request to the server.
+     * It also fetches the server response and converts the returned JSON-array into a HashMap.
+     *
+     * @param params the parameters used in execution of the UserTask
+     * @return result a HashMap containing the result of the UserTask
+     */
     @Override
     protected HashMap<String, HashMap<String, String>> doInBackground(String... params) {
 
@@ -174,6 +205,13 @@ public class UserTask extends AsyncTask<String, Void, HashMap<String,HashMap<Str
         return result;
     }
 
+    /**
+     * onPostExecute uses the results returned by doInBackground,
+     * displays the server response code and message if necessary
+     * and delegates its results if everything is ok.
+     *
+     * @param result the HashMap returned by doInBackground
+     */
     protected void onPostExecute(HashMap<String,HashMap<String, String>> result) {
 
         String generalResponse = result.get("response").get("generalResponse");

@@ -25,17 +25,26 @@ import java.util.HashMap;
 
 /**
  * Created by ida803f16
+ *
+ * The Role class allows for getting role data from and updating data in the database asynchronously
  */
 public class RoleTask extends AsyncTask<String, Void, HashMap<String,HashMap<String, String>>> {
 
+    /** callback */
     private final Callback delegate;
-    private final ProgressDialog progressDialog;
+
+    /** context */
     private final Context context;
 
-    @Override
-    protected void onPreExecute() {
-    }
+    /** dialog showing progress during task execution */
+    private final ProgressDialog progressDialog;
 
+    /**
+     * UserTask constructor
+     *
+     * @param delegate the result is delegated to
+     * @param context the execution context
+     */
     public RoleTask(Callback delegate, Context context) {
         progressDialog = new ProgressDialog(context);
         this.delegate = delegate;
@@ -46,7 +55,15 @@ public class RoleTask extends AsyncTask<String, Void, HashMap<String,HashMap<Str
         progressDialog.show();
     }
 
-    @Override
+
+    /**
+     * the doInBackground method creates a uri for making an HTTP-request to the server.
+     * It also fetches the server response and converts the returned JSON-array into a HashMap.
+     *
+     * @param params the parameters used in execution of the UserTask.
+     *               Since this method has only one way of execution, no parameter are passed.
+     * @return result a HashMap containing the result of the UserTask
+     */
     protected HashMap<String,HashMap<String, String>> doInBackground(String... params) {
 
         //Initiating return vars.
@@ -111,6 +128,13 @@ public class RoleTask extends AsyncTask<String, Void, HashMap<String,HashMap<Str
         return result;
     }
 
+    /**
+     * onPostExecute uses the results returned by doInBackground,
+     * displays the server response code and message if necessary
+     * and delegates its results if everything is ok.
+     *
+     * @param result the HashMap returned by doInBackground
+     */
     protected void onPostExecute(HashMap<String,HashMap<String, String>> result) {
 
         String generalResponse = result.get("response").get("generalResponse");
