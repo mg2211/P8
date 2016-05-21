@@ -310,8 +310,8 @@ public class TextActivity extends AppCompatActivity {
         int O = words.length;
         if (O > 0 && P > 0) {
             int L = 0;
-            for (int i = 0; i < words.length; i++) {
-                if (words[i].length() > 6) {
+            for (String word : words) {
+                if (word.length() > 6) {
                     L++;
                 }
             }

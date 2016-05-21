@@ -26,7 +26,6 @@ import com.github.mikephil.charting.interfaces.datasets.IBarDataSet;
 import com.github.mikephil.charting.listener.OnChartValueSelectedListener;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 
 public class TeacherActivity extends AppCompatActivity {
 

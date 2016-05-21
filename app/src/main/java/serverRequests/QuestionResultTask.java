@@ -7,8 +7,6 @@ import android.os.AsyncTask;
 import android.util.Log;
 import android.widget.Toast;
 
-import callback.Callback;
-
 import org.apache.commons.io.IOUtils;
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -23,10 +21,9 @@ import java.io.OutputStreamWriter;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.HashMap;
-import java.util.Iterator;
 
 /**
- * Created by Ivo on 19-5-2016.
+ * Created by ida803f16
  */
 public class QuestionResultTask extends AsyncTask<String, Void, HashMap<String, HashMap<String, HashMap<String, String>>>> {
     private final Context context;

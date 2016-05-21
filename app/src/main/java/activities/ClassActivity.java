@@ -503,7 +503,6 @@ public class ClassActivity extends AppCompatActivity {
             classClassId = classData.get("classId");
             classClassName = classData.get("className");
 
-            currentTeacherFullName = classData.get("teacherFullName");
             currentTeacherEmail = classData.get("teacherEmail");
 
             Map<String, String> teacherData = (Map) teacherListAdapter.getItem(teacherListPos);
@@ -521,9 +520,6 @@ public class ClassActivity extends AppCompatActivity {
             Map<String, String> classData = (Map) classListAdapter.getItem(classListPos);
             classClassId = classData.get("classId");
             classClassName = classData.get("className");
-
-            currentTeacherFullName = classData.get("teacherFullName");
-            currentTeacherEmail = classData.get("teacherEmail");
 
             teacherTeacherId = classData.get("teacherId");
             teacherTeacherFullName = (classData.get("teacherFirstName") + " " + classData.get("teacherLastName"));
@@ -551,9 +547,7 @@ public class ClassActivity extends AppCompatActivity {
 
             teacherTeacherId = null;
             teacherTeacherFullName = null;
-            teacherTeacherEmail = null;
 
-            currentTeacherFullName = null;
             currentTeacherEmail = null;
 
             etClassName.setText("");

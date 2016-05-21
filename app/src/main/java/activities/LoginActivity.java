@@ -54,14 +54,8 @@ public class LoginActivity extends AppCompatActivity {
                 username = usernameInput.getText().toString();
                 password = passwordInput.getText().toString();
 
-
-              //  String decryptPass = Encryption.encryptIt(password);
-
-                String pass = "qqi7JAngXUA=" + "\n";
                 Log.d("password",password);
 
-                String encryptpass  = Encryption.encryptIt(password);
-                //Log.d("2222", decryptPass);
                 if (!username.equals("") && !password.equals("")) {//check if both input fields has text
                     new LoginTask(context).execute(username, password);
                 } else {

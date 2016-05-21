@@ -946,11 +946,7 @@ public class AssignmentActivity extends AppCompatActivity {
 
                 }
             },context).execute("get","",assignmentLibId,"","","").get(15, TimeUnit.SECONDS);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        } catch (ExecutionException e) {
-            e.printStackTrace();
-        } catch (TimeoutException e) {
+        } catch (InterruptedException | TimeoutException | ExecutionException e) {
             e.printStackTrace();
         }
         return null;
@@ -1003,11 +999,7 @@ public class AssignmentActivity extends AppCompatActivity {
     private HashMap<String, HashMap<String, HashMap<String, String>>> getResult(String assignmentLibId){
         try {
             return new QuestionResultTask(context).execute("","","","","","","","get",assignmentLibId).get(30,TimeUnit.SECONDS);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        } catch (ExecutionException e) {
-            e.printStackTrace();
-        } catch (TimeoutException e) {
+        } catch (InterruptedException | TimeoutException | ExecutionException e) {
             e.printStackTrace();
         }
         return null;

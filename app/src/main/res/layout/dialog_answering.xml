@@ -19,9 +19,7 @@
         android:id="@+id/radiogroup"
         android:orientation="vertical"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_centerHorizontal="true"
-        android:layout_centerVertical="true">
+        android:layout_height="wrap_content">
 
     </RadioGroup>
 
@@ -34,14 +32,6 @@
         android:layout_marginBottom="20dp">
 
 
-        <LinearLayout
-            android:orientation="horizontal"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="20dp"
-            android:tag="LLAnswer1">
-
-        </LinearLayout>
     </LinearLayout>
 
     <Button
@@ -51,14 +41,5 @@
         android:id="@+id/bDialogSubmit"
         android:layout_gravity="right"
         android:enabled="true"/>
-
-    <LinearLayout
-        android:orientation="horizontal"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_weight="1"
-        android:gravity="bottom|right">
-
-    </LinearLayout>
 
 </LinearLayout>

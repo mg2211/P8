@@ -24,7 +24,7 @@ import java.net.URL;
 import java.util.HashMap;
 
 /**
- * Created by Ivo on 19-5-2016.
+ * Created by ida803f16
  */
 public class RoleTask extends AsyncTask<String, Void, HashMap<String,HashMap<String, String>>> {
 
@@ -53,7 +53,6 @@ public class RoleTask extends AsyncTask<String, Void, HashMap<String,HashMap<Str
         HashMap<String, HashMap<String,String>> result = new HashMap<>();
         String generalResponse = null;
         int responseCode = 0;
-        String role = null;
 
         try {
             URL url = new URL("http://emilsiegenfeldt.dk/p8/roles.php");
@@ -128,6 +127,7 @@ public class RoleTask extends AsyncTask<String, Void, HashMap<String,HashMap<Str
         } else if (Integer.parseInt(responseCode) != 100) {
             int duration = Toast.LENGTH_LONG;
             Toast toast = Toast.makeText(context, "Response code " + responseCode +", " + "Message: " + generalResponse, duration);
+            toast.show();
         }
         else {
             int duration = Toast.LENGTH_LONG;

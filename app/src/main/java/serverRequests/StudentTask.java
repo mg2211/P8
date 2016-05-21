@@ -25,7 +25,7 @@ import java.net.URL;
 import java.util.HashMap;
 
 /**
- * Created by Ivo on 19-5-2016.
+ * Created by ida803f16
  */
 public class StudentTask extends AsyncTask<String, Void, HashMap<String, HashMap<String, String>>> {
     private final Callback delegate;

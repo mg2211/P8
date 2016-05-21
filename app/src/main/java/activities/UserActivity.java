@@ -764,11 +764,10 @@ public class UserActivity extends AppCompatActivity {
     }
 
     private String getClassName(String userId, List<Map<String, String>> userList) {
-        String userTeacher = null;
         String userNotInClass = "Not enrolled in class";
         if ("teacher".equals(userRole)) {
-            Log.d("getClassName result", String.valueOf(userTeacher));
-            return userTeacher;
+            Log.d("getClassName result", String.valueOf((Object) null));
+            return null;
         } else {
             for (Map<String, String> userMap : userList) {
                 if (userMap.get("userId").equals(userId) && userMap.containsKey("classId")) {
