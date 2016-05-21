@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Color;
+import android.graphics.Typeface;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
@@ -31,6 +32,7 @@ import serverRequests.*;
 
 
 import com.example.svilen.p8.R;
+import com.github.mikephil.charting.animation.Easing;
 import com.github.mikephil.charting.charts.CombinedChart;
 import com.github.mikephil.charting.charts.PieChart;
 import com.github.mikephil.charting.components.XAxis;
@@ -42,6 +44,9 @@ import com.github.mikephil.charting.data.CombinedData;
 import com.github.mikephil.charting.data.Entry;
 import com.github.mikephil.charting.data.LineData;
 import com.github.mikephil.charting.data.LineDataSet;
+import com.github.mikephil.charting.data.PieData;
+import com.github.mikephil.charting.data.PieDataSet;
+import com.github.mikephil.charting.formatter.PercentFormatter;
 import com.github.mikephil.charting.highlight.Highlight;
 import com.github.mikephil.charting.interfaces.datasets.IBarDataSet;
 import com.github.mikephil.charting.interfaces.datasets.ILineDataSet;
@@ -1021,16 +1026,102 @@ public class AssignmentActivity extends AppCompatActivity {
         dialog.show();
 
         ListView lvDialogQuestions = (ListView) layout.findViewById(R.id.lvDialogQuestions);
-        PieChart chartDialog = (PieChart) layout.findViewById(R.id.chartDialog);
+        final PieChart chartDialog = (PieChart) layout.findViewById(R.id.chartDialog);
         TextView tvDialogTime = (TextView) layout.findViewById(R.id.tvDialogTime);
         TextView tvDialogAverageTime = (TextView) layout.findViewById(R.id.tvDialogAverageTime);
         TextView tvDialogCorrect = (TextView) layout.findViewById(R.id.tvDialogCorrect);
         TextView tvDialogCorrectAverage = (TextView) layout.findViewById(R.id.tvDialogCorrectAverage);
-        List<Map<String, String>> questionList = new ArrayList<>();
+        final List<Map<String, String>> questionList = new ArrayList<>();
         QuestionListAdapter questionListAdapter = new QuestionListAdapter(this,questionList);
         lvDialogQuestions.setAdapter(questionListAdapter);
 
+        chartDialog.setUsePercentValues(true);
+        chartDialog.setDescription("");
+        chartDialog.setExtraOffsets(5, 10, 5, 5);
+
+        chartDialog.setDragDecelerationFrictionCoef(0.95f);
+
+        chartDialog.setDrawHoleEnabled(true);
+        chartDialog.setHoleColor(Color.WHITE);
+
+        chartDialog.setTransparentCircleColor(Color.WHITE);
+        chartDialog.setTransparentCircleAlpha(110);
+
+        chartDialog.setHoleRadius(58f);
+        chartDialog.setTransparentCircleRadius(61f);
+
+        chartDialog.setRotationAngle(0);
+        chartDialog.setRotationEnabled(true);
+        chartDialog.setHighlightPerTapEnabled(true);
+        chartDialog.animateY(1400, Easing.EasingOption.EaseInOutQuad);
+
+
+        int studentCorrect = 0;
+        int studentAnswers = 0;
         HashMap<String, HashMap<String, String>> studentResult = result.get(assignmentId);
+        for(Map.Entry<String, HashMap<String, String>> studentResults : studentResult.entrySet()){
+            if(!studentResults.getKey().equals("time")){
+                Log.d("studentResult",studentResults.toString());
+                if(studentResults.getValue().get("correct").equals("1")){
+                    studentCorrect++;
+                }
+                studentAnswers++;
+            }
+        }
+        double studentAverage = ((double) studentCorrect / (double) studentAnswers) * 100;
+        String studentAverageString = studentAverage + "%";
+
+        double totalTime = 0;
+        double total = 0;
+        double assignments = assignmentIds.size();
+
+        for(int i=0; i<assignmentIds.size(); i++){
+            HashMap<String, HashMap<String, String>> assignmentResult = result.get(assignmentIds.get(i));
+            totalTime = totalTime+Double.parseDouble(assignmentResult.get("time").get("time"));
+
+            int assignmentAnswers = 0;
+            int assignmentCorrect = 0;
+
+            for(Map.Entry<String, HashMap<String, String>> result : assignmentResult.entrySet()){
+                if(!result.getKey().equals("time")){
+                    Log.d("studentResult",result.toString());
+                    if(result.getValue().get("correct").equals("1")){
+                        assignmentCorrect++;
+                    }
+                    assignmentAnswers++;
+                }
+            }
+            double assignmentAverage = ((double) assignmentCorrect / (double) assignmentAnswers) * 100;
+            total = total+assignmentAverage;
+        }
+
+        double average = total/assignments;
+        double averageTime = totalTime/assignments;
+
+        tvDialogCorrect.setText(studentAverageString);
+
+        int studentTime = Integer.parseInt(studentResult.get("time").get("time"));
+        tvDialogTime.setText(convertTime(studentTime));
+
+        if(studentTime < averageTime){
+            double difference = ((averageTime-studentTime)/studentTime)*100;
+            tvDialogAverageTime.setText(Math.round(difference)+"% below average");
+        } else if(studentTime > averageTime){
+            double difference = ((studentTime-averageTime)/averageTime)*100;
+            tvDialogAverageTime.setText(Math.round(difference)+"% above average");
+        } else {
+            tvDialogAverageTime.setText("On average");
+        }
+
+        if(studentAverage < average){
+            double difference = ((average-studentAverage)/studentAverage)*100;
+            tvDialogCorrectAverage.setText(Math.round(difference)+"% below average");
+        } else if(studentAverage > average){
+            double difference = ((studentAverage-average)/average)*100;
+            tvDialogCorrectAverage.setText(Math.round(difference)+"% above average");
+        } else {
+            tvDialogCorrectAverage.setText("On average");
+        }
 
         for(Map.Entry<String, HashMap<String, String>> question : questions.entrySet()){
 
@@ -1050,31 +1141,58 @@ public class AssignmentActivity extends AppCompatActivity {
             questionListAdapter.notifyDataSetChanged();
         }
 
-        Log.d("questions", questionList.toString());
+        lvDialogQuestions.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                String questionId = questionList.get(position).get("id");
+                int totalAnswers = 0;
+                int correctAnswers = 0;
 
+                for(int i=0; i<assignmentIds.size(); i++){
+                    HashMap<String, HashMap<String, String>> assignmentResult = result.get(assignmentIds.get(i));
+                    if(assignmentResult.get(questionId).get("correct").equals("1")){
+                        correctAnswers++;
+                    }
+                    totalAnswers++;
+                }
+                double correct = ((double) correctAnswers / (double) totalAnswers) * 100;
+                double wrong = 100-correct;
 
-        double totalTime = 0;
+                Log.d("correct %", String.valueOf(correct));
+                Log.d("wrong", String.valueOf(wrong));
 
-        for(int i=0; i<assignmentIds.size(); i++){
-            HashMap<String, HashMap<String, String>> assignmentResult = result.get(assignmentIds.get(i));
-            totalTime = totalTime+Double.parseDouble(assignmentResult.get("time").get("time"));
-        }
-        double averageTime = totalTime/assignmentIds.size();
-        int studentTime = Integer.parseInt(studentResult.get("time").get("time"));
-        Log.d("studenttime", String.valueOf(studentTime));
-        Log.d("student time string",studentResult.get("time").get("time"));
-        tvDialogTime.setText(convertTime(studentTime));
+                //PIE CHART
 
+                ArrayList<Entry> pieValues = new ArrayList<>();
+                ArrayList<String> pieNames = new ArrayList<>();
 
-        if(studentTime < averageTime){
-            double difference = ((averageTime-studentTime)/studentTime)*100;
-            tvDialogAverageTime.setText(Math.round(difference)+"% below average");
-        } else if(studentTime > averageTime){
-            double difference = ((studentTime-averageTime)/averageTime)*100;
-            tvDialogAverageTime.setText(Math.round(difference)+"% above average");
-        } else {
-            tvDialogAverageTime.setText("On average");
-        }
+                pieValues.add(new Entry((float) correct,0));
+                pieNames.add(0,"Correct answers");
+
+                pieValues.add(new Entry((float) wrong,1));
+                pieNames.add(1,"Wrong answers");
+
+                PieDataSet dataSet = new PieDataSet(pieValues, "");
+                dataSet.setSliceSpace(3f);
+                dataSet.setSelectionShift(5f);
+                ArrayList<Integer> colors = new ArrayList<>();
+                colors.add(Color.GREEN);
+                colors.add(Color.RED);
+                dataSet.setColors(colors);
+
+                PieData pieData = new PieData(pieNames, dataSet);
+                pieData.setValueFormatter(new PercentFormatter());
+                pieData.setValueTextSize(11f);
+                pieData.setValueTextColor(Color.WHITE);
+
+                chartDialog.setData(pieData);
+
+                chartDialog.highlightValues(null);
+
+                chartDialog.invalidate();
+
+            }
+        });
     }
 
     private String convertTime(int time){
