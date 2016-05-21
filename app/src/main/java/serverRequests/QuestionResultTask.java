@@ -23,17 +23,16 @@ import java.io.OutputStreamWriter;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.HashMap;
+import java.util.Iterator;
 
 /**
  * Created by Ivo on 19-5-2016.
  */
-public class QuestionResultTask extends AsyncTask<String, Void, HashMap<String, HashMap<String, String>>> {
+public class QuestionResultTask extends AsyncTask<String, Void, HashMap<String, HashMap<String, HashMap<String, String>>>> {
     Context context;
     ProgressDialog progressDialog;
-    Callback delegate;
 
-    public QuestionResultTask(Callback delegate, Context context) {
-        this.delegate = delegate;
+    public QuestionResultTask(Context context) {
         this.context = context;
         progressDialog = new ProgressDialog(context);
         progressDialog.setCancelable(false);
@@ -43,7 +42,7 @@ public class QuestionResultTask extends AsyncTask<String, Void, HashMap<String, 
     }
 
     @Override
-    protected HashMap<String, HashMap<String, String>> doInBackground(String... params) {
+    protected HashMap<String, HashMap<String, HashMap<String, String>>> doInBackground(String... params) {
 
         String assignmentid = params[0];
         String questionid = params[1];
@@ -53,8 +52,10 @@ public class QuestionResultTask extends AsyncTask<String, Void, HashMap<String, 
         String iscomplete = params[5];
         String totaltimespent = params[6];
         String method = params[7];
-        HashMap<String, HashMap<String, String>> results = new HashMap<>();
-        HashMap<String, String> response = new HashMap<>();
+        String assignmentLibraryid = params[8];
+        HashMap<String, String> responseMap = new HashMap<>();
+        HashMap<String,HashMap<String, HashMap<String, String>>> results = new HashMap<>();
+        HashMap<String,HashMap<String, String>> response = new HashMap<>();
 
         try {
             URL url = new URL("http://emilsiegenfeldt.dk/p8/questionresults.php");
@@ -69,7 +70,8 @@ public class QuestionResultTask extends AsyncTask<String, Void, HashMap<String, 
                     .appendQueryParameter("answerid", answerid)
                     .appendQueryParameter("answeredcorrect", answeredcorrect)
                     .appendQueryParameter("iscomplete", iscomplete)
-                    .appendQueryParameter("totaltimespent", totaltimespent);
+                    .appendQueryParameter("totaltimespent", totaltimespent)
+                    .appendQueryParameter("assignmentLibraryId",assignmentLibraryid);
 
 
             String query = builder.build().getEncodedQuery();
@@ -85,47 +87,68 @@ public class QuestionResultTask extends AsyncTask<String, Void, HashMap<String, 
             InputStream in = new BufferedInputStream(connection.getInputStream());
 
             String serverResponse = IOUtils.toString(in, "UTF-8");
-            Log.d("SERVERRESPONSE", serverResponse);
 
             JSONObject JSONResult = new JSONObject(serverResponse);
             String generalResponse = JSONResult.getString("generalResponse");
             String responseCode = String.valueOf(JSONResult.getInt("responseCode"));
-            response.put("generalResponse", generalResponse);
-            response.put("responseCode", responseCode);
+            responseMap.put("generalResponse", generalResponse);
+            responseMap.put("responseCode", responseCode);
 
             if(method.equals("get")) {
-                JSONArray questionResults = JSONResult.getJSONArray("results");
-                for (int i = 0; i < questionResults.length(); i++) {
-                    JSONObject result = questionResults.getJSONObject(i);
-                    String correct = String.valueOf(result.getInt("correct"));
-                    String questionId = String.valueOf(result.getInt("questionid"));
-                    String answerText = result.getString("answerText");
+                JSONArray assignmentResults = JSONResult.getJSONArray("results");
+                for(int i=0; i<assignmentResults.length(); i++){
+                   JSONObject assignment = assignmentResults.getJSONObject(i);
+                    String assignmentTime = assignment.getString("time");
+                    String assignmentId = assignment.getString("id");
+                    HashMap<String, String> time = new HashMap<>();
+                    time.put("time",assignmentTime);
 
-                    HashMap<String, String> resultInfo = new HashMap<>();
-                    resultInfo.put("correct", correct);
-                    resultInfo.put("answerText",answerText);
+                    HashMap<String, HashMap<String, String>> assignmentResult = new HashMap<>();
 
-                    results.put(""+questionId,resultInfo);
+                    assignment.remove("time");
+                    assignment.remove("id");
+
+
+                    for(int n =0; n<assignment.names().length(); n++){
+                        String questionId = String.valueOf(assignment.names().get(n));
+                        JSONObject questionResult = assignment.getJSONObject(questionId);
+
+
+                        HashMap<String, String> specificQuestionResult = new HashMap<>();
+                        String answerId = questionResult.getString("answerid");
+                        String answerCorrect = questionResult.getString("answered correct");
+                        String answerContent = questionResult.getString("answercontent");
+
+                        specificQuestionResult.put("answerId",answerId);
+                        specificQuestionResult.put("correct",answerCorrect);
+                        specificQuestionResult.put("answerContent",answerContent);
+                        assignmentResult.put(questionId,specificQuestionResult);
+                    }
+                    assignmentResult.put("time",time);
+                    results.put(assignmentId,assignmentResult);
                 }
+
             }
 
         } catch (IOException e) {
-            response.put("generalResponse", "Server connection failed");
-            response.put("responseCode", "300");
+            responseMap.put("generalResponse", "Server connection failed");
+            responseMap.put("responseCode", "300");
         } catch (JSONException e) {
             e.printStackTrace();
         }
-
-        results.put("response", response);
+        response.put("response",responseMap);
+        results.put("response",response);
+        Log.d("results",results.toString());
         return results;
     }
 
-    protected void onPostExecute (HashMap<String, HashMap<String, String>> results){
+    protected void onPostExecute (HashMap<String, HashMap<String, HashMap<String,String>>> results){
         progressDialog.dismiss();
+        HashMap<String, HashMap<String, String>> response = results.get("response");
         int duration = Toast.LENGTH_LONG;
-        CharSequence alert = results.get("response").get("generalResponse");
+        CharSequence alert = response.get("response").get("generalResponse");
         Toast toast = Toast.makeText(context, alert, duration);
         toast.show();
-        delegate.asyncDone(results);
+
     }
 }

@@ -3,7 +3,6 @@ package activities;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
-import android.content.Intent;
 import android.graphics.Color;
 import android.os.Build;
 import android.os.Bundle;
@@ -24,12 +23,8 @@ import android.widget.TextView;
 import android.widget.TimePicker;
 import android.widget.Toast;
 
-import callback.*;
-import helper.*;
-import serverRequests.*;
-
-
 import com.example.svilen.p8.R;
+import com.github.mikephil.charting.animation.Easing;
 import com.github.mikephil.charting.charts.CombinedChart;
 import com.github.mikephil.charting.charts.PieChart;
 import com.github.mikephil.charting.components.XAxis;
@@ -41,6 +36,9 @@ import com.github.mikephil.charting.data.CombinedData;
 import com.github.mikephil.charting.data.Entry;
 import com.github.mikephil.charting.data.LineData;
 import com.github.mikephil.charting.data.LineDataSet;
+import com.github.mikephil.charting.data.PieData;
+import com.github.mikephil.charting.data.PieDataSet;
+import com.github.mikephil.charting.formatter.PercentFormatter;
 import com.github.mikephil.charting.highlight.Highlight;
 import com.github.mikephil.charting.interfaces.datasets.IBarDataSet;
 import com.github.mikephil.charting.interfaces.datasets.ILineDataSet;
@@ -57,6 +55,19 @@ import java.util.Map;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
+
+import callback.Callback;
+import callback.DatePickerCallback;
+import helper.AssignmentListAdapter;
+import helper.QuestionListAdapter;
+import helper.UserInfo;
+import serverRequests.AssignmentLibTask;
+import serverRequests.AssignmentTask;
+import serverRequests.ClassTask;
+import serverRequests.QuestionResultTask;
+import serverRequests.QuestionTask;
+import serverRequests.StudentTask;
+import serverRequests.TextTask;
 
 public class AssignmentActivity extends AppCompatActivity {
 
@@ -101,7 +112,9 @@ public class AssignmentActivity extends AppCompatActivity {
     private final ArrayList<IBarDataSet> dataSets = new ArrayList<>();
     private final ArrayList<Entry> lineY = new ArrayList<>();
     private final ArrayList<ILineDataSet> lineSets = new ArrayList<>();
-    private final ArrayList<String> assignmentIds = new ArrayList<>();
+    HashMap<String, HashMap<String, HashMap<String, String>>> result;
+
+    ArrayList<String> assignmentIds = new ArrayList<>();
     HashMap<String,HashMap<String, String>> questions = new HashMap<>();
     HashMap<String,HashMap<String,String>> generalResults = new HashMap<>();
 
@@ -233,13 +246,6 @@ public class AssignmentActivity extends AppCompatActivity {
         setNew(true);
         getStudents("");
     }
-
-    @Override
-    public void onBackPressed() {
-        super.onBackPressed();
-        Intent backIntent = new Intent(this,TeacherActivity.class);
-        startActivity(backIntent);
-    }
     private void setChanged(boolean value){
         changed = value;
         Log.d(".......","changed value"+ String.valueOf(changed));
@@ -320,6 +326,7 @@ public class AssignmentActivity extends AppCompatActivity {
             }
         });
     }
+
     private void confirm(final int position) {
         new AlertDialog.Builder(context)
                 .setIcon(android.R.drawable.ic_dialog_alert)
@@ -329,10 +336,7 @@ public class AssignmentActivity extends AppCompatActivity {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         if(newAssignment){
-                            Log.d("new assignment","true");
-                            if(createAssignment()) {
-                                setContentPane(position);
-                            }
+                            createAssignment();
                         } else {
                             if(updateAssignment()){
                                 setContentPane(position);
@@ -354,18 +358,34 @@ public class AssignmentActivity extends AppCompatActivity {
     }
     private boolean createAssignment(){
         if(assignmentLibTextId != 0 && !etAssignmentName.getText().toString().equals("")) {
-            new AssignmentLibTask(new Callback() {
-                @Override
-                public void asyncDone(HashMap<String, HashMap<String, String>> results) {
-                    assignmentLibId = results.get("response").get("insertedId");
-                    if(results.get("response").get("responseCode").equals("100")){
-                        setChanged(false);
-                        setNew(false);
-                        getAssignmentLib();
+            try {
+              HashMap<String, HashMap<String, String>> result= new AssignmentLibTask(new Callback() {
+                    @Override
+                    public void asyncDone(HashMap<String, HashMap<String, String>> results) {
+                    }
+                },context).execute("create",teacherId,"",etAssignmentName.getText().toString(), String.valueOf(assignmentLibTextId)).get(30,TimeUnit.SECONDS);
+
+                if(result.get("response").get("responseCode").equals("101")){
+                    setChanged(false);
+                    setNew(false);
+                    String insertedId = result.get("response").get("insertedId");
+                    Log.d("LIST BEFORE", String.valueOf(assignmentLibList.size()));
+                    if(getAssignmentLib()){
+                        for(int i=0; i<assignmentLibList.size();i++){
+                            if(assignmentLibList.get(i).get("assignmentLibId").equals(insertedId)){
+                                setContentPane(i);
+                            }
+                        }
                     }
                 }
-            },context).executeTask("create",teacherId,"",etAssignmentName.getText().toString(), String.valueOf(assignmentLibTextId));
-            return true;
+
+            } catch (InterruptedException e) {
+                return false;
+            } catch (ExecutionException e) {
+               return false;
+            } catch (TimeoutException e) {
+               return false;
+            }
         } else {
             int duration = Toast.LENGTH_LONG;
             CharSequence alert = "Please fill in all relevant information";
@@ -373,6 +393,7 @@ public class AssignmentActivity extends AppCompatActivity {
             toast.show();
             return false;
         }
+        return false;
     }
     private boolean updateAssignment(){
         if(assignmentLibTextId != 0 && !etAssignmentName.getText().toString().equals("")) {
@@ -440,34 +461,35 @@ public class AssignmentActivity extends AppCompatActivity {
         },context).execute("FETCH", "", teacherId, "", "", "");
     }
     private boolean getAssignmentLib(){
-        new AssignmentLibTask(new Callback() {
-            @Override
-            public void asyncDone(HashMap<String, HashMap<String, String>> results) {
-                results.remove("response");
-                assignmentLibList.clear();
-                for (Map.Entry<String, HashMap<String, String>> assignment : results.entrySet()) {
-                    final Map<String, String> assignmentInfo = new HashMap<>();
-                    String assignmentId = assignment.getValue().get("id");
-                    String assignmentName = assignment.getValue().get("name");
-                    String assignmentText = assignment.getValue().get("textId");
-                    String assignedStudents = assignment.getValue().get("assignedStudents");
-                    String assignmentIds = assignment.getValue().get("assignmentIds");
-                    String isComplete = assignment.getValue().get("isComplete");
-                    String assignmentTimes = assignment.getValue().get("assignmentTimes");
-
-                    assignmentInfo.put("assignmentLibId",assignmentId);
-                    assignmentInfo.put("assignmentLibName",assignmentName);
-                    assignmentInfo.put("assignmentText",assignmentText);
-                    assignmentInfo.put("assignedStudents",assignedStudents);
-                    assignmentInfo.put("assignmentIds",assignmentIds);
-                    assignmentInfo.put("isComplete",isComplete);
-                    assignmentInfo.put("assignmentTimes",assignmentTimes);
-                    assignmentLibList.add(assignmentInfo);
+        try {
+            HashMap<String, HashMap<String, String>> assignments = new HashMap<>(new AssignmentLibTask(new Callback() {
+                @Override
+                public void asyncDone(HashMap<String, HashMap<String, String>> results) {
                 }
-                assignmentAdapter.notifyDataSetChanged();
+            },context).execute("get",teacherId,"","","").get(30,TimeUnit.SECONDS));
+
+            assignments.remove("response");
+            assignmentLibList.clear();
+            for (Map.Entry<String, HashMap<String, String>> assignment : assignments.entrySet()) {
+                final Map<String, String> assignmentInfo = new HashMap<>();
+                String assignmentId = assignment.getValue().get("id");
+                String assignmentName = assignment.getValue().get("name");
+                String assignmentText = assignment.getValue().get("textId");
+
+                assignmentInfo.put("assignmentLibId",assignmentId);
+                assignmentInfo.put("assignmentLibName",assignmentName);
+                assignmentInfo.put("assignmentText",assignmentText);
+                assignmentLibList.add(assignmentInfo);
             }
-        },context).executeTask("get",teacherId,"","","");
-        return true;
+            assignmentAdapter.notifyDataSetChanged();
+            return true;
+        } catch (InterruptedException e) {
+            return false;
+        } catch (ExecutionException e) {
+            return false;
+        } catch (TimeoutException e) {
+            return false;
+        }
     }
     private void getTexts(){
         new TextTask(new Callback() {
@@ -638,10 +660,6 @@ public class AssignmentActivity extends AppCompatActivity {
             etAssignmentName.setText(assignmentLibName);
             etAssignmentText.setText(textList.get(textListPos).get("textname"));
 
-            //etAssignmentName.setText(assignmentLibList.get(position).get("assignmentLibName"));
-            //assignmentLibName = assignmentLibList.get(position).get("assignmentLibName");
-            //assignmentLibTextId = Integer.parseInt(assignmentLibList.get(position).get("assignmentText"));
-
             assignedList.clear();
             studentsAssigned.clear();
             setChanged(false);
@@ -659,7 +677,9 @@ public class AssignmentActivity extends AppCompatActivity {
                        specificAssignment.put("Name",student.get("Name"));
                    }
                }
-               assignedList.add(specificAssignment);
+               if(specificAssignment.get("Name") != null) {
+                   assignedList.add(specificAssignment);
+               }
                assignedAdapter.notifyDataSetChanged();
 
            }
@@ -715,51 +735,54 @@ public class AssignmentActivity extends AppCompatActivity {
         lineY.clear();
         assignmentIds.clear();
 
+        result = new HashMap<>(getResult(assignmentLibId));
+
+        result.remove("response");
+        Log.d("RESULT RESPONSE",result.toString());
+
+
         ArrayList<Integer> colors = new ArrayList<>();
         int index = 0;
         double total = 0;
-        for (int i = 0; i < assignedList.size(); i++) {
-            final String studentName = assignedList.get(i).get("Name");
-            String assignmentId = assignedList.get(i).get("assignmentid");
-            if (assignedList.get(i).get("isComplete").equals("1")) {
-                HashMap<String, HashMap<String, String>> result = new HashMap<>(getResult(assignmentId));
-                HashMap<String, String> studentAnswers = new HashMap<>();
-                Log.d("results",result.toString());
-                result.remove("response");
-                int numberOfQuestions = 0;
-                int numberOfCorrect = 0;
-                for (Map.Entry<String, HashMap<String, String>> questionResult : result.entrySet()) {
-                    numberOfQuestions++;
-                    studentAnswers.put("time",assignedList.get(i).get("timeSpent"));
-                    studentAnswers.put("Question: "+i,questionResult.getValue().get("correct"));
-                    studentAnswers.put("Answer: "+i,questionResult.getValue().get("answerText"));
-                    if (questionResult.getValue().get("correct").equals("1")) {
-                        numberOfCorrect++;
+
+        for(int i=0; i<assignedList.size(); i++){
+            Map<String, String> assignment = assignedList.get(i);
+            if(assignment.get("isComplete").equals("1")){
+                String assignmentId = assignment.get("assignmentid");
+                String studentName = assignment.get("Name");
+
+                HashMap<String, HashMap<String, String>> assignmentResult = result.get(assignmentId);
+                if(assignmentResult != null) {
+                    assignmentIds.add(assignmentId);
+                    Log.d("assignment result", assignmentResult.toString());
+                    int numberOfQuestions = 0;
+                    int correctAnswers = 0;
+                    for (Map.Entry<String, HashMap<String, String>> questionResults : assignmentResult.entrySet()) {
+                        if(!questionResults.getKey().equals("time")) {
+                            if(questionResults.getValue().get("correct").equals("1")){
+                                correctAnswers++;
+                            }
+                            numberOfQuestions++;
+                        }
                     }
-                    generalResults.put(assignmentId,studentAnswers);
-                }
-                Log.d("correct answers", String.valueOf(numberOfCorrect));
-                Log.d("No. questions", String.valueOf(numberOfQuestions));
+                    double percentage = ((double) correctAnswers / (double) numberOfQuestions) * 100;
+                    yVal.add(new BarEntry((float) percentage, index));
+                    xVals.add(studentName);
 
-                double percentage = ((double) numberOfCorrect / (double) numberOfQuestions) * 100;
-                Log.d("percentage", String.valueOf(percentage));
-                yVal.add(new BarEntry((float) percentage, index));
-                xVals.add(studentName);
-                assignmentIds.add(assignedList.get(i).get("assignmentid"));
-
-                if (percentage >= 50 && percentage <= 75) {
-                    colors.add(Color.rgb(255, 235, 69));
-                } else if (percentage > 75) {
-                    colors.add(Color.rgb(156, 204, 101));
-                } else {
-                    colors.add(Color.rgb(239, 83, 80));
+                    if (percentage >= 50 && percentage <= 75) {
+                        colors.add(Color.rgb(255, 235, 69));
+                    } else if (percentage > 75) {
+                        colors.add(Color.rgb(156, 204, 101));
+                    } else {
+                        colors.add(Color.rgb(239, 83, 80));
+                    }
+                    total = total + percentage;
+                    index++;
+                    Log.d("Questions/correct ", String.valueOf(numberOfQuestions) + String.valueOf(correctAnswers));
                 }
-                total = total + percentage;
-                index++;
             }
-
         }
-        Log.d("average", String.valueOf((total / xVals.size())));
+
         for (int i = 0; i < index; i++) {
             lineY.add(new Entry((float) (total / xVals.size()), i));
         }
@@ -927,7 +950,6 @@ public class AssignmentActivity extends AppCompatActivity {
         });
     }
 
-
     private HashMap<String, HashMap<String,String>> getAssignments(String assignmentLibId){
         try {
             return new AssignmentTask(new Callback() {
@@ -990,14 +1012,9 @@ public class AssignmentActivity extends AppCompatActivity {
             }
         });
     }
-    private HashMap<String, HashMap<String, String>> getResult(String assignmentId){
+    private HashMap<String, HashMap<String, HashMap<String, String>>> getResult(String assignmentLibId){
         try {
-            return new QuestionResultTask(new Callback() {
-                @Override
-                public void asyncDone(HashMap<String, HashMap<String, String>> questresult) {
-
-                }
-            }, context).execute(assignmentId,"","","","","","","get").get(30,TimeUnit.SECONDS);
+            return new QuestionResultTask(context).execute("","","","","","","","get",assignmentLibId).get(30,TimeUnit.SECONDS);
         } catch (InterruptedException e) {
             e.printStackTrace();
         } catch (ExecutionException e) {
@@ -1018,59 +1035,173 @@ public class AssignmentActivity extends AppCompatActivity {
         dialog.show();
 
         ListView lvDialogQuestions = (ListView) layout.findViewById(R.id.lvDialogQuestions);
-        PieChart chartDialog = (PieChart) layout.findViewById(R.id.chartDialog);
+        final PieChart chartDialog = (PieChart) layout.findViewById(R.id.chartDialog);
         TextView tvDialogTime = (TextView) layout.findViewById(R.id.tvDialogTime);
         TextView tvDialogAverageTime = (TextView) layout.findViewById(R.id.tvDialogAverageTime);
         TextView tvDialogCorrect = (TextView) layout.findViewById(R.id.tvDialogCorrect);
         TextView tvDialogCorrectAverage = (TextView) layout.findViewById(R.id.tvDialogCorrectAverage);
-        int time = Integer.parseInt(generalResults.get(assignmentId).get("time"));
-        tvDialogTime.setText(convertTime(time));
-        List<Map<String, String>> questionList = new ArrayList<>();
+        final List<Map<String, String>> questionList = new ArrayList<>();
+        QuestionListAdapter questionListAdapter = new QuestionListAdapter(this,questionList);
+        lvDialogQuestions.setAdapter(questionListAdapter);
+
+        chartDialog.setUsePercentValues(true);
+        chartDialog.setDescription("");
+        chartDialog.setExtraOffsets(5, 10, 5, 5);
+
+        chartDialog.setDragDecelerationFrictionCoef(0.95f);
+
+        chartDialog.setDrawHoleEnabled(true);
+        chartDialog.setHoleColor(Color.WHITE);
+
+        chartDialog.setTransparentCircleColor(Color.WHITE);
+        chartDialog.setTransparentCircleAlpha(110);
+
+        chartDialog.setHoleRadius(58f);
+        chartDialog.setTransparentCircleRadius(61f);
+
+        chartDialog.setRotationAngle(0);
+        chartDialog.setRotationEnabled(true);
+        chartDialog.setHighlightPerTapEnabled(true);
+        chartDialog.animateY(1400, Easing.EasingOption.EaseInOutQuad);
 
 
-        Log.d("questions",questions.toString());
-        Log.d("no. of questions", String.valueOf(questions.size()));
-        Log.d("generalResults",generalResults.toString());
-        Log.d("results for student",generalResults.get(assignmentId).toString());
+        int studentCorrect = 0;
+        int studentAnswers = 0;
+        HashMap<String, HashMap<String, String>> studentResult = result.get(assignmentId);
+        for(Map.Entry<String, HashMap<String, String>> studentResults : studentResult.entrySet()){
+            if(!studentResults.getKey().equals("time")){
+                Log.d("studentResult",studentResults.toString());
+                if(studentResults.getValue().get("correct").equals("1")){
+                    studentCorrect++;
+                }
+                studentAnswers++;
+            }
+        }
+        double studentAverage = ((double) studentCorrect / (double) studentAnswers) * 100;
+        String studentAverageString = String.format("%.1f",studentAverage) + "%";
 
-        for(Map.Entry<String, HashMap<String, String>> question : questions.entrySet()){
-            Map<String, String> questionInfo = new HashMap<>();
-            questionInfo.put("id",question.getValue().get("questionId"));
-            questionInfo.put("questionContent",question.getValue().get("questionContent"));
-            questionInfo.put("answer",generalResults.get(assignmentId).get("answerText"));
-            questionList.add(questionInfo);
+        double totalTime = 0;
+        double total = 0;
+        double assignments = assignmentIds.size();
+
+        for(int i=0; i<assignmentIds.size(); i++){
+            HashMap<String, HashMap<String, String>> assignmentResult = result.get(assignmentIds.get(i));
+            totalTime = totalTime+Double.parseDouble(assignmentResult.get("time").get("time"));
+
+            int assignmentAnswers = 0;
+            int assignmentCorrect = 0;
+
+            for(Map.Entry<String, HashMap<String, String>> result : assignmentResult.entrySet()){
+                if(!result.getKey().equals("time")){
+                    Log.d("studentResult",result.toString());
+                    if(result.getValue().get("correct").equals("1")){
+                        assignmentCorrect++;
+                    }
+                    assignmentAnswers++;
+                }
+            }
+            double assignmentAverage = ((double) assignmentCorrect / (double) assignmentAnswers) * 100;
+            total = total+assignmentAverage;
         }
 
-        Log.d("question List",questionList.toString());
+        double average = total/assignments;
+        double averageTime = totalTime/assignments;
 
+        tvDialogCorrect.setText(studentAverageString);
 
-        int timeTotal = 0;
-        int numberOfStudents = 0;
+        int studentTime = Integer.parseInt(studentResult.get("time").get("time"));
+        tvDialogTime.setText(convertTime(studentTime));
 
-        for(Map.Entry<String, HashMap<String, String>> hashMap : generalResults.entrySet()){
-            timeTotal = timeTotal+Integer.parseInt(hashMap.getValue().get("time"));
-            numberOfStudents++;
-
-        }
-        double averageTime = timeTotal/numberOfStudents;
-        if(time < averageTime){
-            double difference = ((averageTime-time)/time)*100;
+        if(studentTime < averageTime){
+            double difference = ((averageTime-studentTime)/studentTime)*100;
             tvDialogAverageTime.setText(Math.round(difference)+"% below average");
-        } else if(time > averageTime){
-            double difference = ((time-averageTime)/averageTime)*100;
+        } else if(studentTime > averageTime){
+            double difference = ((studentTime-averageTime)/averageTime)*100;
             tvDialogAverageTime.setText(Math.round(difference)+"% above average");
         } else {
             tvDialogAverageTime.setText("On average");
         }
 
-        Log.d("Average time", String.valueOf(timeTotal/numberOfStudents));
-/*        for(Map.Entry<String, String> map : generalResults.get(assignmentId).entrySet()){
-            Log.d("map value",map.getValue());
-            Log.d("map Key",map.getKey());
-           String[] questionId = map.getKey().split(" ");
-            Log.d("new key",questionId[1]);
-            Log.d("corresponding question",questions.get("Question"+questionId[1]).toString());
-        }*/
+        if(studentAverage < average){
+            double difference = ((average-studentAverage)/studentAverage)*100;
+            tvDialogCorrectAverage.setText(Math.round(difference)+"% below average");
+        } else if(studentAverage > average){
+            double difference = ((studentAverage-average)/average)*100;
+            tvDialogCorrectAverage.setText(Math.round(difference)+"% above average");
+        } else {
+            tvDialogCorrectAverage.setText("On average");
+        }
+
+        for(Map.Entry<String, HashMap<String, String>> question : questions.entrySet()){
+
+            Map<String, String> specificQuestion = question.getValue();
+            String questionContent = specificQuestion.get("questionContent");
+            String questionId = specificQuestion.get("questionId");
+            String answer = studentResult.get(questionId).get("answerContent");
+            String correct = studentResult.get(questionId).get("correct");
+
+            Map<String, String> questionInfo = new HashMap<>();
+            questionInfo.put("id",questionId);
+            questionInfo.put("questionContent",questionContent);
+            questionInfo.put("answer",answer);
+            questionInfo.put("correct",correct);
+
+            questionList.add(questionInfo);
+            questionListAdapter.notifyDataSetChanged();
+        }
+
+        lvDialogQuestions.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                String questionId = questionList.get(position).get("id");
+                int totalAnswers = 0;
+                int correctAnswers = 0;
+
+                for(int i=0; i<assignmentIds.size(); i++){
+                    HashMap<String, HashMap<String, String>> assignmentResult = result.get(assignmentIds.get(i));
+                    if(assignmentResult.get(questionId).get("correct").equals("1")){
+                        correctAnswers++;
+                    }
+                    totalAnswers++;
+                }
+                double correct = ((double) correctAnswers / (double) totalAnswers) * 100;
+                double wrong = 100-correct;
+
+                Log.d("correct %", String.valueOf(correct));
+                Log.d("wrong", String.valueOf(wrong));
+
+                //PIE CHART
+
+                ArrayList<Entry> pieValues = new ArrayList<>();
+                ArrayList<String> pieNames = new ArrayList<>();
+
+                pieValues.add(new Entry((float) correct,0));
+                pieNames.add(0,"Correct answers");
+
+                pieValues.add(new Entry((float) wrong,1));
+                pieNames.add(1,"Wrong answers");
+
+                PieDataSet dataSet = new PieDataSet(pieValues, "");
+                dataSet.setSliceSpace(3f);
+                dataSet.setSelectionShift(5f);
+                ArrayList<Integer> colors = new ArrayList<>();
+                colors.add(Color.GREEN);
+                colors.add(Color.RED);
+                dataSet.setColors(colors);
+
+                PieData pieData = new PieData(pieNames, dataSet);
+                pieData.setValueFormatter(new PercentFormatter());
+                pieData.setValueTextSize(11f);
+                pieData.setValueTextColor(Color.WHITE);
+
+                chartDialog.setData(pieData);
+
+                chartDialog.highlightValues(null);
+
+                chartDialog.invalidate();
+
+            }
+        });
     }
 
     private String convertTime(int time){
