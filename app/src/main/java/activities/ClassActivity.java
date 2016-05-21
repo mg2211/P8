@@ -63,6 +63,8 @@ public class ClassActivity extends AppCompatActivity {
     boolean nameChanged;
     boolean teacherChanged;
     boolean clear;
+    boolean allClasses;
+    boolean teacherClassses;
 
     int classListPosition;
     int teacherListPosition;
@@ -100,6 +102,7 @@ public class ClassActivity extends AppCompatActivity {
         currentUserTeacherId = user.get("teacherId");
         currentUserFirstName = user.get("username");
         getTeacherClasses();
+        setTeacherClasses(true);
 
         classListPosition = -1;
         teacherListPosition = -1;
@@ -302,6 +305,7 @@ public class ClassActivity extends AppCompatActivity {
             public void onClick(View v) {
                 classListPosition = -1;
                 teacherListPosition = -1;
+                setTeacherClasses(true);
                 if (changed) {
                     confirm(new DialogCallback() {
                         @Override
@@ -354,6 +358,7 @@ public class ClassActivity extends AppCompatActivity {
             public void onClick(View v) {
                 classListPosition = -1;
                 teacherListPosition = -1;
+                setAllClasses(true);
                 if (changed) {
                     confirm(new DialogCallback() {
                         @Override
@@ -576,6 +581,11 @@ public class ClassActivity extends AppCompatActivity {
                         Log.d("dialogClassListAdapter", "successfully updated");
                     }
                 }, context).executeTask("CREATE", "", teacherId, className, "", "");
+                if(teacherClassses){
+                    getTeacherClasses();
+                } else {
+                    getAllClasses();
+                }
                 resetAdapter(lvListClasses, classListAdapter);
                 return true;
             }
@@ -598,6 +608,11 @@ public class ClassActivity extends AppCompatActivity {
             }
         }, context).executeTask("UPDATE", classClassId, teacherTeacherId, className, "", "");
         classClassName = className;
+        if(teacherClassses){
+            getTeacherClasses();
+        } else {
+            getAllClasses();
+        }
         resetAdapter(lvListClasses, classListAdapter);
         return true;
     }
@@ -630,6 +645,11 @@ public class ClassActivity extends AppCompatActivity {
                 })
                 .setNegativeButton("No", null)
                 .show();
+        if(teacherClassses){
+            getTeacherClasses();
+        } else {
+            getAllClasses();
+        }
         resetAdapter(lvListClasses, classListAdapter);
     }
 
@@ -756,6 +776,15 @@ public class ClassActivity extends AppCompatActivity {
         setEnabledUiItems();
         Log.d("Changed teacher value", String.valueOf(changed));
     }
+
+    public void setTeacherClasses(boolean value){
+        teacherClassses = value;
+    }
+
+    public void setAllClasses(boolean value){
+        allClasses = value;
+    }
+
 
     public void checkChanged() {
         if(teacherChanged && nameChanged) {

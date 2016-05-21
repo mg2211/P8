@@ -603,7 +603,7 @@ public class UserActivity extends AppCompatActivity {
             }, context).executeTask("CREATE", role, "", "", "", "", username, password, lastName, firstName, // bfk
                     email, parentEmail);
             getAllUsers();
-            //setContentPane(getLastEntryPosition(userList));
+            resetAdapter(lvListUsers, userListAdapter);
             return true;
         } else if (!role.equals("student") && general) {
             new UserTask(new Callback() {
@@ -616,7 +616,7 @@ public class UserActivity extends AppCompatActivity {
             }, context).executeTask("CREATE", role, "", "", "", "", username, password, lastName, firstName,
                     email, "");
             getAllUsers();
-            //setContentPane(getLastEntryPosition(userList));
+            resetAdapter(lvListUsers, userListAdapter);
             return true;
         } else {
             int duration = Toast.LENGTH_LONG;
@@ -641,6 +641,7 @@ public class UserActivity extends AppCompatActivity {
             }
         }, context).execute("UPDATE", "", userUserId, "", "", "", username, password, lastName, firstName,
                 email, parentEmail);
+        getAllUsers();
         resetAdapter(lvListUsers, userListAdapter);
         return true;
     }
@@ -652,7 +653,8 @@ public class UserActivity extends AppCompatActivity {
             }
         }, context).execute("UPDATE", "", userId, "", "", classId, "", "", "", "",
                 "", "");
-        getAllUsers();
+        getAllClasses();
+        resetAdapter(lvDialogListClasses, dialogClassListAdapter);
         return true;
     }
 
@@ -691,6 +693,7 @@ public class UserActivity extends AppCompatActivity {
                     })
                     .setNegativeButton("No", null)
                     .show();
+            getAllUsers();
             resetAdapter(lvListUsers, userListAdapter);
         }
     }
