@@ -337,10 +337,7 @@ public class AssignmentActivity extends AppCompatActivity {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         if(newAssignment){
-                            Log.d("new assignment","true");
-                            if(createAssignment()) {
-                                setContentPane(position);
-                            }
+                            createAssignment();
                         } else {
                             if(updateAssignment()){
                                 setContentPane(position);
@@ -362,18 +359,34 @@ public class AssignmentActivity extends AppCompatActivity {
     }
     private boolean createAssignment(){
         if(assignmentLibTextId != 0 && !etAssignmentName.getText().toString().equals("")) {
-            new AssignmentLibTask(new Callback() {
-                @Override
-                public void asyncDone(HashMap<String, HashMap<String, String>> results) {
-                    assignmentLibId = results.get("response").get("insertedId");
-                    if(results.get("response").get("responseCode").equals("100")){
-                        setChanged(false);
-                        setNew(false);
-                        getAssignmentLib();
+            try {
+              HashMap<String, HashMap<String, String>> result= new AssignmentLibTask(new Callback() {
+                    @Override
+                    public void asyncDone(HashMap<String, HashMap<String, String>> results) {
+                    }
+                },context).execute("create",teacherId,"",etAssignmentName.getText().toString(), String.valueOf(assignmentLibTextId)).get(30,TimeUnit.SECONDS);
+
+                if(result.get("response").get("responseCode").equals("101")){
+                    setChanged(false);
+                    setNew(false);
+                    String insertedId = result.get("response").get("insertedId");
+                    Log.d("LIST BEFORE", String.valueOf(assignmentLibList.size()));
+                    if(getAssignmentLib()){
+                        for(int i=0; i<assignmentLibList.size();i++){
+                            if(assignmentLibList.get(i).get("assignmentLibId").equals(insertedId)){
+                                setContentPane(i);
+                            }
+                        }
                     }
                 }
-            },context).executeTask("create",teacherId,"",etAssignmentName.getText().toString(), String.valueOf(assignmentLibTextId));
-            return true;
+
+            } catch (InterruptedException e) {
+                return false;
+            } catch (ExecutionException e) {
+               return false;
+            } catch (TimeoutException e) {
+               return false;
+            }
         } else {
             int duration = Toast.LENGTH_LONG;
             CharSequence alert = "Please fill in all relevant information";
@@ -381,6 +394,7 @@ public class AssignmentActivity extends AppCompatActivity {
             toast.show();
             return false;
         }
+        return false;
     }
     private boolean updateAssignment(){
         if(assignmentLibTextId != 0 && !etAssignmentName.getText().toString().equals("")) {
@@ -448,34 +462,35 @@ public class AssignmentActivity extends AppCompatActivity {
         },context).execute("FETCH", "", teacherId, "", "", "");
     }
     private boolean getAssignmentLib(){
-        new AssignmentLibTask(new Callback() {
-            @Override
-            public void asyncDone(HashMap<String, HashMap<String, String>> results) {
-                results.remove("response");
-                assignmentLibList.clear();
-                for (Map.Entry<String, HashMap<String, String>> assignment : results.entrySet()) {
-                    final Map<String, String> assignmentInfo = new HashMap<>();
-                    String assignmentId = assignment.getValue().get("id");
-                    String assignmentName = assignment.getValue().get("name");
-                    String assignmentText = assignment.getValue().get("textId");
-                    String assignedStudents = assignment.getValue().get("assignedStudents");
-                    String assignmentIds = assignment.getValue().get("assignmentIds");
-                    String isComplete = assignment.getValue().get("isComplete");
-                    String assignmentTimes = assignment.getValue().get("assignmentTimes");
-
-                    assignmentInfo.put("assignmentLibId",assignmentId);
-                    assignmentInfo.put("assignmentLibName",assignmentName);
-                    assignmentInfo.put("assignmentText",assignmentText);
-                    assignmentInfo.put("assignedStudents",assignedStudents);
-                    assignmentInfo.put("assignmentIds",assignmentIds);
-                    assignmentInfo.put("isComplete",isComplete);
-                    assignmentInfo.put("assignmentTimes",assignmentTimes);
-                    assignmentLibList.add(assignmentInfo);
+        try {
+            HashMap<String, HashMap<String, String>> assignments = new HashMap<>(new AssignmentLibTask(new Callback() {
+                @Override
+                public void asyncDone(HashMap<String, HashMap<String, String>> results) {
                 }
-                assignmentAdapter.notifyDataSetChanged();
+            },context).execute("get",teacherId,"","","").get(30,TimeUnit.SECONDS));
+
+            assignments.remove("response");
+            assignmentLibList.clear();
+            for (Map.Entry<String, HashMap<String, String>> assignment : assignments.entrySet()) {
+                final Map<String, String> assignmentInfo = new HashMap<>();
+                String assignmentId = assignment.getValue().get("id");
+                String assignmentName = assignment.getValue().get("name");
+                String assignmentText = assignment.getValue().get("textId");
+
+                assignmentInfo.put("assignmentLibId",assignmentId);
+                assignmentInfo.put("assignmentLibName",assignmentName);
+                assignmentInfo.put("assignmentText",assignmentText);
+                assignmentLibList.add(assignmentInfo);
             }
-        },context).executeTask("get",teacherId,"","","");
-        return true;
+            assignmentAdapter.notifyDataSetChanged();
+            return true;
+        } catch (InterruptedException e) {
+            return false;
+        } catch (ExecutionException e) {
+            return false;
+        } catch (TimeoutException e) {
+            return false;
+        }
     }
     private void getTexts(){
         new TextTask(new Callback() {
@@ -645,10 +660,6 @@ public class AssignmentActivity extends AppCompatActivity {
             int textListPos = textListIds.get(assignmentLibTextId);
             etAssignmentName.setText(assignmentLibName);
             etAssignmentText.setText(textList.get(textListPos).get("textname"));
-
-            //etAssignmentName.setText(assignmentLibList.get(position).get("assignmentLibName"));
-            //assignmentLibName = assignmentLibList.get(position).get("assignmentLibName");
-            //assignmentLibTextId = Integer.parseInt(assignmentLibList.get(position).get("assignmentText"));
 
             assignedList.clear();
             studentsAssigned.clear();
@@ -1069,7 +1080,7 @@ public class AssignmentActivity extends AppCompatActivity {
             }
         }
         double studentAverage = ((double) studentCorrect / (double) studentAnswers) * 100;
-        String studentAverageString = studentAverage + "%";
+        String studentAverageString = String.format("%.1f",studentAverage) + "%";
 
         double totalTime = 0;
         double total = 0;
