@@ -42,8 +42,8 @@ public class AssignmentLibTask extends AsyncTask<String, Void, HashMap<String, H
         progressDialog.setMessage("Please wait ...");
         progressDialog.show();
     }
-    public void executeTask(String method, String teacherId, String assignmentId, String assignmentName, String textId){
-        this.execute(method, teacherId, assignmentId, assignmentName, textId);
+    public void executeTask(String teacherId, String assignmentId, String assignmentName, String textId){
+        this.execute("update", teacherId, assignmentId, assignmentName, textId);
     }
     @Override
     protected HashMap <String, HashMap<String, String>> doInBackground(String... params) {

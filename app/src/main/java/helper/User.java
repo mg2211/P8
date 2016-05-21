@@ -8,8 +8,6 @@ import com.example.svilen.p8.R;
 
 public class User extends AppCompatActivity {
 
-    Context context = this;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);

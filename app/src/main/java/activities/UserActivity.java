@@ -36,30 +36,24 @@ import java.util.Map;
 
 public class UserActivity extends AppCompatActivity {
 
-    private Context context = this;
+    private final Context context = this;
 
-    private Button bAddUser;
     private Button bRegisterUser;
     private Button bEditUser;
     private Button bDeleteUser;
     private Button bAssignClass;
     private Button bModifyClasses;
-    private Button bDialogAssignClass;
-    private Button bDialogCancel;
-    private EditText etSearch;
     private EditText etUsername;
     private EditText etPassword;
     private EditText etFirstName;
     private EditText etLastName;
     private EditText etEmail;
     private EditText etContactEmail;
-    private EditText etDialogSearch;
     private Spinner spinnerRole;
     private ListView lvListUsers;
     private ListView lvDialogListClasses;
     private TextView tvTitleCRUDUser;
     private TextView tvTitleStudentClass;
-    private TextView tvDialogClassTitle;
     private TextView tvUserClassName;
     private TextView tvDialogClassName;
     private TextView tvDialogTeacherName;
@@ -67,18 +61,13 @@ public class UserActivity extends AppCompatActivity {
     private ArrayAdapter roleAdapter;
     private SimpleAdapter userListAdapter;
     private SimpleAdapter dialogClassListAdapter;
-    private List<String> roleList = new ArrayList<>();
-    private List<Map<String, String>> userList = new ArrayList<>();
-    private List<Map<String, String>> classList = new ArrayList<>();
-
-    private UserInfo userinfo;
-    private HashMap<String, String> user;
+    private final List<String> roleList = new ArrayList<>();
+    private final List<Map<String, String>> userList = new ArrayList<>();
+    private final List<Map<String, String>> classList = new ArrayList<>();
 
     private String currentUserUsername;
 
     private String userUserId;
-    private String userTeacherId;
-    private String userStudentId;
     private String userClassId;
     private String userRole;
     private String userUsername;
@@ -87,13 +76,9 @@ public class UserActivity extends AppCompatActivity {
     private String userLastName;
     private String userEmail;
     private String userParentEmail;
-    private String userClassName;
 
     private String classClassId;
     private String classClassName;
-    private String classTeacherFistName;
-    private String classTeacherLastName;
-    private String classTeacherEmail;
 
     private boolean newUser;
     private boolean changed;
@@ -105,7 +90,7 @@ public class UserActivity extends AppCompatActivity {
 
         setContentView(R.layout.activity_user);
 
-        etSearch = (EditText) findViewById(R.id.etSearch);
+        EditText etSearch = (EditText) findViewById(R.id.etSearch);
 
         tvTitleCRUDUser = (TextView) findViewById(R.id.tvTitleCRUDUser);
         tvTitleStudentClass = (TextView) findViewById(R.id.tvTitleStudentClass);
@@ -120,7 +105,7 @@ public class UserActivity extends AppCompatActivity {
         etEmail = (EditText) findViewById(R.id.etEmail);
         etContactEmail = (EditText) findViewById(R.id.etContactEmail);
 
-        bAddUser = (Button) findViewById(R.id.bAddUser);
+        Button bAddUser = (Button) findViewById(R.id.bAddUser);
         bRegisterUser = (Button) findViewById(R.id.bRegisterUser);
         bEditUser = (Button) findViewById(R.id.bEditUser);
         bDeleteUser = (Button) findViewById(R.id.bDeleteUser);
@@ -129,8 +114,8 @@ public class UserActivity extends AppCompatActivity {
 
         lvListUsers = (ListView) findViewById(R.id.lvListUsers);
 
-        userinfo = new UserInfo(context);
-        user = userinfo.getUser();
+        UserInfo userinfo = new UserInfo(context);
+        HashMap<String, String> user = userinfo.getUser();
         Log.d("userinfo content", String.valueOf(user));
         currentUserUsername = user.get("username");
 
@@ -531,7 +516,7 @@ public class UserActivity extends AppCompatActivity {
                 dialogClassListAdapter.notifyDataSetChanged();
                 Log.d("dialogClassListAdapter", "successfully updated");
             }
-        }, context).executeTask("FETCH", "", "", "", "", "");
+        }, context).executeTask("FETCH", "", "", "");
     }
 
     private void getAllUsers() {
@@ -567,7 +552,7 @@ public class UserActivity extends AppCompatActivity {
                 }
                 userListAdapter.notifyDataSetChanged();
             }
-        }, context).executeTask("FETCH", "", "", "", "", "", "", "", "", "", "", ""); //Nothing within "" to get every text - see php script
+        }, context).executeTask("FETCH", "", "", "", "", "", "", "", "", ""); //Nothing within "" to get every text - see php script
     }
 
     private boolean createUser() {
@@ -600,7 +585,7 @@ public class UserActivity extends AppCompatActivity {
                         userUserId = user.getValue().get("lastUserId");
                     }
                 }
-            }, context).executeTask("CREATE", role, "", "", "", "", username, password, lastName, firstName, // bfk
+            }, context).executeTask("CREATE", role, "", "", username, password, lastName, firstName, // bfk
                     email, parentEmail);
             getAllUsers();
             resetAdapter(lvListUsers, userListAdapter);
@@ -613,7 +598,7 @@ public class UserActivity extends AppCompatActivity {
                         userUserId = user.getValue().get("lastUserId");
                     }
                 }
-            }, context).executeTask("CREATE", role, "", "", "", "", username, password, lastName, firstName,
+            }, context).executeTask("CREATE", role, "", "", username, password, lastName, firstName,
                     email, "");
             getAllUsers();
             resetAdapter(lvListUsers, userListAdapter);
@@ -646,7 +631,7 @@ public class UserActivity extends AppCompatActivity {
         return true;
     }
 
-    private boolean updateUserClass(String userId, String classId) {
+    private void updateUserClass(String userId, String classId) {
         new UserTask(new Callback() {
             @Override
             public void asyncDone(HashMap<String, HashMap<String, String>> users) {
@@ -655,7 +640,6 @@ public class UserActivity extends AppCompatActivity {
                 "", "");
         getAllClasses();
         resetAdapter(lvDialogListClasses, dialogClassListAdapter);
-        return true;
     }
 
     private void deleteUser() {
@@ -676,7 +660,7 @@ public class UserActivity extends AppCompatActivity {
                                 @Override
                                 public void asyncDone(HashMap<String, HashMap<String, String>> users) {
                                 }
-                            }, context).executeTask("DELETE", userRole, userUserId, "", "", "", "", "", "", "", "", "");
+                            }, context).executeTask("DELETE", userRole, userUserId, "", "", "", "", "", "", "");
                             getAllUsers();
                             etUsername.setText("");
                             etFirstName.setText("");
@@ -737,8 +721,6 @@ public class UserActivity extends AppCompatActivity {
         if (position >= 0) {
             Map<String, String> userData = (Map) userListAdapter.getItem(position);
             userUserId = userData.get("userId");
-            userTeacherId = userData.get("teacherId");
-            userStudentId = userData.get("studentId");
             userClassId = userData.get("classId");
             userRole = userData.get("role");
             userUsername = userData.get("username");
@@ -747,7 +729,7 @@ public class UserActivity extends AppCompatActivity {
             userLastName = userData.get("lastName");
             userEmail = userData.get("email");
             userParentEmail = userData.get("parentEmail");
-            userClassName = getClassName(userUserId, userList);
+            String userClassName = getClassName(userUserId, userList);
             spinnerRole.setSelection(getIndex(spinnerRole, userRole));
             spinnerRole.setEnabled(false);
             etUsername.setText(userUsername);
@@ -760,8 +742,6 @@ public class UserActivity extends AppCompatActivity {
             setChanged(false);
             setNewUser(false);
         } else {
-            userTeacherId = null;
-            userStudentId = null;
             userClassId = null;
             userRole = null;
             userUsername = null;
@@ -777,7 +757,6 @@ public class UserActivity extends AppCompatActivity {
             etLastName.setText("");
             etEmail.setText("");
             etContactEmail.setText("");
-            //tvUserClassName.setText("");
             spinnerRole.setEnabled(true);
             setChanged(false);
             setNewUser(true);
@@ -804,10 +783,6 @@ public class UserActivity extends AppCompatActivity {
         }
         Log.d("getClassName result", userNotInClass);
         return userNotInClass;
-    }
-
-    public void createClass(String teacherId) {
-
     }
 
     //set Spinner value
@@ -837,14 +812,14 @@ public class UserActivity extends AppCompatActivity {
 
         lvDialogListClasses = (ListView) layout.findViewById(R.id.lvDialogListClasses);
 
-        etDialogSearch = (EditText) layout.findViewById(R.id.etDialogSearch);
-        tvDialogClassTitle = (TextView) layout.findViewById(R.id.tvDialogClassTitle);
+        EditText etDialogSearch = (EditText) layout.findViewById(R.id.etDialogSearch);
+        TextView tvDialogClassTitle = (TextView) layout.findViewById(R.id.tvDialogClassTitle);
         tvDialogClassName = (TextView) layout.findViewById(R.id.tvDialogClassName);
         tvDialogTeacherName = (TextView) layout.findViewById(R.id.tvDialogTeacherName);
         tvDialogTeacherEmail = (TextView) layout.findViewById(R.id.tvDialogTeacherEmail);
 
-        bDialogAssignClass = (Button) layout.findViewById(R.id.bDialogAssignClass);
-        bDialogCancel = (Button) layout.findViewById(R.id.bDialogCancel);
+        Button bDialogAssignClass = (Button) layout.findViewById(R.id.bDialogAssignClass);
+        Button bDialogCancel = (Button) layout.findViewById(R.id.bDialogCancel);
 
         lvDialogListClasses.setAdapter(dialogClassListAdapter);
         lvDialogListClasses.setChoiceMode(AbsListView.CHOICE_MODE_SINGLE);
@@ -913,9 +888,9 @@ public class UserActivity extends AppCompatActivity {
             Map<String, String> classData = (Map) dialogClassListAdapter.getItem(position);
             classClassId = classData.get("classId");
             classClassName = classData.get("className");
-            classTeacherFistName = classData.get("teacherFirstName");
-            classTeacherLastName = classData.get("teacherLastName");
-            classTeacherEmail = classData.get("teacherEmail");
+            String classTeacherFistName = classData.get("teacherFirstName");
+            String classTeacherLastName = classData.get("teacherLastName");
+            String classTeacherEmail = classData.get("teacherEmail");
             tvDialogClassName.setText(classClassName);
             tvDialogTeacherName.setText(classTeacherFistName + " " + classTeacherLastName);
             tvDialogTeacherEmail.setText(classTeacherEmail);
@@ -926,9 +901,9 @@ public class UserActivity extends AppCompatActivity {
         }
     }
 
-    public void resetAdapter(ListView lv, SimpleAdapter sa) {
-        lv.setChoiceMode(lv.CHOICE_MODE_NONE);
+    private void resetAdapter(ListView lv, SimpleAdapter sa) {
+        lv.setChoiceMode(AbsListView.CHOICE_MODE_NONE);
         lv.setAdapter(sa);
-        lv.setChoiceMode(lv.CHOICE_MODE_SINGLE);
+        lv.setChoiceMode(AbsListView.CHOICE_MODE_SINGLE);
     }
 }

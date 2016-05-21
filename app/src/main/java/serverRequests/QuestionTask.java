@@ -28,13 +28,11 @@ import java.util.HashMap;
  */
 public class QuestionTask extends AsyncTask<String, Void, HashMap<String, HashMap<String, String>>> {
 
-    Callback delegate;
-    private final Context context;
-    ProgressDialog progressDialog;
+    private final Callback delegate;
+    private final ProgressDialog progressDialog;
 
     public QuestionTask(Callback delegate, Context context) {
         this.delegate = delegate;
-        this.context = context;
         progressDialog = new ProgressDialog(context);
         progressDialog.setCancelable(false);
         progressDialog.setTitle("Processing...");

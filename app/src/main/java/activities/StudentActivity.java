@@ -28,32 +28,26 @@ import java.util.Map;
 public class StudentActivity extends AppCompatActivity {
 
 
-    Button bLogout;
-    Context context = this;
-    ListView lvAssToStudent;
-    SimpleAdapter assignmentAdapter;
-    AssignmentListAdapter assignedAdapter;
+    private final Context context = this;
 
-    List<Map<String, String>> assignmentList = new ArrayList<>();
-    UserInfo userinfo;
-    HashMap<String, String> user;
-    String studentId;
-    String textId;
-    String assignmentName;
-    String specificAssignmentId;
-    String assignmentId;
+    private final List<Map<String, String>> assignmentList = new ArrayList<>();
+    private String studentId;
+    private String textId;
+    private String assignmentName;
+    private String specificAssignmentId;
+    private String assignmentId;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
         setContentView(R.layout.activity_student);
         //getWindow().setBackgroundDrawableResource(R.drawable.green);
-        userinfo = new UserInfo(context);
-        user = userinfo.getUser();
+        UserInfo userinfo = new UserInfo(context);
+        HashMap<String, String> user = userinfo.getUser();
         studentId = user.get("studentId");
         Log.d("StudentId:  ", studentId);
 
-        lvAssToStudent = (ListView) findViewById(R.id.lvAssOverview);
+        ListView lvAssToStudent = (ListView) findViewById(R.id.lvAssOverview);
 
       /*  assignmentAdapter = new SimpleAdapter(this, assignmentList,
                 android.R.layout.simple_list_item_1,
@@ -61,7 +55,7 @@ public class StudentActivity extends AppCompatActivity {
                 new int[]{android.R.id.text1});
         lvAssToStudent.setAdapter(assignmentAdapter);*/
 
-        assignedAdapter = new AssignmentListAdapter(this,assignmentList);
+        AssignmentListAdapter assignedAdapter = new AssignmentListAdapter(this, assignmentList);
 
         lvAssToStudent.setAdapter(assignedAdapter);
 
@@ -144,7 +138,7 @@ public class StudentActivity extends AppCompatActivity {
         });
 
 
-        bLogout = (Button) findViewById(R.id.bLogout);
+        Button bLogout = (Button) findViewById(R.id.bLogout);
         bLogout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -165,7 +159,7 @@ public class StudentActivity extends AppCompatActivity {
     }
 
 
-    public void getAssignment() {
+    private void getAssignment() {
 
         new AssignmentTask(new Callback() {
             @Override

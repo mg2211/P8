@@ -11,11 +11,8 @@ import java.util.List;
 
 
 public class Pagination {
-    private final boolean mIncludePad = true;
     private final int mWidth;
     private final int mHeight;
-    final float mSpacingMult = 1;
-    final float mSpacingAdd = 1;
     private final CharSequence mText;
     private final TextPaint mPaint;
     private final List<CharSequence> mPages;
@@ -32,6 +29,9 @@ public class Pagination {
     }
 
     private void layout() {
+        float mSpacingAdd = 1;
+        float mSpacingMult = 1;
+        boolean mIncludePad = true;
         final StaticLayout layout = new StaticLayout(mText, mPaint, mWidth, Layout.Alignment.ALIGN_NORMAL, mSpacingMult, mSpacingAdd, mIncludePad);
 
         final int lines = layout.getLineCount();

@@ -43,49 +43,47 @@ import java.util.concurrent.TimeoutException;
 
 public class ReadingActivity extends AppCompatActivity  {
 
-    List<Map<String, String>> questionList = new ArrayList<>();
-    String specificQuestionContent1;
-    String answerText1;
-    String isCorrrect1;
-    Button bPause;
-    Button bFinish;
-    Context context = this;
-    UserInfo userinfo;
-    HashMap<String, String> user;
-    String studentId;
-    String textId;
-    TextView tvTextName2;
-    Button bDialogSubmit;
+    private List<Map<String, String>> questionList = new ArrayList<>();
+    private String specificQuestionContent1;
+    private String answerText1;
+    private String isCorrrect1;
+    private Button bPause;
+    private Button bFinish;
+    private Context context = this;
+    private UserInfo userinfo;
+    private HashMap<String, String> user;
+    private String studentId;
+    private String textId;
+    private TextView tvTextName2;
+    private Button bDialogSubmit;
 
-    TextView tvAssignmentName;
-    String textName;
-    String assignmentName;
-    Chronometer chronometer;
-    long timeWhenStopped = 0;
-    TextView tvQuestionToStudent;
-    String questionContent;
-    View layout;
-    int i;
-    String answerChoosen;
-    String specificQuestionId;
-    ArrayList<String> mylist = new ArrayList<>();
-    Set<String> set = new HashSet<>();
-    List<Integer> correctOrNot = new ArrayList<>();    //Set<String> set = new HashSet<String>();
-    ArrayList<String> loggedIdAnswers = new ArrayList<>();
-    ArrayList<String> correctAnswer = new ArrayList<>();
-    int noOfQuestions;
-    int clickCount = 0;
-    String assignmentId;
-    String answerIdtoChosenAnswer;
-    String lastElement;
-    int booleanForButton = 0;
-    int seconds = 0;
+    private TextView tvAssignmentName;
+    private String assignmentName;
+    private Chronometer chronometer;
+    private long timeWhenStopped = 0;
+    private TextView tvQuestionToStudent;
+    private View layout;
+    private int i;
+    private String answerChoosen;
+    private String specificQuestionId;
+    private ArrayList<String> mylist = new ArrayList<>();
+    private Set<String> set = new HashSet<>();
+    private List<Integer> correctOrNot = new ArrayList<>();    //Set<String> set = new HashSet<String>();
+    private ArrayList<String> loggedIdAnswers = new ArrayList<>();
+    private ArrayList<String> correctAnswer = new ArrayList<>();
+    private int noOfQuestions;
+    private int clickCount = 0;
+    private String assignmentId;
+    private String answerIdtoChosenAnswer;
+    private String lastElement;
+    private int booleanForButton = 0;
+    private int seconds = 0;
 
-    Pagination mPagination;
-    CharSequence mText;
-    int mCurrentIndex = 0;
-    TextView tvContent;
-    String textContent22;
+    private Pagination mPagination;
+    private CharSequence mText;
+    private int mCurrentIndex = 0;
+    private TextView tvContent;
+    private String textContent22;
 
 
     @Override
@@ -208,7 +206,7 @@ public class ReadingActivity extends AppCompatActivity  {
 
     }
 
-    public void getQuestions(String textId) {
+    private void getQuestions(String textId) {
         new QuestionTask(new Callback() {
             @Override
             public void asyncDone(HashMap<String, HashMap<String, String>> results) {
@@ -246,7 +244,7 @@ public class ReadingActivity extends AppCompatActivity  {
 
     }
 
-    public void createArrays () {
+    private void createArrays() {
 
         for (int row = 0; row < 1; row++) {
 
@@ -255,7 +253,7 @@ public class ReadingActivity extends AppCompatActivity  {
         }
     }
 
-    public void addRadioButtons() { //creates dynamic radio button depdending on how many anwswers to a question
+    private void addRadioButtons() { //creates dynamic radio button depdending on how many anwswers to a question
 
 
 
@@ -303,7 +301,7 @@ public class ReadingActivity extends AppCompatActivity  {
 
     }
 
-    public HashMap<String, HashMap<String, String>> getText1(){ // used to retrieve answerId based on questionId and answertext while freezing everything else
+    private HashMap<String, HashMap<String, String>> getText1(){ // used to retrieve answerId based on questionId and answertext while freezing everything else
         try {
             return new TextTask(new Callback() {
                 @Override
@@ -323,7 +321,7 @@ public class ReadingActivity extends AppCompatActivity  {
 
 
 
-    public HashMap<String, HashMap<String, String>> getAnswerId(){ // used to retrieve answerId based on questionId and answertext while freezing everything else
+    private HashMap<String, HashMap<String, String>> getAnswerId(){ // used to retrieve answerId based on questionId and answertext while freezing everything else
 
     try {
       return  new AnswerTask(new Callback() {
@@ -344,7 +342,7 @@ public class ReadingActivity extends AppCompatActivity  {
 }
 
 
-    public void getAnswers(String s) { // running getAnswer based on questionId from HashSet
+    private void getAnswers(String s) { // running getAnswer based on questionId from HashSet
         new QuestionTask(new Callback() {
             @Override
             public void asyncDone(HashMap<String, HashMap<String, String>> results) {
@@ -388,7 +386,7 @@ public class ReadingActivity extends AppCompatActivity  {
         }, context).executeTask("get", s, "", "", "");
     }
 
-    public void createDialog(){
+    private void createDialog(){
 
 
         AlertDialog.Builder builder = new AlertDialog.Builder(context);
@@ -496,7 +494,7 @@ public class ReadingActivity extends AppCompatActivity  {
         if (text != null) tvContent.setText(text);
     }
 
-    public void pager() {
+    private void pager() {
         StringBuilder sb = new StringBuilder();
         for (int i = 0; i < 1; i++) {
             sb.append(textContent22);

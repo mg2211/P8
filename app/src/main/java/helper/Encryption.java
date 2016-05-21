@@ -23,9 +23,9 @@ public final class Encryption {
 
     private Encryption(){
 
-    };
+    }
 
-    private static String cryptoPass = "sup3rBr4ndur";
+    private static final String cryptoPass = "sup3rBr4ndur";
 
      public static String encryptIt(String value) {
         try {
@@ -57,7 +57,7 @@ public final class Encryption {
             e.printStackTrace();
         }
         return value;
-    };
+    }
 
     public static String decryptIt(String value) {
         try {

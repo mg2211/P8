@@ -3,7 +3,6 @@ package activities;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
-import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.text.Editable;
@@ -14,7 +13,6 @@ import android.widget.AbsListView;
 import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.SimpleAdapter;
 import android.widget.TextView;
@@ -33,76 +31,76 @@ import java.util.Map;
 
 public class ClassActivity extends AppCompatActivity {
 
-    Context context = this;
-    UserInfo userinfo;
-    HashMap<String, String> user;
-    LinearLayout llListStudents;
-    ListView lvListClasses, lvListStudents, lvListTeachers;
-    TextView tvTitleListStudents, tvTitleListTeachers, tvTitleCRUDClass, tvTeacherName, tvTeacherEmail;
-    EditText etSearch, etClassName, etSearchTeacher;
-    SimpleAdapter classListAdapter, studentListAdapter, teacherListAdapter;
-    Button bAddClass, bShowTeacherClasses, bShowAllClasses, bCreateClass, bEditClass, bDeleteClass;
-    Drawable item_disabled, item_pressed, item_focussed;
+    private final Context context = this;
+    private ListView lvListClasses;
+    private ListView lvListStudents;
+    private ListView lvListTeachers;
+    private TextView tvTitleListStudents;
+    private TextView tvTitleCRUDClass;
+    private TextView tvTeacherName;
+    private TextView tvTeacherEmail;
+    private EditText etClassName;
+    private SimpleAdapter classListAdapter;
+    private SimpleAdapter studentListAdapter;
+    private SimpleAdapter teacherListAdapter;
+    private Button bCreateClass;
+    private Button bEditClass;
+    private Button bDeleteClass;
 
-    List<Map<String, String>> classList = new ArrayList<>();
-    List<Map<String, String>> studentList = new ArrayList<>();
-    List<Map<String, String>> teacherList = new ArrayList<>();
+    private final List<Map<String, String>> classList = new ArrayList<>();
+    private final List<Map<String, String>> studentList = new ArrayList<>();
+    private final List<Map<String, String>> teacherList = new ArrayList<>();
 
-    String currentUserTeacherId;
-    String currentUserFirstName;
-    String teacherTeacherId;
-    String teacherTeacherFullName;
-    String teacherTeacherEmail;
-    String currentTeacherFullName;
-    String currentTeacherEmail;
-    String classClassId;
-    String classClassName;
+    private String currentUserTeacherId;
+    private String currentUserFirstName;
+    private String teacherTeacherId;
+    private String teacherTeacherFullName;
+    private String currentTeacherEmail;
+    private String classClassId;
+    private String classClassName;
 
-    boolean newClass;
-    boolean changed;
-    boolean nameChanged;
-    boolean teacherChanged;
-    boolean clear;
-    boolean allClasses;
-    boolean teacherClassses;
+    private boolean newClass;
+    private boolean changed;
+    private boolean nameChanged;
+    private boolean teacherChanged;
+    private boolean clear;
+    private boolean teacherClasses;
 
-    int classListPosition;
-    int teacherListPosition;
+    private int classListPosition;
+    private int teacherListPosition;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_class);
 
-        llListStudents = (LinearLayout) findViewById(R.id.llListStudents);
 
         tvTitleListStudents = (TextView) findViewById(R.id.tvTitleListStudents);
-        tvTitleListTeachers = (TextView) findViewById(R.id.tvTitleListTeachers);
         tvTitleCRUDClass = (TextView) findViewById(R.id.tvTitleCRUDClass);
         tvTeacherName = (TextView) findViewById(R.id.tvTeacherName);
         tvTeacherEmail = (TextView) findViewById(R.id.tvDialogTeacherEmail);
 
-        etSearch = (EditText) findViewById(R.id.etSearch);
+        EditText etSearch = (EditText) findViewById(R.id.etSearch);
         etClassName = (EditText) findViewById(R.id.etClassName);
-        etSearchTeacher = (EditText) findViewById(R.id.etSearchTeacher);
+        EditText etSearchTeacher = (EditText) findViewById(R.id.etSearchTeacher);
 
         lvListClasses = (ListView) findViewById(R.id.lvListClasses);
         lvListStudents = (ListView) findViewById(R.id.lvListStudents);
         lvListTeachers = (ListView) findViewById(R.id.lvListTeachers);
 
-        bAddClass = (Button) findViewById(R.id.bAddClass);
-        bShowTeacherClasses = (Button) findViewById(R.id.bShowTeacherClasses);
-        bShowAllClasses = (Button) findViewById(R.id.bShowAllClasses);
+        Button bAddClass = (Button) findViewById(R.id.bAddClass);
+        Button bShowTeacherClasses = (Button) findViewById(R.id.bShowTeacherClasses);
+        Button bShowAllClasses = (Button) findViewById(R.id.bShowAllClasses);
         bCreateClass = (Button) findViewById(R.id.bCreateClass);
         bEditClass = (Button) findViewById(R.id.bEditClass);
         bDeleteClass = (Button) findViewById(R.id.bDeleteClass);
 
-        userinfo = new UserInfo(context);
-        user = userinfo.getUser();
+        UserInfo userinfo = new UserInfo(context);
+        HashMap<String, String> user = userinfo.getUser();
         currentUserTeacherId = user.get("teacherId");
         currentUserFirstName = user.get("username");
         getTeacherClasses();
-        setTeacherClasses(true);
+        setTeacherClasses();
 
         classListPosition = -1;
         teacherListPosition = -1;
@@ -305,7 +303,7 @@ public class ClassActivity extends AppCompatActivity {
             public void onClick(View v) {
                 classListPosition = -1;
                 teacherListPosition = -1;
-                setTeacherClasses(true);
+                setTeacherClasses();
                 if (changed) {
                     confirm(new DialogCallback() {
                         @Override
@@ -358,7 +356,6 @@ public class ClassActivity extends AppCompatActivity {
             public void onClick(View v) {
                 classListPosition = -1;
                 teacherListPosition = -1;
-                setAllClasses(true);
                 if (changed) {
                     confirm(new DialogCallback() {
                         @Override
@@ -498,7 +495,9 @@ public class ClassActivity extends AppCompatActivity {
         });
     }
 
-    public void setContentPane(int classListPos, int teacherListPos) {
+    private void setContentPane(int classListPos, int teacherListPos) {
+        String currentTeacherFullName;
+        String teacherTeacherEmail;
         if (classListPos >= 0 && teacherListPos >= 0) {
             Map<String, String> classData = (Map) classListAdapter.getItem(classListPos);
             classClassId = classData.get("classId");
@@ -563,7 +562,7 @@ public class ClassActivity extends AppCompatActivity {
         }
     }
 
-    public boolean createClass(int teacherListPos) {
+    private boolean createClass(int teacherListPos) {
         if(teacherListPos >= 0 && ! etClassName.getText().toString().isEmpty()) {
             Log.d("teacherListPos", String.valueOf(teacherListPosition));
             Map<String, String> teacherData = (Map) teacherListAdapter.getItem(teacherListPos);
@@ -580,8 +579,8 @@ public class ClassActivity extends AppCompatActivity {
                         classListAdapter.notifyDataSetChanged();
                         Log.d("dialogClassListAdapter", "successfully updated");
                     }
-                }, context).executeTask("CREATE", "", teacherId, className, "", "");
-                if(teacherClassses){
+                }, context).executeTask("CREATE", "", teacherId, className);
+                if(teacherClasses){
                     getTeacherClasses();
                 } else {
                     getAllClasses();
@@ -598,7 +597,7 @@ public class ClassActivity extends AppCompatActivity {
         return false;
     }
 
-    public boolean updateClass() {
+    private boolean updateClass() {
        String className = etClassName.getText().toString();
         new ClassTask(new Callback() {
             @Override
@@ -606,9 +605,9 @@ public class ClassActivity extends AppCompatActivity {
                 classListAdapter.notifyDataSetChanged();
                 Log.d("classListAdapter", "successfully updated");
             }
-        }, context).executeTask("UPDATE", classClassId, teacherTeacherId, className, "", "");
+        }, context).executeTask("UPDATE", classClassId, teacherTeacherId, className);
         classClassName = className;
-        if(teacherClassses){
+        if(teacherClasses){
             getTeacherClasses();
         } else {
             getAllClasses();
@@ -617,7 +616,7 @@ public class ClassActivity extends AppCompatActivity {
         return true;
     }
 
-    public void deleteClass() {
+    private void deleteClass() {
         new AlertDialog.Builder(context)
                 .setIcon(android.R.drawable.ic_dialog_alert)
                 .setTitle("Confirm")
@@ -629,7 +628,7 @@ public class ClassActivity extends AppCompatActivity {
                             @Override
                             public void asyncDone(HashMap<String, HashMap<String, String>> classes) {
                             }
-                        }, context).executeTask("DELETE", classClassId, "", "", "", "");
+                        }, context).executeTask("DELETE", classClassId, "", "");
                         getAllClasses();
                         etClassName.setText("");
                         tvTeacherName.setText("");
@@ -645,7 +644,7 @@ public class ClassActivity extends AppCompatActivity {
                 })
                 .setNegativeButton("No", null)
                 .show();
-        if(teacherClassses){
+        if(teacherClasses){
             getTeacherClasses();
         } else {
             getAllClasses();
@@ -654,7 +653,7 @@ public class ClassActivity extends AppCompatActivity {
     }
 
 
-    public void getTeacherClasses() {
+    private void getTeacherClasses() {
         new ClassTask(new Callback() {
             @Override
             public void asyncDone(HashMap<String, HashMap<String, String>> classes) {
@@ -685,10 +684,10 @@ public class ClassActivity extends AppCompatActivity {
                 Log.d("classList entries", String.valueOf(classList));
                 Log.d("classListAdapter", "successfully updated");
             }
-        }, context).executeTask("FETCH", "", currentUserTeacherId, "", "", "");
+        }, context).executeTask("FETCH", "", currentUserTeacherId, "");
     }
 
-    public void setEnabledUiItems() {
+    private void setEnabledUiItems() {
         if (newClass) {
             tvTitleCRUDClass.setText(R.string.createClass);
             bCreateClass.setVisibility(View.VISIBLE);
@@ -720,7 +719,7 @@ public class ClassActivity extends AppCompatActivity {
         }
     }
 
-    public void getAllClasses() {
+    private void getAllClasses() {
         new ClassTask(new Callback() {
             @Override
             public void asyncDone(HashMap<String, HashMap<String, String>> classes) {
@@ -750,43 +749,38 @@ public class ClassActivity extends AppCompatActivity {
                 classListAdapter.notifyDataSetChanged();
                 Log.d("dialogClassListAdapter", "successfully updated");
             }
-        }, context).executeTask("FETCH", "", "", "", "", "");
+        }, context).executeTask("FETCH", "", "", "");
     }
 
-    public void setNewClass(boolean value) {
+    private void setNewClass(boolean value) {
         newClass = value;
         setEnabledUiItems();
         Log.d("new class value", String.valueOf(newClass));
     }
 
-    public void setChanged(boolean value) {
+    private void setChanged(boolean value) {
         changed = value;
         setEnabledUiItems();
         Log.d("setChanged changed", String.valueOf(changed));
     }
 
-    public void setNameChanged(boolean value) {
+    private void setNameChanged(boolean value) {
         nameChanged = value;
         setEnabledUiItems();
         Log.d("Changed name value", String.valueOf(changed));
     }
 
-    public void setTeacherChanged(boolean value) {
+    private void setTeacherChanged(boolean value) {
         teacherChanged = value;
         setEnabledUiItems();
         Log.d("Changed teacher value", String.valueOf(changed));
     }
 
-    public void setTeacherClasses(boolean value){
-        teacherClassses = value;
+    private void setTeacherClasses(){
+        teacherClasses = true;
     }
 
-    public void setAllClasses(boolean value){
-        allClasses = value;
-    }
-
-
-    public void checkChanged() {
+    private void checkChanged() {
         if(teacherChanged && nameChanged) {
             setChanged(true);
             Log.d("CheckChanged Changed", String.valueOf(changed));
@@ -799,7 +793,7 @@ public class ClassActivity extends AppCompatActivity {
         }
     }
 
-    public void confirm(final DialogCallback callback) {
+    private void confirm(final DialogCallback callback) {
         new AlertDialog.Builder(context)
                 .setIcon(android.R.drawable.ic_dialog_alert)
                 .setTitle("Confirm")
@@ -844,7 +838,7 @@ public class ClassActivity extends AppCompatActivity {
         }, context).execute(classId, teacherId);
     }
 
-    public void getAllTeachers(){
+    private void getAllTeachers(){
         new UserTask(new Callback() {
             @Override
             public void asyncDone(HashMap<String, HashMap<String, String>> users) {
@@ -873,8 +867,8 @@ public class ClassActivity extends AppCompatActivity {
         }, context).execute("FETCH", "teacher", "", "", "", "", "", "", "", "", "", "");
     }
 
-    public void resetAdapter(ListView lv, SimpleAdapter sa) {
-        lv.setChoiceMode(lv.CHOICE_MODE_NONE);
+    private void resetAdapter(ListView lv, SimpleAdapter sa) {
+        lv.setChoiceMode(AbsListView.CHOICE_MODE_NONE);
         lv.setAdapter(sa);
         lv.requestLayout();
     }

@@ -28,9 +28,9 @@ import java.util.HashMap;
  */
 public class RoleTask extends AsyncTask<String, Void, HashMap<String,HashMap<String, String>>> {
 
-    Callback delegate;
-    ProgressDialog progressDialog;
-    final Context context;
+    private final Callback delegate;
+    private final ProgressDialog progressDialog;
+    private final Context context;
 
     @Override
     protected void onPreExecute() {

@@ -29,9 +29,9 @@ import java.util.HashMap;
  */
 public class AnswerTask extends AsyncTask<String, Void, HashMap<String, HashMap<String, String>>> {
 
-    private Context context;
-    private Callback delegate;
-    private ProgressDialog progressDialog;
+    private final Context context;
+    private final Callback delegate;
+    private final ProgressDialog progressDialog;
 
     public AnswerTask (Callback delegate, Context context){
         this.delegate = delegate;
@@ -104,7 +104,7 @@ public class AnswerTask extends AsyncTask<String, Void, HashMap<String, HashMap<
 
 
         } catch (IOException e) {
-
+            e.printStackTrace();
         } catch (JSONException e) {
             e.printStackTrace();
         }

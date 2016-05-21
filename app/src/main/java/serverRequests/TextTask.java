@@ -31,7 +31,7 @@ public class TextTask extends AsyncTask<String, Void, HashMap<String, HashMap<St
 
     private final Context context;
     private final Callback delegate;
-    ProgressDialog progressDialog;
+    private final ProgressDialog progressDialog;
 
     public TextTask(Callback delegate, Context context){
         this.delegate = delegate;

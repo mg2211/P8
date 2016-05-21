@@ -29,9 +29,9 @@ import java.util.HashMap;
  */
 public class UserTask extends AsyncTask<String, Void, HashMap<String,HashMap<String, String>>> {
 
-    Callback delegate;
+    private final Callback delegate;
     private final Context context;
-    ProgressDialog progressDialog;
+    private final ProgressDialog progressDialog;
 
     @Override
     protected void onPreExecute() {
@@ -48,10 +48,10 @@ public class UserTask extends AsyncTask<String, Void, HashMap<String,HashMap<Str
     }
 
 
-    public void executeTask(String method, String role, String userId, String teacherId, String studentId,
-                            String classId, String username, String password, String lastName, String firstName,
+    public void executeTask(String method, String role, String userId, String teacherId,
+                            String username, String password, String lastName, String firstName,
                             String email, String parentEmail) {
-        this.execute(method, role, userId, teacherId, studentId, classId, username, password, lastName,
+        this.execute(method, role, userId, "", "", "", username, password, lastName,
                 firstName, email, parentEmail);
     }
 

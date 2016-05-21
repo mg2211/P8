@@ -12,10 +12,10 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 public class ListViewAdapter extends SimpleAdapter {
-    ArrayList<Integer> colors = new ArrayList<>();
+    private ArrayList<Integer> colors = new ArrayList<>();
 
-    public ListViewAdapter(Context context, List<Map<String, String>> items, int resource, String[] from, int[] to, ArrayList<Integer> colors) {
-        super(context, items, resource, from, to);
+    public ListViewAdapter(Context context, List<Map<String, String>> items, String[] from, int[] to, ArrayList<Integer> colors) {
+        super(context, items, android.R.layout.simple_list_item_2, from, to);
         this.colors = colors;
     }
 

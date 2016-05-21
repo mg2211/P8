@@ -38,21 +38,15 @@ public class TextActivity extends AppCompatActivity {
 
     private EditText etContent;
 
-    private Context context = this;
-    private ListView lvTexts;
-    private List<Map<String, String>> textList = new ArrayList<>();
-    private ArrayList<Integer> colors = new ArrayList<>();
+    private final Context context = this;
+    private final List<Map<String, String>> textList = new ArrayList<>();
+    private final ArrayList<Integer> colors = new ArrayList<>();
     private ListViewAdapter textAdapter;
-    private ListView lvQuestions;
-    private List<Map<String, String>> questionList = new ArrayList<>();
+    private final List<Map<String, String>> questionList = new ArrayList<>();
     private SimpleAdapter questionAdapter;
-    private Button bAddText;
     private Button bDelete;
-    private Button bSave;
-    private Button bAddQuestion;
     private EditText etTextName;
     private TextView tvComplexity;
-    private EditText etSearch;
     private String textContent;
     private String textId;
     private String textName;
@@ -67,18 +61,18 @@ public class TextActivity extends AppCompatActivity {
         setContentView(R.layout.activity_text);
 
 
-        bSave = (Button) findViewById(R.id.bSave);
-        lvTexts = (ListView) findViewById(R.id.lvTexts);
+        Button bSave = (Button) findViewById(R.id.bSave);
+        ListView lvTexts = (ListView) findViewById(R.id.lvTexts);
         etContent = (EditText) findViewById(R.id.etContent);
-        bAddText = (Button) findViewById(R.id.bAddText);
+        Button bAddText = (Button) findViewById(R.id.bAddText);
         bDelete = (Button) findViewById(R.id.bDelete);
         etTextName = (EditText) findViewById(R.id.etTextname);
         tvComplexity = (TextView) findViewById(R.id.tvComplexity);
-        etSearch = (EditText) findViewById(R.id.etSearch);
+        EditText etSearch = (EditText) findViewById(R.id.etSearch);
         bDelete.setEnabled(false);
-        bAddQuestion = (Button) findViewById(R.id.bAddQuestion);
+        Button bAddQuestion = (Button) findViewById(R.id.bAddQuestion);
 
-        lvQuestions = (ListView) findViewById(R.id.lvQuestions);
+        ListView lvQuestions = (ListView) findViewById(R.id.lvQuestions);
         questionAdapter = new SimpleAdapter(this, questionList,
                 android.R.layout.simple_list_item_1,
                 new String[]{"Question"},
@@ -102,7 +96,7 @@ public class TextActivity extends AppCompatActivity {
         setChanged(false);
         getTexts();
         setContentPane(-1);
-        textAdapter = new ListViewAdapter(this, textList, android.R.layout.simple_list_item_2, new String[]{"textname", "complexity"}, new int[]{android.R.id.text1, android.R.id.text2}, colors);
+        textAdapter = new ListViewAdapter(this, textList, new String[]{"textname", "complexity"}, new int[]{android.R.id.text1, android.R.id.text2}, colors);
 
         lvTexts.setAdapter(textAdapter);
         lvTexts.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -536,8 +530,8 @@ public class TextActivity extends AppCompatActivity {
         }, context).executeTask("get", "", textId, "", "");
     }
 
-    private int pxToDp(int px) {
-        return (int) (px / Resources.getSystem().getDisplayMetrics().density);
+    private int pxToDp() {
+        return (int) (20 / Resources.getSystem().getDisplayMetrics().density);
     }
 
     private View addAnswerToDialog(int childNo, String id) {
@@ -546,7 +540,7 @@ public class TextActivity extends AppCompatActivity {
                 LinearLayout.LayoutParams.MATCH_PARENT,
                 LinearLayout.LayoutParams.WRAP_CONTENT
         );
-        llParams.setMargins(0, 0, 0, pxToDp(20));
+        llParams.setMargins(0, 0, 0, pxToDp());
         answer.setOrientation(LinearLayout.HORIZONTAL);
         answer.setTag(R.id.ANSWER_ID_TAG, id);
         answer.setLayoutParams(llParams);
@@ -554,7 +548,7 @@ public class TextActivity extends AppCompatActivity {
         EditText answerText = new EditText(context);
         answerText.setHint("Answer");
         LinearLayout.LayoutParams etParams = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT, 1);
-        etParams.setMargins(0, 0, pxToDp(20), 0);
+        etParams.setMargins(0, 0, pxToDp(), 0);
         answerText.setLayoutParams(etParams);
         String etTag = "etDialogAnswer" + childNo;
         answerText.setTag(etTag);
@@ -562,7 +556,7 @@ public class TextActivity extends AppCompatActivity {
 
         Switch answerSwitch = new Switch(context);
         LinearLayout.LayoutParams swParams = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
-        swParams.setMargins(0, 0, pxToDp(20), 0);
+        swParams.setMargins(0, 0, pxToDp(), 0);
         answerSwitch.setTextOff("Wrong");
         answerSwitch.setTextOn("Right");
         answerSwitch.setLayoutParams(swParams);

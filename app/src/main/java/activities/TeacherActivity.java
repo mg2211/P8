@@ -30,14 +30,7 @@ import java.util.HashMap;
 
 public class TeacherActivity extends AppCompatActivity {
 
-    private Button bClasses;
-    private Button bAssignments;
-    private Button bTexts;
-    private Button bUsers;
-    private Button bLogOut;
     private final Context context = this;
-    private UserInfo userinfo;
-    private HashMap<String, String> user;
     private final ArrayList<BarEntry> yVal = new ArrayList<>();
     private final ArrayList<String> xVals = new ArrayList<>();
     private final ArrayList<IBarDataSet> dataSets = new ArrayList<>();
@@ -49,15 +42,13 @@ public class TeacherActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_teacher);
 
-        userinfo = new UserInfo(context);
-        user = userinfo.getUser();
         setButtons();
-        addData(5);
-        bClasses = (Button) findViewById(R.id.bClasses);
-        bAssignments = (Button) findViewById(R.id.bAssignments);
-        bTexts = (Button) findViewById(R.id.bTexts);
-        bUsers = (Button) findViewById(R.id.bUsers);
-        bLogOut = (Button) findViewById(R.id.bLogOut);
+        addData();
+        Button bClasses = (Button) findViewById(R.id.bClasses);
+        Button bAssignments = (Button) findViewById(R.id.bAssignments);
+        Button bTexts = (Button) findViewById(R.id.bTexts);
+        Button bUsers = (Button) findViewById(R.id.bUsers);
+        Button bLogOut = (Button) findViewById(R.id.bLogOut);
 
         bClasses.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -145,9 +136,9 @@ public class TeacherActivity extends AppCompatActivity {
 
     }
 
-    private void addData(int i) {
+    private void addData() {
         colors.clear();
-        for(int n = 0; n<i; n++){
+        for(int n = 0; n< 5; n++){
             int randomnumber = (int)(Math.random() * 101);
             yVal.add(new BarEntry(randomnumber, n));
             if(randomnumber >= 50 && randomnumber <= 75){
