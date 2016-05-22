@@ -35,56 +35,93 @@ import java.util.List;
 import java.util.Map;
 
 public class TextActivity extends AppCompatActivity {
-
-    private EditText etContent;
-
+    /*The context for which various dialogs and server request is running from*/
     private final Context context = this;
-    private final List<Map<String, String>> textList = new ArrayList<>();
-    private final ArrayList<Integer> colors = new ArrayList<>();
-    private ListViewAdapter textAdapter;
-    private final List<Map<String, String>> questionList = new ArrayList<>();
-    private SimpleAdapter questionAdapter;
+
+    /*UI elements*/
+    private EditText etContent;
     private Button bDelete;
     private EditText etTextName;
     private TextView tvComplexity;
+
+    /*Listview adapters*/
+    private ListViewAdapter textAdapter;
+    private SimpleAdapter questionAdapter;
+
+    /*List to populate listviews*/
+    private final List<Map<String, String>> textList = new ArrayList<>();
+    private final List<Map<String, String>> questionList = new ArrayList<>();
+
+    /*Colors for the listview complexity*/
+    private final ArrayList<Integer> colors = new ArrayList<>();
+
+    /*The content of the text*/
     private String textContent;
+    /*The id of the text*/
     private String textId;
+    /*The name of the text*/
     private String textName;
+    /*Boolean for checking if the text is new or an old text is being edited*/
     private boolean newText;
+    /*Boolean for checking if the text is changed from the last saved instance of that text*/
     private boolean changed;
+    /*Double for storing the complexity of the text*/
     private double lix;
+    /*Boolean for checking if the contentpane should be cleared*/
     private boolean clear;
 
+    /**
+     * onCreate sets up the ui elements, populates them and describes what to do on click
+     * @param savedInstanceState
+     */
     @Override
     protected void onCreate(final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_text);
 
+        /*Setting the content pane to a new text and getting all texts from DB to populate the TextDialog*/
+        setNewText(true);
+        setChanged(false);
+        getTexts();
+        setContentPane(-1);
 
+        /*Setting up UI elements*/
         Button bSave = (Button) findViewById(R.id.bSave);
-        ListView lvTexts = (ListView) findViewById(R.id.lvTexts);
-        etContent = (EditText) findViewById(R.id.etContent);
+        Button bAddQuestion = (Button) findViewById(R.id.bAddQuestion);
         Button bAddText = (Button) findViewById(R.id.bAddText);
+        EditText etSearch = (EditText) findViewById(R.id.etSearch);
+
+        etContent = (EditText) findViewById(R.id.etContent);
         bDelete = (Button) findViewById(R.id.bDelete);
+        bDelete.setEnabled(false);
         etTextName = (EditText) findViewById(R.id.etTextname);
         tvComplexity = (TextView) findViewById(R.id.tvComplexity);
-        EditText etSearch = (EditText) findViewById(R.id.etSearch);
-        bDelete.setEnabled(false);
-        Button bAddQuestion = (Button) findViewById(R.id.bAddQuestion);
 
         ListView lvQuestions = (ListView) findViewById(R.id.lvQuestions);
+        ListView lvTexts = (ListView) findViewById(R.id.lvTexts);
+
+        /*Creating an adapter for the questionAdapter*/
         questionAdapter = new SimpleAdapter(this, questionList,
                 android.R.layout.simple_list_item_1,
                 new String[]{"Question"},
                 new int[]{android.R.id.text1});
+        /*Setting adapter*/
         lvQuestions.setAdapter(questionAdapter);
 
+        /**
+         * Adds an onItemClickListener for the listView with questions
+         * Which calls the questionDialog with the parameter of position - The position in the listview
+         */
         lvQuestions.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int position, long l) {
                 questionDialog(position);
             }
         });
+        /**
+         * Adds an onClickListener for the Add Question Button Which calls
+         * The questionDialog with Parameter(-1) - A negative number will set the dialog to a new question
+         */
         bAddQuestion.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -92,10 +129,7 @@ public class TextActivity extends AppCompatActivity {
             }
         });
 
-        setNewText(true);
-        setChanged(false);
-        getTexts();
-        setContentPane(-1);
+
         textAdapter = new ListViewAdapter(this, textList, new String[]{"textname", "complexity"}, new int[]{android.R.id.text1, android.R.id.text2}, colors);
 
         lvTexts.setAdapter(textAdapter);
