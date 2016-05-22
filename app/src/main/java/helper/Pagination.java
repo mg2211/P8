@@ -1,18 +1,25 @@
 package helper;
 
+/**
+ * Created by Brandur on 5/16/2016.
+ */
 
+        import android.text.Layout;
+        import android.text.StaticLayout;
+        import android.text.TextPaint;
 
-import android.text.Layout;
-import android.text.StaticLayout;
-import android.text.TextPaint;
+        import java.util.ArrayList;
+        import java.util.List;
 
-import java.util.ArrayList;
-import java.util.List;
-
-
+/**
+ * Created by joe on 03.09.15.
+ */
 public class Pagination {
+    private final boolean mIncludePad = true;
     private final int mWidth;
     private final int mHeight;
+    final float mSpacingMult = 1;
+    final float mSpacingAdd = 10;
     private final CharSequence mText;
     private final TextPaint mPaint;
     private final List<CharSequence> mPages;
@@ -23,15 +30,12 @@ public class Pagination {
         this.mHeight = pageH;
         this.mPaint = paint;
 
-        this.mPages = new ArrayList<>();
+        this.mPages = new ArrayList<CharSequence>();
 
         layout();
     }
 
     private void layout() {
-        float mSpacingAdd = 1;
-        float mSpacingMult = 1;
-        boolean mIncludePad = true;
         final StaticLayout layout = new StaticLayout(mText, mPaint, mWidth, Layout.Alignment.ALIGN_NORMAL, mSpacingMult, mSpacingAdd, mIncludePad);
 
         final int lines = layout.getLineCount();
