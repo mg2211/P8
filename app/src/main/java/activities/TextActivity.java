@@ -90,8 +90,8 @@ public class TextActivity extends AppCompatActivity {
         Button bAddQuestion = (Button) findViewById(R.id.bAddQuestion);
         Button bAddText = (Button) findViewById(R.id.bAddText);
         EditText etSearch = (EditText) findViewById(R.id.etSearch);
-
         etContent = (EditText) findViewById(R.id.etContent);
+
         bDelete = (Button) findViewById(R.id.bDelete);
         bDelete.setEnabled(false);
         etTextName = (EditText) findViewById(R.id.etTextname);
