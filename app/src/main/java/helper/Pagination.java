@@ -11,15 +11,13 @@ package helper;
         import java.util.ArrayList;
         import java.util.List;
 
-/**
- * Created by joe on 03.09.15.
- */
+
 public class Pagination {
     private final boolean mIncludePad = true;
     private final int mWidth;
     private final int mHeight;
     final float mSpacingMult = 1;
-    final float mSpacingAdd = 10;
+    final float mSpacingAdd = 10; // number of pages to possible add
     private final CharSequence mText;
     private final TextPaint mPaint;
     private final List<CharSequence> mPages;

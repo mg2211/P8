@@ -122,14 +122,6 @@ android:background="@color/Creamy"    >
                 android:id="@+id/rightPane">
 
 
-
-                <LinearLayout
-                    android:orientation="horizontal"
-                    android:layout_width="fill_parent"
-                    android:layout_height="wrap_content">
-
-                </LinearLayout>
-
                 <RelativeLayout
                     android:orientation="horizontal"
                     android:layout_width="match_parent"
