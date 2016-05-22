@@ -442,7 +442,7 @@ public class TextActivity extends AppCompatActivity {
     }
 
     /**
-     *
+     *Called when saving a text and the newText boolean is true
      * @return true if there are no problems
      */
     private boolean createText() {
@@ -482,12 +482,19 @@ public class TextActivity extends AppCompatActivity {
 
     }
 
+    /**
+     * Called when saving a text and the newText boolean is false and the changed boolean is true
+     * @return boolean true if no problems is encountered
+     */
     private boolean updateText() {
+        /*Checking if all input fields has text*/
         if (!etTextName.getText().toString().equals("") && !etContent.getText().toString().equals("")) {
 
+            /*Creating a new TextTask*/
             new TextTask(new Callback() {
                 @Override
                 public void asyncDone(HashMap<String, HashMap<String, String>> results) {
+                    /*When the text has finished updating the questionList is iterated to update the questions as well via the QuestionTask*/
                     if (questionList.size() > 0) {
                         for (int i = 0; i < questionList.size(); i++) {
                             String questionId = questionList.get(i).get("id");
@@ -500,9 +507,11 @@ public class TextActivity extends AppCompatActivity {
                     }
                 }
             },context).executeTask("update", textId, etTextName.getText().toString(), etContent.getText().toString(), lix);
+            /*Updating the textList*/
             getTexts();
             return true;
         } else {
+            /*Showing a toast if some entry fields are empty*/
             int duration = Toast.LENGTH_LONG;
             CharSequence alert = "Please fill in all required fields";
             Toast toast = Toast.makeText(context, alert, duration);
@@ -512,7 +521,12 @@ public class TextActivity extends AppCompatActivity {
 
     }
 
+    /**
+     * DeleteText method
+     * Called when clicking the delete button in the content pane
+     */
     private void deleteText() {
+        /*Showing an Alert dialog asking for confirmation*/
         new AlertDialog.Builder(context)
                 .setIcon(android.R.drawable.ic_dialog_alert)
                 .setTitle("Confirm")
@@ -520,9 +534,11 @@ public class TextActivity extends AppCompatActivity {
                 .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
+                        /*If the dialog response is positive i.e. confirmed for deletion, a new TextTask is created with the parameters for that text*/
                         new TextTask(new Callback() {
                             @Override
                             public void asyncDone(HashMap<String, HashMap<String, String>> results) {
+                                /*When the text is deleted, the QuestionTask is called as well to delete corresponding questions*/
                                 new QuestionTask(new Callback() {//delete questions
                                     @Override
                                     public void asyncDone(HashMap<String, HashMap<String, String>> results) {
@@ -530,7 +546,7 @@ public class TextActivity extends AppCompatActivity {
                                 }, context).executeTask("delete", "", textId, "", ""); //delete the questions after the text is deleted
                             }
                         },context).executeTask("delete", textId, "", "", 0); //delete the text
-
+                        /*Updating the textList and setting the content pane to a new text*/
                         getTexts();
                         setContentPane(-1);
                     }
@@ -541,14 +557,26 @@ public class TextActivity extends AppCompatActivity {
 
     }
 
+    /**
+     * Method for setting the newText boolean
+     * @param value
+     */
     private void setNewText(boolean value) {
         newText = value;
     }
 
+    /**
+     * Method for setting the changed boolean
+     * @param value
+     */
     private void setChanged(boolean value) {
         changed = value;
     }
 
+    /**
+     * Creating a confirmation dialog
+     * @param callback - implementing the DialogCallback interface - used for passing the dialog answer back to its caller
+     */
     private void confirm(final DialogCallback callback) {
         new AlertDialog.Builder(context)
                 .setIcon(android.R.drawable.ic_dialog_alert)
@@ -571,8 +599,12 @@ public class TextActivity extends AppCompatActivity {
 
     }
 
-    //@param position - the position from the listview - pass -1 for new text
+    /**
+     *
+     * @param position - the position from the ListView - pass -1 for new text
+     */
     private void setContentPane(int position) {
+        /*Setting the contentpane to either a new text or a text from the ListView*/
         if (position >= 0) {
             Map<String, String> textData = (Map) textAdapter.getItem(position);
             textContent = textData.get("textcontent");
@@ -599,6 +631,10 @@ public class TextActivity extends AppCompatActivity {
         }
     }
 
+    /**
+     * Getting the questions for a specific text
+     * @param textId - the textId for which the method should get questions for
+     */
     private void getQuestions(String textId) {
         new QuestionTask(new Callback() {
             @Override
@@ -620,17 +656,29 @@ public class TextActivity extends AppCompatActivity {
         }, context).executeTask("get", "", textId, "", "");
     }
 
-    private int pxToDp() {
-        return (int) (20 / Resources.getSystem().getDisplayMetrics().density);
+    /**
+     * Method for converting pixels to density independent pixels
+     * @param px - the pixel value to be converted
+     * @return
+     */
+    private int pxToDp(int px) {
+        return (int) (px / Resources.getSystem().getDisplayMetrics().density);
     }
 
+    /**
+     * Adding rows of answers to the questionDialog
+     * @param childNo the number of already added childs(answers)+1
+     * @param id if a question has more than two answers this parameter is invoked to set the id of the answer to the one in the DB
+     * @return a linear layout with a switch and an editText
+     */
     private View addAnswerToDialog(int childNo, String id) {
+        /*Creating the linear layout for containing the Switch and the editText*/
         LinearLayout answer = new LinearLayout(context);
         LinearLayout.LayoutParams llParams = new LinearLayout.LayoutParams(
                 LinearLayout.LayoutParams.MATCH_PARENT,
                 LinearLayout.LayoutParams.WRAP_CONTENT
         );
-        llParams.setMargins(0, 0, 0, pxToDp());
+        llParams.setMargins(0, 0, 0, pxToDp(20));
         answer.setOrientation(LinearLayout.HORIZONTAL);
         answer.setTag(R.id.ANSWER_ID_TAG, id);
         answer.setLayoutParams(llParams);
@@ -638,7 +686,7 @@ public class TextActivity extends AppCompatActivity {
         EditText answerText = new EditText(context);
         answerText.setHint("Answer");
         LinearLayout.LayoutParams etParams = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT, 1);
-        etParams.setMargins(0, 0, pxToDp(), 0);
+        etParams.setMargins(0, 0, pxToDp(20), 0);
         answerText.setLayoutParams(etParams);
         String etTag = "etDialogAnswer" + childNo;
         answerText.setTag(etTag);
@@ -646,7 +694,7 @@ public class TextActivity extends AppCompatActivity {
 
         Switch answerSwitch = new Switch(context);
         LinearLayout.LayoutParams swParams = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
-        swParams.setMargins(0, 0, pxToDp(), 0);
+        swParams.setMargins(0, 0, pxToDp(20), 0);
         answerSwitch.setTextOff("Wrong");
         answerSwitch.setTextOn("Right");
         answerSwitch.setLayoutParams(swParams);
