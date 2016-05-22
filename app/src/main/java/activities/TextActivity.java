@@ -79,7 +79,7 @@ public class TextActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_text);
 
-        /*Setting the content pane to a new text and getting all texts from DB to populate the TextDialog*/
+        /*Setting the content pane to a new text and getting all texts from DB to populate the text listView*/
         setNewText(true);
         setChanged(false);
         getTexts();
@@ -129,18 +129,24 @@ public class TextActivity extends AppCompatActivity {
             }
         });
 
-
+        /*Creating a new Adapter from the custom adapter class ListViewAdapter which takes the color ArrayList for coloring rows based on complexity*/
         textAdapter = new ListViewAdapter(this, textList, new String[]{"textname", "complexity"}, new int[]{android.R.id.text1, android.R.id.text2}, colors);
-
+        /*Setting the adapter*/
         lvTexts.setAdapter(textAdapter);
+
+        /*Setting an onItemClickListener for the lvText*/
         lvTexts.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, final int position, long id) {
+               /*If the text has changed from it's last saved instance the confirm dialog method is called*/
                 if (changed) {
                     confirm(new DialogCallback() {
                         @Override
                         public void dialogResponse(boolean dialogResponse) {
+                            /*If the dialog response is positive i.e. that changes should be saved*/
                             if (dialogResponse) {
+                                /*If the text is new i.e. not saved in the DB the createText method is called
+                                * this method returns true if there are no problems*/
                                 if (newText) {
                                     if (createText()) {
                                         clear = true;
@@ -150,6 +156,8 @@ public class TextActivity extends AppCompatActivity {
                                         clear = false;
                                     }
                                 }
+                                /*If the text has changed the updateText method is called
+                                * this method returns true if there are no problems.*/
                                 if (changed) {
                                     if (updateText()) {
                                         clear = true;
@@ -159,9 +167,10 @@ public class TextActivity extends AppCompatActivity {
                                         clear = false;
                                     }
                                 }
-
+                            /*If the response is negative */
                             } else {
                                 clear = true;
+                                /*Deleting all questions added to a new text*/
                                if(newText) {
                                    new QuestionTask(new Callback() {
                                        @Override
@@ -170,20 +179,23 @@ public class TextActivity extends AppCompatActivity {
                                        }
                                    }, context).executeTask("delete", "", textId, "", "");
                                }
-                            } if (clear) {
+                            }
+
+                            /*If clear is set to true the content pane is set to the text initially chosen from the LV*/
+                            if (clear) {
                                 setContentPane(position);
 
                             }
                         }
                     });
-
+                    /*If a change in the text or name hasn't been detected the content pane is set to the text initially chosen from the LV*/
                 } else {
                     setContentPane(position);
                 }
             }
         });
 
-
+        /*Setting an onClickListener for the Add Text button - This clickListener is behaving as the onItemClickListener above*/
         bAddText.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -233,10 +245,12 @@ public class TextActivity extends AppCompatActivity {
 
             }
         });
-
+        /*Setting onClickListener for the save button*/
         bSave.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                /*Checking if all information is provided and call either the createText or updateText depending on the changed and newText booleans
+                * if some information is missing text or name a toast is shown on the screen*/
                 if (!etTextName.getText().toString().equals("") && !etContent.getText().toString().equals("")) {
                     getQuestions(textId);
                     if (newText) {
@@ -256,14 +270,14 @@ public class TextActivity extends AppCompatActivity {
             }
         });
 
-
+        /*onClickListener for the delete button - Calls the deleteText method when clicked*/
         bDelete.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 deleteText();
             }
         });
-
+        /*Adding a textChangedListener for the content editText - This is used for detecting changes and setting the changed boolean accordingly */
         etContent.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
@@ -272,7 +286,9 @@ public class TextActivity extends AppCompatActivity {
 
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
+                /*Everytime a text is changed the calculate method is called*/
                 calculate();
+
                 String content = etContent.getText().toString();
                 if (!content.equals("") && !content.equals(textContent)) {
                     setChanged(true);
@@ -286,6 +302,7 @@ public class TextActivity extends AppCompatActivity {
                 //auto generated stub
             }
         });
+        /*Adding a textChangedListener for the name editText - This is used for detecting changes and setting the changed boolean accordingly */
         etTextName.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
@@ -307,6 +324,7 @@ public class TextActivity extends AppCompatActivity {
 
             }
         });
+        /*Adding a textChangedListener for the search editText - Used for real time sorting of the listview of texts*/
         etSearch.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
@@ -327,42 +345,69 @@ public class TextActivity extends AppCompatActivity {
         });
     }
 
+    /**
+     * Calculate method
+     * Calculates a text's complexity based on the Lix standard.
+     */
     private void calculate() {
+        /*Getting the text to be calculated*/
         String inputText = etContent.getText().toString();
+        /*Declaring a string var for the clean text*/
         String cleanText;
+
+        /*Int P is the number of punctuation marks in the input text*/
         int P = StringUtils.countMatches(inputText, ".");
         P = P + StringUtils.countMatches(inputText, "?");
         P = P + StringUtils.countMatches(inputText, "!");
         P = P + StringUtils.countMatches(inputText, ":");
         P = P + StringUtils.countMatches(inputText, ";");
+
+        /*Cleaning all punctuation marks from inputText*/
         cleanText = inputText.replaceAll("/./", "");
         cleanText = cleanText.replaceAll("/?/", "");
         cleanText = cleanText.replaceAll("/!/", "");
         cleanText = cleanText.replaceAll("/:/", "");
         cleanText = cleanText.replaceAll("/;/", "");
+
+        /*Splitting the cleanText at every whitespace*/
         String[] words = cleanText.split("\\s+");
+
+        /*Int O - The number of words in the text*/
         int O = words.length;
+
+        /*If O and P larger than 0 the complexity counter is running
+        * if the one of these are 0 an exeption will occur due to division by zero*/
         if (O > 0 && P > 0) {
+            /*Int L - The number of long words i.e. words longer than 6 characters*/
             int L = 0;
+            /*Iterating the words array*/
             for (String word : words) {
                 if (word.length() > 6) {
                     L++;
                 }
             }
+            /*Calculating the Lix complexity */
             lix = (O / P) + (L * 100 / O);
+
+            /*Setting the textView accordingly*/
             tvComplexity.setText(String.valueOf(lix));
         } else {
+
+            /*If there are no words OR punctuation marks in the input text the textView is set to nothing*/
             tvComplexity.setText("");
         }
     }
-
+    /*getTexts method - creating a new TextTask object*/
     private void getTexts() {
         new TextTask(new Callback() {
             @Override
             public void asyncDone(HashMap<String, HashMap<String, String>> results) {
+                /*Removing the response from the HashMap*/
                 results.remove("response");
+                /*Clearing the textList and colors*/
                 textList.clear();
                 colors.clear();
+                /*Iterating over the HashMap to add a text to the listView*/
                 for (Map.Entry<String, HashMap<String, String>> text : results.entrySet()) {
 
                     Map<String, String> textInfo = new HashMap<>();
@@ -378,6 +423,7 @@ public class TextActivity extends AppCompatActivity {
                     textInfo.put("id", textId);
                     textList.add(textInfo);
 
+                    /*Adding the right color in the colors ArrayList*/
                     double difficulty = Double.parseDouble(complexity);
                     if (difficulty > 0 && difficulty <= 20) {
                         colors.add(Color.rgb(156, 204, 101));
@@ -389,20 +435,28 @@ public class TextActivity extends AppCompatActivity {
                         colors.add(Color.TRANSPARENT);
                     }
                 }
+                /*Letting the LV know that there is new data*/
                 textAdapter.notifyDataSetChanged();
             }
         },context).executeTask("get","","","",0);
     }
 
+    /**
+     *
+     * @return true if there are no problems
+     */
     private boolean createText() {
-
+        /*Checking if all information is typed in*/
         if (!etTextName.getText().toString().equals("") && !etContent.getText().toString().equals("")) {
-
+            /*Creating a new TextTask object*/
             new TextTask(new Callback() {
                 @Override
                 public void asyncDone(HashMap<String, HashMap<String, String>> results) {
+                    /*String id - getting the text's id in the database*/
                    String id = results.get("response").get("insertedId");
+
                     if (questionList.size() > 0) {
+                        /*Iterating over the questionList and updating each question's textId to the text's new id via the QuestionTask class*/
                         for (int i = 0; i < questionList.size(); i++) {
                             String questionId = questionList.get(i).get("id");
                             new QuestionTask(new Callback() {
@@ -414,9 +468,11 @@ public class TextActivity extends AppCompatActivity {
                     }
                 }
             },context).executeTask("create", "", etTextName.getText().toString(), etContent.getText().toString(), lix);
+            /*updating the textList*/
             getTexts();
             return true;
         } else {
+            /*If an entry field is empty a toast is shown and the method returns false*/
             int duration = Toast.LENGTH_LONG;
             CharSequence alert = "Please fill in all required fields";
             Toast toast = Toast.makeText(context, alert, duration);
