@@ -4,6 +4,8 @@ import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.drawable.BitmapDrawable;
 import android.os.Build;
 import android.os.SystemClock;
 
@@ -23,6 +25,7 @@ import android.view.ViewTreeObserver;
 import android.widget.Button;
 import android.widget.Chronometer;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
@@ -41,7 +44,10 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 
+import javax.microedition.khronos.opengles.GL10;
+
 public class ReadingActivity extends AppCompatActivity  {
+
 
     List<Map<String, String>> questionList = new ArrayList<>();
     String specificQuestionContent1;
@@ -54,7 +60,7 @@ public class ReadingActivity extends AppCompatActivity  {
     HashMap<String, String> user;
     String studentId;
     String textId;
-    TextView tvTextName2;
+    TextView tvTextName;
     Button bDialogSubmit;
 
     TextView tvAssignmentName;
@@ -86,13 +92,12 @@ public class ReadingActivity extends AppCompatActivity  {
     int mCurrentIndex = 0;
     TextView tvContent;
     String textContent22;
-
+    Bitmap bitmap;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_reading);
-
 
 
         userinfo = new UserInfo(context);
@@ -102,8 +107,8 @@ public class ReadingActivity extends AppCompatActivity  {
 
         bFinish = (Button) findViewById(R.id.bFinish);
         bPause = (Button) findViewById(R.id.bPause);
-        tvAssignmentName = (TextView) findViewById(R.id.tvTextName21);
-        tvTextName2 = (TextView) findViewById(R.id.tvTextName2);
+        tvAssignmentName = (TextView) findViewById(R.id.tvAssignmentName);
+        tvTextName = (TextView) findViewById(R.id.tvTextName2);
         chronometer = (Chronometer) findViewById(R.id.chronometer);
 
 
@@ -129,7 +134,7 @@ public class ReadingActivity extends AppCompatActivity  {
 
          textContent22 = getText1().get("text0").get("textcontent");
         String textname = getText1().get("text0").get("textname");
-        tvTextName2.setText(textname);
+        tvTextName.setText(textname);
         Log.d("7979 ", textContent22);
 
 
@@ -527,7 +532,7 @@ public class ReadingActivity extends AppCompatActivity  {
 
 
 
-        tvContent = (TextView) findViewById(R.id.tvText1212);
+        tvContent = (TextView) findViewById(R.id.tvTextContent);
         tvContent.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
             @Override
             public void onGlobalLayout() {
@@ -574,7 +579,13 @@ public class ReadingActivity extends AppCompatActivity  {
 
 
 
-    }}
+    }
+
+    @Override
+    public void onBackPressed() {
+        Log.d("Back button pressed", " -Disabled");
+    }
+}
 
 
 

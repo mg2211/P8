@@ -4,12 +4,15 @@ import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.drawable.BitmapDrawable;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.SimpleAdapter;
 import android.widget.TextView;
@@ -30,24 +33,46 @@ import java.util.Map;
 
 public class StudentActivity extends AppCompatActivity {
 
-
+    /** Button used to logout*/
     Button bLogout;
+
+    /** context*/
     Context context = this;
+
+    /** Listview containing assignments assigned to a student*/
     ListView lvAssToStudent;
+
+    /** Adapter for displaying assignments in the LvAssToStudent listview*/
     AssignmentListAdapterStudent assignedAdapter;
 
-
+    /** A list for storing assignments used by the assignedAdapter*/
     List<Map<String, String>> assignmentList = new ArrayList<>();
+
+
     UserInfo userinfo;
     HashMap<String, String> user;
+
+    /** A string for storing the studentId of the logged in user */
     String studentId;
+
+    /** */
+
+
     String textId;
     String assignmentName;
     String specificAssignmentId;
     String assignmentId;
+
+    /** A textview displaying whether the student has assigned homework waiting or not*/
     TextView homeWork;
+
+    /** A textview displaying the teacher name*/
     TextView teacherName;
+
+    /** A textview displaying the teacher email*/
     TextView teacherEmail;
+
+    /** A textview displaying the class name*/
     TextView className;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -55,13 +80,17 @@ public class StudentActivity extends AppCompatActivity {
 
         setContentView(R.layout.activity_student);
         //getWindow().setBackgroundDrawableResource(R.drawable.green);
+
+
+
+        /** create a new UserInfo to get information on the user currently logged in */
         userinfo = new UserInfo(context);
         user = userinfo.getUser();
         studentId = user.get("studentId");
         String firstName = user.get("firstname");
         String lastName = user.get("lastname");
         String emailAddress = user.get("email");
-        Log.d("StudentId:  ", studentId);
+
 
         getClassInfo();
 
@@ -80,20 +109,14 @@ public class StudentActivity extends AppCompatActivity {
 
         lvAssToStudent = (ListView) findViewById(R.id.lvAssOverview);
 
-      /*  assignmentAdapter = new SimpleAdapter(this, assignmentList,
-                android.R.layout.simple_list_item_1,
-                new String[]{"assignmentLibName"},
-                new int[]{android.R.id.text1});
-        lvAssToStudent.setAdapter(assignmentAdapter);*/
-
         assignedAdapter = new AssignmentListAdapterStudent(this,assignmentList);
 
+        /** Assigns the assignedAdapter to lvAssToStudent listview */
         lvAssToStudent.setAdapter(assignedAdapter);
-
-
 
         getAssignment();
 
+        /** Sets an on item clicklistener to lvAssToStudent */
         lvAssToStudent.setOnItemClickListener(new AdapterView.OnItemClickListener() {
 
             @Override
@@ -106,11 +129,11 @@ public class StudentActivity extends AppCompatActivity {
                 String isComplete = assignmentData.get("isComplete");
                 Long availableto = Long.valueOf(assignmentData.get("availableTo"));
 
+                /** If statement checking whether the assignment clicked in the listview is finished or not*/
                 if(isComplete.equals("0")){
-                    Log.d("TEXTID::: ", textId);
 
 
-                    //add if statement is complete == 0{} else {toast= you have competed that assignment]
+                    /** Alert dialog is created asking the student whether he/she wishes to start an assignment*/
                     AlertDialog.Builder builder = new AlertDialog.Builder(context);
 
                     builder.setMessage("Do you wish to start " + assignmentName + " homework?")
@@ -130,7 +153,6 @@ public class StudentActivity extends AppCompatActivity {
                                     intent.putExtra("assignmentName", assignmentName);
                                     intent.putExtra("id", assignmentId);
                                     startActivity(intent);
-                                    Log.d("8787", assignmentId);
 
                                 }
                             });
@@ -140,6 +162,7 @@ public class StudentActivity extends AppCompatActivity {
                     dialog.show();
 
                 }else{
+                    /** If the assignment is finished a toast will appear */
                     Toast.makeText(StudentActivity.this, "You have finished this assignment", Toast.LENGTH_SHORT).show();
 
                 }

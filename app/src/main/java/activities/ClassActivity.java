@@ -53,8 +53,11 @@ public class ClassActivity extends AppCompatActivity {
 
     private String currentUserTeacherId;
     private String currentUserFirstName;
+
     private String teacherTeacherId;
     private String teacherTeacherFullName;
+    private String teacherTeacherEmail;
+
     private String currentTeacherEmail;
     private String classClassId;
     private String classClassName;
@@ -481,6 +484,8 @@ public class ClassActivity extends AppCompatActivity {
                     setTeacherChanged(true);
                     checkChanged();
                     Log.d("tvTeacherMail changed", String.valueOf(changed));
+                    Log.d("tvTeacherMail value", content);
+                    Log.d("currentTeacher value", currentTeacherEmail);
                 } else {
                     setTeacherChanged(false);
                     checkChanged();
@@ -496,14 +501,12 @@ public class ClassActivity extends AppCompatActivity {
     }
 
     private void setContentPane(int classListPos, int teacherListPos) {
-        String currentTeacherFullName;
-        String teacherTeacherEmail;
         if (classListPos >= 0 && teacherListPos >= 0) {
             Map<String, String> classData = (Map) classListAdapter.getItem(classListPos);
+            currentTeacherEmail = classData.get("teacherEmail");
+
             classClassId = classData.get("classId");
             classClassName = classData.get("className");
-
-            currentTeacherEmail = classData.get("teacherEmail");
 
             Map<String, String> teacherData = (Map) teacherListAdapter.getItem(teacherListPos);
             teacherTeacherId = teacherData.get("teacherId");
@@ -518,6 +521,8 @@ public class ClassActivity extends AppCompatActivity {
 
         } else if (classListPos >= 0) {
             Map<String, String> classData = (Map) classListAdapter.getItem(classListPos);
+            currentTeacherEmail = classData.get("teacherEmail");
+
             classClassId = classData.get("classId");
             classClassName = classData.get("className");
 
@@ -697,7 +702,7 @@ public class ClassActivity extends AppCompatActivity {
                 bCreateClass.setEnabled(false);
             }
         } else {
-            tvTitleCRUDClass.setText(R.string.editClass);
+            tvTitleCRUDClass.setText("Edit class " + classClassName);
             bEditClass.setVisibility(View.VISIBLE);
             bDeleteClass.setVisibility(View.VISIBLE);
             bCreateClass.setVisibility(View.GONE);

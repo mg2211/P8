@@ -71,21 +71,25 @@ android:background="@color/Creamy"    >
                     android:layout_height="wrap_content"
                     android:textAppearance="?android:attr/textAppearanceLarge"
                     android:text="Assignment name"
-                    android:id="@+id/tvTextName21" />
+                    android:id="@+id/tvAssignmentName"
+                    android:textSize="30dp"
+                    android:paddingTop="20dp" />
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:textAppearance="?android:attr/textAppearanceLarge"
                     android:text="Text name"
-                    android:id="@+id/tvTextName2" />
+                    android:id="@+id/tvTextName2"
+                    android:textSize="25dp"
+                    android:paddingTop="10dp" />
 
                 <TextView
                     android:layout_width="match_parent"
                     android:layout_height="538dp"
                     android:textAppearance="?android:attr/textAppearanceMedium"
                     android:text="textContent"
-                    android:id="@+id/tvText1212"
+                    android:id="@+id/tvTextContent"
                     android:textSize="30dp"
                     android:textColor="@color/abc_input_method_navigation_guard"
                     android:width="100dp"
@@ -93,15 +97,8 @@ android:background="@color/Creamy"    >
                     android:singleLine="false"
                     android:maxLines="7"
                     android:lineSpacingExtra="20dp"
-                    android:maxWidth="100dp"/>
-
-                <RelativeLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:id="@+id/la1234"
-                    android:background="@drawable/pencils">
-
-                </RelativeLayout>
+                    android:maxWidth="100dp"
+                    android:paddingTop="30dp" />
 
                 <ScrollView
                     android:id="@+id/SCROLLER_ID"
@@ -145,11 +142,11 @@ android:background="@color/Creamy"    >
                         android:layout_height="wrap_content"
                         android:src="@drawable/arrow_alt_right1"
                         android:layout_gravity="bottom"
+                        android:background="@color/Creamy"
                         android:layout_alignParentBottom="true"
                         android:layout_alignParentRight="true"
-                        android:layout_alignParentEnd="true"
-                        android:layout_marginBottom="183dp"
-                        android:background="@color/Creamy"/>
+                        android:layout_alignParentEnd="true" />
+
 
                 </RelativeLayout>
 
