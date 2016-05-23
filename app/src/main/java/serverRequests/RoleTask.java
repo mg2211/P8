@@ -143,17 +143,25 @@ public class RoleTask extends AsyncTask<String, Void, HashMap<String,HashMap<Str
         progressDialog.dismiss();
 
         if (Integer.parseInt(responseCode) == 100) {
+            /** if 100 - all is fine, remove response and delegate */
             result.remove("response");
             delegate.asyncDone(result);
         } else if (Integer.parseInt(responseCode) == 101) {
+            /** if 101 - response is result of CREATE, UPDATE or DELETE method. Toast a message, remove response and delegate */
             int duration = Toast.LENGTH_LONG;
             Toast toast = Toast.makeText(context, generalResponse, duration);
             toast.show();
             result.remove("response");
             delegate.asyncDone(result);
         } else if (Integer.parseInt(responseCode) > 101) {
+            /** if > 101 - Something went wrong. Toast a message */
             int duration = Toast.LENGTH_LONG;
             Toast toast = Toast.makeText(context, "Response code " + responseCode + ", " + "Message: " + generalResponse, duration);
+            toast.show();
+        } else {
+            /** if no response - Something went wrong. Toast a message */
+            int duration = Toast.LENGTH_LONG;
+            Toast toast = Toast.makeText(context, "Something went horribly wrong, no response code!", duration);
             toast.show();
         }
     }

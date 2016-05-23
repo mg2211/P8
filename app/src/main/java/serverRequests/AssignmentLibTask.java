@@ -177,19 +177,23 @@ public class AssignmentLibTask extends AsyncTask<String, Void, HashMap<String, H
         progressDialog.dismiss();
 
         if (Integer.parseInt(responseCode) == 100) {
+            /** if 100 - all is fine, delegate */
             /*Sending results back to caller activity via the Callback interface*/
             delegate.asyncDone(results);
         } else if (Integer.parseInt(responseCode) == 101) {
+            /** if 101 - response is result of CREATE, UPDATE or DELETE method. Toast a message and delegate */
             int duration = Toast.LENGTH_LONG;
             Toast toast = Toast.makeText(context, generalResponse, duration);
             toast.show();
             /*Sending results back to caller activity via the Callback interface*/
             delegate.asyncDone(results);
         } else if (Integer.parseInt(responseCode) > 101) {
+            /** if > 101 - Something went wrong. Toast a message */
             int duration = Toast.LENGTH_LONG;
             Toast toast = Toast.makeText(context, "Response code " + responseCode + ", " + "Message: " + generalResponse, duration);
             toast.show();
         } else {
+            /** if no response - Something went wrong. Toast a message */
             int duration = Toast.LENGTH_LONG;
             CharSequence alert = "Server connection failed - Please try again later";
             Toast toast = Toast.makeText(context, alert, duration);

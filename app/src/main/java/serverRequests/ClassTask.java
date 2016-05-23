@@ -31,10 +31,10 @@ import java.util.HashMap;
  */
 public class ClassTask extends AsyncTask<String, Void, HashMap<String,HashMap<String, String>>> {
 
-    /** callback */
+    /** callback interface */
     private final Callback delegate;
 
-    /** context */
+    /** application environment interface */
     private final Context context;
 
     /** dialog showing progress during task execution */
@@ -44,7 +44,7 @@ public class ClassTask extends AsyncTask<String, Void, HashMap<String,HashMap<St
     /**
      * classTask constructor
      *
-     * @param delegate the result is delegated to
+     * @param delegate the callback interface the result is delegated to
      * @param context the execution context
      */
     public ClassTask(Callback delegate, Context context) {
@@ -88,6 +88,7 @@ public class ClassTask extends AsyncTask<String, Void, HashMap<String,HashMap<St
         String studentId;
         String userId;
 
+        /** set up the the HashMap that will return the task's results  */
         HashMap<String, HashMap<String, String>> result = new HashMap<>();
 
         method = params[0];
@@ -98,13 +99,16 @@ public class ClassTask extends AsyncTask<String, Void, HashMap<String,HashMap<St
         userId = params[5];
 
         try {
+            /** set up the variables used to store response info */
             String generalResponse;
             int responseCode;
 
+            /** get to the right php script, open a connection and set the connection method */
             URL url = new URL("http://emilsiegenfeldt.dk/p8/classes.php");
             HttpURLConnection connection = (HttpURLConnection) url.openConnection();
             connection.setRequestMethod("POST");
 
+            /** make a uri containing the requested POST-parameters for task execution */
             Uri.Builder builder = new Uri.Builder().appendQueryParameter("method", method)
                     .appendQueryParameter("classid", classId)
                     .appendQueryParameter("teacherid", teacherId)
@@ -120,20 +124,27 @@ public class ClassTask extends AsyncTask<String, Void, HashMap<String,HashMap<St
             writer.close();
             os.close();
 
+            /** connect */
             connection.connect();
-            //catch server response
+
+            /** get the server's response */
             InputStream in = new BufferedInputStream(connection.getInputStream());
 
             String response = IOUtils.toString(in, "UTF-8");
 
+            /** convert to JSON object and get response vars */
             JSONObject JSONResult = new JSONObject(response);
             generalResponse = JSONResult.getString("generalResponse");
             responseCode = JSONResult.getInt("responseCode");
 
+            /** check what sort of information was requested */
             if (params[0].equals("FETCH")) {
+                /** if FETCH, we have some data to store */
 
+                /** get the JSONArray containing user details from JSONResult */
                 JSONArray classes = JSONResult.getJSONArray("classes");
                 for (int i = 0; i < classes.length(); i++) {
+                    /** loop through the JSONArray and store entries in HashMap userInfo */
                     HashMap<String, String> classInfo = new HashMap<>();
 
                     JSONObject classMap = classes.getJSONObject(i);
@@ -146,9 +157,11 @@ public class ClassTask extends AsyncTask<String, Void, HashMap<String,HashMap<St
                     classInfo.put("teacherEmail", classMap.getString("teacherEmail"));
                     classInfo.put("numOfStudents", classMap.getString("numOfStudents"));
 
+                    /** add classInfo to result */
                     result.put("classId: " + classId, classInfo);
                 }
             } else if (params[0].equals("CREATE")) {
+                /** if CREATE, the server returns the id for the last user created, other same as above */
 
                 String lastClassId;
 
@@ -161,6 +174,8 @@ public class ClassTask extends AsyncTask<String, Void, HashMap<String,HashMap<St
                 result.put("lastClassId: " + lastClassId, lastClass);
             }
             Log.d("ClassTask1 response", result.toString());
+            
+            /** store return vars in HashMap and add that to result */
             HashMap<String, String> serverResponse = new HashMap<>();
             serverResponse.put("generalResponse", generalResponse);
             serverResponse.put("responseCode", String.valueOf(responseCode));
@@ -186,19 +201,23 @@ public class ClassTask extends AsyncTask<String, Void, HashMap<String,HashMap<St
         progressDialog.dismiss();
 
         if (Integer.parseInt(responseCode) == 100) {
+            /** if 100 - all is fine, remove response and delegate */
             result.remove("response");
             delegate.asyncDone(result);
         } else if (Integer.parseInt(responseCode) == 101) {
+            /** if 101 - response is result of CREATE, UPDATE or DELETE method. Toast a message, remove response and delegate */
             int duration = Toast.LENGTH_LONG;
             Toast toast = Toast.makeText(context, generalResponse, duration);
             toast.show();
             result.remove("response");
             delegate.asyncDone(result);
         } else if (Integer.parseInt(responseCode) > 101) {
+            /** if > 101 - Something went wrong. Toast a message */
             int duration = Toast.LENGTH_LONG;
             Toast toast = Toast.makeText(context, "Response code " + responseCode + ", " + "Message: " + generalResponse, duration);
             toast.show();
         } else {
+            /** if no response - Something went wrong. Toast a message */
             int duration = Toast.LENGTH_LONG;
             Toast toast = Toast.makeText(context, "Something went horribly wrong, no response code!", duration);
             toast.show();

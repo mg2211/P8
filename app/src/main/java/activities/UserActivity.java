@@ -3,7 +3,6 @@ package activities;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
-import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.text.Editable;
@@ -162,7 +161,7 @@ public class UserActivity extends AppCompatActivity {
     /** boolean for setting whether a new user is being created */
     private boolean newUser;
 
-    /** boolean for setting whether text has been changed */
+    /** boolean for setting whether changes have been made that might need to be saved */
     private boolean changed;
 
     /** boolean for setting whether fields are clear */
@@ -179,6 +178,7 @@ public class UserActivity extends AppCompatActivity {
 
         setContentView(R.layout.activity_user);
 
+        /** EditText for searching */
         EditText etSearch = (EditText) findViewById(R.id.etSearch);
 
         tvTitleCRUDUser = (TextView) findViewById(R.id.tvTitleCRUDUser);
@@ -210,6 +210,7 @@ public class UserActivity extends AppCompatActivity {
         Log.d("userinfo content", String.valueOf(user));
         currentUserUsername = user.get("username");
 
+        /** create an adapter that will contain roles */
         roleAdapter = new ArrayAdapter<>(this,
                 android.R.layout.simple_spinner_item, roleList);
         roleAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
@@ -217,6 +218,7 @@ public class UserActivity extends AppCompatActivity {
         /** assigns the roleAdapter to spinnerRole */
         spinnerRole.setAdapter(roleAdapter);
 
+        /** make sure to start with all roles in spinnerRole */
         getRoles();
 
         /**
@@ -227,6 +229,7 @@ public class UserActivity extends AppCompatActivity {
             public void onItemSelected(AdapterView<?> parent, View v,
                                        int position, long id) {
                 Log.d("Spinner position", spinnerRole.getSelectedItem().toString());
+                /** if teacher - hide UI elements specific for student */
                 if (spinnerRole.getSelectedItem().toString().equals("teacher")) {
                     etContactEmail.setVisibility(View.GONE);
                     bAssignClass.setVisibility(View.GONE);
@@ -243,20 +246,23 @@ public class UserActivity extends AppCompatActivity {
                     tvTitleContactEmail.setVisibility(View.VISIBLE);
                 }
             }
-
-            public void onNothingSelected(AdapterView<?> arg0) {
-                // noting to do do here...
+            /** empty required method for setOnItemSelected */
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
             }
         });
 
+        /** create an adapter that will contain users - displays their username, firstname, lastname and role */
         userListAdapter = new SimpleAdapter(this, userList,
                 R.layout.listview_custom_item, new String[]{"username", "firstName", "lastName", "role"},
                 new int[]{R.id.clTvRow1, R.id.clTvRow2_1, R.id.clTvRow2_2, R.id.clTvRow3});
 
         /** assigns the userListAdapter to lvListUsers */
         lvListUsers.setAdapter(userListAdapter);
+        /** set adapter to single choice mode */
         lvListUsers.setChoiceMode(AbsListView.CHOICE_MODE_SINGLE);
 
+        /** make sure to start with all users in lvListUsers */
         getAllUsers();
 
         /** make sure activity is started in new user mode */
@@ -264,11 +270,16 @@ public class UserActivity extends AppCompatActivity {
         setChanged(false);
         setContentPane(-1);
 
+        /**
+         * create an adapter that will contain classes - displays their name, teacher first and last name and number of students
+         * used in class assignment dialog
+         */
         dialogClassListAdapter = new SimpleAdapter(this, classList,
                 R.layout.listview_custom_item,
                 new String[]{"className", "teacherFirstName", "teacherLastName", "numOfStudents"},
                 new int[]{R.id.clTvRow1, R.id.clTvRow2_1, R.id.clTvRow2_2, R.id.clTvRow3});
 
+        /** make sure to start with all classes in lvListUsers */
         getAllClasses();
 
         /**
@@ -282,11 +293,14 @@ public class UserActivity extends AppCompatActivity {
                 view.setSelected(true);
                 Log.d("position", String.valueOf(position));
                 if (changed) {
+                    /** if changes have been made since last save */
                     confirm(new DialogCallback() {
                         @Override
                         public void dialogResponse(boolean dialogResponse) {
+                            /** if user indicates changes must be saved */
                             if (dialogResponse) {
                                 if (newUser) {
+                                    /** if saving using the creation a new user */
                                     if (createUser()) {
                                         clear = true;
                                         setChanged(false);
@@ -297,6 +311,7 @@ public class UserActivity extends AppCompatActivity {
                                 }
                                 if (changed) {
                                     if (updateUser()) {
+                                        /** if saving using the updating of an existing user */
                                         clear = true;
                                         setChanged(false);
                                         setNewUser(false);
@@ -306,6 +321,7 @@ public class UserActivity extends AppCompatActivity {
                                 }
                             }
                             if (clear) {
+                                /** if user indicates changes must be discarded */
                                 setContentPane(position);
                             } else {
                                 clear = true;
@@ -313,6 +329,7 @@ public class UserActivity extends AppCompatActivity {
                         }
                     });
                 } else {
+                    /** if no changes have been made since last save */
                     setContentPane(position);
                 }
             }
@@ -321,6 +338,7 @@ public class UserActivity extends AppCompatActivity {
         /**
          * set OnItemSelectedListener to bAddUser
          * define behaviour if editTexts have been edited since last click
+         * behaviour is the same as above
          */
         bAddUser.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -413,11 +431,14 @@ public class UserActivity extends AppCompatActivity {
 
         /** add an addTextChangedListener to allow for throwing dialogs in case of unsaved changes */
         etUsername.addTextChangedListener(new TextWatcher() {
+
+            /** required empty method */
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
                 //Auto generated stub
             }
 
+            /** checks if username entry has been changed but is not empty and is not the same as the currently stored username for this entry */
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
                 String content = etUsername.getText().toString();
@@ -428,6 +449,7 @@ public class UserActivity extends AppCompatActivity {
                 }
             }
 
+            /** required empty method */
             @Override
             public void afterTextChanged(Editable s) {
                 //auto generated stub
@@ -457,7 +479,7 @@ public class UserActivity extends AppCompatActivity {
             }
         });
 
-        /** add an addTextChangedListener to allow for throwing dialogs in case of unsaved changes */
+        /** add an addTextChangedListener to allow for throwing dialogs in case of unsaved changes - behaviour as above */
         etFirstName.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
@@ -480,7 +502,7 @@ public class UserActivity extends AppCompatActivity {
             }
         });
 
-        /** add an addTextChangedListener to allow for throwing dialogs in case of unsaved changes */
+        /** add an addTextChangedListener to allow for throwing dialogs in case of unsaved changes - behaviour as above */
         etLastName.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
@@ -503,7 +525,7 @@ public class UserActivity extends AppCompatActivity {
             }
         });
 
-        /** add an addTextChangedListener to allow for throwing dialogs in case of unsaved changes */
+        /** add an addTextChangedListener to allow for throwing dialogs in case of unsaved changes - behaviour as above */
         etEmail.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
@@ -526,7 +548,7 @@ public class UserActivity extends AppCompatActivity {
             }
         });
 
-        /** add an addTextChangedListener to allow for throwing dialogs in case of unsaved changes */
+        /** add an addTextChangedListener to allow for throwing dialogs in case of unsaved changes - behaviour as above */
         etContactEmail.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
@@ -551,7 +573,7 @@ public class UserActivity extends AppCompatActivity {
     }
 
     /**
-     * sets whether a new user is being created
+     * sets whether a new user is being created and adapts the UI elements to that
      *
      * @param value the value to set the boolean to
      */
@@ -562,7 +584,7 @@ public class UserActivity extends AppCompatActivity {
     }
 
     /**
-     * sets whether text has been changed since last button click
+     * sets whether a user's details have been changed since last button click and adapts the UI elements to that
      *
      * @param value the value to set the boolean to
      */
@@ -575,7 +597,7 @@ public class UserActivity extends AppCompatActivity {
     /**
      * creates a dialog asking the user is sure about discarding unsaved changes
      *
-     * @param callback
+     * @param callback the callback interface used
      */
     private void confirm(final DialogCallback callback) {
         new AlertDialog.Builder(context)
@@ -605,6 +627,7 @@ public class UserActivity extends AppCompatActivity {
         new RoleTask(new Callback() {
             @Override
             public void asyncDone(HashMap<String, HashMap<String, String>> asyncResults) {
+                /** execute a new RoleTask  */
                 for (Map.Entry<String, HashMap<String, String>> line : asyncResults.entrySet()) {
                     for (Map.Entry<String, String> role : line.getValue().entrySet()) {
                         String roleName = role.getValue();
@@ -623,8 +646,10 @@ public class UserActivity extends AppCompatActivity {
         new ClassTask(new Callback() {
             @Override
             public void asyncDone(HashMap<String, HashMap<String, String>> classes) {
+                /** execute a new ClassTask with method FETCH  */
                 classList.clear();
                 for (Map.Entry<String, HashMap<String, String>> classData : classes.entrySet()) {
+                    /** get data from the returned HashMap and add it to ArrayList classList that can be used by classListAdapter */
                     Map<String, String> classInfo = new HashMap<>();
                     String classId = classData.getValue().get("classId");
                     String teacherId = classData.getValue().get("teacherId");
@@ -653,6 +678,8 @@ public class UserActivity extends AppCompatActivity {
 
     /**
      * launch a UserTask to fetch all users from the database and add them to userList
+     *
+     * procedure same as above
      */
     private void getAllUsers() {
         new UserTask(new Callback() {
@@ -687,14 +714,14 @@ public class UserActivity extends AppCompatActivity {
                 }
                 userListAdapter.notifyDataSetChanged();
             }
-        }, context).executeTask("FETCH", "", "", "", "", "", "", "", "", ""); //Nothing within "" to get every text - see php script
+        }, context).executeTask("FETCH", "", "", "", "", "", "", "", "", ""); //Nothing within "" to get every user - see php script
     }
 
     /**
      * determine the role of the user to be created, get the contents of relevant EditTexts
      * and feed them to a new UserTask
      *
-     * @return true is a new user has been created, else false
+     * @return true if a new user has been created, else false
      */
     private boolean createUser() {
         String role = spinnerRole.getSelectedItem().toString();
@@ -705,10 +732,10 @@ public class UserActivity extends AppCompatActivity {
         String email = etEmail.getText().toString();
         String parentEmail = etContactEmail.getText().toString();
 
-        String encryptedPass = Encryption.encryptIt(password); // bfk
-        Log.d("8989", encryptedPass);
-
+        /** if true a user can be created */
         boolean general = false;
+
+        /** if true a student can be created */
         boolean student = false;
 
         if (!username.equals("") && !password.equals("") && !firstName.equals("") && !lastName.equals("")
@@ -719,6 +746,7 @@ public class UserActivity extends AppCompatActivity {
             student = true;
         }
         if (role.equals("student") && student) {
+            /** start a new UserTask to create a student - get the id of the newly created user */
             new UserTask(new Callback() {
                 @Override
                 public void asyncDone(HashMap<String, HashMap<String, String>> users) {
@@ -728,10 +756,12 @@ public class UserActivity extends AppCompatActivity {
                 }
             }, context).executeTask("CREATE", role, "", "", username, password, lastName, firstName, // bfk
                     email, parentEmail);
+            /** get all users and reset adapter to reset selection to zero */
             getAllUsers();
             resetAdapter(lvListUsers, userListAdapter);
             return true;
         } else if (!role.equals("student") && general) {
+            /** start a new UserTask to create a teacher - get the id of the newly created user */
             new UserTask(new Callback() {
                 @Override
                 public void asyncDone(HashMap<String, HashMap<String, String>> users) {
@@ -741,22 +771,25 @@ public class UserActivity extends AppCompatActivity {
                 }
             }, context).executeTask("CREATE", role, "", "", username, password, lastName, firstName,
                     email, "");
+            /** get all users and reset adapter to reset selection to zero */
             getAllUsers();
             resetAdapter(lvListUsers, userListAdapter);
+            /** boolean used by lvListUsers onItemClickListener */
             return true;
         } else {
             int duration = Toast.LENGTH_LONG;
             CharSequence alert = "Please fill all required fields";
             Toast toast = Toast.makeText(context, alert, duration);
             toast.show();
+            /** boolean used by lvListUsers onItemClickListener */
             return false;
         }
     }
 
     /**
-     * get the content of relevant EditTexts and create a new UserTask with this content
+     * get the content of relevant EditTexts and update a user with this content
      *
-     * @return true is a new user has been created
+     * @return true if the user has been updated
      */
     private boolean updateUser() {
         String username = etUsername.getText().toString();
@@ -767,13 +800,16 @@ public class UserActivity extends AppCompatActivity {
         String parentEmail = etContactEmail.getText().toString();
 
         new UserTask(new Callback() {
+            /** start a new UserTask to update the student using method UPDATE */
             @Override
             public void asyncDone(HashMap<String, HashMap<String, String>> users) {
             }
         }, context).execute("UPDATE", "", userUserId, "", "", "", username, password, lastName, firstName,
                 email, parentEmail);
+        /** get all users and reset adapter to reset selection to zero */
         getAllUsers();
         resetAdapter(lvListUsers, userListAdapter);
+        /** boolean used by lvListUsers onItemClickListener */
         return true;
     }
 
@@ -796,8 +832,8 @@ public class UserActivity extends AppCompatActivity {
 
     /**
      * deletes a user from the database
-     * checks if the user to be deleted is not the one currently logged in, else throws a dialog
-     * alert for confirmation
+     * checks if the user to be deleted is not the one currently logged in,
+     * else throws a dialog alert for confirmation
      */
     private void deleteUser() {
         if(userUsername.equals(currentUserUsername)){
@@ -814,10 +850,12 @@ public class UserActivity extends AppCompatActivity {
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
                             new UserTask(new Callback() {
+                                /** create a new UserTask to delete the user using method DELETE */
                                 @Override
                                 public void asyncDone(HashMap<String, HashMap<String, String>> users) {
                                 }
                             }, context).executeTask("DELETE", userRole, userUserId, "", "", "", "", "", "", "");
+                            /** clear all EditTexts */
                             getAllUsers();
                             etUsername.setText("");
                             etFirstName.setText("");
@@ -834,6 +872,7 @@ public class UserActivity extends AppCompatActivity {
                     })
                     .setNegativeButton("No", null)
                     .show();
+            /** get all users and reset adapter to reset selection to zero */
             getAllUsers();
             resetAdapter(lvListUsers, userListAdapter);
         }
@@ -845,12 +884,14 @@ public class UserActivity extends AppCompatActivity {
      */
     private void setEnabledUiItems() {
         if (newUser) {
+            /** if a new user is being created */
             tvTitleCRUDUser.setText(R.string.registerUser);
             bRegisterUser.setVisibility(View.VISIBLE);
             bEditUser.setVisibility(View.GONE);
             bDeleteUser.setVisibility(View.GONE);
             bAssignClass.setEnabled(false);
             if (changed) {
+                /** enable register button if changes have been made else disable */
                 bEditUser.setEnabled(false);
                 bDeleteUser.setEnabled(false);
                 bRegisterUser.setEnabled(true);
@@ -860,11 +901,13 @@ public class UserActivity extends AppCompatActivity {
                 bRegisterUser.setEnabled(false);
             }
         } else {
+            /** else a user is being updated */
             tvTitleCRUDUser.setText("Edit user " + userUsername);
             bEditUser.setVisibility(View.VISIBLE);
             bDeleteUser.setVisibility(View.VISIBLE);
             bRegisterUser.setVisibility(View.GONE);
             if (changed) {
+                /** enable save button if changes have been made else disable */
                 bEditUser.setEnabled(true);
                 bDeleteUser.setEnabled(true);
                 bRegisterUser.setEnabled(false);
@@ -886,6 +929,7 @@ public class UserActivity extends AppCompatActivity {
      */
     private void setContentPane(int position) {
         if (position >= 0) {
+            /** if a user has been selected */
             Map<String, String> userData = (Map) userListAdapter.getItem(position);
             userUserId = userData.get("userId");
             userClassId = userData.get("classId");
@@ -909,6 +953,7 @@ public class UserActivity extends AppCompatActivity {
             setChanged(false);
             setNewUser(false);
         } else {
+            /** else clear fields and Strings */
             userClassId = null;
             userRole = null;
             userUsername = null;
@@ -1073,7 +1118,7 @@ public class UserActivity extends AppCompatActivity {
      *
      * @param classId the id of the class we want to know the index of
      * @param classList the list we look through
-     * @return the index at which classId was found
+     * @return the index at which classId was found, if none return -1
      */
     private int getClassListPosition(String classId, List<Map<String, String>> classList) {
         for (int i = 0; i < classList.size(); i++) {
@@ -1095,6 +1140,7 @@ public class UserActivity extends AppCompatActivity {
      */
     private void setDialogContentPane(int position) {
         if (position >= 0) {
+            /** if an item has been selected */
             Map<String, String> classData = (Map) dialogClassListAdapter.getItem(position);
             classClassId = classData.get("classId");
             classClassName = classData.get("className");
@@ -1105,6 +1151,7 @@ public class UserActivity extends AppCompatActivity {
             tvDialogTeacherName.setText(classTeacherFistName + " " + classTeacherLastName);
             tvDialogTeacherEmail.setText(classTeacherEmail);
         } else {
+            /** clear fields if no item has been selected */
             tvDialogClassName.setText("");
             tvDialogTeacherName.setText("");
             tvDialogTeacherEmail.setText("");
