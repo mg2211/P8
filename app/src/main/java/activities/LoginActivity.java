@@ -19,6 +19,7 @@ import java.util.HashMap;
 
 public class LoginActivity extends AppCompatActivity {
 
+    /*Setting up UI*/
     private EditText usernameInput;
     private EditText passwordInput;
     private String username;
@@ -30,7 +31,7 @@ public class LoginActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
 
-        //Check if a user is already logged in
+        /*Checking if a user is already logged in and sending the user to either student or teacheractivity if so*/
         UserInfo userInfo = new UserInfo(this);
         HashMap<String, String> user = userInfo.getUser();
         String role = user.get("role");
@@ -45,34 +46,34 @@ public class LoginActivity extends AppCompatActivity {
         }
 
         Button loginButton = (Button) findViewById(R.id.loginButton);
+
+        /*Setting onClickListener for login button*/
         loginButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                /*setting UI elements*/
                 usernameInput = (EditText) findViewById(R.id.username);
                 passwordInput = (EditText) findViewById(R.id.password);
 
+                /*Getting text from input fields*/
                 username = usernameInput.getText().toString();
                 password = passwordInput.getText().toString();
 
-
-              //  String decryptPass = Encryption.encryptIt(password);
-
-                Log.d("password",password);
-
-                if (!username.equals("") && !password.equals("")) {//check if both input fields has text
+                /* Check if both inputs has text and if so, create a LoginTask*/
+                if (!username.equals("") && !password.equals("")) {
                     new LoginTask(context).execute(username, password);
                 } else {
-                    //make toast if one or both inputs are empty.
+                    /*If one or both of the fields are empty a toast saying so is shown*/
                     CharSequence alert = "Please fill in both username and password";
                     int duration = Toast.LENGTH_LONG;
                     Toast toast = Toast.makeText(context, alert, duration);
                     toast.show();
-
                 }
             }
         });
     }
 
+    /*Overriding the native back button - so the user can't log back in by pressing it*/
     @Override
     public void onBackPressed() {
 
