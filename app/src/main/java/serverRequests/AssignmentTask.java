@@ -221,5 +221,4 @@ public class AssignmentTask extends AsyncTask<String, Void, HashMap<String, Hash
             toast.show();
         }
     }
-
 }

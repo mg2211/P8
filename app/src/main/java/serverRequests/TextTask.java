@@ -172,7 +172,7 @@ public class TextTask extends AsyncTask<String, Void, HashMap<String, HashMap<St
      * Handles the results from doInBackground
      * @param results returned from doInBackground
      */
-    protected void onPostExecute (HashMap<String, HashMap<String, String>> results){
+    protected void onPostExecute (HashMap<String, HashMap<String, String>> results) {
          /*getting the response variables*/
         String generalResponse = results.get("response").get("generalResponse");
         String responseCode = results.get("response").get("responseCode");
@@ -200,4 +200,5 @@ public class TextTask extends AsyncTask<String, Void, HashMap<String, HashMap<St
             Toast toast = Toast.makeText(context, alert, duration);
             toast.show();
         }
+    }
 }
