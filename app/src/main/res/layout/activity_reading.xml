@@ -93,15 +93,8 @@ android:background="@color/Creamy"    >
                     android:singleLine="false"
                     android:maxLines="7"
                     android:lineSpacingExtra="20dp"
-                    android:maxWidth="100dp"/>
-
-                <RelativeLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:id="@+id/la1234"
-                    android:background="@drawable/pencils">
-
-                </RelativeLayout>
+                    android:maxWidth="100dp"
+                    android:paddingTop="10dp" />
 
                 <ScrollView
                     android:id="@+id/SCROLLER_ID"
@@ -145,11 +138,12 @@ android:background="@color/Creamy"    >
                         android:layout_height="wrap_content"
                         android:src="@drawable/arrow_alt_right1"
                         android:layout_gravity="bottom"
+                        android:layout_marginBottom="95dp"
+                        android:background="@color/Creamy"
                         android:layout_alignParentBottom="true"
                         android:layout_alignParentRight="true"
-                        android:layout_alignParentEnd="true"
-                        android:layout_marginBottom="183dp"
-                        android:background="@color/Creamy"/>
+                        android:layout_alignParentEnd="true" />
+
 
                 </RelativeLayout>
 

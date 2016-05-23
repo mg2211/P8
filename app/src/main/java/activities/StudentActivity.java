@@ -4,12 +4,15 @@ import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.drawable.BitmapDrawable;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.SimpleAdapter;
 import android.widget.TextView;
@@ -55,6 +58,10 @@ public class StudentActivity extends AppCompatActivity {
 
         setContentView(R.layout.activity_student);
         //getWindow().setBackgroundDrawableResource(R.drawable.green);
+
+
+
+
         userinfo = new UserInfo(context);
         user = userinfo.getUser();
         studentId = user.get("studentId");
