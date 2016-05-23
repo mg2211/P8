@@ -54,9 +54,6 @@ public class UserActivity extends AppCompatActivity {
     /** Button used to assign a class to a student */
     private Button bAssignClass;
 
-    /** Button used to modify classes */
-    private Button bModifyClasses;
-
     /** EditText field where username is entered */
     private EditText etUsername;
 
@@ -89,6 +86,12 @@ public class UserActivity extends AppCompatActivity {
 
     /** TextView that displays the title of the class block */
     private TextView tvTitleStudentClass;
+
+    /** TextView that displays the caption for the parent/caretaker mail field */
+    private TextView tvTitleContactEmail;
+
+    /** TextView that displays the caption for the class name field */
+    private TextView tvTitleStudentClassCapt;
 
     /** TextView that displays the name of the class the student is currently assigned to */
     private TextView tvUserClassName;
@@ -181,6 +184,8 @@ public class UserActivity extends AppCompatActivity {
         tvTitleCRUDUser = (TextView) findViewById(R.id.tvTitleCRUDUser);
         tvTitleStudentClass = (TextView) findViewById(R.id.tvTitleStudentClass);
         tvUserClassName = (TextView) findViewById(R.id.tvUserClassName);
+        tvTitleContactEmail = (TextView) findViewById(R.id.tvTitleContactEmail);
+        tvTitleStudentClassCapt = (TextView) findViewById(R.id.tvTitleStudentClassCapt);
 
         spinnerRole = (Spinner) findViewById(R.id.spinnerRole);
 
@@ -196,7 +201,6 @@ public class UserActivity extends AppCompatActivity {
         bEditUser = (Button) findViewById(R.id.bEditUser);
         bDeleteUser = (Button) findViewById(R.id.bDeleteUser);
         bAssignClass = (Button) findViewById(R.id.bAssignClass);
-        bModifyClasses = (Button) findViewById(R.id.bModifyClasses);
 
         lvListUsers = (ListView) findViewById(R.id.lvListUsers);
 
@@ -224,17 +228,19 @@ public class UserActivity extends AppCompatActivity {
                                        int position, long id) {
                 Log.d("Spinner position", spinnerRole.getSelectedItem().toString());
                 if (spinnerRole.getSelectedItem().toString().equals("teacher")) {
-                    bModifyClasses.setVisibility(View.VISIBLE);
                     etContactEmail.setVisibility(View.GONE);
                     bAssignClass.setVisibility(View.GONE);
                     tvTitleStudentClass.setVisibility(View.GONE);
                     tvUserClassName.setVisibility(View.GONE);
+                    tvTitleContactEmail.setVisibility(View.GONE);
+                    tvTitleStudentClassCapt.setVisibility(View.GONE);
                 } else if (spinnerRole.getSelectedItem().toString().equals("student")) {
-                    bModifyClasses.setVisibility(View.VISIBLE);
                     etContactEmail.setVisibility(View.VISIBLE);
                     bAssignClass.setVisibility(View.VISIBLE);
                     tvTitleStudentClass.setVisibility(View.VISIBLE);
                     tvUserClassName.setVisibility(View.VISIBLE);
+                    tvTitleStudentClassCapt.setVisibility(View.VISIBLE);
+                    tvTitleContactEmail.setVisibility(View.VISIBLE);
                 }
             }
 
@@ -376,15 +382,6 @@ public class UserActivity extends AppCompatActivity {
             public void onClick(View v) {
                 deleteUser();
                 setChanged(false);
-            }
-        });
-
-        /** start ClassActivity on click */
-        bModifyClasses.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(context, ClassActivity.class);
-                startActivity(intent);
             }
         });
 
