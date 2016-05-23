@@ -863,7 +863,7 @@ public class UserActivity extends AppCompatActivity {
                 bRegisterUser.setEnabled(false);
             }
         } else {
-            tvTitleCRUDUser.setText(R.string.editUser);
+            tvTitleCRUDUser.setText("Edit user " + userUsername);
             bEditUser.setVisibility(View.VISIBLE);
             bDeleteUser.setVisibility(View.VISIBLE);
             bRegisterUser.setVisibility(View.GONE);
