@@ -4,7 +4,6 @@ import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.res.Resources;
-import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.text.Editable;
@@ -23,16 +22,17 @@ import android.widget.Toast;
 
 import com.example.svilen.p8.R;
 
-import callback.*;
-import helper.*;
-import serverRequests.*;
-
 import org.apache.commons.lang3.StringUtils;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import callback.Callback;
+import callback.DialogCallback;
+import serverRequests.QuestionTask;
+import serverRequests.TextTask;
 
 public class TextActivity extends AppCompatActivity {
     /*The context for which various dialogs and server request is running from*/
@@ -45,15 +45,12 @@ public class TextActivity extends AppCompatActivity {
     private TextView tvComplexity;
 
     /*Listview adapters*/
-    private ListViewAdapter textAdapter;
+    private SimpleAdapter textAdapter;
     private SimpleAdapter questionAdapter;
 
     /*List to populate listviews*/
     private final List<Map<String, String>> textList = new ArrayList<>();
     private final List<Map<String, String>> questionList = new ArrayList<>();
-
-    /*Colors for the listview complexity*/
-    private final ArrayList<Integer> colors = new ArrayList<>();
 
     /*The content of the text*/
     private String textContent;
@@ -124,8 +121,9 @@ public class TextActivity extends AppCompatActivity {
             }
         });
 
-        /*Creating a new Adapter from the custom adapter class ListViewAdapter which takes the color ArrayList for coloring rows based on complexity*/
-        textAdapter = new ListViewAdapter(this, textList, new String[]{"textname", "complexity"}, new int[]{android.R.id.text1, android.R.id.text2}, colors);
+        /*Creating a new Adapter*/
+        textAdapter = new SimpleAdapter(this, textList, android.R.layout.simple_list_item_2, new String[]{"textname", "complexity"}, new int[]{android.R.id.text1, android.R.id.text2});
+
         /*Setting the adapter*/
         lvTexts.setAdapter(textAdapter);
 
@@ -405,9 +403,8 @@ public class TextActivity extends AppCompatActivity {
             public void asyncDone(HashMap<String, HashMap<String, String>> results) {
                 /*Removing the response from the HashMap*/
                 results.remove("response");
-                /*Clearing the textList and colors*/
+                /*Clearing the textList*/
                 textList.clear();
-                colors.clear();
                 /*Iterating over the HashMap to add a text to the listView*/
                 for (Map.Entry<String, HashMap<String, String>> text : results.entrySet()) {
 
@@ -423,18 +420,6 @@ public class TextActivity extends AppCompatActivity {
                     textInfo.put("complexity", "Complexity: " + complexity);
                     textInfo.put("id", textId);
                     textList.add(textInfo);
-
-                    /*Adding the right color in the colors ArrayList*/
-                    double difficulty = Double.parseDouble(complexity);
-                    if (difficulty > 0 && difficulty <= 20) {
-                        colors.add(Color.rgb(156, 204, 101));
-                    } else if (difficulty > 20 && difficulty <= 40) {
-                        colors.add(Color.rgb(255, 235, 69));
-                    } else if (difficulty > 40) {
-                        colors.add(Color.rgb(239, 83, 80));
-                    } else {
-                        colors.add(Color.TRANSPARENT);
-                    }
                 }
                 /*Letting the LV know that there is new data*/
                 textAdapter.notifyDataSetChanged();

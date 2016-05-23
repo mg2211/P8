@@ -93,37 +93,38 @@ public class QuestionResultTask extends AsyncTask<String, Void, HashMap<String, 
 
             if(method.equals("get")) {
                 JSONArray assignmentResults = JSONResult.getJSONArray("results");
-                for(int i=0; i<assignmentResults.length(); i++){
-                   JSONObject assignment = assignmentResults.getJSONObject(i);
+                for(int i=0; i<assignmentResults.length(); i++) {
+                    JSONObject assignment = assignmentResults.getJSONObject(i);
                     String assignmentTime = assignment.getString("time");
                     String assignmentId = assignment.getString("id");
                     HashMap<String, String> time = new HashMap<>();
-                    time.put("time",assignmentTime);
+                    time.put("time", assignmentTime);
 
                     HashMap<String, HashMap<String, String>> assignmentResult = new HashMap<>();
 
                     assignment.remove("time");
                     assignment.remove("id");
 
+                    if (assignment.names() != null) {
+                        for (int n = 0; n < assignment.names().length(); n++) {
+                            String questionId = String.valueOf(assignment.names().get(n));
+                            JSONObject questionResult = assignment.getJSONObject(questionId);
 
-                    for(int n =0; n<assignment.names().length(); n++){
-                        String questionId = String.valueOf(assignment.names().get(n));
-                        JSONObject questionResult = assignment.getJSONObject(questionId);
 
+                            HashMap<String, String> specificQuestionResult = new HashMap<>();
+                            String answerId = questionResult.getString("answerid");
+                            String answerCorrect = questionResult.getString("answered correct");
+                            String answerContent = questionResult.getString("answercontent");
 
-                        HashMap<String, String> specificQuestionResult = new HashMap<>();
-                        String answerId = questionResult.getString("answerid");
-                        String answerCorrect = questionResult.getString("answered correct");
-                        String answerContent = questionResult.getString("answercontent");
-
-                        specificQuestionResult.put("answerId",answerId);
-                        specificQuestionResult.put("correct",answerCorrect);
-                        specificQuestionResult.put("answerContent",answerContent);
-                        assignmentResult.put(questionId,specificQuestionResult);
+                            specificQuestionResult.put("answerId", answerId);
+                            specificQuestionResult.put("correct", answerCorrect);
+                            specificQuestionResult.put("answerContent", answerContent);
+                            assignmentResult.put(questionId, specificQuestionResult);
+                        }
                     }
-                    assignmentResult.put("time",time);
-                    results.put(assignmentId,assignmentResult);
-                }
+                        assignmentResult.put("time", time);
+                        results.put(assignmentId, assignmentResult);
+                    }
 
             }
 
