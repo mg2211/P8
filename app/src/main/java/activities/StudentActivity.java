@@ -48,20 +48,18 @@ public class StudentActivity extends AppCompatActivity {
     /** A list for storing assignments used by the assignedAdapter*/
     List<Map<String, String>> assignmentList = new ArrayList<>();
 
-
+    /** */
     UserInfo userinfo;
+
+    /** */
     HashMap<String, String> user;
 
     /** A string for storing the studentId of the logged in user */
     String studentId;
 
-    /** */
 
 
-    String textId;
-    String assignmentName;
-    String specificAssignmentId;
-    String assignmentId;
+
 
     /** A textview displaying whether the student has assigned homework waiting or not*/
     TextView homeWork;
@@ -95,6 +93,7 @@ public class StudentActivity extends AppCompatActivity {
         getClassInfo();
 
 
+        bLogout = (Button) findViewById(R.id.bLogout);
 
         teacherName = (TextView) findViewById(R.id.tvTeacherName);
         teacherEmail = (TextView) findViewById(R.id.tvTeacherEmail);
@@ -123,9 +122,9 @@ public class StudentActivity extends AppCompatActivity {
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
 
                 Map<String, String> assignmentData = assignmentList.get(position);
-                textId = assignmentData.get("textId");
-                assignmentName = assignmentData.get("assignmentLibName");
-                assignmentId = assignmentData.get("assignmentid");
+              final String textId = assignmentData.get("textId");
+                final String assignmentName = assignmentData.get("assignmentLibName");
+                final String assignmentId = assignmentData.get("assignmentid");
                 String isComplete = assignmentData.get("isComplete");
                 Long availableto = Long.valueOf(assignmentData.get("availableTo"));
 
@@ -144,6 +143,7 @@ public class StudentActivity extends AppCompatActivity {
 
                                 }
                             })
+                            /** Sends an intent to the reading activity containing information on the assignment choosen*/
                             .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
                                 @Override
                                 public void onClick(DialogInterface dialog, int which) {
@@ -168,7 +168,8 @@ public class StudentActivity extends AppCompatActivity {
                 }
 
 
-                new TextTask(new Callback() {
+
+               /* new TextTask(new Callback() {
                     @Override
                     public void asyncDone(HashMap<String, HashMap<String, String>> results) {
 
@@ -188,13 +189,14 @@ public class StudentActivity extends AppCompatActivity {
 
                         }
                     }
-                }, context).executeTask("get", textId, "", "", 0);
+                }, context).executeTask("get", textId, "", "", 0);*/
 
             }
         });
 
 
-        bLogout = (Button) findViewById(R.id.bLogout);
+
+        /** A button click listener that once clicked will logout the user */
         bLogout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -207,6 +209,7 @@ public class StudentActivity extends AppCompatActivity {
     }
 
 
+    /** Disables the back button */
     @Override
     public void onBackPressed() {
 
@@ -215,6 +218,7 @@ public class StudentActivity extends AppCompatActivity {
     }
 
 
+    /** Launch an Assignment task which gets the needed information on assignments from the database*/
     public void getAssignment() {
 
         new AssignmentTask(new Callback() {
@@ -228,24 +232,21 @@ public class StudentActivity extends AppCompatActivity {
                 for (Map.Entry<String, HashMap<String, String>> assignment : assignments.entrySet()) {
                     Map<String, String> assignmentInfo = new HashMap<>();
                     String specificAssignmentName = assignment.getValue().get("assignmentLibName");
-                    specificAssignmentId = assignment.getValue().get("assignmentid");
+                    String specificAssignmentId = assignment.getValue().get("assignmentid");
                     String specificAssLibId = assignment.getValue().get("assignmentlibraryid");
                     String specificTextId = assignment.getValue().get("textId");
                     String isComplete = assignment.getValue().get("isComplete");
                     Long availablefrom = Long.valueOf(assignment.getValue().get("availableFrom"));
                     Long availableto = Long.valueOf(assignment.getValue().get("availableTo"));
 
-                    Log.d("1919 ", availablefrom.toString());
-                    Log.d("2020 ", availableto.toString());
 
 
 
-                        Long tsLong = System.currentTimeMillis() / 1000;
-                        String ts = tsLong.toString();
-                        Log.d("1818", tsLong.toString());
+                        /** Gets the current time*/
+                        Long currenTime = System.currentTimeMillis() / 1000;
 
-                        if (tsLong <= availableto && availablefrom <= tsLong) { // Only assignment that are still available within the timeframe will be displayed
-
+                        /** Only assignment that are still available within the timeframe will be displayed */
+                        if (currenTime <= availableto && availablefrom <= currenTime) {
 
                             assignmentInfo.put("assignmentLibName", specificAssignmentName);
                             assignmentInfo.put("Name", specificAssignmentName);
@@ -256,27 +257,28 @@ public class StudentActivity extends AppCompatActivity {
                             assignmentInfo.put("availableFrom", assignment.getValue().get("availableFrom"));
                             assignmentInfo.put("availableTo", assignment.getValue().get("availableTo"));
 
+
+                            /** Checks whether there is an uncomplete assignment, and if so, changes homeWork textView accordingly*/
                             if (isComplete.equals("0")){
                                 homeWork.setText("You have unfinished assignments");
-                             //   homeWork.setTextColor(getResources().getColorStateList(R.color.UnfinishedRed));
 
                             }
                             assignmentList.add(assignmentInfo);
 
-                            Log.d("2222: ", String.valueOf(assignmentInfo));
-                            Log.d("2222", specificAssignmentId);
+
                         }
 
 
                 }
             }
 
+            /** This Assignment task runs with the parameters of "get" for method and studentId, returning all assignments that have
+             * been assigned to that specific studentId*/
         }, context).executeTask("get", studentId, "", "","","");
     }
 
-
+    /** Launches a ClassTask that gets the required information on a class from the database*/
     public void getClassInfo(){
-
 
 
         new ClassTask(new Callback() {
@@ -292,11 +294,12 @@ public class StudentActivity extends AppCompatActivity {
                     teacherName.setText(teacherName1);
                     teacherEmail.setText(teacherEmail1);
 
-                    Log.d("123456", classData.getValue().get("teacherFirstName"));
                 }
 
 
             }
+            /** This class task runs with the parameters of "FETCH" for method, and the studentId of the logged in student.
+             * It will return the information of a class that student logged in belongs to */
         }, context).execute("FETCH", "", "", "", studentId, "");
     }
 
