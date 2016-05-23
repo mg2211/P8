@@ -29,12 +29,23 @@ import java.util.HashMap;
 /**
  * Created by ida803f16
  */
+
+/**
+ * Login Task - Used for checking user credentials in the server
+ */
 public class LoginTask extends AsyncTask<String, Void, HashMap<String, String>> {
+    /*Declaring a ProgressDialog*/
     private final ProgressDialog progressDialog;
+    /*The caller activity*/
     private final Context context;
 
+    /**
+     * Contructor
+     * @param context the caller activity
+     */
     public LoginTask(Context context) {
         this.context = context;
+        /*Creating and setting the progressdialog*/
         progressDialog = new ProgressDialog(context);
         progressDialog.setCancelable(false);
         progressDialog.setTitle("Processing...");
@@ -42,14 +53,18 @@ public class LoginTask extends AsyncTask<String, Void, HashMap<String, String>> 
         progressDialog.show();
     }
 
-
+    /**
+     * DoInBackground method - the actual server call
+     * @param userdata - a string array of the parameters sent to the class
+     * @return a HashMap with the server response
+     */
     @Override
     protected HashMap<String, String> doInBackground(String... userdata) {
-        //Getting params
+        /*Getting params*/
         String username = userdata[0];
         String password = userdata[1];
 
-        //Initiating return vars.
+        /*Initiating return vars.*/
         HashMap<String, String> result = new HashMap<>();
         String generalResponse = null;
         int responseCode = 0;
@@ -61,13 +76,16 @@ public class LoginTask extends AsyncTask<String, Void, HashMap<String, String>> 
         String role = null;
 
         try {
+            /*Creating the server call*/
             URL url = new URL("http://emilsiegenfeldt.dk/p8/login.php");
             HttpURLConnection connection = (HttpURLConnection) url.openConnection();
             connection.setRequestMethod("POST");
 
+            /*Building the URI with post parameters*/
             Uri.Builder builder = new Uri.Builder().appendQueryParameter("username", username)
                     .appendQueryParameter("password", password);
 
+            /*Sending the query*/
             String query = builder.build().getEncodedQuery();
             OutputStream os = connection.getOutputStream();
             BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(os, "UTF-8"));
@@ -78,15 +96,15 @@ public class LoginTask extends AsyncTask<String, Void, HashMap<String, String>> 
 
             connection.connect();
 
-            //Catch server response
+            /*Catch server response*/
             InputStream in = new BufferedInputStream(connection.getInputStream());
 
             String response = IOUtils.toString(in, "UTF-8"); //convert to readable string
 
-            //convert to JSON object
+            /*convert to JSON object*/
             JSONObject JSONResult = new JSONObject(response);
 
-            //extract variables from JSONObject result var
+            /*extract variables from JSONObject result var*/
             generalResponse = JSONResult.getString("generalresponse");
             responseCode = JSONResult.getInt("responsecode");
             username = JSONResult.getString("username");
@@ -105,7 +123,7 @@ public class LoginTask extends AsyncTask<String, Void, HashMap<String, String>> 
         } catch (JSONException e) {
             e.printStackTrace();
         }
-
+        /*Putting the results in the HashMap*/
         result.put("Username", username);
         result.put("Password", password);
         result.put("responseCode", String.valueOf(responseCode));
@@ -121,7 +139,12 @@ public class LoginTask extends AsyncTask<String, Void, HashMap<String, String>> 
         return result;
     }
 
+    /**
+     * Method for handling the reponse from the server
+     * @param result returned from DoInBackground
+     */
     protected void onPostExecute(HashMap<String, String> result) {
+        /*Getting the user information from the result*/
         String generalResponse = result.get("generalResponse");
         String responseCode = result.get("responseCode");
         String role = result.get("role");
@@ -131,17 +154,19 @@ public class LoginTask extends AsyncTask<String, Void, HashMap<String, String>> 
         String email = result.get("email");
         String teacherId = result.get("teacherId");
         String studentId = result.get("studentId");
+        /*Dismissing the progress dialog*/
         progressDialog.dismiss();
 
+        /*Checking the responseCode*/
         if (Integer.parseInt(responseCode) == 100) {
             Intent intent;
-            //if login credentials are right - set intent to either student or teacher depending on role variable.
+            /*if login credentials are right - set intent to either student or teacher depending on role variable.*/
             if (role.equals("student")) {
                 intent = new Intent(context, StudentActivity.class);
             } else {
                 intent = new Intent(context, TeacherActivity.class);
             }
-            //save user information on device
+            /*save user information on device*/
             SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context.getApplicationContext());
             SharedPreferences.Editor editor = preferences.edit();
             editor.putString("username", username);
@@ -156,17 +181,17 @@ public class LoginTask extends AsyncTask<String, Void, HashMap<String, String>> 
             }
             editor.apply();
 
-
+            /*Starting a new activity from the caller activity(context)*/
             intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
             context.startActivity(intent);
 
         } else if (Integer.parseInt(responseCode) == 200) {
-            //if login is wrong - make a toast saying so.
+            /*if login is wrong - make a toast saying so.*/
             int duration = Toast.LENGTH_LONG;
             Toast toast = Toast.makeText(context, generalResponse, duration);
             toast.show();
         } else if (Integer.parseInt(responseCode) == 300) {
-            //If server connection fails.
+            /*If server connection fails.*/
             int duration = Toast.LENGTH_LONG;
             CharSequence alert = "Server connection failed - Please try again later";
             Toast toast = Toast.makeText(context, alert, duration);
