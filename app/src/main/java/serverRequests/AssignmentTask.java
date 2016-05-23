@@ -200,13 +200,21 @@ public class AssignmentTask extends AsyncTask<String, Void, HashMap<String, Hash
             results.remove("response");
             /*Sending the result back to the caller activity via the Callback interface*/
             delegate.asyncDone(results);
-        } else if (Integer.parseInt(responseCode) == 200) {
+        } else if (Integer.parseInt(responseCode) == 101) {
             /*Something went wrong database side, show a toast saying so*/
             int duration = Toast.LENGTH_LONG;
             Toast toast = Toast.makeText(context, generalResponse, duration);
             toast.show();
-        } else if (Integer.parseInt(responseCode) == 300) {
+            /*Everything okay - removing the reponse from the results map*/
+            results.remove("response");
+            /*Sending the result back to the caller activity via the Callback interface*/
+            delegate.asyncDone(results);
+        } else if (Integer.parseInt(responseCode) > 101) {
             /*If the doInBackground fails, a toast saying so is shown*/
+            int duration = Toast.LENGTH_LONG;
+            Toast toast = Toast.makeText(context, generalResponse, duration);
+            toast.show();
+        } else {
             int duration = Toast.LENGTH_LONG;
             CharSequence alert = "Server connection failed - Please try again later";
             Toast toast = Toast.makeText(context, alert, duration);

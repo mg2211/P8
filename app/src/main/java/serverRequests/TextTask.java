@@ -173,14 +173,31 @@ public class TextTask extends AsyncTask<String, Void, HashMap<String, HashMap<St
      * @param results returned from doInBackground
      */
     protected void onPostExecute (HashMap<String, HashMap<String, String>> results){
+         /*getting the response variables*/
+        String generalResponse = results.get("response").get("generalResponse");
+        String responseCode = results.get("response").get("responseCode");
         /*Dismisses the progressdialog*/
         progressDialog.dismiss();
-        /*Showing a toast with the generalResponse*/
-        int duration = Toast.LENGTH_LONG;
-        CharSequence alert = results.get("response").get("generalResponse");
-        Toast toast = Toast.makeText(context, alert, duration);
-        toast.show();
-        /*Sending the results back to the caller activity via the Callback interface*/
-        delegate.asyncDone(results);
-    }
+
+        if (Integer.parseInt(responseCode) == 100) {
+            /*Sending the result back to the caller activity via the Callback interface*/
+            delegate.asyncDone(results);
+        } else if (Integer.parseInt(responseCode) == 101) {
+            /*Something went wrong database side, show a toast saying so*/
+            int duration = Toast.LENGTH_LONG;
+            Toast toast = Toast.makeText(context, generalResponse, duration);
+            toast.show();
+            /*Sending the result back to the caller activity via the Callback interface*/
+            delegate.asyncDone(results);
+        } else if (Integer.parseInt(responseCode) > 101) {
+            /*If the doInBackground fails, a toast saying so is shown*/
+            int duration = Toast.LENGTH_LONG;
+            Toast toast = Toast.makeText(context, generalResponse, duration);
+            toast.show();
+        } else {
+            int duration = Toast.LENGTH_LONG;
+            CharSequence alert = "Server connection failed - Please try again later";
+            Toast toast = Toast.makeText(context, alert, duration);
+            toast.show();
+        }
 }

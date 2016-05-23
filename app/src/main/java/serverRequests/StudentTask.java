@@ -140,6 +140,11 @@ public class StudentTask extends AsyncTask<String, Void, HashMap<String, HashMap
             int duration = Toast.LENGTH_LONG;
             Toast toast = Toast.makeText(context, "Response code " + responseCode + ", " + "Message: " + generalResponse, duration);
             toast.show();
+        } else {
+            int duration = Toast.LENGTH_LONG;
+            CharSequence alert = "Server connection failed - Please try again later";
+            Toast toast = Toast.makeText(context, alert, duration);
+            toast.show();
         }
     }
 }
