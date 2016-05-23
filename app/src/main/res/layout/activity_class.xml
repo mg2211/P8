@@ -42,7 +42,7 @@
                 android:layout_marginTop="0dp"
                 android:layout_marginRight="0dp"
                 android:layout_marginBottom="0dp"
-                android:background="#9ccc65"
+                android:background="@color/colorOrange"
                 android:paddingRight="20dp" />
 
             <Button
@@ -54,7 +54,7 @@
                 android:layout_marginTop="0dp"
                 android:layout_marginRight="0dp"
                 android:layout_marginBottom="0dp"
-                android:background="#9ccc65"
+                android:background="@color/colorOrange"
                 android:paddingRight="20dp" />
 
             <EditText
@@ -185,7 +185,8 @@
                 android:layout_marginBottom="0dp"
                 android:background="#29b6f6"
                 android:paddingLeft="20dp"
-                android:drawableRight="@drawable/search" />
+                android:drawableRight="@drawable/search"
+                android:paddingRight="20dp"/>
 
             <ListView
                 android:layout_width="fill_parent"

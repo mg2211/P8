@@ -21,17 +21,9 @@
             android:id="@+id/menuLinear"
             android:background="#ffffff">
 
-            <EditText
-                android:layout_width="fill_parent"
-                android:layout_height="50dp"
-                android:id="@+id/etSearch"
-                android:background="#7ddfcd"
-                android:inputType="text"
-                android:hint="@string/search" />
-
             <Button
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
+                android:layout_height="60dp"
                 android:text="@string/add_new"
                 android:id="@+id/bAddText"
                 android:layout_marginLeft="0dp"
@@ -39,9 +31,20 @@
                 android:layout_marginTop="0dp"
                 android:layout_marginBottom="0dp"
                 android:background="#9ccc65"
-                android:typeface="sans"
-                android:enabled="true"
-                android:textSize="20sp" />
+                android:paddingRight="20dp"
+                android:drawableRight="@drawable/add" />
+
+            <EditText
+                android:layout_width="fill_parent"
+                android:layout_height="60dp"
+                android:id="@+id/etSearch"
+                android:hint="@string/search"
+                android:layout_marginTop="0dp"
+                android:layout_marginBottom="0dp"
+                android:background="#29b6f6"
+                android:paddingLeft="20dp"
+                android:drawableRight="@drawable/search"
+                android:paddingRight="20dp" />
 
             <ListView
                 android:layout_width="match_parent"
