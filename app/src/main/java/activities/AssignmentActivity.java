@@ -988,10 +988,11 @@ public class AssignmentActivity extends AppCompatActivity {
     }
 
     /**
-     *
-     * @param assignmentListPos
+     *Creating an assignmentDialog for seeing and assigning students
+     * @param assignmentListPos - the list position for the assignmentLibrary entry
      */
     private void assignmentDialog(final int assignmentListPos){
+        /*Creating the dialog*/
         AlertDialog.Builder builder = new AlertDialog.Builder(context);
         LayoutInflater inflater = getLayoutInflater();
         final View layout = inflater.inflate(R.layout.dialog_assign, null);
@@ -1000,14 +1001,19 @@ public class AssignmentActivity extends AppCompatActivity {
         dialog.setCanceledOnTouchOutside(false);
         dialog.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_UNCHANGED);
         dialog.show();
+
+        /*Setting up UI elements*/
         ListView lvDialogClasses = (ListView) layout.findViewById(R.id.lvDialogClasses);
         final ListView lvDialogStudents = (ListView) layout.findViewById(R.id.lvDialogStudents);
         ListView lvDialogAssigned = (ListView) layout.findViewById(R.id.lvDialogAssigned);
-
         Button bDialogAssign = (Button) layout.findViewById(R.id.bDialogAssign);
+
+        /*Setting adapters*/
         lvDialogClasses.setAdapter(classAdapter);
         lvDialogStudents.setAdapter(studentAdapter);
         lvDialogAssigned.setAdapter(assignedAdapter);
+
+        /*Getting all classes for the teacher logged in*/
         getClasses();
 
         lvDialogClasses.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -1016,13 +1022,20 @@ public class AssignmentActivity extends AppCompatActivity {
                 Map<String, String> classData = classList.get(position);
                 String classId = classData.get("ClassId");
 
+                /*Getting students*/
+                getStudents(classId);
+
             }
         });
 
+        /*Adding an OnItemClickListener for the student listview - used for adding students to the assigned list*/
         lvDialogStudents.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, final int position, long id) {
+                /*Getting all currently assigned students, the teacher is "controlling" and iterating through the list*/
                 for(Map<String, String> assignments : assignedList){
+                    /*If the student selected is already assigned and hasn't completed the assignment a toast is shown
+                    * saying the student can't be assigned the same assignment more than once*/
                     if(studentList.get(position).get("studentId").equals(assignments.get("studentId")) && assignments.get("isComplete").equals("0")){
                         int duration = Toast.LENGTH_LONG;
                         CharSequence alert = "Student already assigned - Please remove first";
@@ -1031,14 +1044,18 @@ public class AssignmentActivity extends AppCompatActivity {
                         return;
                     }
                 }
+                /*If the student is not assigned or has completed previous assignments the datePicker method is called
+                * with parameters offset: currentTime minus a minute and the DatePickerCallback interface*/
                 datePicker((System.currentTimeMillis()-60000)/1000, new DatePickerCallback() {
                     @Override
                     public void dateSelected(final Long from) {
                         if(from != null){
+                            /*When the date has been selected and is not null another dialog is shown with the selected date as offset*/
                             datePicker(from, new DatePickerCallback() {
                                 @Override
                                 public void dateSelected(Long to) {
                                     if(to != null){
+                                        /*if the second datepicker is completed the student is added to the assigned list*/
                                         HashMap<String, String> assignment = new HashMap<>();
                                         assignment.put("availableFrom", String.valueOf(from));
                                         assignment.put("availableTo", String.valueOf(to));
@@ -1061,9 +1078,12 @@ public class AssignmentActivity extends AppCompatActivity {
 
         });
 
+        /*Setting OnItemClickListener for the assigned ListView
+        * When clicking a student, the student is removed from the list and the assignment is deleted*/
         lvDialogAssigned.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, final int position, long id) {
+                /*Creating a confirmation dialog*/
                 new AlertDialog.Builder(context)
                         .setIcon(android.R.drawable.ic_dialog_alert)
                         .setTitle("Confirm")
@@ -1071,8 +1091,9 @@ public class AssignmentActivity extends AppCompatActivity {
                         .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
+                                /*If the dialogresponse is positive i.e. the assignment should be deleted*/
                                 if(assignedList.get(position).get("assignmentid") != null) {
-                                    Log.d("assigned id", assignedList.get(position).get("assignmentid"));
+                                    /*if the assignment hasn't been assigned an ID yet i.e. it is new, it is removed from the database*/
                                     String assignmentId = assignedList.get(position).get("assignmentid");
                                     new AssignmentTask(new Callback() {
                                         @Override
@@ -1081,6 +1102,7 @@ public class AssignmentActivity extends AppCompatActivity {
                                         }
                                     }, context).executeTask("delete", "", "", "", "", assignmentId);
                                 }
+                                /*the assignment is removed from the listview and the adapter is notified*/
                                 assignedList.remove(position);
                                 assignedAdapter.notifyDataSetChanged();
                             }
@@ -1094,14 +1116,16 @@ public class AssignmentActivity extends AppCompatActivity {
                         .show();
             }
         });
-
+        /*Setting an OnClickListener for the Save button*/
         bDialogAssign.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                /*Iterating through the list of assignments*/
                 for(int i = 0; i<assignedList.size();i++){
+                    /*Getting information for the position in the list*/
                     Map<String, String> assignment = assignedList.get(i);
-                    //Log.d("assignmentLibId", assignmentLibId);
                     if(assignment.get("new") != null){
+                        /*If the assignment is new, an AssignmentTask is created, adding it to the Database*/
                         new AssignmentTask(new Callback() {
                             @Override
                             public void asyncDone(HashMap<String, HashMap<String, String>> assignments) {
@@ -1110,14 +1134,23 @@ public class AssignmentActivity extends AppCompatActivity {
                         },context).executeTask("assign",assignment.get("studentId"),assignmentLibId,assignment.get("availableFrom"),assignment.get("availableTo"),"");
                     }
                 }
+                /*Reloading the contentPane*/
                 setContentPane(assignmentListPos);
+                /*Dismissing the dialog*/
                 dialog.dismiss();
             }
         });
     }
 
+    /**
+     * Getting all assignments related to an assignmentLibraryId
+     * @param assignmentLibId the assignmentLibraryId to get assignments for.
+     * @return HashMap<String, HashMap<String, String>> of assignments containing the information needed to know which assignments has been completed etc.
+     */
     private HashMap<String, HashMap<String,String>> getAssignments(String assignmentLibId){
         try {
+           /*Creating an AssignmentTask which returns the HashMap - This method freezes the UI to wait for response for 15 seconds
+           * Afterwards it throws an exception */
             return new AssignmentTask(new Callback() {
                 @Override
                 public void asyncDone(HashMap<String, HashMap<String, String>> assignments) {
@@ -1130,8 +1163,11 @@ public class AssignmentActivity extends AppCompatActivity {
         return null;
     }
 
+    /**
+     * Method for designing the BarChart - Setting various design elements within the chart
+     * e.g. animation time, background grid etc.
+     */
     private void barChart(){
-        //design barChart
         mChart = (CombinedChart) findViewById(R.id.chart);
         mChart.setPinchZoom(false);
         mChart.setDoubleTapToZoomEnabled(false);
@@ -1158,22 +1194,30 @@ public class AssignmentActivity extends AppCompatActivity {
 
 
         mChart.getAxisLeft().setDrawGridLines(false);
+        /*Setting an OnChartValueSelectedListener*/
         mChart.setOnChartValueSelectedListener(new OnChartValueSelectedListener() {
             @Override
             public void onValueSelected(Entry entry, int i, Highlight highlight) {
-                Log.d("entry", String.valueOf(entry.getVal()));
-                Log.d("xval", String.valueOf(entry.getXIndex()));
-                Log.d("studentid", assignmentIds.get(entry.getXIndex()));
+
+                /*Getting the assignmentId from the xVals*/
                 String assignmentId = assignmentIds.get(entry.getXIndex());
+
+                /*Calling the statDialog method with the assignmentId as parameter*/
                 statDialog(assignmentId);
             }
 
             @Override
             public void onNothingSelected() {
-
+                //Auto generated stub
             }
         });
     }
+
+    /**
+     *
+     * @param assignmentLibId - the assignment
+     * @return
+     */
     private HashMap<String, HashMap<String, HashMap<String, String>>> getResult(String assignmentLibId){
         try {
             return new QuestionResultTask(context).execute("","","","","","","","get",assignmentLibId).get(30,TimeUnit.SECONDS);
