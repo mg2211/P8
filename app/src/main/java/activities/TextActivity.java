@@ -79,23 +79,18 @@ public class TextActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_text);
 
-        /*Setting the content pane to a new text and getting all texts from DB to populate the text listView*/
-        setNewText(true);
-        setChanged(false);
-        getTexts();
-        setContentPane(-1);
 
         /*Setting up UI elements*/
         Button bSave = (Button) findViewById(R.id.bSave);
         Button bAddQuestion = (Button) findViewById(R.id.bAddQuestion);
         Button bAddText = (Button) findViewById(R.id.bAddText);
         EditText etSearch = (EditText) findViewById(R.id.etSearch);
-        etContent = (EditText) findViewById(R.id.etContent);
 
         bDelete = (Button) findViewById(R.id.bDelete);
         bDelete.setEnabled(false);
         etTextName = (EditText) findViewById(R.id.etTextname);
         tvComplexity = (TextView) findViewById(R.id.tvComplexity);
+        etContent = (EditText) findViewById(R.id.etContent);
 
         ListView lvQuestions = (ListView) findViewById(R.id.lvQuestions);
         ListView lvTexts = (ListView) findViewById(R.id.lvTexts);
@@ -343,6 +338,12 @@ public class TextActivity extends AppCompatActivity {
                 //Auto generated stub
             }
         });
+
+        /*Setting the content pane to a new text and getting all texts from DB to populate the text listView*/
+        setNewText(true);
+        setChanged(false);
+        getTexts();
+        setContentPane(-1);
     }
 
     /**
@@ -619,8 +620,10 @@ public class TextActivity extends AppCompatActivity {
             setNewText(false);
             getQuestions(textId);
         } else {
-            etContent.setText("");
+
             etTextName.setText("");
+            etContent.setText("");
+
             bDelete.setEnabled(false);
             Long time = System.currentTimeMillis() / 1000; //setting a temporary unique id for new texts
             textId = time.toString();
@@ -683,6 +686,7 @@ public class TextActivity extends AppCompatActivity {
         answer.setTag(R.id.ANSWER_ID_TAG, id);
         answer.setLayoutParams(llParams);
 
+        /*Creating the editText*/
         EditText answerText = new EditText(context);
         answerText.setHint("Answer");
         LinearLayout.LayoutParams etParams = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT, 1);
@@ -692,6 +696,7 @@ public class TextActivity extends AppCompatActivity {
         answerText.setTag(etTag);
         answer.addView(answerText);
 
+        /*Creating the Switch*/
         Switch answerSwitch = new Switch(context);
         LinearLayout.LayoutParams swParams = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
         swParams.setMargins(0, 0, pxToDp(20), 0);
@@ -702,11 +707,16 @@ public class TextActivity extends AppCompatActivity {
         answerSwitch.setTag(switchTag);
         answer.addView(answerSwitch);
 
+        /*Returning the linearLayout with the editText and Switch*/
         return answer;
     }
 
-    //@param position - the position from the listview - pass -1 for new question
+    /**
+     * Creating a dialog for adding questions to a text
+     * @param position - The position from the listview - pass -1 for new question
+     */
     private void questionDialog(final int position) {
+        /*Creating the actual dialog*/
         AlertDialog.Builder builder = new AlertDialog.Builder(context);
         LayoutInflater inflater = getLayoutInflater();
         final View layout = inflater.inflate(R.layout.dialog_question, null);
@@ -714,6 +724,8 @@ public class TextActivity extends AppCompatActivity {
         final AlertDialog dialog = builder.create();
         dialog.setCanceledOnTouchOutside(true);
         dialog.show();
+
+        /*Setting up UI elements in the dialog*/
         Button bDialogAddAnswer = (Button) layout.findViewById(R.id.bDialogAddAnswer);
         Button bDialogDelete = (Button) layout.findViewById(R.id.bDialogDelete);
         Button bDialogSave = (Button) layout.findViewById(R.id.bDialogSave);
@@ -724,6 +736,7 @@ public class TextActivity extends AppCompatActivity {
         Switch swDialogSwitch0 = (Switch) layout.findViewWithTag("swDialogSwitch0");
         Switch swDialogSwitch1 = (Switch) layout.findViewWithTag("swDialogSwitch1");
 
+        /*If position is greater than 0 the dialog is loading answers*/
         if (position >= 0) {
             bDialogDelete.setEnabled(true);
             etDialogQuestion.setText(questionList.get(position).get("Question"));
@@ -737,6 +750,8 @@ public class TextActivity extends AppCompatActivity {
                 boolean answerCorrect;
                 answerCorrect = answer[2].equals("1");
 
+                /*The first two answers should populate the static layout in the dialog
+                * after the first two answers, the addAnswerToDialog method is called and populated*/
                 if (i == 0) {
                     etDialogAnswer0.setText(answerText);
                     swDialogSwitch0.setChecked(answerCorrect);
@@ -754,6 +769,7 @@ public class TextActivity extends AppCompatActivity {
                 }
             }
 
+            /*If the position is less than 0 the delete button is disabled and the static layout is set for new answers*/
         } else {
             //new text - sets the answer rows' id to 0...
             bDialogDelete.setEnabled(false);
@@ -764,13 +780,16 @@ public class TextActivity extends AppCompatActivity {
         bDialogSave.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-
-                if (!etDialogAnswer0.getText().toString().equals("") && !etDialogAnswer0.getText().toString().equals("") && !etDialogQuestion.getText().toString().equals("")) {
+                /*Checking if a question and two answers are added*/
+                if (!etDialogAnswer0.getText().toString().equals("") && !etDialogAnswer1.getText().toString().equals("") && !etDialogQuestion.getText().toString().equals("")) {
+                    /*Setting up variables to add the answers*/
                     String answerString = "";
                     int correctanswers = 0;
                     int childcount = getChildCount(LLAnswers)-1;
 
+                    /*Iterating through the linearLayouts containing answers*/
                     for (int i = 0; i <= childcount; i++) {
+
                         EditText etAnswerText = (EditText) layout.findViewWithTag("etDialogAnswer" + i);
                         Switch swAnswerSwitch = (Switch) layout.findViewWithTag("swDialogSwitch" + i);
                         String answerId = null;
@@ -778,24 +797,30 @@ public class TextActivity extends AppCompatActivity {
                         String answerText;
                         String answer;
 
-
+                        /*Getting the actual row of answer*/
                         View answerRow = LLAnswers.getChildAt(i);
                         String tag = (String) answerRow.getTag(R.id.ANSWER_ID_TAG);
+
+                        /*If the answer already has an ID this is added to the string*/
                         if(tag != null) {
                             answerId = tag;
                         }
 
-
+                        /*Checking the Switch*/
                         if (swAnswerSwitch.isChecked()) {
                             answerCorrect = "1";
                             correctanswers++;
                         } else {
                             answerCorrect = "0";
                         }
+
+                        /*Getting the actual content of the answer*/
                         answerText = etAnswerText.getText().toString();
+
+                        /*Putting all the information together into a string*/
                         answer = answerId + ";" + answerText + ";" + answerCorrect;
 
-
+                        /*Checking if this row is the first answer. If not, a # is added as a delimiter*/
                         if(!answerText.equals("")){
                             if(answerString.equals("")){
                                 answerString = answer;
@@ -805,6 +830,7 @@ public class TextActivity extends AppCompatActivity {
                         }
                     }
 
+                    /*Checking that one and only one correct answer is added*/
                     if (correctanswers > 1) {
                         int duration = Toast.LENGTH_LONG;
                         CharSequence alert = "Please add only one correct answer";
@@ -827,6 +853,7 @@ public class TextActivity extends AppCompatActivity {
                             method = "create";
                             questionId = "";
                         }
+                        /*Creating the Question Task for adding this question and answers to the database*/
                         new QuestionTask(new Callback() {
                             @Override
                             public void asyncDone(HashMap<String, HashMap<String, String>> results) {
@@ -834,12 +861,16 @@ public class TextActivity extends AppCompatActivity {
                             }
                         }, context).executeTask(method, questionId, textId, answerString, etDialogQuestion.getText().toString());
                         dialog.dismiss();
+
+                        /*If the text is new i.e. not in the DB - the text has been changed after adding questions to it*/
                         if(newText){
                             setChanged(true);
                         }
+                        /*Reloading questions*/
                         getQuestions(textId);
                     }
                 } else {
+                    /*Showing a toast if one of the three entry fields in the static layout is empty*/
                     int duration = Toast.LENGTH_LONG;
                     CharSequence alert = "Please add a question and two answers";
                     Toast toast = Toast.makeText(context, alert, duration);
@@ -849,15 +880,19 @@ public class TextActivity extends AppCompatActivity {
             }
         });
 
+        /*Adding a onClickListener for the Add Answer button which calls the addAnswerTodialog method*/
         bDialogAddAnswer.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 LLAnswers.addView(addAnswerToDialog(getChildCount(LLAnswers), "0"));
             }
         });
+
+        /*onClickListener for the delete button*/
         bDialogDelete.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                /*A confirmation dialog is shown*/
                 new AlertDialog.Builder(context)
                         .setIcon(android.R.drawable.ic_dialog_alert)
                         .setTitle("Confirm")
@@ -865,9 +900,11 @@ public class TextActivity extends AppCompatActivity {
                         .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialogCallback, int which) {
+                                /*If the deletion is confirmed, a QuestionTask is created with the parameters delete, and id of the question*/
                                 new QuestionTask(new Callback() {
                                     @Override
                                     public void asyncDone(HashMap<String, HashMap<String, String>> results) {
+                                        /*When the deletion is completed, the dialog is dismissed and the quetions are reloaded for the text*/
                                         dialog.dismiss();
                                         getQuestions(textId);
                                     }
@@ -881,6 +918,11 @@ public class TextActivity extends AppCompatActivity {
         });
     }
 
+    /**
+     * Method for getting the number of children in a View - used to calculate the next position of a new answer in the parent's layout
+     * @param parent the parent View to count children in
+     * @return int the number of children in the parent View
+     */
     private int getChildCount(LinearLayout parent) {
         return parent.getChildCount();
     }
