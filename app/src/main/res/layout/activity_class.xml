@@ -42,7 +42,7 @@
                 android:layout_marginTop="0dp"
                 android:layout_marginRight="0dp"
                 android:layout_marginBottom="0dp"
-                android:background="#9ccc65"
+                android:background="@color/colorOrange"
                 android:paddingRight="20dp" />
 
             <Button
@@ -54,7 +54,7 @@
                 android:layout_marginTop="0dp"
                 android:layout_marginRight="0dp"
                 android:layout_marginBottom="0dp"
-                android:background="#9ccc65"
+                android:background="@color/colorOrange"
                 android:paddingRight="20dp" />
 
             <EditText
@@ -81,9 +81,10 @@
 
         <LinearLayout
             android:orientation="vertical"
-            android:layout_width="250dp"
+            android:layout_width="fill_parent"
+            android:layout_weight="1"
             android:layout_height="fill_parent"
-            android:padding="0dp"
+            android:layout_margin="20dp"
             android:id="@+id/llListStudents">
 
             <TextView
@@ -91,12 +92,12 @@
                 android:layout_height="wrap_content"
                 android:textAppearance="?android:attr/textAppearanceLarge"
                 android:text="@string/studentsInClass"
-                android:id="@+id/tvTitleListStudents"
-                android:layout_marginTop="10dp"/>
+                android:id="@+id/tvTitleListStudents" />
 
             <ListView
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
                 android:id="@+id/lvListStudents"
                 android:choiceMode="none"
                 android:listSelector="@android:color/transparent"
@@ -106,8 +107,10 @@
 
         <LinearLayout
             android:orientation="vertical"
-            android:layout_width="251dp"
-            android:layout_height="match_parent">
+            android:layout_width="310dp"
+            android:layout_height="match_parent"
+            android:layout_margin="20dp"
+            android:layout_marginLeft="40dp" >
 
             <TextView
                 android:layout_width="wrap_content"
@@ -115,15 +118,29 @@
                 android:textAppearance="?android:attr/textAppearanceLarge"
                 android:text="@string/editClass"
                 android:id="@+id/tvTitleCRUDClass"
-                android:layout_marginTop="10dp"/>
+                android:layout_marginBottom="10dp"/>
 
-            <EditText
+            <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:textAppearance="?android:attr/textAppearanceLarge"
+                android:textAppearance="?android:attr/textAppearanceSmall"
+                android:text="@string/className"
+                android:id="@+id/tvTitleClassName"/>
+
+            <EditText
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:textAppearance="?android:attr/textAppearanceMedium"
                 android:hint="@string/className"
                 android:id="@+id/etClassName"
-                android:layout_marginTop="10dp"/>
+                android:layout_marginBottom="10dp"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textAppearance="?android:attr/textAppearanceSmall"
+                android:text="@string/teacherName"
+                android:id="@+id/tvTitleTeacherName" />
 
             <TextView
                 android:layout_width="wrap_content"
@@ -131,7 +148,15 @@
                 android:textAppearance="?android:attr/textAppearanceMedium"
                 android:hint="@string/teacherName"
                 android:id="@+id/tvTeacherName"
-                android:inputType="none" />
+                android:inputType="none"
+                android:layout_marginBottom="10dp" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textAppearance="?android:attr/textAppearanceSmall"
+                android:text="@string/teacherEmail"
+                android:id="@+id/tvTitleTeacherEmail" />
 
             <TextView
                 android:layout_width="wrap_content"
@@ -139,25 +164,8 @@
                 android:textAppearance="?android:attr/textAppearanceMedium"
                 android:hint="@string/teacherEmail"
                 android:id="@+id/tvDialogTeacherEmail"
-                android:inputType="none" />
-
-            <Button
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/createClass"
-                android:id="@+id/bCreateClass" />
-
-            <Button
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/saveClass"
-                android:id="@+id/bEditClass" />
-
-            <Button
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/deleteClass"
-                android:id="@+id/bDeleteClass" />
+                android:inputType="none"
+                android:layout_marginBottom="10dp" />
 
             <TextView
                 android:layout_width="wrap_content"
@@ -165,7 +173,8 @@
                 android:textAppearance="?android:attr/textAppearanceLarge"
                 android:text="@string/allTeachers"
                 android:id="@+id/tvTitleListTeachers"
-                android:layout_marginTop="10dp"/>
+                android:layout_marginTop="10dp"
+                android:layout_marginBottom="10dp"/>
 
             <EditText
                 android:layout_width="fill_parent"
@@ -177,14 +186,34 @@
                 android:background="#29b6f6"
                 android:paddingLeft="20dp"
                 android:drawableRight="@drawable/search"
-                android:paddingRight="20dp" />
+                android:paddingRight="20dp"/>
 
             <ListView
                 android:layout_width="fill_parent"
-                android:layout_height="wrap_content"
+                android:layout_height="fill_parent"
+                android:layout_weight="1"
                 android:id="@+id/lvListTeachers"
                 android:listSelector="@color/colorHighlight"
                 android:choiceMode="singleChoice" />
+
+            <Button
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/createClass"
+                android:id="@+id/bCreateClass"
+                android:layout_marginTop="10dp" />
+
+            <Button
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/saveClass"
+                android:id="@+id/bEditClass" />
+
+            <Button
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/deleteClass"
+                android:id="@+id/bDeleteClass" />
 
         </LinearLayout>
 

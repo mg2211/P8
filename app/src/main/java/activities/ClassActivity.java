@@ -53,8 +53,11 @@ public class ClassActivity extends AppCompatActivity {
 
     private String currentUserTeacherId;
     private String currentUserFirstName;
+
     private String teacherTeacherId;
     private String teacherTeacherFullName;
+    private String teacherTeacherEmail;
+
     private String currentTeacherEmail;
     private String classClassId;
     private String classClassName;
@@ -481,6 +484,7 @@ public class ClassActivity extends AppCompatActivity {
                     setTeacherChanged(true);
                     checkChanged();
                     Log.d("tvTeacherMail changed", String.valueOf(changed));
+                    Log.d("tvTeacherMail value", content);
                 } else {
                     setTeacherChanged(false);
                     checkChanged();
@@ -496,14 +500,12 @@ public class ClassActivity extends AppCompatActivity {
     }
 
     private void setContentPane(int classListPos, int teacherListPos) {
-        String currentTeacherFullName;
-        String teacherTeacherEmail;
         if (classListPos >= 0 && teacherListPos >= 0) {
             Map<String, String> classData = (Map) classListAdapter.getItem(classListPos);
+            currentTeacherEmail = classData.get("teacherEmail");
+
             classClassId = classData.get("classId");
             classClassName = classData.get("className");
-
-            currentTeacherEmail = classData.get("teacherEmail");
 
             Map<String, String> teacherData = (Map) teacherListAdapter.getItem(teacherListPos);
             teacherTeacherId = teacherData.get("teacherId");
@@ -518,6 +520,8 @@ public class ClassActivity extends AppCompatActivity {
 
         } else if (classListPos >= 0) {
             Map<String, String> classData = (Map) classListAdapter.getItem(classListPos);
+            currentTeacherEmail = classData.get("teacherEmail");
+
             classClassId = classData.get("classId");
             classClassName = classData.get("className");
 
@@ -533,13 +537,16 @@ public class ClassActivity extends AppCompatActivity {
 
         } else if (teacherListPos >= 0) {
             Map<String, String> userData = (Map) teacherListAdapter.getItem(teacherListPos);
+
+            if(etClassName.getText().equals(classClassName)) {
+                classClassName = null;
+                etClassName.setText("");
+            }
+
             teacherTeacherId = userData.get("teacherId");
             teacherTeacherFullName = userData.get("fullName");
             teacherTeacherEmail = userData.get("email");
 
-            classClassName = null;
-
-            etClassName.setText("");
             tvTeacherName.setText(teacherTeacherFullName);
             tvTeacherEmail.setText(teacherTeacherEmail);
         } else {
@@ -561,7 +568,9 @@ public class ClassActivity extends AppCompatActivity {
             Log.d("teacherListPos", String.valueOf(teacherListPosition));
             Map<String, String> teacherData = (Map) teacherListAdapter.getItem(teacherListPos);
             String teacherId = teacherData.get("teacherId");
+            Log.d("teacherId", teacherId);
             String className = etClassName.getText().toString();
+            Log.d("className", className);
             if (!teacherId.equals("") && !className.equals("")) {
                 new ClassTask(new Callback() {
                     @Override
@@ -697,7 +706,7 @@ public class ClassActivity extends AppCompatActivity {
                 bCreateClass.setEnabled(false);
             }
         } else {
-            tvTitleCRUDClass.setText(R.string.editClass);
+            tvTitleCRUDClass.setText("Edit class " + classClassName);
             bEditClass.setVisibility(View.VISIBLE);
             bDeleteClass.setVisibility(View.VISIBLE);
             bCreateClass.setVisibility(View.GONE);
