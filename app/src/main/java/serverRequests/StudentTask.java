@@ -56,7 +56,7 @@ public class StudentTask extends AsyncTask<String, Void, HashMap<String, HashMap
             connection.setRequestMethod("POST");
 
             Uri.Builder builder = new Uri.Builder().appendQueryParameter("classId", classID)
-                    .appendQueryParameter("teacherId",teacherId);
+                    .appendQueryParameter("teacherId", teacherId);
 
             String query = builder.build().getEncodedQuery();
             OutputStream os = connection.getOutputStream();
@@ -72,7 +72,7 @@ public class StudentTask extends AsyncTask<String, Void, HashMap<String, HashMap
 
             InputStream in = new BufferedInputStream(connection.getInputStream());
             String response = IOUtils.toString(in, "UTF-8"); // convert to string
-            Log.d("student response",response);
+            Log.d("student response", response);
 
             //convert to JSONobject
 
@@ -122,28 +122,24 @@ public class StudentTask extends AsyncTask<String, Void, HashMap<String, HashMap
 
 
     protected void onPostExecute(HashMap<String, HashMap<String, String>> results) {
-
-        String responseCode = results.get("response").get("responseCode");
         String generalResponse = results.get("response").get("generalResponse");
-        results.remove("response");
+        String responseCode = results.get("response").get("responseCode");
+
+        progressDialog.dismiss();
 
         if (Integer.parseInt(responseCode) == 100) {
+            results.remove("response");
             delegate.asyncDone(results);
-        } else if (Integer.parseInt(responseCode) == 200) {
+        } else if (Integer.parseInt(responseCode) == 101) {
             int duration = Toast.LENGTH_LONG;
             Toast toast = Toast.makeText(context, generalResponse, duration);
             toast.show();
-        } else if (Integer.parseInt(responseCode) == 300) {
+            results.remove("response");
+            delegate.asyncDone(results);
+        } else if (Integer.parseInt(responseCode) > 101) {
             int duration = Toast.LENGTH_LONG;
-            CharSequence alert = "Server connection failed - Please try again later";
-            Toast toast = Toast.makeText(context, alert, duration);
+            Toast toast = Toast.makeText(context, "Response code " + responseCode + ", " + "Message: " + generalResponse, duration);
             toast.show();
         }
-
-        results.remove("response");
-        progressDialog.dismiss();
     }
-
-
-
 }

@@ -121,11 +121,22 @@ public class TextTask extends AsyncTask<String, Void, HashMap<String, HashMap<St
     }
 
     protected void onPostExecute (HashMap<String, HashMap<String, String>> results){
+        String generalResponse = results.get("response").get("generalResponse");
+        String responseCode = results.get("response").get("responseCode");
+
         progressDialog.dismiss();
-        int duration = Toast.LENGTH_LONG;
-        CharSequence alert = results.get("response").get("generalResponse");
-        Toast toast = Toast.makeText(context, alert, duration);
-        toast.show();
-        delegate.asyncDone(results);
+
+        if (Integer.parseInt(responseCode) == 100) {
+            delegate.asyncDone(results);
+        } else if (Integer.parseInt(responseCode) == 101) {
+            int duration = Toast.LENGTH_LONG;
+            Toast toast = Toast.makeText(context, generalResponse, duration);
+            toast.show();
+            delegate.asyncDone(results);
+        } else if (Integer.parseInt(responseCode) > 101) {
+            int duration = Toast.LENGTH_LONG;
+            Toast toast = Toast.makeText(context, "Response code " + responseCode + ", " + "Message: " + generalResponse, duration);
+            toast.show();
+        }
     }
 }
