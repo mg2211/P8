@@ -485,7 +485,6 @@ public class ClassActivity extends AppCompatActivity {
                     checkChanged();
                     Log.d("tvTeacherMail changed", String.valueOf(changed));
                     Log.d("tvTeacherMail value", content);
-                    Log.d("currentTeacher value", currentTeacherEmail);
                 } else {
                     setTeacherChanged(false);
                     checkChanged();
@@ -538,13 +537,16 @@ public class ClassActivity extends AppCompatActivity {
 
         } else if (teacherListPos >= 0) {
             Map<String, String> userData = (Map) teacherListAdapter.getItem(teacherListPos);
+
+            if(etClassName.getText().equals(classClassName)) {
+                classClassName = null;
+                etClassName.setText("");
+            }
+
             teacherTeacherId = userData.get("teacherId");
             teacherTeacherFullName = userData.get("fullName");
             teacherTeacherEmail = userData.get("email");
 
-            classClassName = null;
-
-            etClassName.setText("");
             tvTeacherName.setText(teacherTeacherFullName);
             tvTeacherEmail.setText(teacherTeacherEmail);
         } else {
@@ -566,7 +568,9 @@ public class ClassActivity extends AppCompatActivity {
             Log.d("teacherListPos", String.valueOf(teacherListPosition));
             Map<String, String> teacherData = (Map) teacherListAdapter.getItem(teacherListPos);
             String teacherId = teacherData.get("teacherId");
+            Log.d("teacherId", teacherId);
             String className = etClassName.getText().toString();
+            Log.d("className", className);
             if (!teacherId.equals("") && !className.equals("")) {
                 new ClassTask(new Callback() {
                     @Override
