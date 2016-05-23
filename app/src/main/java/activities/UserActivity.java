@@ -54,9 +54,6 @@ public class UserActivity extends AppCompatActivity {
     /** Button used to assign a class to a student */
     private Button bAssignClass;
 
-    /** Button used to modify classes */
-    private Button bModifyClasses;
-
     /** EditText field where username is entered */
     private EditText etUsername;
 
@@ -196,7 +193,6 @@ public class UserActivity extends AppCompatActivity {
         bEditUser = (Button) findViewById(R.id.bEditUser);
         bDeleteUser = (Button) findViewById(R.id.bDeleteUser);
         bAssignClass = (Button) findViewById(R.id.bAssignClass);
-        bModifyClasses = (Button) findViewById(R.id.bModifyClasses);
 
         lvListUsers = (ListView) findViewById(R.id.lvListUsers);
 
@@ -224,13 +220,11 @@ public class UserActivity extends AppCompatActivity {
                                        int position, long id) {
                 Log.d("Spinner position", spinnerRole.getSelectedItem().toString());
                 if (spinnerRole.getSelectedItem().toString().equals("teacher")) {
-                    bModifyClasses.setVisibility(View.VISIBLE);
                     etContactEmail.setVisibility(View.GONE);
                     bAssignClass.setVisibility(View.GONE);
                     tvTitleStudentClass.setVisibility(View.GONE);
                     tvUserClassName.setVisibility(View.GONE);
                 } else if (spinnerRole.getSelectedItem().toString().equals("student")) {
-                    bModifyClasses.setVisibility(View.VISIBLE);
                     etContactEmail.setVisibility(View.VISIBLE);
                     bAssignClass.setVisibility(View.VISIBLE);
                     tvTitleStudentClass.setVisibility(View.VISIBLE);
@@ -376,15 +370,6 @@ public class UserActivity extends AppCompatActivity {
             public void onClick(View v) {
                 deleteUser();
                 setChanged(false);
-            }
-        });
-
-        /** start ClassActivity on click */
-        bModifyClasses.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(context, ClassActivity.class);
-                startActivity(intent);
             }
         });
 

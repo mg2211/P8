@@ -20,7 +20,7 @@
     <string name="studentsInClass">Students in class</string>
     <string name="editClass">Edit this class</string>
     <string name="addClass">Create a new class</string>
-    <string name="allTeachers">Displaying all teachers</string>
+    <string name="allTeachers">Assign a teacher</string>
 
     <!--Labels for general buttons-->
     <string name="login">Login</string>
@@ -55,6 +55,7 @@
     <string name="email">E-mail address</string>
     <string name="contactEmail">Parent/caretaker E-mail address</string>
     <string name="role">Role</string>
+    <string name="userRole">user role</string>
 
     <!--Labels for defining texts in text fields-->
     <string name="text_name">Text name</string>

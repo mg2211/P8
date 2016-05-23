@@ -58,19 +58,16 @@
 
         </LinearLayout>
 
-        <LinearLayout
-            android:orientation="vertical"
-            android:layout_width="320dp"
-            android:layout_height="wrap_content"
-            android:paddingLeft="12dp"
-            android:paddingRight="12dp"
-            android:paddingTop="12dp"
-            android:paddingBottom="12dp">
+        <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+            android:orientation="horizontal"
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent">
 
             <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
                 android:orientation="vertical"
-                android:layout_width="320dp"
+                android:layout_width="290dp"
                 android:layout_height="wrap_content"
+                android:layout_margin="20dp"
                 android:id="@+id/llUserFields">
 
                 <TextView
@@ -79,20 +76,22 @@
                     android:textAppearance="?android:attr/textAppearanceLarge"
                     android:text="@string/registerUser"
                     android:id="@+id/tvTitleCRUDUser"
-                    android:paddingBottom="6dp" />
+                    android:layout_marginBottom="10dp" />
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:textAppearance="?android:attr/textAppearanceSmall"
-                    android:text="User role"
+                    android:text="@string/userRole"
                     android:id="@+id/tvTitleRole" />
 
                 <Spinner
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:id="@+id/spinnerRole"
-                    android:spinnerMode="dropdown" />
+                    android:textAppearance="?android:attr/textAppearanceMedium"
+                    android:spinnerMode="dropdown"
+                    android:layout_marginBottom="10dp" />
 
                 <TextView
                     android:layout_width="wrap_content"
@@ -105,8 +104,10 @@
                     android:layout_width="fill_parent"
                     android:layout_height="wrap_content"
                     android:id="@+id/etFirstName"
+                    android:textAppearance="?android:attr/textAppearanceMedium"
                     android:hint="@string/firstName"
-                    android:singleLine="true"/>
+                    android:singleLine="true"
+                    android:layout_marginBottom="10dp"/>
 
                 <TextView
                     android:layout_width="wrap_content"
@@ -119,8 +120,10 @@
                     android:layout_width="fill_parent"
                     android:layout_height="wrap_content"
                     android:id="@+id/etLastName"
+                    android:textAppearance="?android:attr/textAppearanceMedium"
                     android:hint="@string/lastName"
-                    android:singleLine="true"/>
+                    android:singleLine="true"
+                    android:layout_marginBottom="10dp" />
 
                 <TextView
                     android:layout_width="wrap_content"
@@ -133,8 +136,10 @@
                     android:layout_width="fill_parent"
                     android:layout_height="wrap_content"
                     android:id="@+id/etUserName"
+                    android:textAppearance="?android:attr/textAppearanceMedium"
                     android:hint="@string/username"
-                    android:singleLine="true"/>
+                    android:singleLine="true"
+                    android:layout_marginBottom="10dp"/>
 
                 <TextView
                     android:layout_width="wrap_content"
@@ -147,9 +152,11 @@
                     android:layout_width="fill_parent"
                     android:layout_height="wrap_content"
                     android:id="@+id/etPassword"
+                    android:textAppearance="?android:attr/textAppearanceMedium"
                     android:hint="@string/password"
                     android:inputType="textPassword"
-                    android:singleLine="true"/>
+                    android:singleLine="true"
+                    android:layout_marginBottom="10dp"/>
 
                 <TextView
                     android:layout_width="wrap_content"
@@ -162,9 +169,11 @@
                     android:layout_width="fill_parent"
                     android:layout_height="wrap_content"
                     android:inputType="textEmailAddress"
+                    android:textAppearance="?android:attr/textAppearanceMedium"
                     android:id="@+id/etEmail"
                     android:hint="@string/email"
-                    android:singleLine="true"/>
+                    android:singleLine="true"
+                    android:layout_marginBottom="10dp"/>
 
                 <TextView
                     android:layout_width="wrap_content"
@@ -178,86 +187,67 @@
                     android:layout_height="wrap_content"
                     android:inputType="textEmailAddress"
                     android:id="@+id/etContactEmail"
+                    android:textAppearance="?android:attr/textAppearanceMedium"
                     android:hint="@string/contactEmail"
-                    android:singleLine="true"/>
+                    android:singleLine="true"
+                    android:layout_marginBottom="10dp"/>
 
-                <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-                    android:orientation="horizontal"
-                    android:layout_width="301dp"
+                <Button
+                    android:layout_width="fill_parent"
                     android:layout_height="wrap_content"
-                    android:id="@+id/llUserButtons"
-                    android:paddingTop="6dp"
-                    android:paddingBottom="18dp" >
+                    android:text="@string/register"
+                    android:id="@+id/bRegisterUser" />
 
-                    <Button
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="@string/register"
-                        android:id="@+id/bRegisterUser" />
-
-                    <Button
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="@string/saveUser"
-                        android:id="@+id/bEditUser" />
-
-                    <Button
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="@string/deleteUser"
-                        android:id="@+id/bDeleteUser" />
-
-                </LinearLayout>
-
-                <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-                    android:orientation="vertical"
-                    android:layout_width="301dp"
+                <Button
+                    android:layout_width="fill_parent"
                     android:layout_height="wrap_content"
-                    android:id="@+id/llClassAssignment"
-                    android:paddingLeft="12dp"
-                    android:paddingRight="12dp"
-                    android:paddingTop="12dp"
-                    android:paddingBottom="12dp"
-                    android:background="@color/colorHighlight">
+                    android:text="@string/saveUser"
+                    android:id="@+id/bEditUser" />
 
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:textAppearance="?android:attr/textAppearanceSmall"
-                        android:text="@string/titleStudentClass"
-                        android:id="@+id/tvTitleStudentClass" />
+                <Button
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/deleteUser"
+                    android:id="@+id/bDeleteUser" />
 
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:textAppearance="?android:attr/textAppearanceMedium"
-                        android:text="@string/className"
-                        android:id="@+id/tvUserClassName"
-                        android:inputType="none" />
+            </LinearLayout>
 
-                    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-                        android:orientation="horizontal"
-                        android:layout_width="301dp"
-                        android:layout_height="wrap_content"
-                        android:id="@+id/llClassButtons"
-                        android:paddingTop="6dp"
-                        android:paddingBottom="18dp" >
+            <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                android:orientation="vertical"
+                android:layout_width="290dp"
+                android:layout_height="wrap_content"
+                android:layout_margin="20dp"
+                android:id="@+id/llClassFields">
 
-                        <Button
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="@string/assignClass"
-                            android:id="@+id/bAssignClass" />
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textAppearance="?android:attr/textAppearanceLarge"
+                    android:text="@string/titleStudentClass"
+                    android:id="@+id/tvTitleStudentInClass"
+                    android:layout_marginBottom="10dp" />
 
-                        <Button
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="@string/modifyClasses"
-                            android:id="@+id/bModifyClasses" />
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textAppearance="?android:attr/textAppearanceSmall"
+                    android:text="@string/titleStudentClass"
+                    android:id="@+id/tvTitleStudentClass" />
 
-                    </LinearLayout>
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textAppearance="?android:attr/textAppearanceMedium"
+                    android:text="@string/className"
+                    android:id="@+id/tvUserClassName"
+                    android:inputType="none"
+                    android:layout_marginBottom="10dp" />
 
-                </LinearLayout>
+                <Button
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/assignClass"
+                    android:id="@+id/bAssignClass" />
 
             </LinearLayout>
 
