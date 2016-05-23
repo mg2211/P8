@@ -48,6 +48,7 @@ import javax.microedition.khronos.opengles.GL10;
 
 public class ReadingActivity extends AppCompatActivity  {
 
+
     List<Map<String, String>> questionList = new ArrayList<>();
     String specificQuestionContent1;
     String answerText1;
@@ -59,7 +60,7 @@ public class ReadingActivity extends AppCompatActivity  {
     HashMap<String, String> user;
     String studentId;
     String textId;
-    TextView tvTextName2;
+    TextView tvTextName;
     Button bDialogSubmit;
 
     TextView tvAssignmentName;
@@ -106,8 +107,8 @@ public class ReadingActivity extends AppCompatActivity  {
 
         bFinish = (Button) findViewById(R.id.bFinish);
         bPause = (Button) findViewById(R.id.bPause);
-        tvAssignmentName = (TextView) findViewById(R.id.tvTextName21);
-        tvTextName2 = (TextView) findViewById(R.id.tvTextName2);
+        tvAssignmentName = (TextView) findViewById(R.id.tvAssignmentName);
+        tvTextName = (TextView) findViewById(R.id.tvTextName2);
         chronometer = (Chronometer) findViewById(R.id.chronometer);
 
 
@@ -133,7 +134,7 @@ public class ReadingActivity extends AppCompatActivity  {
 
          textContent22 = getText1().get("text0").get("textcontent");
         String textname = getText1().get("text0").get("textname");
-        tvTextName2.setText(textname);
+        tvTextName.setText(textname);
         Log.d("7979 ", textContent22);
 
 
@@ -531,7 +532,7 @@ public class ReadingActivity extends AppCompatActivity  {
 
 
 
-        tvContent = (TextView) findViewById(R.id.tvText1212);
+        tvContent = (TextView) findViewById(R.id.tvTextContent);
         tvContent.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
             @Override
             public void onGlobalLayout() {
