@@ -5,6 +5,7 @@ import android.content.Context;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.util.Log;
+import android.widget.Toast;
 
 import callback.Callback;
 
@@ -32,6 +33,8 @@ import java.util.HashMap;
  */
 public class QuestionTask extends AsyncTask<String, Void, HashMap<String, HashMap<String, String>>> {
 
+    /*context*/
+    private final Context context;
     /*Callback interface*/
     private final Callback delegate;
     /*Declaring a Prgressdialog*/
@@ -43,6 +46,7 @@ public class QuestionTask extends AsyncTask<String, Void, HashMap<String, HashMa
      * @param context - The caller activity
      */
     public QuestionTask(Callback delegate, Context context) {
+        this.context = context;
         this.delegate = delegate;
         /*Creating and setting the progressdialog*/
         progressDialog = new ProgressDialog(context);
@@ -171,7 +175,25 @@ public class QuestionTask extends AsyncTask<String, Void, HashMap<String, HashMa
     protected void onPostExecute(HashMap<String, HashMap<String, String>> results) {
         /*Dismisses progressdialog*/
         progressDialog.dismiss();
-        /*Sending the results map to the caller activity via the Callback interface*/
-        delegate.asyncDone(results);
-    }
+
+        String generalResponse = results.get("response").get("generalResponse");
+        String responseCode = results.get("response").get("responseCode");
+
+        progressDialog.dismiss();
+
+        if (Integer.parseInt(responseCode) == 100) {
+            /*Sending the results map to the caller activity via the Callback interface*/
+            delegate.asyncDone(results);
+        } else if (Integer.parseInt(responseCode) == 101) {
+            int duration = Toast.LENGTH_LONG;
+            Toast toast = Toast.makeText(context, generalResponse, duration);
+            toast.show();
+            /*Sending the results map to the caller activity via the Callback interface*/
+            delegate.asyncDone(results);
+        } else if (Integer.parseInt(responseCode) > 101) {
+            int duration = Toast.LENGTH_LONG;
+            Toast toast = Toast.makeText(context, "Response code " + responseCode + ", " + "Message: " + generalResponse, duration);
+            toast.show();
+        }
+}
 }
