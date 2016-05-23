@@ -87,6 +87,12 @@ public class UserActivity extends AppCompatActivity {
     /** TextView that displays the title of the class block */
     private TextView tvTitleStudentClass;
 
+    /** TextView that displays the caption for the parent/caretaker mail field */
+    private TextView tvTitleContactEmail;
+
+    /** TextView that displays the caption for the class name field */
+    private TextView tvTitleStudentClassCapt;
+
     /** TextView that displays the name of the class the student is currently assigned to */
     private TextView tvUserClassName;
 
@@ -178,6 +184,8 @@ public class UserActivity extends AppCompatActivity {
         tvTitleCRUDUser = (TextView) findViewById(R.id.tvTitleCRUDUser);
         tvTitleStudentClass = (TextView) findViewById(R.id.tvTitleStudentClass);
         tvUserClassName = (TextView) findViewById(R.id.tvUserClassName);
+        tvTitleContactEmail = (TextView) findViewById(R.id.tvTitleContactEmail);
+        tvTitleStudentClassCapt = (TextView) findViewById(R.id.tvTitleStudentClassCapt);
 
         spinnerRole = (Spinner) findViewById(R.id.spinnerRole);
 
@@ -224,11 +232,15 @@ public class UserActivity extends AppCompatActivity {
                     bAssignClass.setVisibility(View.GONE);
                     tvTitleStudentClass.setVisibility(View.GONE);
                     tvUserClassName.setVisibility(View.GONE);
+                    tvTitleContactEmail.setVisibility(View.GONE);
+                    tvTitleStudentClassCapt.setVisibility(View.GONE);
                 } else if (spinnerRole.getSelectedItem().toString().equals("student")) {
                     etContactEmail.setVisibility(View.VISIBLE);
                     bAssignClass.setVisibility(View.VISIBLE);
                     tvTitleStudentClass.setVisibility(View.VISIBLE);
                     tvUserClassName.setVisibility(View.VISIBLE);
+                    tvTitleStudentClassCapt.setVisibility(View.VISIBLE);
+                    tvTitleContactEmail.setVisibility(View.VISIBLE);
                 }
             }
 

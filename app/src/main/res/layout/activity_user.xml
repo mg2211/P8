@@ -224,7 +224,7 @@
                     android:layout_height="wrap_content"
                     android:textAppearance="?android:attr/textAppearanceLarge"
                     android:text="@string/titleStudentClass"
-                    android:id="@+id/tvTitleStudentInClass"
+                    android:id="@+id/tvTitleStudentClass"
                     android:layout_marginBottom="10dp" />
 
                 <TextView
@@ -232,7 +232,7 @@
                     android:layout_height="wrap_content"
                     android:textAppearance="?android:attr/textAppearanceSmall"
                     android:text="@string/titleStudentClass"
-                    android:id="@+id/tvTitleStudentClass" />
+                    android:id="@+id/tvTitleStudentClassCapt" />
 
                 <TextView
                     android:layout_width="wrap_content"
