@@ -1214,19 +1214,29 @@ public class AssignmentActivity extends AppCompatActivity {
     }
 
     /**
-     *
-     * @param assignmentLibId - the assignment
-     * @return
+     *getResult method - used for getting the results for every assignment associated with an assignmentLibrary entry
+     * @param assignmentLibId - the assignmentLibraryId to get results for.
+     * @return a HashMap of results for the assignment
+     * The HashMap contains a HashMap which contains a third HashMap
+     * The structure for the maps is:
+     * AssignmentID->HashMap containing results for each question in the assignment->HashMap containing information about the question answered e.g. correctness and answer chosen
      */
     private HashMap<String, HashMap<String, HashMap<String, String>>> getResult(String assignmentLibId){
         try {
+            /*Returns the HashMap - This method freezes the UI to make sure that all results are in before continuing */
             return new QuestionResultTask(context).execute("","","","","","","","get",assignmentLibId).get(30,TimeUnit.SECONDS);
         } catch (InterruptedException | TimeoutException | ExecutionException e) {
             e.printStackTrace();
         }
         return null;
     }
+
+    /**
+     * statDialog - used for showing detailed statistics for an assignment compared with other assignments
+     * @param assignmentId - the id to show statistics for
+     */
     private void statDialog(String assignmentId){
+        /*Create the dialog*/
         AlertDialog.Builder builder = new AlertDialog.Builder(context);
         LayoutInflater inflater = getLayoutInflater();
         final View layout = inflater.inflate(R.layout.dialog_stats, null);
@@ -1236,16 +1246,23 @@ public class AssignmentActivity extends AppCompatActivity {
         dialog.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_UNCHANGED);
         dialog.show();
 
+        /*Setting up UI elements*/
         ListView lvDialogQuestions = (ListView) layout.findViewById(R.id.lvDialogQuestions);
         final PieChart chartDialog = (PieChart) layout.findViewById(R.id.chartDialog);
         TextView tvDialogTime = (TextView) layout.findViewById(R.id.tvDialogTime);
         TextView tvDialogAverageTime = (TextView) layout.findViewById(R.id.tvDialogAverageTime);
         TextView tvDialogCorrect = (TextView) layout.findViewById(R.id.tvDialogCorrect);
         TextView tvDialogCorrectAverage = (TextView) layout.findViewById(R.id.tvDialogCorrectAverage);
+
+        /*creating a list for containing the questions*/
         final List<Map<String, String>> questionList = new ArrayList<>();
+        /*Creating a new adapter from the custom QuestionListAdapterClass
+        * Used for coloring the answer in the listview depending on the correctness*/
         QuestionListAdapter questionListAdapter = new QuestionListAdapter(this,questionList);
+        /*Setting the adapter*/
         lvDialogQuestions.setAdapter(questionListAdapter);
 
+        /*Designing the PieChart - setting various variables e.g. center hole size, animation etc.*/
         chartDialog.setUsePercentValues(true);
         chartDialog.setDescription("");
         chartDialog.setExtraOffsets(5, 10, 5, 5);
@@ -1266,54 +1283,78 @@ public class AssignmentActivity extends AppCompatActivity {
         chartDialog.setHighlightPerTapEnabled(true);
         chartDialog.animateY(1400, Easing.EasingOption.EaseInOutQuad);
 
-
+        /*Setting variables used for calculating student's average*/
         int studentCorrect = 0;
         int studentAnswers = 0;
+        /*Getting the result from the HashMap of all results*/
         HashMap<String, HashMap<String, String>> studentResult = result.get(assignmentId);
+        /*Itereating through the assignment's results*/
         for(Map.Entry<String, HashMap<String, String>> studentResults : studentResult.entrySet()){
+            /*If the key in the result is not time*/
             if(!studentResults.getKey().equals("time")){
-                Log.d("studentResult",studentResults.toString());
+                /*Checking the correctness of the answer*/
                 if(studentResults.getValue().get("correct").equals("1")){
+                    /*If the answer is correct, increase studentCorrect by 1*/
                     studentCorrect++;
                 }
+                /*Increase studentAnswers by 1 regardless of correctness*/
                 studentAnswers++;
             }
         }
+        /*Calculate studentAverage*/
         double studentAverage = ((double) studentCorrect / (double) studentAnswers) * 100;
+
+        /*Format the average to one decimal and adding a %-sign */
         String studentAverageString = String.format("%.1f",studentAverage) + "%";
 
+
+        /*Setting variables for calculating the average time and average correctness*/
         double totalTime = 0;
         double total = 0;
         double assignments = assignmentIds.size();
 
+        /*Iterating the list of assignments to calculate from*/
         for(int i=0; i<assignmentIds.size(); i++){
+            /*Getting information for a specific assignment*/
             HashMap<String, HashMap<String, String>> assignmentResult = result.get(assignmentIds.get(i));
+
+            /*Adding the time to the totalTime*/
             totalTime = totalTime+Double.parseDouble(assignmentResult.get("time").get("time"));
 
+            /*Settign variables for calculating an assignment's answers*/
             int assignmentAnswers = 0;
             int assignmentCorrect = 0;
 
+            /*Iterating through the assignments result*/
             for(Map.Entry<String, HashMap<String, String>> result : assignmentResult.entrySet()){
+                /*if the key is not time*/
                 if(!result.getKey().equals("time")){
-                    Log.d("studentResult",result.toString());
                     if(result.getValue().get("correct").equals("1")){
+                        /*If the result is correct, increase assignmentCorret by 1*/
                         assignmentCorrect++;
                     }
+                    /*Increases assignmentAnswers by 1*/
                     assignmentAnswers++;
                 }
             }
+            /*Calculating the average for a specific assignment*/
             double assignmentAverage = ((double) assignmentCorrect / (double) assignmentAnswers) * 100;
+
+            /*Adding to the total*/
             total = total+assignmentAverage;
         }
-
+        /*Calculating the average correctness and average time*/
         double average = total/assignments;
         double averageTime = totalTime/assignments;
 
+        /*Setting the student's average TextView*/
         tvDialogCorrect.setText(studentAverageString);
 
+        /*Getting the student's time and setting the TextView after the time is converted to a string in the convertTime method*/
         int studentTime = Integer.parseInt(studentResult.get("time").get("time"));
         tvDialogTime.setText(convertTime(studentTime));
 
+        /*Calculating the differnce between the student's time and the average time and setting TextView accordingly*/
         if(studentTime < averageTime){
             double difference = ((averageTime-studentTime)/studentTime)*100;
             tvDialogAverageTime.setText(Math.round(difference)+"% below average");
@@ -1324,6 +1365,7 @@ public class AssignmentActivity extends AppCompatActivity {
             tvDialogAverageTime.setText("On average");
         }
 
+        /*Calculating the difference between the student's average and the general average  and setting TextView accordingly*/
         if(studentAverage < average){
             double difference = ((average-studentAverage)/studentAverage)*100;
             tvDialogCorrectAverage.setText(Math.round(difference)+"% below average");
@@ -1334,6 +1376,7 @@ public class AssignmentActivity extends AppCompatActivity {
             tvDialogCorrectAverage.setText("On average");
         }
 
+        /*Iterating the questionList to add the questions to the list of questions and correlate the student's results*/
         for(Map.Entry<String, HashMap<String, String>> question : questions.entrySet()){
 
             Map<String, String> specificQuestion = question.getValue();
@@ -1351,14 +1394,17 @@ public class AssignmentActivity extends AppCompatActivity {
             questionList.add(questionInfo);
             questionListAdapter.notifyDataSetChanged();
         }
-
+        /*Setting an OnItemClickListener for the QuestionList - used for calculating the number of correct answers for a specific question
+        * and setting the PieChart accordingly*/
         lvDialogQuestions.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                /*Getting the questionId and setting the variables for calculating*/
                 String questionId = questionList.get(position).get("id");
                 int totalAnswers = 0;
                 int correctAnswers = 0;
 
+                /*Iterating through the assignments and getting the correctness for the question chosen*/
                 for(int i=0; i<assignmentIds.size(); i++){
                     HashMap<String, HashMap<String, String>> assignmentResult = result.get(assignmentIds.get(i));
                     if(assignmentResult.get(questionId).get("correct").equals("1")){
@@ -1366,36 +1412,39 @@ public class AssignmentActivity extends AppCompatActivity {
                     }
                     totalAnswers++;
                 }
+                /*Calculating the percentage of correct and wrong answers*/
                 double correct = ((double) correctAnswers / (double) totalAnswers) * 100;
                 double wrong = 100-correct;
 
-                Log.d("correct %", String.valueOf(correct));
-                Log.d("wrong", String.valueOf(wrong));
-
-                //PIE CHART
-
+                /*Creating ArrayList for containing PieChart Data*/
                 ArrayList<Entry> pieValues = new ArrayList<>();
                 ArrayList<String> pieNames = new ArrayList<>();
 
+                /*Adding the correct answers to the chart*/
                 pieValues.add(new Entry((float) correct,0));
                 pieNames.add(0,"Correct answers");
 
+                /*Adding the wrong answers to the chart*/
                 pieValues.add(new Entry((float) wrong,1));
                 pieNames.add(1,"Wrong answers");
 
+                /*Adding the data to the chart*/
                 PieDataSet dataSet = new PieDataSet(pieValues, "");
                 dataSet.setSliceSpace(3f);
                 dataSet.setSelectionShift(5f);
+                /*Adding red as the color for wrong answers and green for right answers*/
                 ArrayList<Integer> colors = new ArrayList<>();
                 colors.add(Color.GREEN);
                 colors.add(Color.RED);
                 dataSet.setColors(colors);
 
+                /*Setting the data and various design variables*/
                 PieData pieData = new PieData(pieNames, dataSet);
                 pieData.setValueFormatter(new PercentFormatter());
                 pieData.setValueTextSize(11f);
                 pieData.setValueTextColor(Color.WHITE);
 
+                /*Sending the data to the Chart and redraw it*/
                 chartDialog.setData(pieData);
 
                 chartDialog.highlightValues(null);
@@ -1406,13 +1455,21 @@ public class AssignmentActivity extends AppCompatActivity {
         });
     }
 
+    /**
+     *
+     * @param time - time in seconds
+     * @return String - time converted to format HH:MM:SS
+     */
     private String convertTime(int time){
+
+        /*Calculating the number of hours, minutes and seconds*/
         int hour = time/3600;
         int remainder = time - hour*3600;
         int minute = remainder/60;
         remainder = remainder - minute * 60;
         int second = remainder;
 
+        /*Converting to strings and adding leading zeros if necessary*/
         String hours,minutes,seconds;
         if(hour < 10){
             hours = "0"+hour;
