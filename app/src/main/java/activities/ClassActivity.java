@@ -106,13 +106,6 @@ public class ClassActivity extends AppCompatActivity {
     private String teacherTeacherFullName;
 
     /**
-     * String for storing the e-mail address for the teacher that teaches the currently
-     * selected class or, if selected, the e-mail address id belonging to the teacher clicked
-     * from lvListTeachers
-     */
-    private String teacherTeacherEmail;
-
-    /**
      * String for storing the E-mail address for the teacher teaching the class last clicked
      * in lvListClasses
      */
@@ -145,10 +138,10 @@ public class ClassActivity extends AppCompatActivity {
      */
     private boolean teacherClasses;
 
-    /** int for storing the postition of the item last clicked in lvListClasses */
+    /** int for storing the position of the item last clicked in lvListClasses */
     private int classListPosition;
 
-    /** int for storing the postition of the item last clicked in lvListTeachers */
+    /** int for storing the position of the item last clicked in lvListTeachers */
     private int teacherListPosition;
 
     @Override
@@ -651,6 +644,14 @@ public class ClassActivity extends AppCompatActivity {
      * @param teacherListPos the position of the selected item in lvListTeachers
      */
     private void setContentPane(int classListPos, int teacherListPos) {
+
+        /**
+         * String for storing the e-mail address for the teacher that teaches the currently
+         * selected class or, if selected, the e-mail address id belonging to the teacher clicked
+         * from lvListTeachers
+         */
+        String teacherTeacherEmail;
+
         if (classListPos >= 0 && teacherListPos >= 0) {
             /**
              * if an entry has been selected from lvListClasses and lvListTeachers
