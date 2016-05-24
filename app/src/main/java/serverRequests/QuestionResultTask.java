@@ -4,6 +4,7 @@ import android.app.ProgressDialog;
 import android.content.Context;
 import android.net.Uri;
 import android.os.AsyncTask;
+import android.util.Log;
 import android.widget.Toast;
 
 import org.apache.commons.io.IOUtils;
@@ -107,6 +108,7 @@ public class QuestionResultTask extends AsyncTask<String, Void, HashMap<String, 
 
             String serverResponse = IOUtils.toString(in, "UTF-8");
 
+            Log.d("server response",serverResponse);
             /*Converting to JSONObject*/
             JSONObject JSONResult = new JSONObject(serverResponse);
             /*Getting the server responseCode and generalResponse*/
