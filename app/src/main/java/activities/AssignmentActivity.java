@@ -468,7 +468,7 @@ public class AssignmentActivity extends AppCompatActivity {
                 @Override
                 public void asyncDone(HashMap<String, HashMap<String, String>> results) {
                     /*Checking the result from the AssignmentLibTask and setting the variables accordingly*/
-                    if(results.get("response").get("responseCode").equals("100")){
+                    if(results.get("response").get("responseCode").equals("101")){
                         setChanged(false);
                         setNew(false);
                         getAssignmentLib();
@@ -759,13 +759,21 @@ public class AssignmentActivity extends AppCompatActivity {
 
         if(position >= 0) {
             /*If the assignmentLib entry is saved in the database - setting up the content pane*/
-            Map<String, String> assignmentLibData =(Map) assignmentAdapter.getItem(position);
+            Map<String, String> assignmentLibData = (Map) assignmentAdapter.getItem(position);
             assignmentLibTextId = Integer.parseInt(assignmentLibData.get("assignmentText"));
             assignmentLibName = assignmentLibData.get("assignmentLibName");
             assignmentLibId = assignmentLibData.get("assignmentLibId");
             etAssignmentName.setText(assignmentLibName);
-            int textListPos = textListIds.get(assignmentLibTextId);
-            etAssignmentText.setText(textList.get(textListPos).get("textname"));
+            /*Checking if the text is avaiable, if not the first available text is set as the text for the assignment*/
+            try {
+                int textListPos = textListIds.get(assignmentLibTextId);
+                etAssignmentText.setText(textList.get(textListPos).get("textname"));
+            } catch (NullPointerException e){
+                int textListPos = 0;
+                assignmentLibTextId = Integer.parseInt(textList.get(textListPos).get("textid"));
+                etAssignmentText.setText(textList.get(textListPos).get("textname"));
+            }
+
 
             /*Clearing the assignedList and studentsAssigned*/
             assignedList.clear();
