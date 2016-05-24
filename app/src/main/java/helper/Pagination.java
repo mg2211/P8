@@ -12,7 +12,7 @@ public class Pagination {
     private final int mWidth;
     private final int mHeight;
     private final float mSpacingMult = 1;
-    private final float mSpacingAdd = 10; // number of pages to possible add
+    private final float mSpacingAdd = 15; // number of pages to possible add
     private final CharSequence mText;
     private final TextPaint mPaint;
     private final List<CharSequence> mPages;
