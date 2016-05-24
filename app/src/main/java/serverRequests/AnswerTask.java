@@ -57,7 +57,7 @@ public class AnswerTask extends AsyncTask<String, Void, HashMap<String, HashMap<
 
         try {
 
-            URL url = new URL("http://emilsiegenfeldt.dk/p8/answers.php");
+            URL url = new URL(ServerAddress.url+"answers.php");
             HttpURLConnection connection = (HttpURLConnection) url.openConnection();
             connection.setRequestMethod("POST");
 

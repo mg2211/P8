@@ -77,7 +77,7 @@ public class LoginTask extends AsyncTask<String, Void, HashMap<String, String>> 
 
         try {
             /*Creating the server call*/
-            URL url = new URL("http://emilsiegenfeldt.dk/p8/login.php");
+            URL url = new URL(ServerAddress.url+"login.php");
             HttpURLConnection connection = (HttpURLConnection) url.openConnection();
             connection.setRequestMethod("POST");
 

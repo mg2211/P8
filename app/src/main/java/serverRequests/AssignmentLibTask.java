@@ -87,7 +87,7 @@ public class AssignmentLibTask extends AsyncTask<String, Void, HashMap<String, H
         HashMap<String, String> response = new HashMap<>();
         try {
             /*Creating the server call*/
-            URL url = new URL("http://emilsiegenfeldt.dk/p8/assignmentlibs.php");
+            URL url = new URL(ServerAddress.url+"assignmentlibs.php");
 
             HttpURLConnection connection = (HttpURLConnection) url.openConnection();
             connection.setRequestMethod("POST");

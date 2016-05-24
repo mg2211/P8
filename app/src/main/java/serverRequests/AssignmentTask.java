@@ -95,7 +95,7 @@ public class AssignmentTask extends AsyncTask<String, Void, HashMap<String, Hash
 
         try {
             /*Creating the actual server call*/
-            URL url = new URL("http://emilsiegenfeldt.dk/p8/assignments.php");
+            URL url = new URL(ServerAddress.url+"assignments.php");
             HttpURLConnection connection = (HttpURLConnection) url.openConnection();
             connection.setRequestMethod("POST");
 

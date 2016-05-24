@@ -72,7 +72,7 @@ public class RoleTask extends AsyncTask<String, Void, HashMap<String,HashMap<Str
         int responseCode = 0;
 
         try {
-            URL url = new URL("http://emilsiegenfeldt.dk/p8/roles.php");
+            URL url = new URL(ServerAddress.url+"roles.php");
             HttpURLConnection connection = (HttpURLConnection) url.openConnection();
             connection.setRequestMethod("POST");
 

@@ -89,7 +89,7 @@ public class QuestionTask extends AsyncTask<String, Void, HashMap<String, HashMa
 
         try {
             /*Creating the server call*/
-            URL url = new URL("http://emilsiegenfeldt.dk/p8/questions.php");
+            URL url = new URL(ServerAddress.url+"questions.php");
             HttpURLConnection connection = (HttpURLConnection) url.openConnection();
             connection.setRequestMethod("POST");
 

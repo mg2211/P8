@@ -104,7 +104,7 @@ public class ClassTask extends AsyncTask<String, Void, HashMap<String,HashMap<St
             int responseCode;
 
             /** get to the right php script, open a connection and set the connection method */
-            URL url = new URL("http://emilsiegenfeldt.dk/p8/classes.php");
+            URL url = new URL(ServerAddress.url+"classes.php");
             HttpURLConnection connection = (HttpURLConnection) url.openConnection();
             connection.setRequestMethod("POST");
 

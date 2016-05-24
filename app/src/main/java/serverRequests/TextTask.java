@@ -88,7 +88,7 @@ public class TextTask extends AsyncTask<String, Void, HashMap<String, HashMap<St
         HashMap<String, String> response = new HashMap<>();
         try {
             /*Creating the server call*/
-            URL url = new URL("http://emilsiegenfeldt.dk/p8/texts.php");
+            URL url = new URL(ServerAddress.url+"texts.php");
 
             /*Building the URI with POST parameters*/
             HttpURLConnection connection = (HttpURLConnection) url.openConnection();

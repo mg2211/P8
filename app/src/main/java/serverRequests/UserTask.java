@@ -124,7 +124,7 @@ public class UserTask extends AsyncTask<String, Void, HashMap<String,HashMap<Str
             int responseCode;
 
             /** get to the right php script, open a connection and set the connection method */
-            URL url = new URL("http://emilsiegenfeldt.dk/p8/users.php");
+            URL url = new URL(ServerAddress.url+"users.php");
             HttpURLConnection connection = (HttpURLConnection) url.openConnection();
             connection.setRequestMethod("POST");
 
