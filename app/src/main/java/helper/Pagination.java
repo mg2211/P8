@@ -7,6 +7,10 @@ package helper;
         import java.util.List;
 
 
+/**
+ * Pagination class
+ * Used for dividing text into several pages
+ */
 public class Pagination {
     private final boolean mIncludePad = true;
     private final int mWidth;
@@ -17,6 +21,13 @@ public class Pagination {
     private final TextPaint mPaint;
     private final List<CharSequence> mPages;
 
+    /**
+     * Constructor
+     * @param text
+     * @param pageW
+     * @param pageH
+     * @param paint
+     */
     public Pagination(CharSequence text, int pageW, int pageH, TextPaint paint) {
         this.mText = text;
         this.mWidth = pageW;
@@ -28,14 +39,22 @@ public class Pagination {
         layout();
     }
 
+    /**
+     * Creating the layout for containing the page
+     */
     private void layout() {
+        /*Creating the layout container*/
         final StaticLayout layout = new StaticLayout(mText, mPaint, mWidth, Layout.Alignment.ALIGN_NORMAL, mSpacingMult, mSpacingAdd, mIncludePad);
 
+        /*Getting the lines of text in the layout*/
         final int lines = layout.getLineCount();
+        /*Getting text from the layout*/
         final CharSequence text = layout.getText();
+        /*Setting the offset*/
         int startOffset = 0;
         int height = mHeight;
 
+        /*iterating the lines*/
         for (int i = 0; i < lines; i++) {
             if (height < layout.getLineBottom(i)) {
                 // When the layout height has been exceeded
@@ -52,14 +71,17 @@ public class Pagination {
         }
     }
 
+    /*Adds the page to the ArrayList of pages*/
     private void addPage(CharSequence text) {
         mPages.add(text);
     }
 
+    /*Getting the number of pages*/
     public int size() {
         return mPages.size();
     }
 
+    /*Getting text for a specific page*/
     public CharSequence get(int index) {
         return (index >= 0 && index < mPages.size()) ? mPages.get(index) : null;
     }

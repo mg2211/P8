@@ -104,7 +104,6 @@ public class AssignmentActivity extends AppCompatActivity {
     private final List<Map<String, String>> assignedList = new ArrayList<>();
     private final ArrayList<String> assignmentIds = new ArrayList<>();
     private HashMap<String,HashMap<String, String>> questions = new HashMap<>();
-    private HashMap<String, HashMap<String, HashMap<String, String>>> result;
     private final List<Map<String, String>> assignmentLibList = new ArrayList<>();
     private final List<Map<String, String>> textList = new ArrayList<>();
 
@@ -115,6 +114,7 @@ public class AssignmentActivity extends AppCompatActivity {
     private final ArrayList<IBarDataSet> dataSets = new ArrayList<>();
     private final ArrayList<Entry> lineY = new ArrayList<>();
     private final ArrayList<ILineDataSet> lineSets = new ArrayList<>();
+    private HashMap<String, HashMap<String, HashMap<String, String>>> result;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
