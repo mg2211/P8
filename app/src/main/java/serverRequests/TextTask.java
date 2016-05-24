@@ -144,6 +144,7 @@ public class TextTask extends AsyncTask<String, Void, HashMap<String, HashMap<St
                     String specificTextContent = specificText.getString("textContent");
                     String specificTextId = specificText.getString("textId");
                     double specificTextComplexity = specificText.getDouble("complexity");
+                    String specificTextAssigned = specificText.getString("assigned");
 
                     /*Creating a HashMap for containing textinfo and put data in it*/
                     HashMap<String, String> textInfo = new HashMap<>();
@@ -151,6 +152,7 @@ public class TextTask extends AsyncTask<String, Void, HashMap<String, HashMap<St
                     textInfo.put("textcontent", specificTextContent);
                     textInfo.put("id", specificTextId);
                     textInfo.put("complexity", String.valueOf(specificTextComplexity));
+                    textInfo.put("assigned", specificTextAssigned);
 
                     /*Putting a text into the results map*/
                     results.put("text"+i,textInfo);

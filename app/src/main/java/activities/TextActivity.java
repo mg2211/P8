@@ -414,11 +414,13 @@ public class TextActivity extends AppCompatActivity {
                     String textContent = text.getValue().get("textcontent");
                     String textBook = text.getValue().get("textbook");
                     String complexity = text.getValue().get("complexity");
+                    String assigned = text.getValue().get("assigned");
                     textInfo.put("textname", textName);
                     textInfo.put("textcontent", textContent);
                     textInfo.put("textbook", textBook);
                     textInfo.put("complexity", "Complexity: " + complexity);
                     textInfo.put("id", textId);
+                    textInfo.put("assigned",assigned);
                     textList.add(textInfo);
                 }
                 /*Letting the LV know that there is new data*/
@@ -598,7 +600,11 @@ public class TextActivity extends AppCompatActivity {
             textId = textData.get("id");
             etContent.setText(textContent);
             etTextName.setText(textName);
-            bDelete.setEnabled(true);
+            if(textData.get("assigned").equals("true")){
+                 bDelete.setEnabled(false);
+            }  else{
+                bDelete.setEnabled(true);
+            }
             lix = 0;
             calculate();
             setChanged(false);
