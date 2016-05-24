@@ -139,11 +139,6 @@ public class AssignmentLibTask extends AsyncTask<String, Void, HashMap<String, H
                     assignmentInfo.put("name",specificAssignment.getString("name"));
                     assignmentInfo.put("textId", specificAssignment.getString("text"));
                     assignmentInfo.put("teacherId",specificAssignment.getString("teacherId"));
-                    assignmentInfo.put("assignedStudents",specificAssignment.getString("assignedStudents"));
-                    assignmentInfo.put("assignmentIds", specificAssignment.getString("assignmentIds"));
-                    assignmentInfo.put("isComplete",specificAssignment.getString("isComplete"));
-                    assignmentInfo.put("assignmentTimes",specificAssignment.getString("assignmentTimes"));
-
                     /*Putting map into results map with assignment id as key*/
 
                     results.put("Assignment id" + specificAssignment.getString("id"), assignmentInfo);
