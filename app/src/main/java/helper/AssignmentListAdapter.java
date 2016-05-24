@@ -60,7 +60,7 @@ public class AssignmentListAdapter extends BaseAdapter {
         }
         /*The color to color the name of the student depending on assignment completion*/
         int color;
-        if(assignments.get(position).get("isComplete").equals("0")){
+        if(assignments.get(position).get("isComplete").equals("1")){
             color = Color.GREEN;
         } else {
             color = Color.RED;

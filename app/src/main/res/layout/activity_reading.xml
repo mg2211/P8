@@ -72,7 +72,7 @@ android:background="@color/Creamy"    >
                     android:textAppearance="?android:attr/textAppearanceLarge"
                     android:text="Assignment name"
                     android:id="@+id/tvAssignmentName"
-                    android:textSize="30dp"
+                    android:textSize="30sp"
                     android:paddingTop="20dp" />
 
                 <TextView
@@ -81,7 +81,7 @@ android:background="@color/Creamy"    >
                     android:textAppearance="?android:attr/textAppearanceLarge"
                     android:text="Text name"
                     android:id="@+id/tvTextName2"
-                    android:textSize="25dp"
+                    android:textSize="25sp"
                     android:paddingTop="10dp" />
 
                 <TextView
@@ -90,7 +90,7 @@ android:background="@color/Creamy"    >
                     android:textAppearance="?android:attr/textAppearanceMedium"
                     android:text="textContent"
                     android:id="@+id/tvTextContent"
-                    android:textSize="30dp"
+                    android:textSize="30sp"
                     android:textColor="@color/abc_input_method_navigation_guard"
                     android:width="100dp"
                     android:typeface="serif"
@@ -134,7 +134,8 @@ android:background="@color/Creamy"    >
                         android:layout_alignTop="@+id/next1"
                         android:layout_toLeftOf="@+id/next1"
                         android:layout_toStartOf="@+id/next1"
-                        android:background="@color/Creamy"/>
+                        android:background="@color/Creamy"
+                        android:contentDescription="Previous page"/>
 
                     <ImageButton
                         android:id="@+id/next1"
@@ -145,7 +146,8 @@ android:background="@color/Creamy"    >
                         android:background="@color/Creamy"
                         android:layout_alignParentBottom="true"
                         android:layout_alignParentRight="true"
-                        android:layout_alignParentEnd="true" />
+                        android:layout_alignParentEnd="true"
+                        android:contentDescription="Next page"/>
 
 
                 </RelativeLayout>

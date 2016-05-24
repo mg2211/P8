@@ -4,23 +4,17 @@ import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.graphics.Bitmap;
-import android.graphics.drawable.BitmapDrawable;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.Button;
-import android.widget.ImageView;
 import android.widget.ListView;
-import android.widget.SimpleAdapter;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.svilen.p8.R;
-
-import org.w3c.dom.Text;
 
 import callback.*;
 import helper.*;
@@ -34,44 +28,44 @@ import java.util.Map;
 public class StudentActivity extends AppCompatActivity {
 
     /** Button used to logout*/
-    Button bLogout;
+    private Button bLogout;
 
     /** context*/
-    Context context = this;
+    private final Context context = this;
 
     /** Listview containing assignments assigned to a student*/
-    ListView lvAssToStudent;
+    private ListView lvAssToStudent;
 
     /** Adapter for displaying assignments in the LvAssToStudent listview*/
-    AssignmentListAdapterStudent assignedAdapter;
+    private AssignmentListAdapterStudent assignedAdapter;
 
     /** A list for storing assignments used by the assignedAdapter*/
-    List<Map<String, String>> assignmentList = new ArrayList<>();
+    private final List<Map<String, String>> assignmentList = new ArrayList<>();
 
     /** */
-    UserInfo userinfo;
+    private UserInfo userinfo;
 
     /** */
-    HashMap<String, String> user;
+    private HashMap<String, String> user;
 
     /** A string for storing the studentId of the logged in user */
-    String studentId;
+    private String studentId;
 
 
 
 
 
     /** A textview displaying whether the student has assigned homework waiting or not*/
-    TextView homeWork;
+    private TextView homeWork;
 
     /** A textview displaying the teacher name*/
-    TextView teacherName;
+    private TextView teacherName;
 
     /** A textview displaying the teacher email*/
-    TextView teacherEmail;
+    private TextView teacherEmail;
 
     /** A textview displaying the class name*/
-    TextView className;
+    private TextView className;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -123,7 +117,6 @@ public class StudentActivity extends AppCompatActivity {
                 final String assignmentName = assignmentData.get("assignmentLibName");
                 final String assignmentId = assignmentData.get("assignmentid");
                 String isComplete = assignmentData.get("isComplete");
-                Long availableto = Long.valueOf(assignmentData.get("availableTo"));
 
                 /** If statement checking whether the assignment clicked in the listview is finished or not*/
                 if(isComplete.equals("0")){
@@ -191,7 +184,7 @@ public class StudentActivity extends AppCompatActivity {
 
 
     /** Launch an Assignment task which gets the needed information on assignments from the database*/
-    public void getAssignment() {
+    private void getAssignment() {
 
         new AssignmentTask(new Callback() {
             @Override
@@ -250,7 +243,7 @@ public class StudentActivity extends AppCompatActivity {
     }
 
     /** Launches a ClassTask that gets the required information on a class from the database*/
-    public void getClassInfo(){
+    private void getClassInfo(){
 
 
         new ClassTask(new Callback() {

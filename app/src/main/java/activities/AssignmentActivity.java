@@ -102,7 +102,6 @@ public class AssignmentActivity extends AppCompatActivity {
     private final List<Map<String, String>> studentList = new ArrayList<>();
     private final List<Map<String, String>> classList = new ArrayList<>();
     private final List<Map<String, String>> assignedList = new ArrayList<>();
-    private final ArrayList<Integer> studentsAssigned = new ArrayList<>();
     private final ArrayList<String> assignmentIds = new ArrayList<>();
     private HashMap<String,HashMap<String, String>> questions = new HashMap<>();
     private HashMap<String, HashMap<String, HashMap<String, String>>> result;
@@ -776,7 +775,6 @@ public class AssignmentActivity extends AppCompatActivity {
 
             /*Clearing the assignedList and studentsAssigned*/
             assignedList.clear();
-            studentsAssigned.clear();
 
             /*Setting new and changed to false*/
             setChanged(false);
@@ -1090,6 +1088,15 @@ public class AssignmentActivity extends AppCompatActivity {
         lvDialogAssigned.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, final int position, long id) {
+
+                if(assignedList.get(position).get("isComplete").equals("1")){
+                    int duration = Toast.LENGTH_LONG;
+                    CharSequence alert = "It is not possible to remove completed assignments";
+                    Toast toast = Toast.makeText(context, alert, duration);
+                    toast.show();
+                    return;
+                }
+
                 /*Creating a confirmation dialog*/
                 new AlertDialog.Builder(context)
                         .setIcon(android.R.drawable.ic_dialog_alert)

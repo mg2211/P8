@@ -4,8 +4,6 @@ import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.graphics.Bitmap;
-import android.graphics.drawable.BitmapDrawable;
 import android.os.Build;
 import android.os.SystemClock;
 
@@ -25,7 +23,6 @@ import android.view.ViewTreeObserver;
 import android.widget.Button;
 import android.widget.Chronometer;
 import android.widget.ImageButton;
-import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
@@ -44,110 +41,108 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 
-import javax.microedition.khronos.opengles.GL10;
-
 public class ReadingActivity extends AppCompatActivity  {
 
 
     /** A list for storing questions*/
-    List<Map<String, String>> questionList = new ArrayList<>();
+    private final List<Map<String, String>> questionList = new ArrayList<>();
 
     /** A string containing the question text itself */
-    String specificQuestionContent1;
+    private String specificQuestionContent1;
 
     /** A string containing a text for a multiple choose answer */
-    String answerText1;
+    private String answerText1;
 
     /**  A button used to pause an assignment*/
-    Button bPause;
+    private Button bPause;
 
     /**  A button used to indicate that the user has finished an assignment*/
-    Button bFinish;
+    private Button bFinish;
 
     /**  Context*/
-    Context context = this;
+    private final Context context = this;
 
 
 
     /**  A string containing the textId of a text*/
-    String textId;
+    private String textId;
 
     /**  A textView where the name of the text will be displayed*/
-    TextView tvTextName;
+    private TextView tvTextName;
 
     /** A button used to submit a choosen answer to a question */
-    Button bDialogSubmit;
+    private Button bDialogSubmit;
 
     /**  A textView displaying the name of the assignment*/
-    TextView tvAssignmentName;
+    private TextView tvAssignmentName;
 
     /**  A string containing the name of the assignment*/
-    String assignmentName;
+    private String assignmentName;
 
     /**  Chronometer used to time how long it takes to read a given text*/
-    Chronometer chronometer;
+    private Chronometer chronometer;
 
     /**  A long used for calculation when an assignment is paused*/
-    long timeWhenStopped = 0;
+    private long timeWhenStopped = 0;
 
 
 
     /**  A textview displaying the content of a question*/
-    TextView tvQuestionToStudent;
+    private TextView tvQuestionToStudent;
 
     /**  A view used for creating dialogs*/
-    View layout;
+    private View layout;
 
     /**  A string containing the text of a choosen answer*/
-    String answerChoosen;
+    private String answerChoosen;
 
     /**  A string containing questionId of a question, otherwise contains a string "empty"*/
-    String specificQuestionId = "empty";
+    private String specificQuestionId = "empty";
 
     /**  A list containing all questionId belonging to a given text*/
-    ArrayList<String> mylist = new ArrayList<>();
+    private final ArrayList<String> mylist = new ArrayList<>();
 
     /**  A HashSet to remove all possible duplicates of questionId*/
-    Set<String> set = new HashSet<>();
+    private Set<String> set = new HashSet<>();
 
     /**  */
     /**  An arraylist containing id of all choosen answers*/
-    ArrayList<String> loggedIdAnswers = new ArrayList<>();
+    private final ArrayList<String> loggedIdAnswers = new ArrayList<>();
 
     /**  An integer containing the number of questions*/
-    int noOfQuestions;
+    private int noOfQuestions;
 
     /**  An integer containing information on how many times bDialogButton has been clicked*/
-    int clickCount = 0;
+    private int clickCount = 0;
 
     /**  A string containing the id of the given assignment*/
-    String assignmentId;
+    private String assignmentId;
 /**  */
 
     /**  A string containing the answerId of the choosen answer*/
-    String answerIdtoChosenAnswer;
+    private String answerIdtoChosenAnswer;
 
     /**  A string containing the id of a question, retrieved from the last index of an array */
-    String lastElement;
+    private String lastElement;
 
     /**  An integer that will change from 0 to 1 if an multiple choose has been picked*/
-    int answerChosenListener = 0;
+    private int answerChosenListener = 0;
 
     /**  An integer containing seconds*/
-    int seconds = 0;
+    private int seconds = 0;
 
     /**  mPagination created from the pagination class*/
-    Pagination mPagination;
+    private Pagination mPagination;
 
-    CharSequence mText;
+    private CharSequence mText;
 
-    int mCurrentIndex = 0;
+    private int mCurrentIndex = 0;
 
     /**  A textView containing the content of a text */
-    TextView tvContent;
+    private TextView tvContent;
 
     /**  A string containing the content of a text*/
-    String textContent22;
+    private String textContent22;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -265,7 +260,7 @@ public class ReadingActivity extends AppCompatActivity  {
     }
 
 
-    public void getQuestions(String textId) {
+    private void getQuestions(String textId) {
 
         /**  Launch a question task to get questions to a given textId */
         new QuestionTask(new Callback() {
@@ -344,7 +339,7 @@ public class ReadingActivity extends AppCompatActivity  {
 
 
     /**  Creates an array with questionIds*/
-    public void createArrays () {
+    private void createArrays() {
 
         for (int row = 0; row < 1; row++) {
 
@@ -354,7 +349,7 @@ public class ReadingActivity extends AppCompatActivity  {
     }
 
     /** Creates dynamic radio buttons depending how many answers are to a given question */
-    public void addRadioButtons() {
+    private void addRadioButtons() {
 
 
             RadioGroup rg = (RadioGroup) layout.findViewById(R.id.radiogroup);
@@ -404,7 +399,7 @@ public class ReadingActivity extends AppCompatActivity  {
 
     /** Used to retrieve answerId based on questionId and answertext while freezing the UI thread else until it is finished or timed out
     * We use it to make sure the that the required information is obtained to set textviews in the UI to avoid a nullpoint exception*/
-    public HashMap<String, HashMap<String, String>> getText1(){
+    private HashMap<String, HashMap<String, String>> getText1(){
         try {
             return new TextTask(new Callback() {
                 @Override
@@ -425,7 +420,7 @@ public class ReadingActivity extends AppCompatActivity  {
 
 
     /** Used to retrieve answerId based on questionId and answertext while freezing the UI thread */
-    public HashMap<String, HashMap<String, String>> getAnswerId(){
+    private HashMap<String, HashMap<String, String>> getAnswerId(){
 
     try {
       return  new AnswerTask(new Callback() {
@@ -446,7 +441,7 @@ public class ReadingActivity extends AppCompatActivity  {
 }
 
     //* Launce a questionTask to get answers based on question Id obtained from the set HashSet*/
-    public void getAnswers(String s) {
+    private void getAnswers(String s) {
         new QuestionTask(new Callback() {
             @Override
             public void asyncDone(HashMap<String, HashMap<String, String>> results) {
@@ -492,7 +487,7 @@ public class ReadingActivity extends AppCompatActivity  {
 
 
     //* A method used to create dialog, which is called each time getAnswers() is run */
-    public void createDialog(){
+    private void createDialog(){
 
 
         AlertDialog.Builder builder = new AlertDialog.Builder(context);
@@ -617,7 +612,7 @@ public class ReadingActivity extends AppCompatActivity  {
     }
 
     //* A pager used to create pages, to give a book like feeling when reading through a text*/
-    public void pager() {
+    private void pager() {
         StringBuilder sb = new StringBuilder();
         for (int i = 0; i < 1; i++) {
             sb.append(textContent22);

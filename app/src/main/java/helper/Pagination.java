@@ -1,9 +1,4 @@
 package helper;
-
-/**
- * Created by Brandur on 5/16/2016.
- */
-
         import android.text.Layout;
         import android.text.StaticLayout;
         import android.text.TextPaint;
@@ -16,8 +11,8 @@ public class Pagination {
     private final boolean mIncludePad = true;
     private final int mWidth;
     private final int mHeight;
-    final float mSpacingMult = 1;
-    final float mSpacingAdd = 10; // number of pages to possible add
+    private final float mSpacingMult = 1;
+    private final float mSpacingAdd = 10; // number of pages to possible add
     private final CharSequence mText;
     private final TextPaint mPaint;
     private final List<CharSequence> mPages;
@@ -28,7 +23,7 @@ public class Pagination {
         this.mHeight = pageH;
         this.mPaint = paint;
 
-        this.mPages = new ArrayList<CharSequence>();
+        this.mPages = new ArrayList<>();
 
         layout();
     }
