@@ -41,18 +41,17 @@ public class AssignmentListAdapterStudent extends BaseAdapter {
         } else {
             holder = (ViewHolder) convertView.getTag();
         }
-        if(assignments.get(position).get("isComplete").equals("1")){
+        if (assignments.get(position).get("isComplete").equals("0")) {
+            color = Color.WHITE;
+            holder.student.setTypeface(Typeface.DEFAULT_BOLD);
+            holder.student.setPaintFlags(0);
+            holder.from.setPaintFlags(0);
+            holder.to.setPaintFlags(0);
+        } if (assignments.get(position).get("isComplete").equals("1")){
             color = Color.LTGRAY;
             holder.student.setPaintFlags(holder.student.getPaintFlags() | Paint.STRIKE_THRU_TEXT_FLAG);
             holder.from.setPaintFlags(holder.from.getPaintFlags() | Paint.STRIKE_THRU_TEXT_FLAG);
             holder.to.setPaintFlags(holder.to.getPaintFlags() | Paint.STRIKE_THRU_TEXT_FLAG);
-
-
-        }
-        if(assignments.get(position).get("isComplete").equals("0")){
-
-            color = Color.WHITE;
-            holder.student.setTypeface(Typeface.DEFAULT_BOLD);
         }
 
         Long from = Long.parseLong(assignments.get(position).get("availableFrom"));
