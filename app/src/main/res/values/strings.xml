@@ -1,6 +1,6 @@
 <resources>
     <!--App name-->
-    <string name="app_name">P8</string>
+    <string name="app_name">Smart Teaching Assistant</string>
 
     <string name="Yes">Yes</string>
     <string name="No">No</string>

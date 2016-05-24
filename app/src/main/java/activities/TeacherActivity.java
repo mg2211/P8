@@ -30,19 +30,13 @@ import java.util.ArrayList;
 public class TeacherActivity extends AppCompatActivity {
 
     private final Context context = this;
-    private final ArrayList<BarEntry> yVal = new ArrayList<>();
-    private final ArrayList<String> xVals = new ArrayList<>();
-    private final ArrayList<IBarDataSet> dataSets = new ArrayList<>();
-    private final ArrayList<Integer> colors = new ArrayList<>();
-
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_teacher);
 
         setButtons();
-        addData();
+
         Button bClasses = (Button) findViewById(R.id.bClasses);
         Button bAssignments = (Button) findViewById(R.id.bAssignments);
         Button bTexts = (Button) findViewById(R.id.bTexts);
@@ -61,7 +55,7 @@ public class TeacherActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
 
-                    Intent intent = new Intent (TeacherActivity.this, AssignmentActivity.class);
+                Intent intent = new Intent(TeacherActivity.this, AssignmentActivity.class);
                 startActivity(intent);
 
             }
@@ -78,7 +72,7 @@ public class TeacherActivity extends AppCompatActivity {
         bUsers.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent (context, UserActivity.class);
+                Intent intent = new Intent(context, UserActivity.class);
                 startActivity(intent);
                 //new UserTask().execute("");
             }
@@ -92,68 +86,10 @@ public class TeacherActivity extends AppCompatActivity {
             }
         });
 
-        //design barChart
-        BarChart mChart = (BarChart) findViewById(R.id.chart);
-        mChart.setPinchZoom(false);
-        mChart.setDoubleTapToZoomEnabled(false);
-        mChart.setScaleEnabled(false);
-        mChart.setDrawBarShadow(false);
-        mChart.setDrawGridBackground(false);
-        mChart.animateY(1250);
-        mChart.getLegend().setEnabled(false);
-        mChart.setDescription("");
-
-        XAxis xAxis = mChart.getXAxis();
-        xAxis.setPosition(XAxis.XAxisPosition.BOTTOM);
-        xAxis.setSpaceBetweenLabels(0);
-        xAxis.setDrawGridLines(false);
-
-        YAxis yaxisleft = mChart.getAxisLeft();
-        YAxis yaxisright = mChart.getAxisRight();
-        yaxisleft.setLabelCount(3, true);
-        yaxisright.setLabelCount(3,true);
-        yaxisleft.setAxisMaxValue(100);
-        yaxisright.setAxisMaxValue(100);
-        yaxisleft.setAxisMinValue(0);
-        yaxisright.setAxisMinValue(0);
-
-
-        mChart.getAxisLeft().setDrawGridLines(false);
-        BarData data = new BarData(xVals, dataSets);
-
-        mChart.setData(data);
-        mChart.setOnChartValueSelectedListener(new OnChartValueSelectedListener() {
-            @Override
-            public void onValueSelected(Entry entry, int i, Highlight highlight) {
-            }
-
-            @Override
-            public void onNothingSelected() {
-
-            }
-        });
-
     }
 
-    private void addData() {
-        colors.clear();
-        for(int n = 0; n< 5; n++){
-            int randomnumber = (int)(Math.random() * 101);
-            yVal.add(new BarEntry(randomnumber, n));
-            if(randomnumber >= 50 && randomnumber <= 75){
-                colors.add(Color.rgb(255, 235, 69));
-            } else if(randomnumber > 75){
-                colors.add(Color.rgb(156,204,101));
-            } else {
-                colors.add(Color.rgb(239,83,80));
-            }
-            xVals.add("Assignment "+n);
-        }
-        BarDataSet set1 = new BarDataSet(yVal, "Assignments");
-        set1.setColors(colors);
-        dataSets.add(set1);
-    }
-
+    /*Method for setting the buttons to fill the entire height of the screen
+    * equally sized*/
     private void setButtons(){
         ArrayList<Integer> buttonIds = new ArrayList<>();
         buttonIds.add(R.id.bClasses);
