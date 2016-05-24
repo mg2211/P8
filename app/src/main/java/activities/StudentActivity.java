@@ -77,9 +77,6 @@ public class StudentActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
 
         setContentView(R.layout.activity_student);
-        //getWindow().setBackgroundDrawableResource(R.drawable.green);
-
-
 
         /** create a new UserInfo to get information on the user currently logged in */
         userinfo = new UserInfo(context);
@@ -166,31 +163,6 @@ public class StudentActivity extends AppCompatActivity {
                     Toast.makeText(StudentActivity.this, "You have finished this assignment", Toast.LENGTH_SHORT).show();
 
                 }
-
-
-
-               /* new TextTask(new Callback() {
-                    @Override
-                    public void asyncDone(HashMap<String, HashMap<String, String>> results) {
-
-                        //remove other hashmaps in results var to avoid the first returning null
-
-                        // remove progressDial if possible
-                        for (Map.Entry<String, HashMap<String, String>> text : results.entrySet()) {
-                            Map<String, String> textInfo = new HashMap<>();
-                            String textContent = text.getValue().get("textcontent");
-                            String textName = text.getValue().get("textname");
-
-                            textInfo.put("textcontent", textContent);
-                            textInfo.put("textname", textName);
-                            // assignmentList.add(textInfo);
-                            Log.d("TEXTTASK", String.valueOf(textInfo));
-
-
-                        }
-                    }
-                }, context).executeTask("get", textId, "", "", 0);*/
-
             }
         });
 
