@@ -85,14 +85,14 @@
 
                 <EditText
                     android:layout_width="match_parent"
-                    android:layout_height="0dp"
+                    android:layout_height="match_parent"
                     android:inputType="textMultiLine"
                     android:ems="10"
                     android:id="@+id/etContent"
                     android:layout_weight="1"
                     android:background="@null"
                     android:hint="@string/text_content"
-                    android:lines="10"
+                    android:lines="30"
                     android:gravity="top" />
 
             </LinearLayout>
