@@ -454,6 +454,11 @@ public class TextActivity extends AppCompatActivity {
                             }, context).executeTask("update", questionId, id, questionList.get(i).get("answers"), questionList.get(i).get("Question"));
                         }
                     }
+                    if(results.get("response").get("responseCode").equals("101")) {
+                        setChanged(false);
+                        setNewText(false);
+                        textId = id;
+                    }
                 }
             },context).executeTask("create", "", etTextName.getText().toString(), etContent.getText().toString(), lix);
             /*updating the textList*/

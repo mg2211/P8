@@ -125,7 +125,7 @@ public class TextTask extends AsyncTask<String, Void, HashMap<String, HashMap<St
             response.put("responseCode", responseCode);
 
             /*If the method is create, get the text's new id and put it in the response*/
-            if(method.equals("create")){
+            if(method.equals("create") && responseCode.equals("101")){
                 response.put("insertedId", JSONResult.getString("insertedId"));
             }
 
