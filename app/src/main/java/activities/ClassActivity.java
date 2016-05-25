@@ -535,7 +535,7 @@ public class ClassActivity extends AppCompatActivity {
             public void onClick(View v) {
                 createClass(teacherListPosition);
                 setChanged(false);
-                setNewClass(true);
+                setNewClass(false);
             }
         });
 
@@ -766,7 +766,9 @@ public class ClassActivity extends AppCompatActivity {
                     }
                 }, context).executeTask("CREATE", "", teacherId, className);
                 /** get classes and reset adapter to reset selection to zero */
-                if(teacherClasses){
+                if(!currentUserTeacherId.equals(teacherId)){
+                    getAllClasses();
+                } else if (teacherClasses) {
                     getTeacherClasses();
                 } else {
                     getAllClasses();

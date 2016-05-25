@@ -66,6 +66,7 @@
 
     <!--Labels for defining classes in text fields-->
     <string name="className">Class name</string>
+    <string name="assignedClassName">Student not enrolled in class</string>
     <string name="teacherName">Teacher name</string>
     <string name="teacherEmail">Teacher e-mail</string>
 

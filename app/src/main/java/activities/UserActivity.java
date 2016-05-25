@@ -381,6 +381,7 @@ public class UserActivity extends AppCompatActivity {
             public void onClick(View v) {
                 createUser();
                 setChanged(false);
+                setNewUser(false);
                 bAssignClass.setEnabled(true);
             }
         });
@@ -391,6 +392,7 @@ public class UserActivity extends AppCompatActivity {
             public void onClick(View v) {
                 updateUser();
                 setChanged(false);
+                setNewUser(false);
             }
         });
 
@@ -400,6 +402,7 @@ public class UserActivity extends AppCompatActivity {
             public void onClick(View v) {
                 deleteUser();
                 setChanged(false);
+                setNewUser(true);
             }
         });
 
